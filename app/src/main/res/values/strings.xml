@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AndroidApp</string>
-    <string name="hello_world">FirstBuild!</string>
+    <string name="app_name">1B | firstbuild</string>
     <string name="action_settings">Settings</string>
 
 </resources>
