@@ -17,7 +17,7 @@ import java.util.List;
 public class DeviceListAdapter extends BaseAdapter{
     private final String TAG = "DeviceListAdapter";
     private LayoutInflater layoutInflater = null;
-    private List<BluetoothDevice> mData;
+    private List<BluetoothDevice> devices;
 
     public DeviceListAdapter(Context context) {
         Log.d(TAG, "IN DeviceListAdapter");
@@ -26,12 +26,12 @@ public class DeviceListAdapter extends BaseAdapter{
 
     public void setData(List<BluetoothDevice> data) {
         Log.d(TAG, "IN setData");
-        mData = data;
+        devices = data;
     }
 
     public int getCount() {
         Log.d(TAG, "IN getCount");
-        return (mData == null) ? 0 : mData.size();
+        return (devices == null) ? 0 : devices.size();
     }
 
     public Object getItem(int position) {
@@ -61,7 +61,7 @@ public class DeviceListAdapter extends BaseAdapter{
         }
 
         // Get Data in given position
-        BluetoothDevice device	= mData.get(position);
+        BluetoothDevice device	= devices.get(position);
 
         TextViewHolder.deviceName.setText(device.getName());
         TextViewHolder.deviceAddress.setText(device.getAddress());
@@ -70,7 +70,7 @@ public class DeviceListAdapter extends BaseAdapter{
         return convertView;
     }
 
-    // Text Vie hold class
+    // Text View hold class
     static class TextViewHolder {
         static TextView deviceName;
         static TextView deviceAddress;
