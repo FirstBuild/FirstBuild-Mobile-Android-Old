@@ -65,6 +65,7 @@ public class DeviceListAdapter extends BaseAdapter{
         deviceBond.setText((device.getBondState() == BluetoothDevice.BOND_BONDED) ? "Unpair" : "Pair");
 
 
+
         return convertView;
     }
 }
