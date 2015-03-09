@@ -53,19 +53,27 @@ public class DeviceListAdapter extends BaseAdapter{
 
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.list_item_ble_device, null);
+
+            // Hold text views not to load resource everytime.
+            TextViewHolder.deviceName = (TextView) convertView.findViewById(R.id.device_name);
+            TextViewHolder.deviceAddress = (TextView) convertView.findViewById(R.id.device_address);
+            TextViewHolder.deviceBond = (TextView) convertView.findViewById(R.id.bond_state);
         }
 
+        // Get Data in given position
         BluetoothDevice device	= mData.get(position);
-        TextView deviceName = (TextView) convertView.findViewById(R.id.device_name);
-        TextView deviceAddress = (TextView) convertView.findViewById(R.id.device_address);
-        TextView deviceBond = (TextView) convertView.findViewById(R.id.bond_state);
 
-        deviceName.setText(device.getName());
-        deviceAddress.setText(device.getAddress());
-        deviceBond.setText((device.getBondState() == BluetoothDevice.BOND_BONDED) ? "Unpair" : "Pair");
-
-
+        TextViewHolder.deviceName.setText(device.getName());
+        TextViewHolder.deviceAddress.setText(device.getAddress());
+        TextViewHolder.deviceBond.setText((device.getBondState() == BluetoothDevice.BOND_BONDED) ? "Unpair" : "Pair");
 
         return convertView;
+    }
+
+    // Text Vie hold class
+    static class TextViewHolder {
+        static TextView deviceName;
+        static TextView deviceAddress;
+        static TextView deviceBond;
     }
 }

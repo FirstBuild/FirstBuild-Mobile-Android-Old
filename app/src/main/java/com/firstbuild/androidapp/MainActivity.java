@@ -51,23 +51,15 @@ public class MainActivity extends ActionBarActivity {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Log.d(TAG, "Scan button clicked");
-                bluetoothAdapter.startDiscovery();
-                Handler handler = new Handler();
-
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        Log.d(TAG, "cancelDiscovery");
-                        bluetoothAdapter.cancelDiscovery();
-                    }
-                }, 7000);
+            Log.d(TAG, "Scan button clicked");
+            bluetoothAdapter.startDiscovery();
             }
         });
 
         // Register intents for broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
