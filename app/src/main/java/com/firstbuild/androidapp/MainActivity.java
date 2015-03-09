@@ -28,7 +28,6 @@ public class MainActivity extends ActionBarActivity {
     private ListView listView = null;
     private BluetoothAdapter bluetoothAdapter = null;
     private ArrayList<BluetoothDevice> bleDeviceList = null;
-    //    private ArrayAdapter<String> arrayAdapter = null;
     private DeviceListAdapter deviceListAdapter;
 
     @Override
@@ -113,23 +112,17 @@ public class MainActivity extends ActionBarActivity {
                 final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
 
                 if (state == BluetoothAdapter.STATE_ON) {
-
+                    // TODO - do nothing so far.
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 Log.d(TAG, "In BroadcastReceiver - Discovery started");
 
                 if(bleDeviceList == null) {
                     bleDeviceList = new ArrayList<BluetoothDevice>();
-//                    bleDeviceList = new HashMap<String, BluetoothDevice>();
                 }
 
-//                mProgressDlg.show();
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.d(TAG, "In BroadcastReceiver - Discovery finished");
-
-//                deviceListAdapter = new DeviceListAdapter(this);
-                listView.setAdapter(deviceListAdapter);
-                deviceListAdapter.setData(bleDeviceList);
 
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 Log.d(TAG, "In BroadcastReceiver - BluetoothDevice found!");
@@ -137,19 +130,14 @@ public class MainActivity extends ActionBarActivity {
 
                 bleDeviceList.add(device);
 
+                // Update items in the list view
+                listView.setAdapter(deviceListAdapter);
+                deviceListAdapter.setData(bleDeviceList);
+
                 for(BluetoothDevice item : bleDeviceList){
                     Log.d(TAG, "Device: " + item);
                 }
-
-//                showToast("Found device " + device.getName());
             }
         }
     };
 }
-
-
-//                bleDeviceList.put(device.getAddress(), device);
-//
-//                for (HashMap.Entry<String, BluetoothDevice> entry : bleDeviceList.entrySet()) {
-//                    Log.d(TAG, "Device" + entry.getKey()+" : " + entry.getValue());
-//                }
