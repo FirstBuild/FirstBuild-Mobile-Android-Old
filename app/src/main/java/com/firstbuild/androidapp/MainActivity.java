@@ -6,28 +6,29 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 
 public class MainActivity extends ActionBarActivity {
     private final String TAG = "MainActivity";
+    private final int REQUEST_ENABLE_BT = 1000;
+
     private static Context context = null;
     private Button scanButton = null;
     private ListView listView = null;
     private BluetoothAdapter bluetoothAdapter = null;
-    private ArrayList<BluetoothDevice> bleDeviceList = null;
+    private ArrayList<BluetoothDevice> bleDevices = null;
+
     private DeviceListAdapter deviceListAdapter;
 
     @Override
@@ -47,14 +48,11 @@ public class MainActivity extends ActionBarActivity {
         // Set List view to showing scan result
         deviceListAdapter = new DeviceListAdapter(this);
 
-        // When a ble device scan button clicked.
-        scanButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-            Log.d(TAG, "Scan button clicked");
-            bluetoothAdapter.startDiscovery();
-            }
-        });
+        // When a ble device scan button clicked
+        scanButton.setOnClickListener(scanButtonClickListener);
+
+        // When item is clicked from list view
+        listView.setOnItemClickListener(itemClickListener);
 
         // Register intents for broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
@@ -64,8 +62,9 @@ public class MainActivity extends ActionBarActivity {
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
         registerReceiver(broadcastReceiver, intentFilter);
-    }
 
+        checkBluetoothOnOff();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,6 +95,65 @@ public class MainActivity extends ActionBarActivity {
         super.onDestroy();
     }
 
+    private void checkBluetoothOnOff(){
+        if(bluetoothAdapter == null || !bluetoothAdapter.isEnabled()){
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.d(TAG, "requestCode: " + requestCode + ", resultCode: " +  resultCode);
+        switch(requestCode) {
+            case REQUEST_ENABLE_BT:
+                if (resultCode == RESULT_OK) {
+                    showToast("Bluetooth is ON");
+                }
+                else {
+                    showToast("Bluetooth is OFF");
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private final View.OnClickListener scanButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View arg0) {
+            Log.d(TAG, "Scan button clicked");
+            bluetoothAdapter.cancelDiscovery();
+
+            // Clear ble device list
+            if(bleDevices != null) {
+                bleDevices = null;
+            }
+
+            bluetoothAdapter.startDiscovery();
+        }
+    };
+
+    // An item is clicked in the ble device list
+    private final AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            bluetoothAdapter.cancelDiscovery();
+
+            BluetoothDevice device = (BluetoothDevice) deviceListAdapter.getItem(position);
+            Log.d(TAG, "Clicked item: " + device);
+
+            Intent intent = new Intent(getBaseContext(), BleDeviceActivity.class);
+            intent.putExtra("BLE_DEVICE", device);
+            startActivity(intent);
+        }
+    };
+
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -109,10 +167,9 @@ public class MainActivity extends ActionBarActivity {
             } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 Log.d(TAG, "In BroadcastReceiver - Discovery started");
 
-                if(bleDeviceList == null) {
-                    bleDeviceList = new ArrayList<BluetoothDevice>();
+                if(bleDevices == null){
+                    bleDevices = new ArrayList<BluetoothDevice>();
                 }
-
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.d(TAG, "In BroadcastReceiver - Discovery finished");
 
@@ -120,16 +177,31 @@ public class MainActivity extends ActionBarActivity {
                 Log.d(TAG, "In BroadcastReceiver - BluetoothDevice found!");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                bleDeviceList.add(device);
+                boolean isDuplicated = isDuplicate(device);
 
-                // Update items in the list view
-                listView.setAdapter(deviceListAdapter);
-                deviceListAdapter.setData(bleDeviceList);
+                if(isDuplicated == false) {
+                    bleDevices.add(device);
+                    // Update items in the list view
+                    deviceListAdapter.setData(bleDevices);
+                    listView.setAdapter(deviceListAdapter);
 
-                for(BluetoothDevice item : bleDeviceList){
-                    Log.d(TAG, "Device: " + item);
+                    for(BluetoothDevice item : bleDevices){
+                        Log.d(TAG, item.getAddress() + " : " + item.getBondState());
+                    }
                 }
             }
+        }
+
+        private boolean isDuplicate(BluetoothDevice device){
+            boolean isDuplicated = false;
+            for(BluetoothDevice item : bleDevices){
+                if(item == device){
+                    isDuplicated = true;
+                    break;
+                }
+            }
+
+            return isDuplicated;
         }
     };
 }

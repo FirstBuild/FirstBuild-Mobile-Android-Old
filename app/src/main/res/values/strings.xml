@@ -3,5 +3,7 @@
 
     <string name="app_name">1B | firstbuild</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_ble_device">BleDeviceActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
