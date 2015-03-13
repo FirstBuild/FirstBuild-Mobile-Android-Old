@@ -91,7 +91,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onDestroy() {
         unregisterReceiver(broadcastReceiver);
-
         super.onDestroy();
     }
 

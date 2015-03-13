@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Current Temperature"
-            android:id="@+id/currentTempLabel"
+            android:id="@+id/current_temp_label"
             android:singleLine="true"
             android:textSize="20sp"
             android:layout_marginTop="40dp"
@@ -78,13 +78,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="None"
-            android:id="@+id/currentTempValue"
-            android:textSize="20dp"
+            android:text="--"
+            android:id="@+id/current_temp_value"
+            android:textSize="30dp"
             android:textIsSelectable="false"
-            android:layout_below="@+id/currentTempLabel"
+            android:layout_below="@+id/current_temp_label"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="10dp"
+            android:textColor="#000000" />
 
     </RelativeLayout>
 
@@ -105,16 +106,28 @@
         android:layout_alignTop="@+id/set_temp_picker"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/set_temp_Label"
+        android:layout_marginTop="0dp" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="Set"
+        android:id="@+id/set_button"
+        android:layout_below="@+id/set_temp_picker"
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp"
+        android:background="#D1C4E9"
+        android:textColor="#FFFFFF"
         android:layout_marginTop="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set"
-        android:id="@+id/button"
-        android:layout_below="@+id/set_temp_picker"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:text="READ"
+        android:layout_alignBottom="@+id/set_button"
+        android:layout_toRightOf="@+id/set_button"
+        android:layout_toEndOf="@+id/set_button"
+        android:id="@+id/read_button" />
 
 
 </RelativeLayout>

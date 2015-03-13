@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -24,7 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -32,11 +36,16 @@ public class BleDeviceActivity extends ActionBarActivity {
     private final String TAG = "BleDeviceActivity";
     private TextView deviceName = null;
     private TextView deviceAddress = null;
+    private TextView currentTemp = null;
     private NumberPicker setTemperaturePicker = null;
     private Button connectButton = null;
+    private Button setButton = null;
+    private Button readButton = null;
     private static BluetoothDevice device = null;
     private static BluetoothGatt bleGatt = null;
     private static boolean bPaired = false;
+    private List<BluetoothGattCharacteristic> characteristics = null;
+    private Timer readTimer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +58,25 @@ public class BleDeviceActivity extends ActionBarActivity {
         deviceName = (TextView) findViewById(R.id.ble_device_name);
         deviceAddress = (TextView) findViewById(R.id.ble_device_address);
         connectButton = (Button) findViewById(R.id.ble_connect_button);
+        setButton = (Button) findViewById(R.id.set_button);
+//        readButton = (Button) findViewById(R.id.read_button);
         setTemperaturePicker = (NumberPicker) findViewById(R.id.set_temp_picker);
+        currentTemp = (TextView) findViewById(R.id.current_temp_value);
 
         deviceName.setText(device.getName());
         deviceAddress.setText(device.getAddress());
 
         connectButton.setOnClickListener(connectButtonClickListener);
+        setButton.setOnClickListener(setButtonClickListener);
+//        readButton.setOnClickListener(readButtonClickListener);
 
         // Set temp picker
         setTemperaturePicker.setMinValue(50);
         setTemperaturePicker.setMaxValue(200);
-        setTemperaturePicker.setValue(100);
+        setTemperaturePicker.setValue(120);
         setTemperaturePicker.setWrapSelectorWheel(false);
+
+        setButton.setEnabled(false);
 
         setTemperaturePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
 
@@ -70,8 +86,13 @@ public class BleDeviceActivity extends ActionBarActivity {
             }
         });
 
-
         registerReceiver(mPairReceiver, new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED));
+    }
+
+    private void TimerMethod()
+    {
+        readData();
+//        this.runOnUiThread(Timer_Tick);
     }
 
     @Override
@@ -99,7 +120,8 @@ public class BleDeviceActivity extends ActionBarActivity {
     @Override
     public void onDestroy() {
         unregisterReceiver(mPairReceiver);
-
+        Log.d(TAG, "onDestroy");
+        bPaired = false;
         super.onDestroy();
     }
 
@@ -132,9 +154,77 @@ public class BleDeviceActivity extends ActionBarActivity {
     public void connectDevice(Context context){
         Log.d(TAG, "IN connectToDevice - Device: " + device);
         if(bPaired == false){
-            showToast("Connecting....");
             bleGatt = device.connectGatt(context, false, bleGattCallback);
             bPaired = true;
+        }
+    }
+
+    private void writeData(){
+        if(characteristics == null){
+            Log.d(TAG, "No characteristics has been read");
+            return;
+        }
+
+        for(BluetoothGattCharacteristic c : characteristics){
+            if(c.getUuid().toString().equals("15333333-3333-3333-3333-333333330003")){
+                Log.d(TAG, "uuid: " + c.getUuid().toString());
+                Log.d(TAG, "permissions: " + c.getPermissions());
+                Log.d(TAG, "properties: " + c.getProperties());
+                Log.d(TAG, "writeType: " + c.getWriteType());
+                Log.d(TAG, "Value: " + c.getValue());
+                Integer value = setTemperaturePicker.getValue();
+                Log.d(TAG, "Found - Picker Value: " + value);
+
+                String outputHex = Integer.toHexString(value);
+//                Integer hexValue = Integer.valueOf(outputHex);
+//                Log.d(TAG, "Hex: " + hexValue + " : " + hexValue.byteValue());
+
+                byte[] sendValue = new byte[2];
+
+                sendValue[0] = 0x00;
+                sendValue[1] = value.byteValue();
+
+                c.setValue(sendValue);
+                bleGatt.writeCharacteristic(c);
+                break;
+            }
+        }
+    }
+
+    private void readData(){
+        if(characteristics == null){
+            Log.d(TAG, "No characteristics has been read");
+            return;
+        }
+
+        for(final BluetoothGattCharacteristic c : characteristics){
+            if(c.getUuid().toString().equals("16333333-3333-3333-3333-333333330003")){
+
+                if(c.getValue() != null) {
+                    if (c.getValue() != null) {
+                        byte[] byteValue = c.getValue();
+
+                        StringBuilder stringValue = new StringBuilder();
+                        stringValue.append(String.format("%02X", byteValue[1]));
+                        Integer integer = Integer.parseInt(stringValue.toString(), 16);
+
+                        final String result = integer.toString();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                currentTemp.setText(result);
+                            }
+                        });
+                    }
+                }
+                else{
+                    Log.d(TAG, "Value is null!");
+                }
+
+                bleGatt.readCharacteristic(c);
+                break;
+            }
         }
     }
 
@@ -148,11 +238,49 @@ public class BleDeviceActivity extends ActionBarActivity {
         }
     };
 
+    private final View.OnClickListener setButtonClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View arg0) {
+            Log.d(TAG, "Set button clicked! - isPaired: " + bPaired);
+            writeData();
+        }
+    };
+
+    private final View.OnClickListener readButtonClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View arg0) {
+            Log.d(TAG, "Read button clicked! - isPaired: " + bPaired);
+            readData();
+        }
+    };
+
     private final BluetoothGattCallback bleGattCallback = new BluetoothGattCallback() {
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt,
+                                         BluetoothGattCharacteristic characteristic,
+                                         int status) {
+            Log.d(TAG, "onCharacteristicRead:  " + characteristic.getUuid().toString());
+
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+//            broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            }
+        }
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic) {
             // this will get called anytime you perform a read or write characteristic operation
+        }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt g, final BluetoothGattCharacteristic c, int status) {
+            if(status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d(TAG, "[Success] onCharacteristicWrite!");
+            }
+            else{
+                Log.d(TAG, "[Error] onCharacteristicWrite!");
+
+            }
         }
 
         @Override
@@ -162,29 +290,49 @@ public class BleDeviceActivity extends ActionBarActivity {
             if(BluetoothProfile.STATE_CONNECTED == newState){
                 Log.d(TAG, "Connected to " + device.getAddress() + " and Request Service");
                 gatt.discoverServices();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectButton.setEnabled(false);
+                        setButton.setEnabled(true);
+
+                        setButton.setBackgroundColor(Color.parseColor("#673AB7"));
+                        showToast("Connected");
+                    }
+                });
+
+                readTimer = new Timer();
+                readTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        TimerMethod();
+                    }
+
+                }, 0, 3000);
             }
         }
 
         @Override
         public void onServicesDiscovered(final BluetoothGatt gatt, final int status) {
             Log.d(TAG, "In onServicesDiscovered");
+
             // this will get called after the client initiates a BluetoothGatt.discoverServices() call
             List<BluetoothGattService> services = bleGatt.getServices();
-
             for (BluetoothGattService service : services) {
-
                 Log.d(TAG, "service: " + service.getUuid().toString());
                 Log.d(TAG, "Type: " + service.getType());
 
                 Log.d(TAG, "--------------------------------");
 
-                List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
+               characteristics = service.getCharacteristics();
 
                 for(BluetoothGattCharacteristic c : characteristics){
                     Log.d(TAG, "uuid: " + c.getUuid().toString());
                     Log.d(TAG, "permissions: " + c.getPermissions());
                     Log.d(TAG, "properties: " + c.getProperties());
                     Log.d(TAG, "writeType: " + c.getWriteType());
+                    Log.d(TAG, "Value: " + c.getValue());
                 }
                 Log.d(TAG, "================================");
             }
@@ -210,3 +358,20 @@ public class BleDeviceActivity extends ActionBarActivity {
         }
     };
 }
+
+
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (c.getValue() != null) {
+//                            String s = new String(c.getValue());
+//                            currentTemp.setText(s);
+//                        }
+//
+//                    }
+//                });
+
+//                Log.d(TAG, "uuid: " + c.getUuid().toString());
+//                Log.d(TAG, "permissions: " + c.getPermissions());
+//                Log.d(TAG, "properties: " + c.getProperties());
+//                Log.d(TAG, "writeType: " + c.getWriteType());
