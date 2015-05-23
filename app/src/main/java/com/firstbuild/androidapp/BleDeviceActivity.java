@@ -3,14 +3,11 @@ package com.firstbuild.androidapp;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
@@ -25,11 +22,9 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firstbuild.ble.BluetoothLeManager;
-import com.firstbuild.ble.BluetoothListener;
+import com.firstbuild.commonframework.bleManager.BleManager;
+import com.firstbuild.commonframework.bleManager.BluetoothListener;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,7 +32,7 @@ import java.util.TimerTask;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BleDeviceActivity extends ActionBarActivity {
-    private final String TAG = BluetoothLeManager.class.getSimpleName();
+    private final String TAG = BleManager.class.getSimpleName();
     private TextView deviceName = null;
     private TextView deviceAddress = null;
     private TextView currentTemp = null;
@@ -45,7 +40,7 @@ public class BleDeviceActivity extends ActionBarActivity {
     private Button connectButton = null;
     private Button setButton = null;
 
-    private BluetoothLeManager bluetoothLeManager = null;
+    private BleManager bleManager = null;
     private static BluetoothDevice device = null;
     private static boolean bPaired = false;
 
@@ -93,16 +88,16 @@ public class BleDeviceActivity extends ActionBarActivity {
         });
 
         // Register Observer
-        bluetoothLeManager = BluetoothLeManager.getSharedObject();
-        bluetoothLeManager.addListener(onConnectListener);
-        bluetoothLeManager.addListener(onServicesListener);
-        bluetoothLeManager.addListener(onMessageListener);
-        bluetoothLeManager.addListener(onPairingListener);
+        bleManager = BleManager.getInstance();
+        bleManager.addListener(onConnectListener);
+        bleManager.addListener(onServicesListener);
+        bleManager.addListener(onMessageListener);
+        bleManager.addListener(onPairingListener);
     }
 
     private void TimerMethod(){
         Log.d(TAG, "In TimerMethod");
-        bluetoothLeManager.readData("f000ffc2-0451-4000-b000-000000000000");
+        bleManager.readData("f000ffc2-0451-4000-b000-000000000000");
     }
 
     @Override
@@ -172,7 +167,7 @@ public class BleDeviceActivity extends ActionBarActivity {
             Log.d(TAG, "In onServicesDiscovered");
 
             // this will get called after the client initiates a BluetoothGatt.discoverServices() call
-            List<BluetoothGattService> services = bluetoothLeManager.getBluetootheServices();
+            List<BluetoothGattService> services = bleManager.getBluetootheServices();
             for (BluetoothGattService service : services) {
                 Log.d(TAG, "service: " + service.getUuid().toString());
                 Log.d(TAG, "Type: " + service.getType());
@@ -219,7 +214,7 @@ public class BleDeviceActivity extends ActionBarActivity {
                 final int prevState	= intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
 
                 if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
-                    bluetoothLeManager.connect(getApplicationContext(), device);
+                    bleManager.connect(getApplicationContext(), device);
                 } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED){
                     bPaired = false;
                 }
@@ -233,7 +228,7 @@ public class BleDeviceActivity extends ActionBarActivity {
             Log.d(TAG, "Connect button clicked! - isPaired: " + bPaired);
 
 //            bluetoothLeManager.pairing(getApplicationContext(), device);
-            bluetoothLeManager.connect(getApplicationContext(), device);
+            bleManager.connect(getApplicationContext(), device);
         }
     };
 
@@ -246,7 +241,7 @@ public class BleDeviceActivity extends ActionBarActivity {
             sendValue[0] = 0x00;
             sendValue[1] = value.byteValue();
 
-            bluetoothLeManager.writeData(sendValue, "f000ffc2-0451-4000-b000-000000000000");
+            bleManager.writeData(sendValue, "f000ffc2-0451-4000-b000-000000000000");
         }
     };
 }

@@ -1,4 +1,4 @@
-package com.firstbuild.ble;
+package com.firstbuild.commonframework.bleManager;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;

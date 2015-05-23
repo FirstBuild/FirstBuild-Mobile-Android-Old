@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.firstbuild.ble;
+package com.firstbuild.commonframework.bleManager;
 
 import java.util.HashMap;
 

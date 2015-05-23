@@ -16,8 +16,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.firstbuild.ble.BluetoothLeManager;
-import com.firstbuild.ble.BluetoothListener;
+import com.firstbuild.commonframework.bleManager.BleManager;
+import com.firstbuild.commonframework.bleManager.BluetoothListener;
 
 import java.util.ArrayList;
 
@@ -32,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
     private ArrayList<BluetoothDevice> bleDevices = null;
 
     private DeviceListAdapter deviceListAdapter;
-    private BluetoothLeManager bluetoothLeManager = null;
+    private BleManager bleManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +58,8 @@ public class MainActivity extends ActionBarActivity {
         listView.setOnItemClickListener(itemClickListener);
 
         // Register Observer
-        bluetoothLeManager = BluetoothLeManager.getSharedObject();
-        bluetoothLeManager.addListener(onScanListener);
+        bleManager = BleManager.getInstance();
+        bleManager.addListener(onScanListener);
 
         checkBluetoothOnOff();
     }
@@ -88,12 +88,12 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onDestroy() {
-        bluetoothLeManager.close();
+        bleManager.close();
         super.onDestroy();
     }
 
     private void checkBluetoothOnOff(){
-        if(!bluetoothLeManager.checkBluetoothOnOff()){
+        if(!bleManager.checkBluetoothOnOff()){
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
@@ -125,20 +125,20 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onClick(View arg0) {
             Log.d(TAG, "Scan button clicked");
-            bluetoothLeManager.stopScan(context);
+            bleManager.stopScan(context);
 
             // Clear ble device list
             if(bleDevices != null) {
                 bleDevices = null;
             }
-            bluetoothLeManager.startScan(context);
+            bleManager.startScan(context);
         }
     };
 
     private final AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            bluetoothLeManager.stopScan(context);
+            bleManager.stopScan(context);
 
             BluetoothDevice device = (BluetoothDevice) deviceListAdapter.getItem(position);
             Log.d(TAG, "Clicked item: " + device);
@@ -162,7 +162,7 @@ public class MainActivity extends ActionBarActivity {
             }
             else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 Log.d(TAG, "In BroadcastReceiver - BluetoothDevice found!");
-                ArrayList<BluetoothDevice> bleDevices = bluetoothLeManager.getBluetoothDeviceList();
+                ArrayList<BluetoothDevice> bleDevices = bleManager.getBluetoothDeviceList();
 
                 deviceListAdapter.setData(bleDevices);
                 listView.setAdapter(deviceListAdapter);

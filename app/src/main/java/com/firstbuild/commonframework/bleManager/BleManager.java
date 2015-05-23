@@ -1,4 +1,12 @@
-package com.firstbuild.ble;
+/**
+ * @file BleManager.java
+ * @brief BleManager handles all kind of interface with ble devices
+ * @author Ryan Lee - 320006284
+ * @date May/22/2015
+ * Copyright (c) 2014 General Electric Corporation - Confidential - All rights reserved.
+ */
+
+package com.firstbuild.commonframework.bleManager;
 
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
@@ -15,18 +23,18 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
 
+import com.firstbuild.commonframework.deviceManager.DeviceManager;
+import com.firstbuild.commonframework.deviceManager.Paragon;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by ryanlee on 3/14/15.
- */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class BluetoothLeManager {
-    private final static String TAG = BluetoothLeManager.class.getSimpleName();
+public class BleManager {
+    private final static String TAG = BleManager.class.getSimpleName();
 
     private Context context = null;
     private BluetoothAdapter bluetoothAdapter = null;
@@ -34,33 +42,47 @@ public class BluetoothLeManager {
     private ArrayList<BluetoothDevice> bluetoothDevices;
     private List<BluetoothGattService> bluetoothServices;
     private HashMap<String, BluetoothListener> callbacks = null;
-    private static BluetoothLeManager object = null;
 
-    public static BluetoothLeManager getSharedObject(){
-        if(object == null){
-            object = new BluetoothLeManager();
-        }
+    /**
+     * Singleton object
+     */
+    private static BleManager instance = new BleManager();
 
-        return object;
+    public static BleManager getInstance(){
+        return instance;
     }
 
-    public BluetoothLeManager(){
+    /**
+     * Default constructor
+     */
+    public BleManager(){
         Log.d(TAG, "IN BluetoothLeManager");
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
+    /**
+     * Checking bluetooth feature in system is turned on
+     * @return boolean - turned on or not
+     */
     public boolean checkBluetoothOnOff(){
         Log.d(TAG, "IN checkBluetoothOnOff");
+
         boolean isTurnOn = false;
         if(bluetoothAdapter.isEnabled()){
+
             isTurnOn = true;
         }
 
         return isTurnOn;
     }
 
+    /**
+     * Start scanning bluetooth device around phone
+     * @param context Activity's context
+     */
     public void startScan(Context context){
         Log.d(TAG, "IN startScan");
+
         this.context = context;
 
         // Register intents for broadcast receiver
@@ -76,13 +98,19 @@ public class BluetoothLeManager {
         bluetoothAdapter.startDiscovery();
     }
 
-    public void stopScan(Context context){
+    /**
+     * Stop scanning bluetooth device around phone
+     */
+    public void stopScan(){
         Log.d(TAG, "IN stopScan");
-        this.context = context;
         bluetoothAdapter.cancelDiscovery();
     }
 
-    public void pairing(Context context, BluetoothDevice device) {
+    /**
+     * Pairing between phone and bluetooth device
+     * @param device Bluetooth device object
+     */
+    public void pairing(BluetoothDevice device) {
         Log.d(TAG, "In pairing - device: " + device);
 
         try {
@@ -93,6 +121,10 @@ public class BluetoothLeManager {
         }
     }
 
+    /**
+     * Unpairing device from phone
+     * @param device Bluetooth device object
+     */
     public void unpairing(BluetoothDevice device) {
         try {
             Method method = device.getClass().getMethod("removeBond", (Class[]) null);
@@ -103,6 +135,11 @@ public class BluetoothLeManager {
         }
     }
 
+    /**
+     * Connect to a bluetooth device
+     * @param context Activity's context
+     * @param device Bluetooth device object
+     */
     public void connect(Context context, BluetoothDevice device){
         Log.d(TAG, "IN connectToDevice - Device: " + device);
         bluetoothGatt = device.connectGatt(context, false, bluetoothGattCallback);
@@ -175,20 +212,10 @@ public class BluetoothLeManager {
         context.unregisterReceiver(broadcastReceiver);
     }
 
-    private ArrayList<BluetoothDevice> addDevice(BluetoothDevice device){
+    private void addDevice(BluetoothDevice device){
 
-        // Create array list to contain devices scanned.
-        if(bluetoothDevices == null){
-            bluetoothDevices = new ArrayList<BluetoothDevice>();
-        }
-
-        if(bluetoothDevices.contains(device) == false) {
-            bluetoothDevices.add(device);
-        }
-
-        return bluetoothDevices;
+        DeviceManager.getInstance().add(new Paragon(device));
     }
-
 
     public void addListener(BluetoothListener listener){
         if(callbacks == null){
@@ -237,7 +264,9 @@ public class BluetoothLeManager {
             // Update device list whenever new devices found
             else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
                 addDevice(device);
+
                 notifyUpdates("onScan", new Object[]{action});
             }
             else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {

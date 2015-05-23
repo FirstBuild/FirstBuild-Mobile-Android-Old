@@ -2,7 +2,7 @@
  * Created by ryanlee on 3/9/15.
  */
 
-package com.firstbuild.ble;
+package com.firstbuild.commonframework.bleManager;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
