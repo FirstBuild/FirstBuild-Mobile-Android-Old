@@ -57,6 +57,11 @@ public class MainActivity extends ActionBarActivity {
         // When item is clicked from list view
         listView.setOnItemClickListener(itemClickListener);
 
+
+
+
+
+        
         // Register Observer
         bleManager = BleManager.getInstance();
         bleManager.addListener(onScanListener);
