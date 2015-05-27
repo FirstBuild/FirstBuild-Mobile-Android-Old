@@ -4,3 +4,15 @@
 /.idea/libraries
 .DS_Store
 /build
+.idea/inspectionProfiles/Project_Default.xml
+.idea/encodings.xml
+.idea/gradle.xml
+.idea/.name
+.idea/misc.xml
+.idea/inspectionProfiles/profiles_settings.xml
+app/app.iml
+.idea/compiler.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/scopes/scope_settings.xml
+FirstBuild-Mobile-Android.iml
