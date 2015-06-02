@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#404143</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#00b5cc</color>
+    <color name="colorHighlight">#de4a32</color>
+    <color name="colorPrimaryText">#f1f2f2</color>
+    <color name="colorSecondaryText">#727272</color>
+    <color name="colorDivider">#B6B6B6</color>
+
+    <color name="colorKitchenPrimary">#9E9E9E</color>
+    <color name="colorKitchenPrimaryDark">#616161</color>
+    <color name="colorKitchenAccent">#8BC34A</color>
+    <color name="colorKitchenDivider">#6e6a6b</color>
+
+    // Liqing's color table
+    <color name="colorFridgePrimary">#468104</color>
+    <color name="colorFridgePrimaryDark">#2a4e02</color>
+    <color name="colorFridgeAccent">#468104</color>
+
+    // Material Design color table
+    <color name="colorOrangePrimary">#ffaf5e1d</color>
+    <color name="colorOrangePrimaryDark">#ff582c11</color>
+    <color name="colorOrangeAccent">#ffaf9318</color>
+    <color name="colorOrangeHighlight">#ffaf2319</color>
+
+    <color name="transparent">#00FFFFFF</color>
+
+
+</resources>

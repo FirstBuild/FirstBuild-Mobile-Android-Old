@@ -130,7 +130,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onClick(View arg0) {
             Log.d(TAG, "Scan button clicked");
-            bleManager.stopScan(context);
+            bleManager.stopScan();
 
             // Clear ble device list
             if(bleDevices != null) {
@@ -143,7 +143,7 @@ public class MainActivity extends ActionBarActivity {
     private final AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            bleManager.stopScan(context);
+            bleManager.stopScan();
 
             BluetoothDevice device = (BluetoothDevice) deviceListAdapter.getItem(position);
             Log.d(TAG, "Clicked item: " + device);
