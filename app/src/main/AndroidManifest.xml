@@ -50,6 +50,10 @@
             android:name=".cookingMethod.CookingMethodActivity"
             android:label="@string/title_activity_cooking_method" >
         </activity>
+        <activity
+            android:name=".sousvideUI.SousvideActivity"
+            android:label="@string/title_activity_sousvide" >
+        </activity>
     </application>
 
 </manifest>
