@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.firstbuild.androidapp.R;
@@ -23,7 +22,9 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
     private int xDelta;
     private int yDelta;
     private View containerThickness;
+    private View containerDoneness;
     private View imgMeat;
+    private View knobDoneness;
 
     public BeefFragment() {
         // Required empty public constructor
@@ -37,11 +38,13 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         View view = inflater.inflate(R.layout.fragment_beef, container, false);
 
         containerThickness = view.findViewById(R.id.container_thickness);
+        containerDoneness = view.findViewById(R.id.container_doneness);
+        knobDoneness = view.findViewById(R.id.doneness_knob);
         imgMeat = view.findViewById(R.id.img_meat);
 
         view.findViewById(R.id.thickness_knob).setOnTouchListener(this);
-        view.findViewById(R.id.cook_knob).setOnTouchListener(this);
-        view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener(){
+        view.findViewById(R.id.doneness_knob).setOnTouchListener(this);
+        view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFragmentManager().
@@ -52,9 +55,46 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
             }
         });
 
+        view.findViewById(R.id.doneness_r).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDonenessChanged(v);
+            }
+        });
+        view.findViewById(R.id.doneness_mr).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDonenessChanged(v);
+            }
+        });
+        view.findViewById(R.id.doneness_m).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDonenessChanged(v);
+            }
+        });
+        view.findViewById(R.id.doneness_mw).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDonenessChanged(v);
+            }
+        });
+        view.findViewById(R.id.doneness_w).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDonenessChanged(v);
+            }
+        });
+
         return view;
     }
 
+    public void onDonenessChanged(View v) {
+        RelativeLayout.LayoutParams layoutParamsKnob = (RelativeLayout.LayoutParams) knobDoneness.getLayoutParams();
+
+        layoutParamsKnob.leftMargin = (int) v.getX();
+        knobDoneness.setLayoutParams(layoutParamsKnob);
+    }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -67,6 +107,28 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
                 yDelta = Y - lParams.topMargin;
                 break;
             case MotionEvent.ACTION_UP:
+                int posX = X - xDelta + (v.getWidth() / 2);
+
+                // When release on the donness knob, snap on close donness slot.
+                if (v.getId() == R.id.doneness_knob) {
+                    int widthGrid = (int) (containerDoneness.getWidth() / 5);
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
+
+                    if (posX < widthGrid) {
+                        layoutParams.leftMargin = 0;
+                    } else if (widthGrid <= posX && posX < widthGrid * 2) {
+                        layoutParams.leftMargin = widthGrid;
+                    } else if (widthGrid * 2 <= posX && posX < widthGrid * 3) {
+                        layoutParams.leftMargin = widthGrid * 2;
+                    } else if (widthGrid * 3 <= posX && posX < widthGrid * 4) {
+                        layoutParams.leftMargin = widthGrid * 3;
+                    } else {
+                        layoutParams.leftMargin = widthGrid * 4;
+                    }
+
+                    layoutParams.rightMargin = -250;
+                    v.setLayoutParams(layoutParams);
+                }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 break;
@@ -75,24 +137,30 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
             case MotionEvent.ACTION_MOVE:
 
                 if (v.getId() == R.id.thickness_knob) {
-//                    Log.d(TAG, "ACTION_MOVE " + Y + ", " + yDelta);
+//                    Log.d(TAG, "ACTION_MOVE " + Y + ", " + yDelta + ", " + (Y - yDelta));
 
-                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                    layoutParams.topMargin = Y - yDelta;
-                    layoutParams.bottomMargin = -250;
-                    v.setLayoutParams(layoutParams);
+                    // Slide for thickness knob
+                    if (0 < Y - yDelta && Y - yDelta < (containerThickness.getHeight() - v.getHeight())) {
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
+                        layoutParams.topMargin = Y - yDelta;
+                        layoutParams.bottomMargin = -250;
+                        v.setLayoutParams(layoutParams);
 
-                    RelativeLayout.LayoutParams layoutParamsMeat = (RelativeLayout.LayoutParams) imgMeat.getLayoutParams();
+                        RelativeLayout.LayoutParams layoutParamsMeat = (RelativeLayout.LayoutParams) imgMeat.getLayoutParams();
 
-                    layoutParamsMeat.height = containerThickness.getHeight() - (Y - yDelta) - (v.getHeight() / 2);
-                    imgMeat.setLayoutParams(layoutParamsMeat);
-                } else if (v.getId() == R.id.cook_knob) {
-//                    Log.d(TAG, "ACTION_MOVE " + X + ", " + xDelta);
+                        layoutParamsMeat.height = containerThickness.getHeight() - (Y - yDelta) - (v.getHeight() / 2);
+                        imgMeat.setLayoutParams(layoutParamsMeat);
+                    }
 
-                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                    layoutParams.leftMargin = X - xDelta;
-                    layoutParams.rightMargin = -250;
-                    v.setLayoutParams(layoutParams);
+                } else if (v.getId() == R.id.doneness_knob) {           // Slide for doneness knob.
+//                    Log.d(TAG, "ACTION_MOVE " + X + ", " + xDelta + ", " + (X - xDelta));
+
+                    if (0 < X - xDelta && X - xDelta < (containerDoneness.getWidth() - v.getWidth())) {
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
+                        layoutParams.leftMargin = X - xDelta;
+                        layoutParams.rightMargin = -250;
+                        v.setLayoutParams(layoutParams);
+                    }
                 }
 
                 break;

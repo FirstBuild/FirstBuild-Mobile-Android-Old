@@ -24,7 +24,20 @@ public class ReadyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ready, container, false);
+        View view = inflater.inflate(R.layout.fragment_ready, container, false);
+
+        view.findViewById(R.id.layout_picture).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().
+                        beginTransaction().
+                        replace(R.id.frame_content, new PreheatingFragment()).
+                        addToBackStack(null).
+                        commit();
+            }
+        });
+
+        return view;
     }
 
 
