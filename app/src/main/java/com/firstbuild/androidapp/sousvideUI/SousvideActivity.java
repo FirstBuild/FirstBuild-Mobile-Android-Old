@@ -1,5 +1,6 @@
 package com.firstbuild.androidapp.sousvideUI;
 
+import android.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +28,21 @@ public class SousvideActivity extends ActionBarActivity {
                 replace(R.id.frame_content, new BeefFragment()).
                 addToBackStack(null).
                 commit();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+
+        FragmentManager fm = getFragmentManager();
+
+        if (fm.getBackStackEntryCount() > 1) {
+            fm.popBackStack();
+        } else {
+            finish();
+        }
+
     }
 
     @Override

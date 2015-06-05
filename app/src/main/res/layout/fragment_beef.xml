@@ -34,8 +34,8 @@
         android:id="@+id/container_thickness"
         android:layout_width="match_parent"
         android:layout_height="190dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="20dp"
         android:background="@drawable/img_thickness_grid">
 
         <ImageView
@@ -159,10 +159,10 @@
         <com.firstbuild.viewUtil.StyledButton
             android:id="@+id/btn_continue"
             android:layout_width="match_parent"
-            android:background="@drawable/btn_bottom_blue"
             android:layout_height="@dimen/footer_button_height"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/btn_bottom_blue"
             android:text="Continue"
             android:textAllCaps="false"
             android:textSize="20sp" />

@@ -44,7 +44,11 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
+                getFragmentManager().
+                        beginTransaction().
+                        replace(R.id.frame_content, new ReadyFragment()).
+                        addToBackStack(null).
+                        commit();
             }
         });
 
