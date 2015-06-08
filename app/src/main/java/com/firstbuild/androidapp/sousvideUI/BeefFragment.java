@@ -3,12 +3,12 @@ package com.firstbuild.androidapp.sousvideUI;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
 
@@ -19,12 +19,19 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
 
     private String TAG = BeefFragment.class.getSimpleName();
 
+    private final String DONENESS_R = "Rare";
+    private final String DONENESS_MR = "Medium-Rare";
+    private final String DONENESS_M = "Medium";
+    private final String DONENESS_MW = "Medium-Well";
+    private final String DONENESS_W = "Well";
+
     private int xDelta;
     private int yDelta;
     private View containerThickness;
     private View containerDoneness;
     private View imgMeat;
     private View knobDoneness;
+    private TextView textDoneness;
 
     public BeefFragment() {
         // Required empty public constructor
@@ -41,6 +48,7 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         containerDoneness = view.findViewById(R.id.container_doneness);
         knobDoneness = view.findViewById(R.id.doneness_knob);
         imgMeat = view.findViewById(R.id.img_meat);
+        textDoneness = (TextView) view.findViewById(R.id.text_doneness);
 
         view.findViewById(R.id.thickness_knob).setOnTouchListener(this);
         view.findViewById(R.id.doneness_knob).setOnTouchListener(this);
@@ -49,7 +57,7 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
             public void onClick(View v) {
                 getFragmentManager().
                         beginTransaction().
-                        replace(R.id.frame_content, new ReadyFragment()).
+                        replace(R.id.frame_content, new ReadyToPreheatFragment()).
                         addToBackStack(null).
                         commit();
             }
@@ -59,30 +67,35 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
+                textDoneness.setText(DONENESS_R);
             }
         });
         view.findViewById(R.id.doneness_mr).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
+                textDoneness.setText(DONENESS_MR);
             }
         });
         view.findViewById(R.id.doneness_m).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
+                textDoneness.setText(DONENESS_M);
             }
         });
         view.findViewById(R.id.doneness_mw).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
+                textDoneness.setText(DONENESS_MW);
             }
         });
         view.findViewById(R.id.doneness_w).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
+                textDoneness.setText(DONENESS_W);
             }
         });
 
@@ -94,6 +107,10 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
 
         layoutParamsKnob.leftMargin = (int) v.getX();
         knobDoneness.setLayoutParams(layoutParamsKnob);
+    }
+
+    private void updateDonenessText(String text){
+        textDoneness.setText(text);
     }
 
     @Override
@@ -116,14 +133,19 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
 
                     if (posX < widthGrid) {
                         layoutParams.leftMargin = 0;
+                        textDoneness.setText(DONENESS_R);
                     } else if (widthGrid <= posX && posX < widthGrid * 2) {
                         layoutParams.leftMargin = widthGrid;
+                        textDoneness.setText(DONENESS_MR);
                     } else if (widthGrid * 2 <= posX && posX < widthGrid * 3) {
                         layoutParams.leftMargin = widthGrid * 2;
+                        textDoneness.setText(DONENESS_M);
                     } else if (widthGrid * 3 <= posX && posX < widthGrid * 4) {
                         layoutParams.leftMargin = widthGrid * 3;
+                        textDoneness.setText(DONENESS_MW);
                     } else {
                         layoutParams.leftMargin = widthGrid * 4;
+                        textDoneness.setText(DONENESS_W);
                     }
 
                     layoutParams.rightMargin = -250;

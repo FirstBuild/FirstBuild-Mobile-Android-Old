@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ge="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,32 +11,36 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="Ready To Cook!"
+            android:textAllCaps="true"
             android:textColor="@color/colorHighlight"
-            android:textSize="50sp" />
+            android:textSize="50sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
 
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:text="1h: 47min | 140.0 F"
             android:textColor="@color/colorSecondaryText"
-            android:textSize="19sp" />
+            android:textSize="24sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
 
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="Steak (medium-rare), 1 1/4 thick"
             android:textColor="@color/colorSecondaryText"
-            android:textSize="19sp" />
+            android:textSize="19sp"
+            ge:typeface="fonts/PTSansNarrowRegular" />
 
     </LinearLayout>
 
@@ -56,21 +61,25 @@
             android:background="@color/colorHighlight"
             android:orientation="vertical">
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="Current Temp"
+                android:textAllCaps="true"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="19sp" />
+                android:textSize="23sp"
+                ge:typeface="fonts/PTSansNarrowBold" />/>
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="127 F"
+                android:textAllCaps="true"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="40sp" />
+                android:textSize="45sp"
+                ge:typeface="fonts/PTSansNarrowBold" />/>
 
             <ImageView
                 android:layout_width="80dp"
@@ -78,13 +87,14 @@
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/img_ready_to_cook" />
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 android:text="Submerge your vaccuum-sealed bag \nof food in the pot of water."
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="19sp" />
+                android:textSize="23sp"
+                ge:typeface="fonts/PTSansNarrowBold" />/>
 
         </LinearLayout>
 
@@ -101,18 +111,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:orientation="vertical">
+        android:orientation="horizontal">
+
+        <com.firstbuild.viewUtil.StyledButton
+            android:layout_width="0dp"
+            android:layout_height="@dimen/footer_button_height"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_weight="0.7"
+            android:background="@drawable/btn_bottom_blue"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            ge:typeface="fonts/PTSansNarrowBold" />/>
+
 
         <com.firstbuild.viewUtil.StyledButton
             android:id="@+id/btn_continue"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/footer_button_height"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="1"
             android:background="@drawable/btn_bottom_blue"
             android:text="Start Timer"
             android:textAllCaps="false"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            ge:typeface="fonts/PTSansNarrowBold" />/>
 
     </LinearLayout>
 

@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ge="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,31 +7,35 @@
     tools:context="com.firstbuild.androidapp.sousvideUI.BeefFragment">
 
 
-    <TextView
+    <com.firstbuild.viewUtil.StyledTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:gravity="center_horizontal"
         android:text="Ready To Preheat"
+        android:textAllCaps="true"
         android:textColor="@color/colorHighlight"
-        android:textSize="41sp" />
+        android:textSize="41sp"
+        ge:typeface="fonts/PTSansNarrowBold" />
 
-    <TextView
+    <com.firstbuild.viewUtil.StyledTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="140°F"
         android:textColor="@color/colorHighlight"
-        android:textSize="60sp" />
+        android:textSize="50sp"
+        ge:typeface="fonts/PTSansNarrowBold" />
 
-    <TextView
+    <com.firstbuild.viewUtil.StyledTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:gravity="center_horizontal"
         android:text="Press the START button on your \nParagon cooktop to continue."
         android:textColor="@color/colorSecondaryText"
-        android:textSize="19sp" />
+        android:textSize="19sp"
+        ge:typeface="fonts/PTSansNarrowBold" />
 
     <RelativeLayout
         android:id="@+id/layout_picture"
@@ -62,7 +67,8 @@
             android:background="@drawable/btn_bottom_blue"
             android:text="Continue"
             android:textAllCaps="false"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
 
     </LinearLayout>
 

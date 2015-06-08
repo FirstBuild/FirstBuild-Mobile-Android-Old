@@ -1,35 +1,47 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ge="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.firstbuild.androidapp.cookingMethod.Step1Fragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#4c000000"
         android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="What would you like to "
-            android:textAllCaps="true"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="19sp" />
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="Sous Vide?"
-            android:textAllCaps="true"
-            android:textColor="@color/colorHighlight"
-            android:textSize="19sp" />
+            <com.firstbuild.viewUtil.StyledTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="What would you like to "
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="19sp"
+                ge:typeface="fonts/PTSansNarrowRegular" />
 
-    </LinearLayout>
+            <com.firstbuild.viewUtil.StyledTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="Sous Vide?"
+                android:textAllCaps="true"
+                android:textColor="@color/colorHighlight"
+                android:textSize="19sp"
+                ge:typeface="fonts/PTSansNarrowBold" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/step2_beef"
@@ -39,14 +51,15 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:orientation="vertical">
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal|center_vertical"
             android:text="Beef"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimaryText"
-            android:textSize="19sp" />
+            android:textSize="19sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
 
         <ImageView
             android:layout_width="match_parent"

@@ -12,10 +12,10 @@ import com.firstbuild.androidapp.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ReadyFragment extends Fragment {
+public class ReadyToPreheatFragment extends Fragment {
 
 
-    public ReadyFragment() {
+    public ReadyToPreheatFragment() {
         // Required empty public constructor
     }
 
@@ -24,7 +24,7 @@ public class ReadyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_ready, container, false);
+        View view = inflater.inflate(R.layout.fragment_ready_to_preheat, container, false);
 
         view.findViewById(R.id.layout_picture).setOnClickListener(new View.OnClickListener() {
             @Override

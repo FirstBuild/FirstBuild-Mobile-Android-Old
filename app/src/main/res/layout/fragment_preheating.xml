@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ge="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,32 +11,38 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:gravity="center_horizontal"
             android:text="Preheating To"
+            android:textAllCaps="true"
             android:textColor="@color/colorSecondaryText"
-            android:textSize="19sp" />
+            android:textSize="19sp"
+            ge:typeface="fonts/PTSansNarrowRegular" />
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
+            android:id="@+id/text_target_temp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
-            android:text="140°F"
+            android:text="140℉"
             android:textColor="@color/colorHighlight"
-            android:textSize="60sp" />
+            android:textSize="50sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
 
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:text="Press STOP on Paragon to cancel"
             android:textColor="@color/colorSecondaryText"
-            android:textSize="19sp" />
+            android:textSize="19sp"
+            ge:typeface="fonts/PTSansNarrowRegular" />
 
     </LinearLayout>
 
@@ -43,7 +50,7 @@
         android:id="@+id/container_thickness"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:background="@drawable/img_thickness_grid">
 
@@ -54,20 +61,20 @@
 
             <RelativeLayout
                 android:id="@+id/container_current_temp"
-                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#80de4a32"
                 android:layout_marginTop="80dp"
+                android:layout_weight="1"
+                android:background="#80de4a32"
                 android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/img_pulse"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scaleType="fitXY"
                     android:layout_marginTop="200dp"
-                    android:src="@drawable/img_heating_pulse"/>
+                    android:scaleType="fitXY"
+                    android:src="@drawable/img_heating_pulse" />
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -79,26 +86,30 @@
                     android:id="@+id/layout_current_temp"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
                     android:background="@color/colorHighlight"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.firstbuild.viewUtil.StyledTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="Current Temp"
+                        android:textAllCaps="true"
                         android:textColor="@color/colorPrimaryText"
-                        android:textSize="19sp" />
+                        android:textSize="19sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
 
-                    <TextView
+                    <com.firstbuild.viewUtil.StyledTextView
+                        android:id="@+id/text_current_temp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:text="127 F"
+                        android:text="127℉"
                         android:textColor="@color/colorPrimaryText"
-                        android:textSize="40sp" />
+                        android:textSize="40sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
 
                 </LinearLayout>
             </RelativeLayout>

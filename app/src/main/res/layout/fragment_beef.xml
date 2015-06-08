@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ge="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,23 +11,25 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:gravity="center_horizontal"
-            android:text="BEEF (STEAK) SETTINGS"
+            android:text="BEEF SETTINGS"
             android:textColor="@color/colorSecondaryText"
-            android:textSize="19sp" />
+            android:textSize="19sp"
+            ge:typeface="fonts/PTSansNarrowRegular" />
 
-        <TextView
+        <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:gravity="center_horizontal"
             android:text="1H : 47MIN   |   140.5° F"
             android:textColor="@color/colorSecondaryText"
-            android:textSize="19sp" />
+            android:textSize="24sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
 
     </LinearLayout>
 
@@ -40,9 +43,9 @@
 
         <ImageView
             android:id="@+id/thickness_knob"
-            android:layout_marginTop="80dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
             android:scaleType="fitXY"
             android:src="@drawable/img_thickness_knob" />
 
@@ -61,15 +64,17 @@
 
             </ImageView>
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
+                android:id="@+id/text_doneness"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
-                android:text="Medium-Rare 140 F"
+                android:text="Medium-Rare"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="19sp" />
+                android:textSize="24sp"
+                ge:typeface="fonts/PTSansNarrowRegular" />
 
         </RelativeLayout>
 
@@ -88,7 +93,7 @@
             android:background="@drawable/img_cook_guage"
             android:orientation="horizontal">
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
                 android:id="@+id/doneness_r"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -98,9 +103,10 @@
                 android:gravity="center"
                 android:text="R"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="19sp" />
+                android:textSize="19sp"
+                ge:typeface="fonts/PTSansNarrowRegular" />
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
                 android:id="@+id/doneness_mr"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -109,9 +115,10 @@
                 android:gravity="center"
                 android:text="MR"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="19sp" />
+                android:textSize="19sp"
+                ge:typeface="fonts/PTSansNarrowRegular" />
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
                 android:id="@+id/doneness_m"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -120,9 +127,10 @@
                 android:gravity="center"
                 android:text="M"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="19sp" />
+                android:textSize="19sp"
+                ge:typeface="fonts/PTSansNarrowRegular" />
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
                 android:id="@+id/doneness_mw"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -131,9 +139,10 @@
                 android:gravity="center"
                 android:text="MW"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="19sp" />
+                android:textSize="19sp"
+                ge:typeface="fonts/PTSansNarrowRegular" />
 
-            <TextView
+            <com.firstbuild.viewUtil.StyledTextView
                 android:id="@+id/doneness_w"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -142,7 +151,8 @@
                 android:gravity="center"
                 android:text="W"
                 android:textColor="@color/colorPrimaryText"
-                android:textSize="19sp" />
+                android:textSize="19sp"
+                ge:typeface="fonts/PTSansNarrowRegular" />
 
         </LinearLayout>
 
@@ -172,7 +182,8 @@
             android:background="@drawable/btn_bottom_blue"
             android:text="Continue"
             android:textAllCaps="false"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
 
     </LinearLayout>
 
