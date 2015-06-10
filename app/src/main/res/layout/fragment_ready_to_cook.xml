@@ -69,7 +69,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/colorPrimaryText"
                 android:textSize="23sp"
-                ge:typeface="fonts/PTSansNarrowBold" />/>
+                ge:typeface="fonts/PTSansNarrowBold" />
 
             <com.firstbuild.viewUtil.StyledTextView
                 android:layout_width="match_parent"
