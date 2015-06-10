@@ -4,7 +4,6 @@ package com.firstbuild.androidapp.sousvideUI;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ public class PreheatingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_preheating, container, false);
+        View view = inflater.inflate(R.layout.fragment_sousvide_preheating, container, false);
 
         imgPulse = view.findViewById(R.id.img_pulse);
         containerCurrentTemp = view.findViewById(R.id.container_current_temp);

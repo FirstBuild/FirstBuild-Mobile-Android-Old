@@ -24,7 +24,7 @@ public class ReadyToPreheatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_ready_to_preheat, container, false);
+        View view = inflater.inflate(R.layout.fragment_sousvide_ready_to_preheat, container, false);
 
         view.findViewById(R.id.layout_picture).setOnClickListener(new View.OnClickListener() {
             @Override

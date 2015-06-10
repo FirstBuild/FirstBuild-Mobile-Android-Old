@@ -1,0 +1,222 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ge="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.firstbuild.androidapp.sousvideUI.CookingFragment">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_sousvide_bg_0" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.firstbuild.viewUtil.StyledTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"
+            android:text="Now Cooking"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="41sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
+
+        <com.firstbuild.viewUtil.StyledTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Steak (medium-rare) at 140.5°F"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="21sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
+
+        <RelativeLayout
+            android:id="@+id/layout_picture"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/img_sousvide_glow" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="10dp">
+
+                <com.firstbuild.androidapp.sousvideUI.TimerCycle
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <LinearLayout
+                    android:id="@+id/layout_timer_remain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+                    <com.firstbuild.viewUtil.StyledTextView
+                        android:id="@+id/text_timer_remain_h"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center_horizontal"
+                        android:text="1"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="50sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
+
+                    <com.firstbuild.viewUtil.StyledTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center_horizontal"
+                        android:text="H"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="25sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
+
+                    <com.firstbuild.viewUtil.StyledTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center_horizontal"
+                        android:text=":"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="50sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
+
+                    <com.firstbuild.viewUtil.StyledTextView
+                        android:id="@+id/text_timer_remain_m"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center_horizontal"
+                        android:text="34"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="50sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
+
+                    <com.firstbuild.viewUtil.StyledTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center_horizontal"
+                        android:text="min"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="25sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
+
+
+                </LinearLayout>
+
+                <com.firstbuild.viewUtil.StyledTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/layout_timer_remain"
+                    android:gravity="center_horizontal"
+                    android:text="Time Remaining"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorSecondaryText"
+                    android:textSize="19sp"
+                    ge:typeface="fonts/PTSansNarrowBold" />
+
+                <com.firstbuild.viewUtil.StyledTextView
+                    android:id="@+id/text_will_be_done"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/layout_timer_remain"
+                    android:gravity="center_horizontal"
+                    android:text="Fool will be done at"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textSize="19sp"
+                    ge:typeface="fonts/PTSansNarrowBold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:layout_below="@id/text_will_be_done"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal">
+
+                    <com.firstbuild.viewUtil.StyledTextView
+                        android:id="@+id/text_timer_done_hm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="9:37"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="32sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
+
+                    <com.firstbuild.viewUtil.StyledTextView
+                        android:id="@+id/text_timer_done_ampm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="AM"
+                        android:textColor="@color/colorPrimaryText"
+                        android:textSize="19sp"
+                        ge:typeface="fonts/PTSansNarrowBold" />
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <com.firstbuild.viewUtil.StyledButton
+            android:id="@+id/btn_continue"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/footer_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/btn_bottom_blue"
+            android:text="Complete"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
