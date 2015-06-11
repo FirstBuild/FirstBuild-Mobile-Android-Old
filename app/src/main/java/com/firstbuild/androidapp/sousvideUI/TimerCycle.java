@@ -26,6 +26,9 @@ public class TimerCycle extends View {
     private int delayMillis = 0;
     private int indicatorThickness = 20;
     private boolean isFullCircle = false;
+    private float timeRatio = 0.0f;
+    private int alphaPluse = 255;
+    private int alphaPluseDirection = 3;
 
     public TimerCycle(Context context) {
         super(context);
@@ -49,7 +52,7 @@ public class TimerCycle extends View {
         int widthWithoutPadding = width - getPaddingLeft() - getPaddingRight();
         int heightWithoutPadding = height - getPaddingTop() - getPaddingBottom();
 
-        int size =  widthWithoutPadding > heightWithoutPadding? heightWithoutPadding : widthWithoutPadding ;
+        int size = widthWithoutPadding > heightWithoutPadding ? heightWithoutPadding : widthWithoutPadding;
 
         setMeasuredDimension(size + getPaddingLeft() + getPaddingRight(), size + getPaddingTop() + getPaddingBottom());
     }
@@ -63,8 +66,8 @@ public class TimerCycle extends View {
 
         int minValue = Math.min(layout_width, layout_height);
 
-        rectOuter = new RectF(0,0,minValue,minValue);
-        rectOuter.inset(thickness+margin, thickness+margin);
+        rectOuter = new RectF(0, 0, minValue, minValue);
+        rectOuter.inset(thickness + margin, thickness + margin);
 
         circleFrontPaint.setColor(0xFFFFFFFF);
         circleFrontPaint.setAntiAlias(true);
@@ -96,17 +99,18 @@ public class TimerCycle extends View {
         super.onDraw(canvas);
 
         circleFrontPaint.setAlpha(255);
+        circleWideBackPaint.setAlpha(alphaPluse);
         canvas.drawArc(rectOuter, 0.0f, 360.0f, false, circleWideBackPaint);
         canvas.drawArc(rectOuter, 0.0f, 360.0f, false, circleDiarkPaint);
 
         canvas.save(Canvas.MATRIX_SAVE_FLAG);
         {
             canvas.rotate(-90.0f, rectOuter.centerX(), rectOuter.centerY());
-            canvas.drawArc(rectOuter, 0.0f, 135.0f, false, circleFrontPaint);
+            canvas.drawArc(rectOuter, 0.0f, timeRatio * 360.0f, false, circleFrontPaint);
 
             canvas.save(Canvas.MATRIX_SAVE_FLAG);
             {
-                canvas.rotate(135.0f, rectOuter.centerX(), rectOuter.centerY());
+                canvas.rotate(timeRatio * 360.0f, rectOuter.centerX(), rectOuter.centerY());
                 canvas.drawLine(rectOuter.centerX() + (rectOuter.width() / 2) - (thickness + margin), rectOuter.centerY(),
                         rectOuter.centerX() + (rectOuter.width() / 2) + (thickness + margin), rectOuter.centerY(), indicatorPaint);
 
@@ -116,17 +120,29 @@ public class TimerCycle extends View {
         }
         canvas.restore();
 
-        circleFrontPaint.setAlpha(100);
-        canvas.drawArc(rectOuter, progress, 1.0f, false, circleFrontPaint);
+//        circleFrontPaint.setAlpha(100);
+//        canvas.drawArc(rectOuter, progress, 1.0f, false, circleFrontPaint);
 
         scheduleRedraw();
     }
 
     private void scheduleRedraw() {
         progress += spinSpeed;
+        timeRatio += 0.002f;
+        alphaPluse += alphaPluseDirection;
+
         if (progress > 360) {
             progress = 0;
         }
+
+        if (timeRatio > 1.0f) {
+            timeRatio = 1.0f;
+        }
+
+        if(alphaPluse < 50 || alphaPluse >= 200){
+            alphaPluseDirection *= -1;
+        }
+
         postInvalidateDelayed(delayMillis);
     }
 
@@ -134,7 +150,7 @@ public class TimerCycle extends View {
         return isSpinning;
     }
 
-    public void stopSpinning(){
+    public void stopSpinning() {
         isSpinning = false;
         progress = 0;
         postInvalidate();
@@ -146,10 +162,9 @@ public class TimerCycle extends View {
     }
 
     /**
-     *
      * @param timeRatio Time ratio. The value is from 0.0 to 1.0
      */
-    public void setTime(float timeRatio){
+    public void setTime(float timeRatio) {
         timeRatio = timeRatio;
     }
 

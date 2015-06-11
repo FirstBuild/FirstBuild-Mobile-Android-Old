@@ -18,6 +18,7 @@
         android:orientation="vertical">
 
         <com.firstbuild.viewUtil.StyledTextView
+            android:id="@+id/text_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -58,6 +59,7 @@
                 android:layout_margin="10dp">
 
                 <com.firstbuild.androidapp.sousvideUI.TimerCycle
+                    android:id="@+id/timer_cycle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true" />
@@ -76,7 +78,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="-5dp"
+                    android:paddingBottom="20dp">
 
                     <com.firstbuild.viewUtil.StyledTextView
                         android:id="@+id/text_timer_remain_h"
@@ -139,6 +143,7 @@
                 </LinearLayout>
 
                 <com.firstbuild.viewUtil.StyledTextView
+                    android:id="@+id/text_kind_of_timer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_above="@id/layout_timer_remain"
@@ -158,14 +163,15 @@
                     android:text="Fool will be done at"
                     android:textColor="@color/colorPrimaryText"
                     android:textSize="19sp"
+                    android:layout_marginTop="-10dp"
                     ge:typeface="fonts/PTSansNarrowBold" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-5dp"
                     android:layout_below="@id/text_will_be_done"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="-5dp"
                     android:orientation="horizontal">
 
                     <com.firstbuild.viewUtil.StyledTextView
@@ -205,15 +211,15 @@
         android:orientation="vertical">
 
         <com.firstbuild.viewUtil.StyledButton
-            android:id="@+id/btn_continue"
+            android:id="@+id/btn_complete"
             android:layout_width="match_parent"
             android:layout_height="@dimen/footer_button_height"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:background="@drawable/btn_bottom_blue"
             android:text="Complete"
-            android:textAllCaps="false"
-            android:textSize="20sp"
+            android:textAllCaps="true"
+            android:textSize="30sp"
             ge:typeface="fonts/PTSansNarrowBold" />
 
     </LinearLayout>

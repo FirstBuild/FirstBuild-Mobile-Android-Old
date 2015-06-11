@@ -50,7 +50,6 @@
 
     </RelativeLayout>
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -67,7 +66,7 @@
             android:background="@drawable/btn_bottom_blue"
             android:text="Continue"
             android:textAllCaps="false"
-            android:textSize="20sp"
+            android:textSize="30sp"
             ge:typeface="fonts/PTSansNarrowBold" />
 
     </LinearLayout>

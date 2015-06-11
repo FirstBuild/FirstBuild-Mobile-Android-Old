@@ -122,7 +122,7 @@
             android:background="@drawable/btn_bottom_blue"
             android:text="Cancel"
             android:textAllCaps="false"
-            android:textSize="20sp"
+            android:textSize="30sp"
             ge:typeface="fonts/PTSansNarrowBold" />/>
 
 
@@ -137,7 +137,7 @@
             android:background="@drawable/btn_bottom_blue"
             android:text="Start Timer"
             android:textAllCaps="false"
-            android:textSize="20sp"
+            android:textSize="30sp"
             ge:typeface="fonts/PTSansNarrowBold" />/>
 
     </LinearLayout>
