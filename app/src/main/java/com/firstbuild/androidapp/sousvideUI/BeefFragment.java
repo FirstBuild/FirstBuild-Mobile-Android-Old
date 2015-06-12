@@ -3,6 +3,7 @@ package com.firstbuild.androidapp.sousvideUI;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,14 +18,13 @@ import com.firstbuild.androidapp.R;
  */
 public class BeefFragment extends Fragment implements View.OnTouchListener {
 
-    private String TAG = BeefFragment.class.getSimpleName();
-
     private final String DONENESS_R = "Rare";
     private final String DONENESS_MR = "Medium-Rare";
     private final String DONENESS_M = "Medium";
     private final String DONENESS_MW = "Medium-Well";
     private final String DONENESS_W = "Well";
 
+    private String TAG = BeefFragment.class.getSimpleName();
     private int xDelta;
     private int yDelta;
     private View containerThickness;
@@ -32,6 +32,8 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
     private View imgMeat;
     private View knobDoneness;
     private TextView textDoneness;
+    private TextView textThickness;
+    private int thicknessIndex = 0;
 
     public BeefFragment() {
         // Required empty public constructor
@@ -49,6 +51,7 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         knobDoneness = view.findViewById(R.id.doneness_knob);
         imgMeat = view.findViewById(R.id.img_meat);
         textDoneness = (TextView) view.findViewById(R.id.text_doneness);
+        textThickness = (TextView) view.findViewById(R.id.text_thickness);
 
         view.findViewById(R.id.thickness_knob).setOnTouchListener(this);
         view.findViewById(R.id.doneness_knob).setOnTouchListener(this);
@@ -109,7 +112,7 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         knobDoneness.setLayoutParams(layoutParamsKnob);
     }
 
-    private void updateDonenessText(String text){
+    private void updateDonenessText(String text) {
         textDoneness.setText(text);
     }
 
@@ -160,18 +163,27 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
 
                 if (v.getId() == R.id.thickness_knob) {
 //                    Log.d(TAG, "ACTION_MOVE " + Y + ", " + yDelta + ", " + (Y - yDelta));
+                    int posY = Y - yDelta;
+                    int maxHeight = (containerThickness.getHeight() - v.getHeight());
 
                     // Slide for thickness knob
-                    if (0 < Y - yDelta && Y - yDelta < (containerThickness.getHeight() - v.getHeight())) {
+                    if (0 < posY && posY < (containerThickness.getHeight() - v.getHeight())) {
                         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                        layoutParams.topMargin = Y - yDelta;
+                        layoutParams.topMargin = posY;
                         layoutParams.bottomMargin = -250;
                         v.setLayoutParams(layoutParams);
 
                         RelativeLayout.LayoutParams layoutParamsMeat = (RelativeLayout.LayoutParams) imgMeat.getLayoutParams();
 
-                        layoutParamsMeat.height = containerThickness.getHeight() - (Y - yDelta) - (v.getHeight() / 2);
+                        layoutParamsMeat.height = containerThickness.getHeight() - (posY) - (v.getHeight() / 2);
                         imgMeat.setLayoutParams(layoutParamsMeat);
+
+                        thicknessIndex = (int) (posY / (maxHeight / 8.0));
+                        Log.d(TAG, "Thickness Index  :" + thicknessIndex);
+
+                        String[] arrayThickness = getResources().getStringArray(R.array.string_thickness);
+
+                        textThickness.setText(arrayThickness[thicknessIndex]+" Inches Thick");
                     }
 
                 } else if (v.getId() == R.id.doneness_knob) {           // Slide for doneness knob.
@@ -189,5 +201,64 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         }
         containerThickness.invalidate();
         return true;
+    }
+
+    private void calcuTimeTemp() {
+//        @134.5: @{
+//            @0.2:@[@1,@00],
+//            @0.4:@[@1,@15],
+//            @0.6:@[@1,@30],
+//            @0.8:@[@1,@45],
+//            @1.2:@[@2,@00],
+//            @1.4:@[@2,@15],
+//            @1.6:@[@2,@30],
+//            @2.0:@[@3,@07],
+//            @2.15:@[@3,@45],
+//            @2.35:@[@4,@15],
+//            @2.5:@[@4,@45],
+//            @2.75:@[@5,@15]
+//        },
+//        @143.5: @{
+//            @0.2:@[@0,@25],
+//            @0.4:@[@0,@30],
+//            @0.6:@[@0,@45],
+//            @0.8:@[@0,@55],
+//            @1.2:@[@1,@30],
+//            @1.4:@[@1,@30],
+//            @1.6:@[@1,@45],
+//            @2.0:@[@2,@31],
+//            @2.15:@[@2,@45],
+//            @2.35:@[@3,@00],
+//            @2.5:@[@3,@15],
+//            @2.75:@[@3,@45]
+//        },
+//        @151.0: @{
+//            @0.2:@[@0,@13],
+//            @0.4:@[@0,@25],
+//            @0.6:@[@0,@35],
+//            @0.8:@[@0,@45],
+//            @1.2:@[@1,@15],
+//            @1.4:@[@1,@15],
+//            @1.6:@[@1,@30],
+//            @2.0:@[@2,@28],
+//            @2.15:@[@2,@15],
+//            @2.35:@[@2,@30],
+//            @2.5:@[@2,@45],
+//            @2.75:@[@3,@15]
+//        },
+//        @160: @{
+//            @0.2:@[@0,@13],
+//            @0.4:@[@0,@25],
+//            @0.6:@[@0,@35],
+//            @0.8:@[@0,@45],
+//            @1.2:@[@1,@15],
+//            @1.4:@[@1,@15],
+//            @1.6:@[@1,@30],
+//            @2.0:@[@2,@28],
+//            @2.15:@[@2,@15],
+//            @2.35:@[@2,@30],
+//            @2.5:@[@2,@45],
+//            @2.75:@[@3,@15]
+//        },
     }
 }

@@ -57,6 +57,7 @@
             android:layout_centerHorizontal="true">
 
             <ImageView
+                android:id="@+id/img_beef"
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
@@ -77,6 +78,19 @@
                 ge:typeface="fonts/PTSansNarrowRegular" />
 
         </RelativeLayout>
+
+        <com.firstbuild.viewUtil.StyledTextView
+            android:id="@+id/text_thickness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/img_meat"
+            android:gravity="center_horizontal"
+            android:paddingBottom="10dp"
+            android:text="1 inch"
+            android:textAllCaps="true"
+            android:textColor="@color/colorSecondaryText"
+            android:textSize="24sp"
+            ge:typeface="fonts/PTSansNarrowBold" />
 
     </RelativeLayout>
 

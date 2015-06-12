@@ -27,8 +27,11 @@ public class TimerCycle extends View {
     private int indicatorThickness = 20;
     private boolean isFullCircle = false;
     private float timeRatio = 0.0f;
-    private int alphaPluse = 255;
-    private int alphaPluseDirection = 3;
+    private float alphaPluse = 200.0f;
+    private float alphaPluseDirection = 6.0f;
+
+    private final int circleAlphaMax = 200;
+    private final int circleAlphaMin = 10;
 
     public TimerCycle(Context context) {
         super(context);
@@ -99,7 +102,7 @@ public class TimerCycle extends View {
         super.onDraw(canvas);
 
         circleFrontPaint.setAlpha(255);
-        circleWideBackPaint.setAlpha(alphaPluse);
+        circleWideBackPaint.setAlpha(Math.min(circleAlphaMax, (int)alphaPluse));
         canvas.drawArc(rectOuter, 0.0f, 360.0f, false, circleWideBackPaint);
         canvas.drawArc(rectOuter, 0.0f, 360.0f, false, circleDiarkPaint);
 
@@ -139,7 +142,7 @@ public class TimerCycle extends View {
             timeRatio = 1.0f;
         }
 
-        if(alphaPluse < 50 || alphaPluse >= 200){
+        if(alphaPluse < circleAlphaMin || alphaPluse >= 300){
             alphaPluseDirection *= -1;
         }
 
