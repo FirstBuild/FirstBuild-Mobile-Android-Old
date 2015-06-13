@@ -12,6 +12,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_sousvide">SousvideActivity</string>
 
+
+    <string name="ble_not_supported">BLE is not supported</string>
+    <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
+
     <string-array name="string_thickness">
         <item>2</item>
         <item>1.75</item>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -11,13 +12,15 @@ import com.firstbuild.androidapp.cookingMethod.CookingMethodActivity;
 
 
 public class SplashActivity extends Activity {
-
+    private final String TAG = getClass().getSimpleName();
     private Runnable runnable;
     private Handler handlerDelay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate IN");
+
         setContentView(R.layout.activity_splash);
 
         handlerDelay = new Handler();
