@@ -1,10 +1,21 @@
-/**
- * Created by ryanlee on 3/9/15.
+/*
+ * Copyright (C) 2013 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.firstbuild.commonframework.bleManager;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -12,8 +23,6 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattServer;
-import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -22,6 +31,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +39,6 @@ import java.util.UUID;
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
  */
-@SuppressLint("NewApi")
 public class BluetoothLeService extends Service {
     private final static String TAG = BluetoothLeService.class.getSimpleName();
 
@@ -37,7 +46,6 @@ public class BluetoothLeService extends Service {
     private BluetoothAdapter mBluetoothAdapter;
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
-    private BluetoothGattServer mBluetoothGattServer;
     private int mConnectionState = STATE_DISCONNECTED;
 
     private static final int STATE_DISCONNECTED = 0;
@@ -106,52 +114,6 @@ public class BluetoothLeService extends Service {
         }
     };
 
-    private final BluetoothGattServerCallback mGattServerCallback = new BluetoothGattServerCallback() {
-        @Override
-        public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
-            Log.d("HELLO", "Our gatt server connection state changed, new state ");
-            Log.d("HELLO", Integer.toString(newState));
-            super.onConnectionStateChange(device, status, newState);
-        }
-
-        @Override
-        public void onServiceAdded(int status, BluetoothGattService service) {
-            Log.d("HELLO", "Our gatt server service was added.");
-            super.onServiceAdded(status, service);
-        }
-
-        @Override
-        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
-            Log.d("HELLO", "Our gatt characteristic was read.");
-            super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
-        }
-
-        @Override
-        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
-            Log.d("HELLO", "We have received a write request for one of our hosted characteristics");
-
-            super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
-        }
-
-        @Override
-        public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattDescriptor descriptor) {
-            Log.d("HELLO", "Our gatt server descriptor was read.");
-            super.onDescriptorReadRequest(device, requestId, offset, descriptor);
-        }
-
-        @Override
-        public void onDescriptorWriteRequest(BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
-            Log.d("HELLO", "Our gatt server descriptor was written.");
-            super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
-        }
-
-        @Override
-        public void onExecuteWrite(BluetoothDevice device, int requestId, boolean execute) {
-            Log.d("HELLO", "Our gatt server on execute write.");
-            super.onExecuteWrite(device, requestId, execute);
-        }
-    };
-
     private void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);
@@ -191,7 +153,7 @@ public class BluetoothLeService extends Service {
     }
 
     public class LocalBinder extends Binder {
-        BluetoothLeService getService() {
+        public BluetoothLeService getService() {
             return BluetoothLeService.this;
         }
     }
@@ -234,9 +196,6 @@ public class BluetoothLeService extends Service {
             return false;
         }
 
-        //JDD - lets go ahead and start our GATT server now
-        addDefinedGattServerServices();
-
         return true;
     }
 
@@ -276,7 +235,6 @@ public class BluetoothLeService extends Service {
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
-
         Log.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
@@ -324,15 +282,6 @@ public class BluetoothLeService extends Service {
         mBluetoothGatt.readCharacteristic(characteristic);
     }
 
-    public void writeRemoteCharacteristic(BluetoothGattCharacteristic characteristic) {
-
-        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w(TAG, "BluetoothAdapter not initialized");
-            return;
-        }
-        mBluetoothGatt.writeCharacteristic(characteristic);
-    }
-
     /**
      * Enables or disables notification on a give characteristic.
      *
@@ -366,23 +315,5 @@ public class BluetoothLeService extends Service {
         if (mBluetoothGatt == null) return null;
 
         return mBluetoothGatt.getServices();
-    }
-
-    public void addGattServerService(BluetoothGattService service)
-    {
-        mBluetoothGattServer.addService(service);
-    }
-
-    public void addDefinedGattServerServices( )
-    {
-        mBluetoothGattServer = mBluetoothManager.openGattServer(this, mGattServerCallback);
-        BluetoothGattService service = new BluetoothGattService(UUID.fromString(SampleGattAttributes.FAN_CONTROL_SERVICE_UUID), BluetoothGattService.SERVICE_TYPE_PRIMARY);
-        BluetoothGattCharacteristic characteristic = new BluetoothGattCharacteristic(UUID.fromString(SampleGattAttributes.FAN_OPERATING_STATE), BluetoothGattCharacteristic.FORMAT_UINT8, BluetoothGattCharacteristic.PERMISSION_WRITE );
-
-        service.addCharacteristic(characteristic);
-        mBluetoothGattServer.addService(service);
-
-        Log.d("HELLO", "Created our own GATT server.\r\n");
-
     }
 }

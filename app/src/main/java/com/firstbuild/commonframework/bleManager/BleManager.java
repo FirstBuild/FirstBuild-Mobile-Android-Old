@@ -8,19 +8,21 @@
 
 package com.firstbuild.commonframework.bleManager;
 
-import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 
 import com.firstbuild.commonframework.deviceManager.DeviceManager;
@@ -32,289 +34,242 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BleManager {
-    private final static String TAG = BleManager.class.getSimpleName();
+
+    private final String TAG = getClass().getSimpleName();
+
+    //    private final String TARGET_DEVICE_NAME = "BLE ACM";
+    private final String TARGET_DEVICE_NAME = "CC2650 SensorTag";
+
+    // Set enable bluetooth feature
+    private static final int REQUEST_ENABLE_BT = 1;
+
+    // Stops scanning after 10 seconds.
+    private static final long SCAN_PERIOD = 10000;
+
+    // Bluetooth adapter handler
+    private BluetoothAdapter bluetoothAdapter = null;
+
+    private BluetoothLeService bluetoothLeService = null;
+
+    private BluetoothManager bluetoothManager = null;
+
+    // Flag for checking device scanning state
+    public boolean isScanning = false;
+
+    // Flag for checking ble connection established
+    public boolean isConnected = false;
+
+    // Post Delayed handler
+    private Handler handler = new Handler();
+
+    private String deviceAddress = null;
 
     private Context context = null;
-    private BluetoothAdapter bluetoothAdapter = null;
-    private BluetoothGatt bluetoothGatt = null;
-    private ArrayList<BluetoothDevice> bluetoothDevices;
-    private List<BluetoothGattService> bluetoothServices;
-    private HashMap<String, BluetoothListener> callbacks = null;
 
-    /**
-     * Singleton object
-     */
-    private static BleManager instance = new BleManager();
+    public static BleManager instance = new BleManager();
 
     public static BleManager getInstance(){
         return instance;
     }
 
-    /**
-     * Default constructor
-     */
     public BleManager(){
-        Log.d(TAG, "IN BluetoothLeManager");
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        // Default constructor
     }
 
-    /**
-     * Checking bluetooth feature in system is turned on
-     * @return boolean - turned on or not
-     */
-    public boolean checkBluetoothOnOff(){
-        Log.d(TAG, "IN checkBluetoothOnOff");
-
-        boolean isTurnOn = false;
-        if(bluetoothAdapter.isEnabled()){
-
-            isTurnOn = true;
-        }
-
-        return isTurnOn;
-    }
-
-    /**
-     * Start scanning bluetooth device around phone
-     * @param context Activity's context
-     */
-    public void startScan(Context context){
-        Log.d(TAG, "IN startScan");
+    public void initBleManager(Context context){
+        Log.d(TAG, "initBleManager IN");
 
         this.context = context;
+        bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
 
-        // Register intents for broadcast receiver
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-        intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-
-        context.registerReceiver(broadcastReceiver, intentFilter);
-
-        bluetoothAdapter.startDiscovery();
+        Intent gattServiceIntent = new Intent(context, BluetoothLeService.class);
+        context.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    /**
-     * Stop scanning bluetooth device around phone
-     */
-    public void stopScan(){
-        Log.d(TAG, "IN stopScan");
-        bluetoothAdapter.cancelDiscovery();
-    }
+    // Code to manage Service lifecycle.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            bluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+            if (!bluetoothLeService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+//                finish();
+                // TODO:  Notify end service
+            }
+
+            // Automatically connects to the device upon successful start-up initialization.
+            if (deviceAddress != null) {
+                bluetoothLeService.connect(deviceAddress);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            bluetoothLeService = null;
+        }
+    };
 
     /**
-     * Pairing between phone and bluetooth device
-     * @param device Bluetooth device object
+     * Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
+     * fire an intent to display a dialog asking the user to grant permission to enable it.
      */
-    public void pairing(BluetoothDevice device) {
-        Log.d(TAG, "In pairing - device: " + device);
+    public void enableBluetoothAndStartScan(){
+        Log.d(TAG, "enableBluetoothAndStartScan IN");
 
-        try {
-            Method method = device.getClass().getMethod("createBond", (Class[]) null);
-            method.invoke(device, (Object[]) null);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!bluetoothAdapter.isEnabled()) {
+            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            ((Activity) context).startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+        else {
+            Log.d(TAG, "Bluetooth adapter is enabled!");
+            startScan();
         }
     }
 
     /**
-     * Unpairing device from phone
-     * @param device Bluetooth device object
+     * Start scanning BLE devices
      */
-    public void unpairing(BluetoothDevice device) {
-        try {
-            Method method = device.getClass().getMethod("removeBond", (Class[]) null);
-            method.invoke(device, (Object[]) null);
+    private void startScan() {
+        Log.d(TAG, "startScan IN");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        isScanning = true;
+        bluetoothAdapter.startLeScan(leScanCallback);
+
+        // Stops scanning after a pre-defined scan period.
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Scan ble device time out!");
+                stopScan();
+            }
+        }, SCAN_PERIOD);
     }
 
     /**
-     * Connect to a bluetooth device
-     * @param context Activity's context
-     * @param device Bluetooth device object
+     * Stop scanning BLE devices
      */
-    public void connect(Context context, BluetoothDevice device){
-        Log.d(TAG, "IN connectToDevice - Device: " + device);
-        bluetoothGatt = device.connectGatt(context, false, bluetoothGattCallback);
+    private void stopScan() {
+        Log.d(TAG, "stopScan IN");
+
+        isScanning = false;
+        bluetoothAdapter.stopLeScan(leScanCallback);
     }
 
-    public ArrayList<BluetoothDevice> getBluetoothDeviceList(){
-        return bluetoothDevices;
+    public void unregisterService(){
+        Log.d(TAG, "unregisterService IN");
+
     }
 
-    public List<BluetoothGattService> getBluetootheServices(){
-        return bluetoothServices;
-    }
+    /**
+     * Device scan callback
+     */
+    private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
 
-    public byte[] readData(String targetUuid){
-        Log.d(TAG, "IN readData");
+        @Override
+        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+            Log.d(TAG, "onLeScan: device: " + device.getName() + ", address: " + device.getAddress() + ", RSSI: " + rssi);
+            Log.d(TAG, "---------------------------------------------");
 
-        if(targetUuid == null){
-            Log.d(TAG, "No characteristics has been read");
-            return null;
-        }
+            try {
+                Log.d(TAG, "device: " + device);
+                Log.d(TAG, "device's name: " + device.getName());
 
-        if(bluetoothServices == null){
-            Log.d(TAG, "bluetoothServices is null");
-            return null;
-        }
+                if (device != null &&
+                    device.getName() != null &&
+                    device.getName().equals(TARGET_DEVICE_NAME)) {
+                    Log.d(TAG, "device found: " + device.getName());
 
-        byte[] value = null;
+                    deviceAddress = device.getAddress();
 
-        for(BluetoothGattService service : bluetoothServices){
+                    // Stop ble device scanning
+                    stopScan();
 
-            List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
-            for(BluetoothGattCharacteristic characteristic : characteristics){
-                String Uuid = characteristic.getUuid().toString();
+                    // Register Broadcast listener
+                    context.registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
 
-                if(Uuid.equals(targetUuid)) {
-                    value = characteristic.getValue();
-                    Log.d(TAG, "uuid: " + characteristic.getUuid().toString() + ", value: " + value);
-                    break;
+                    // Try to connect target ble device
+                    if (bluetoothLeService != null) {
+                        final boolean result = bluetoothLeService.connect(deviceAddress);
+                        Log.d(TAG, "Connect request result: " + result);
+                    }
+                } else {
+                    // Do nothing
                 }
             }
-        }
-
-        return value;
-    }
-
-    public boolean writeData(byte[] value, String targetUuid) {
-        if (value == null || targetUuid == null) {
-            Log.d(TAG, "Error no values or wrong uuid");
-            return false;
-        }
-
-        for (BluetoothGattService service : bluetoothServices) {
-            List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
-            for (BluetoothGattCharacteristic characteristic : characteristics) {
-                String Uuid = characteristic.getUuid().toString();
-
-                if(Uuid.equals(targetUuid)){
-                    Log.d(TAG, "Target Uuid: " + characteristic.getUuid().toString());
-                    characteristic.setValue(value);
-                    bluetoothGatt.writeCharacteristic(characteristic);
-                    break;
-                }
+            catch(Exception e){
+                e.printStackTrace();
             }
         }
+    };
 
-        return true;
-    }
-
-    public void close(){
-        context.unregisterReceiver(broadcastReceiver);
-    }
-
-    private void addDevice(BluetoothDevice device){
-
-        DeviceManager.getInstance().add(new Paragon(device));
-    }
-
-    public void addListener(BluetoothListener listener){
-        if(callbacks == null){
-            callbacks = new HashMap<String, BluetoothListener>();
-        }
-        Log.d(TAG, "listener: " + listener);
-
-        callbacks.put(listener.toString(), listener);
-    }
-
-    public void notifyUpdates(String listener, Object... args){
-        Log.d(TAG, "In notifyUpdates");
-
-        for(Map.Entry<String, BluetoothListener> entry : callbacks.entrySet()){
-            BluetoothListener callback = entry.getValue();
-
-            if(listener.equals("onScan")) {
-                callback.onScan((String) args[0]);
-            }
-            else if(listener.equals("onPairing")){
-                callback.onPairing((Context) args[0], (Intent) args[1]);
-            }
-            else if(listener.equals("onConnectionStateChange")){
-                callback.onConnectionStateChange((BluetoothGatt) args[0], (int) args[1], (int) args[2]);
-            }
-            else if(listener.equals("onServicesDiscovered")){
-                callback.onServicesDiscovered((BluetoothGatt) args[0], (int) args[1]);
-            }
-            else if(listener.equals("onCharacteristicWrite")){
-                callback.onCharacteristicWrite((BluetoothGatt) args[0], (BluetoothGattCharacteristic) args[1], (int) args[2]);
-            }
-            else if(listener.equals("onCharacteristicRead")){
-                callback.onCharacteristicRead((BluetoothGatt) args[0], (BluetoothGattCharacteristic) args[1], (int) args[2]);
-            }
-        }
-    }
-
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    // Handles various events fired by the Service.
+    // ACTION_GATT_CONNECTED: connected to a GATT server.
+    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
+    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
+    // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+    //                        or notification operations.
+    private final BroadcastReceiver gattUpdateReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                Log.d(TAG, "In BroadcastReceiver - Discovery finished");
-                notifyUpdates("onScan", new Object[]{action});
-            }
-            // Update device list whenever new devices found
-            else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                addDevice(device);
-
-                notifyUpdates("onScan", new Object[]{action});
-            }
-            else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
-                notifyUpdates("onPairing", new Object[]{context, intent});
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                Log.d(TAG, "BLE device is connected!");
+                isConnected = true;
+//                updateConnectionState(R.string.connected);
+//                invalidateOptionsMenu();
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                Log.d(TAG, "BLE device is disconnected!");
+                isConnected = false;
+//                updateConnectionState(R.string.disconnected);
+//                invalidateOptionsMenu();
+//                clearUI();
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                Log.d(TAG, "BLE service discovered");
+                // Show all the supported services and characteristics on the user interface.
+                displayGattServices(bluetoothLeService.getSupportedGattServices());
+            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                Log.d(TAG, "BLE data available");
+//                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
     };
 
-    private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
 
-        @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic characteristic,
-                                         int status) {
-            Log.d(TAG, "onCharacteristicRead:  " + characteristic.getUuid().toString());
-            notifyUpdates("onCharacteristicRead", gatt, characteristic, status);
-        }
+    private void displayGattServices(List<BluetoothGattService> gattServices) {
+        Log.d(TAG, "displayGattServices IN");
 
-        @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic) {
-            // This will get called anytime you perform a read or write characteristic operation
-        }
+        if (gattServices != null) {
+            // Loops through available GATT Services.
+            for (BluetoothGattService gattService : gattServices) {
+                String serviceUuid = gattService.getUuid().toString();
 
-        @Override
-        public void onCharacteristicWrite(BluetoothGatt g, final BluetoothGattCharacteristic c, int status) {
-            Log.d(TAG, "onCharacteristicWrite:  " + c.getUuid().toString());
-            notifyUpdates("onCharacteristicWrite", new Object[]{g, c, status});
-        }
+                Log.d(TAG, "Service UUID: " + serviceUuid);
 
-        @Override
-        public void onConnectionStateChange(final BluetoothGatt gatt, final int status, final int newState) {
-            // this will get called when a device connects or disconnects
-            Log.d(TAG, "connection status: " + status + ", newState: " + newState);
-            if(BluetoothProfile.STATE_CONNECTED == newState){
-                Log.d(TAG, "Connected to " + gatt.getDevice().getAddress() + " and Request Service");
-                notifyUpdates("onConnectionStateChange", new Object[]{gatt, status, newState});
+                List<BluetoothGattCharacteristic> gattCharacteristics =
+                        gattService.getCharacteristics();
+
+                // Loops through available Characteristics.
+                for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                    String CharacteristicUuid = gattCharacteristic.getUuid().toString();
+                    Log.d(TAG, "Characteristic UUID: " + CharacteristicUuid);
+                }
+                Log.d(TAG, "=====================================");
             }
         }
-
-        @Override
-        public void onServicesDiscovered(final BluetoothGatt gatt, final int status) {
-            Log.d(TAG, "In onServicesDiscovered");
-
-            // this will get called after the client initiates a BluetoothGatt.discoverServices() call
-            bluetoothServices = gatt.getServices();
-            notifyUpdates("onServicesDiscovered", new Object[]{gatt, status});
-        }
-    };
+    }
 }
+
 
 

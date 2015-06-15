@@ -23,21 +23,6 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity
-            android:name=".BleDeviceActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name=".SplashActivity"
             android:label="@string/title_activity_splash" >
             <intent-filter>
@@ -54,6 +39,7 @@
             android:name=".sousvideUI.SousvideActivity"
             android:label="@string/title_activity_sousvide" >
         </activity>
+        <service android:name="com.firstbuild.commonframework.bleManager.BluetoothLeService" android:enabled="true"/>
     </application>
 
 </manifest>
