@@ -34,6 +34,7 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
     private TextView textDoneness;
     private TextView textThickness;
     private int thicknessIndex = 0;
+    private TextView textTimerTemp;
 
     public BeefFragment() {
         // Required empty public constructor
@@ -52,6 +53,8 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         imgMeat = view.findViewById(R.id.img_meat);
         textDoneness = (TextView) view.findViewById(R.id.text_doneness);
         textThickness = (TextView) view.findViewById(R.id.text_thickness);
+        textTimerTemp = (TextView) view.findViewById(R.id.text_timer_temp);
+
 
         view.findViewById(R.id.thickness_knob).setOnTouchListener(this);
         view.findViewById(R.id.doneness_knob).setOnTouchListener(this);
@@ -184,6 +187,8 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
                         String[] arrayThickness = getResources().getStringArray(R.array.string_thickness);
 
                         textThickness.setText(arrayThickness[thicknessIndex]+" Inches Thick");
+
+                        calcuTimeTemp(Float.parseFloat(arrayThickness[thicknessIndex]), 0);
                     }
 
                 } else if (v.getId() == R.id.doneness_knob) {           // Slide for doneness knob.
@@ -203,7 +208,58 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         return true;
     }
 
-    private void calcuTimeTemp() {
+    private void calcuTimeTemp(float thickness, int doneness) {
+        int hour = 0;
+        int min = 0;
+        float temp = 0;
+
+
+        if (thickness == 2) {
+            hour = 3;
+            min = 45;
+            temp= 134.5f;
+        }
+        else if (thickness == 1.75f) {
+            hour = 2;
+            min = 30;
+            temp= 134.5f;
+        }
+        else if (thickness == 1.5f) {
+            hour = 2;
+            min = 30;
+            temp= 134.5f;
+        }
+        else if (thickness == 1.25f) {
+            hour = 2;
+            min = 15;
+            temp= 134.5f;
+        }
+        else if (thickness == 1) {
+            hour = 2;
+            min = 0;
+            temp= 134.5f;
+        }
+        else if (thickness == 0.75f) {
+            hour = 1;
+            min = 0;
+            temp= 134.5f;
+        }
+        else if (thickness == 0.5f) {
+            hour = 1;
+            min = 15;
+            temp= 134.5f;
+        }
+        else if (thickness == 0.25f) {
+            hour = 1;
+            min = 0;
+            temp= 134.5f;
+        }
+        else{
+            Log.d(TAG, "No temp / time table for this thickness");
+        }
+
+        UpdateTempTimer(hour, min, temp);
+
 //        @134.5: @{
 //            @0.2:@[@1,@00],
 //            @0.4:@[@1,@15],
@@ -260,5 +316,11 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
 //            @2.5:@[@2,@45],
 //            @2.75:@[@3,@15]
 //        },
+    }
+
+    private void UpdateTempTimer(int hour, int min, float temp) {
+
+        textTimerTemp.setText(hour+"H : "+min+"MIN   |   "+temp+"°F");
+
     }
 }

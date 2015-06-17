@@ -58,13 +58,13 @@
         android:orientation="vertical">
 
         <com.firstbuild.viewUtil.StyledButton
-            android:id="@+id/btn_continue"
+            android:id="@+id/btn_cancel"
             android:layout_width="match_parent"
             android:layout_height="@dimen/footer_button_height"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:background="@drawable/btn_bottom_blue"
-            android:text="Continue"
+            android:text="Cancel"
             android:textAllCaps="false"
             android:textSize="30sp"
             ge:typeface="fonts/PTSansNarrowBold" />
