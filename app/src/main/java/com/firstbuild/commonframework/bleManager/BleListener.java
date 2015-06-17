@@ -8,7 +8,7 @@ import android.content.Intent;
 /**
  * Created by ryanlee on 3/17/15.
  */
-public abstract class BluetoothListener {
+public abstract class BleListener {
     public void onScan(String action){}
 
     public void onPairing(Context context, Intent intent){}

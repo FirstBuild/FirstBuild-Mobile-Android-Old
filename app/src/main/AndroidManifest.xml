@@ -24,6 +24,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".SplashActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_splash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,10 +34,12 @@
         </activity>
         <activity
             android:name=".cookingMethod.CookingMethodActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_cooking_method" >
         </activity>
         <activity
             android:name=".sousvideUI.SousvideActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_sousvide" >
         </activity>
         <service android:name="com.firstbuild.commonframework.bleManager.BluetoothLeService" android:enabled="true"/>

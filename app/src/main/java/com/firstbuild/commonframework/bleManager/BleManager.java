@@ -12,6 +12,9 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattServer;
+import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -20,26 +23,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 import com.firstbuild.commonframework.deviceManager.DeviceManager;
-import com.firstbuild.commonframework.deviceManager.Paragon;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class BleManager {
 
     private final String TAG = getClass().getSimpleName();
 
-    //    private final String TARGET_DEVICE_NAME = "BLE ACM";
-    private final String TARGET_DEVICE_NAME = "CC2650 SensorTag";
+    private final String TARGET_DEVICE_NAME = "BLE ACM";
+//    private final String TARGET_DEVICE_NAME = "CC2650 SensorTag";
+
+    private final String GATT_SERVER_SERVICE_UUID = "0db95663-c52e-2fac-2040-c276b2b63090";
 
     // Set enable bluetooth feature
     private static final int REQUEST_ENABLE_BT = 1;
@@ -54,6 +56,8 @@ public class BleManager {
 
     private BluetoothManager bluetoothManager = null;
 
+    private BluetoothGattServer bluetoothGattServer = null;
+
     // Flag for checking device scanning state
     public boolean isScanning = false;
 
@@ -66,6 +70,8 @@ public class BleManager {
     private String deviceAddress = null;
 
     private Context context = null;
+
+    private HashMap<String, BleListener> callbacks = null;
 
     public static BleManager instance = new BleManager();
 
@@ -86,6 +92,36 @@ public class BleManager {
 
         Intent gattServiceIntent = new Intent(context, BluetoothLeService.class);
         context.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+
+        try {
+            startGattServer();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void addListener(BleListener listener){
+        if (callbacks == null) {
+            callbacks = new HashMap<String, BleListener>();
+        }
+        else{
+            // Do nothing
+        }
+
+        // Key is listener is casted string
+        // Value is listener itself.
+        callbacks.put(listener.toString(), listener);
+    }
+
+    public void removeListener(BleListener listener){
+        if (callbacks != null && !callbacks.isEmpty()) {
+            callbacks.remove(listener.toString());
+            Log.d(TAG, "Remove Listener: " + listener);
+        }
+        else{
+            // Do nothing
+        }
     }
 
     // Code to manage Service lifecycle.
@@ -93,6 +129,7 @@ public class BleManager {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
+            Log.d(TAG, "onServiceConnected");
             bluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             if (!bluetoothLeService.initialize()) {
                 Log.e(TAG, "Unable to initialize Bluetooth");
@@ -126,8 +163,42 @@ public class BleManager {
         }
         else {
             Log.d(TAG, "Bluetooth adapter is enabled!");
-            startScan();
+//            startScan();
+
+            if(isDevicePaired()){
+                // Register Broadcast listener
+                context.registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
+
+                // Try to connect target ble device
+                if (bluetoothLeService != null) {
+                    Log.d(TAG, "Connecting...");
+                    final boolean result = bluetoothLeService.connect(deviceAddress);
+                    Log.d(TAG, "Connect request result: " + result);
+                }
+            }
+            else{
+                startScan();
+            }
         }
+    }
+
+    private boolean isDevicePaired() {
+        boolean result = false;
+
+        Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
+        if(pairedDevice.size( ) > 0)
+        {
+            for(BluetoothDevice device : pairedDevice) {
+                Log.d(TAG, device.getName() + "\n" + device.getAddress());
+
+                if(device.getName().equals(TARGET_DEVICE_NAME)){
+                    deviceAddress = device.getAddress();
+                    result = true;
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -215,23 +286,36 @@ public class BleManager {
     private final BroadcastReceiver gattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            final String address = bluetoothLeService.getBluetoothDeviceAddress();
             final String action = intent.getAction();
+
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 Log.d(TAG, "BLE device is connected!");
+
                 isConnected = true;
-//                updateConnectionState(R.string.connected);
-//                invalidateOptionsMenu();
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                DeviceManager.getInstance().setAddress(address);
+            }
+            else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.d(TAG, "BLE device is disconnected!");
+
                 isConnected = false;
-//                updateConnectionState(R.string.disconnected);
-//                invalidateOptionsMenu();
-//                clearUI();
+                DeviceManager.getInstance().resetAllData();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 Log.d(TAG, "BLE service discovered");
+
+                List<BluetoothGattService> bleGattServices = bluetoothLeService.getSupportedGattServices();
+                DeviceManager.getInstance().setServices(bleGattServices);
+
                 // Show all the supported services and characteristics on the user interface.
-                displayGattServices(bluetoothLeService.getSupportedGattServices());
-            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                displayGattServices(address);
+
+                // Stop Scan
+                stopScan();
+
+                // Stop GATT Server
+                stopGattServer();
+            }
+            else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 Log.d(TAG, "BLE data available");
 //                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
@@ -247,12 +331,14 @@ public class BleManager {
         return intentFilter;
     }
 
-    private void displayGattServices(List<BluetoothGattService> gattServices) {
+    private void displayGattServices(String address) {
         Log.d(TAG, "displayGattServices IN");
 
-        if (gattServices != null) {
+        List<BluetoothGattService> bleGattServices = DeviceManager.getInstance().getServices();
+
+        if (bleGattServices != null) {
             // Loops through available GATT Services.
-            for (BluetoothGattService gattService : gattServices) {
+            for (BluetoothGattService gattService : bleGattServices) {
                 String serviceUuid = gattService.getUuid().toString();
 
                 Log.d(TAG, "Service UUID: " + serviceUuid);
@@ -265,10 +351,74 @@ public class BleManager {
                     String CharacteristicUuid = gattCharacteristic.getUuid().toString();
                     Log.d(TAG, "Characteristic UUID: " + CharacteristicUuid);
                 }
+
                 Log.d(TAG, "=====================================");
             }
         }
     }
+
+    public void startGattServer() throws InterruptedException {
+        Log.d(TAG, "startGattServer IN");
+        BluetoothGattService service;
+
+        bluetoothGattServer = bluetoothManager.openGattServer(context, gattServerCallback);
+        Thread.sleep(10);
+        service = new BluetoothGattService(UUID.fromString(GATT_SERVER_SERVICE_UUID), BluetoothGattService.SERVICE_TYPE_PRIMARY);
+        bluetoothGattServer.addService(service);
+    }
+
+    public void stopGattServer(){
+        Log.d(TAG, "stopGattServer IN");
+        bluetoothGattServer.close();
+    }
+
+
+    private final BluetoothGattServerCallback gattServerCallback = new BluetoothGattServerCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
+            Log.d(TAG, "Our gatt server connection state changed, new state: " + Integer.toString(newState));
+            Log.d(TAG, "Device:" + device.getAddress());
+
+            super.onConnectionStateChange(device, status, newState);
+        }
+
+        @Override
+        public void onServiceAdded(int status, BluetoothGattService service) {
+            Log.d(TAG, "Our gatt server service was added.");
+            super.onServiceAdded(status, service);
+        }
+
+        @Override
+        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
+            Log.d(TAG, "Our gatt characteristic was read.");
+            super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
+        }
+
+        @Override
+        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+            Log.d(TAG, "We have received a write request for one of our hosted characteristics");
+
+            super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
+        }
+
+        @Override
+        public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattDescriptor descriptor) {
+            Log.d(TAG, "Our gatt server descriptor was read.");
+            super.onDescriptorReadRequest(device, requestId, offset, descriptor);
+        }
+
+        @Override
+        public void onDescriptorWriteRequest(BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+            Log.d(TAG, "Our gatt server descriptor was written.");
+            super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
+        }
+
+        @Override
+        public void onExecuteWrite(BluetoothDevice device, int requestId, boolean execute) {
+            Log.d(TAG, "Our gatt server on execute write.");
+            super.onExecuteWrite(device, requestId, execute);
+        }
+    };
 }
 
 
