@@ -15,7 +15,7 @@ public class SplashActivity extends Activity {
     private final String TAG = getClass().getSimpleName();
     private Runnable runnable;
     private Handler handlerDelay;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
