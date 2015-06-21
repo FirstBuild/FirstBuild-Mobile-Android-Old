@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.firstbuild.commonframework.deviceManager.Device;
 import com.firstbuild.commonframework.deviceManager.DeviceManager;
 
 import java.util.HashMap;
@@ -148,18 +149,6 @@ public class BleManager {
             else if (callback != null && listener.equals("onServicesDiscovered")) {
                 callback.onServicesDiscovered((String) args[0], (List<BluetoothGattService>) args[1]);
             }
-//            else if (callback != null && listener.equals("onRosterUpdated")) {
-//                callback.onRosterUpdated((ArrayList<XmppRosterResponse>) args[0]);
-//            }
-//            else if (callback != null && listener.equals("onReceivedData")) {
-//                callback.onReceivedData((XmppDataResponse) args[0]);
-//            }
-//            else if (callback != null && listener.equals("onCheckCertificate")) {
-//                callback.onCheckCertificate((Boolean) args[0]);
-//            }
-//            else if (callback != null && listener.equals("onError")) {
-//                callback.onError((XmppError) args[0]);
-//            }
             else{
                 // Do nothing
             }
@@ -341,7 +330,7 @@ public class BleManager {
                 Log.d(TAG, "BLE device is connected!");
 
                 isConnected = true;
-                DeviceManager.getInstance().setAddress(address);
+                DeviceManager.getInstance().add(new Device(deviceAddress));
 
                 sendUpdate("onConnectionStateChanged", new Object[]{address, action});
             }
@@ -349,7 +338,7 @@ public class BleManager {
                 Log.d(TAG, "BLE device is disconnected!");
 
                 isConnected = false;
-                DeviceManager.getInstance().resetAllData();
+                DeviceManager.getInstance().remove(deviceAddress);
 
                 sendUpdate("onConnectionStateChanged", new Object[]{address, action});
             }
@@ -357,7 +346,7 @@ public class BleManager {
                 Log.d(TAG, "BLE service discovered");
 
                 List<BluetoothGattService> bleGattServices = bluetoothLeService.getSupportedGattServices();
-                DeviceManager.getInstance().setServices(bleGattServices);
+                DeviceManager.getInstance().setServices(deviceAddress, bleGattServices);
 
                 // Show all the supported services and characteristics on the user interface.
 //                displayGattServices(address);
@@ -389,7 +378,7 @@ public class BleManager {
     public void displayGattServices(String address) {
         Log.d(TAG, "displayGattServices IN");
 
-        List<BluetoothGattService> bleGattServices = DeviceManager.getInstance().getServices();
+        List<BluetoothGattService> bleGattServices = DeviceManager.getInstance().getServices(deviceAddress);
 
         if (bleGattServices != null) {
             // Loops through available GATT Services.

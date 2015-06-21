@@ -2,6 +2,7 @@ package com.firstbuild.commonframework.deviceManager;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +12,9 @@ import java.util.List;
  */
 public class DeviceManager {
 
-    private String address = "";
-    private String serialNumber = "";
-    private String modelNumber = "";
-    private String nickName = "";
-    private String batteryLevel = "";
-    private String remainingTime ="";
-    private String targetTemperature = "";
-    private String currentTemperature = "";
+    private final String TAG = this.getClass().getSimpleName();
 
-    private List<BluetoothGattService> bleGattServices = null;
+    private ArrayList<Device> devices = new ArrayList();
 
     // A Singleton object
     private static DeviceManager instance = new DeviceManager();
@@ -33,89 +27,86 @@ public class DeviceManager {
         // Default constructor
     }
 
-    public void setServices(List<BluetoothGattService> bleGattServices){
-        this.bleGattServices = bleGattServices;
+    public int size(){
+        Log.d(TAG, "size IN");
+        return devices.size();
     }
 
-    public List<BluetoothGattService> getServices(){
-        return bleGattServices;
+    public void add(Device device){
+        Log.d(TAG, "add IN");
+        if(device != null) {
+            devices.add(device);
+        }
     }
 
-    public String getAddress() {
-        return address;
+    public void remove(String address){
+        Log.d(TAG, "remove IN");
+
+        if(address != null){
+            for(Device device : devices){
+                if(device.getAddress().equals(address)){
+                    devices.remove(device);
+                    Log.d(TAG, "Removed device: " +  device.getAddress());
+                    break;
+                }
+                else{
+                    // Do nothing
+                }
+            }
+        }
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public Device getDevice(String address){
+        Log.d(TAG, "getDevice IN");
+
+        Device device = null;
+
+        if(address != null){
+            for(Device item : devices){
+                if(item.getAddress().equals(address)){
+                    device = item;
+                    Log.d(TAG, "Found device: " +  device.getAddress());
+                    break;
+                }
+                else{
+                    // Do nothing
+                }
+            }
+        }
+
+        return device;
     }
 
-    public String getSerialNumber() {
-        return serialNumber;
+    public void setServices(String address, List<BluetoothGattService> bleGattServices){
+        Log.d(TAG, "setService");
+
+        if(address != null){
+            for(Device device : devices){
+                if(device.getAddress().equals(address)){
+                    device.setBluetoothServices(bleGattServices);
+                }
+            }
+        }
     }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public String getModelNumber() {
-        return modelNumber;
-    }
-
-    public void setModelNumber(String modelNumber) {
-        this.modelNumber = modelNumber;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public String getBatteryLevel() {
-        return batteryLevel;
-    }
-
-    public void setBatteryLevel(String batteryLevel) {
-        this.batteryLevel = batteryLevel;
-    }
-
-    public String getRemainingTime() {
-        return remainingTime;
-    }
-
-    public void setRemainingTime(String remainingTime) {
-        this.remainingTime = remainingTime;
-    }
-
-    public String getTargetTemperature() {
-        return targetTemperature;
-    }
-
-    public void setTargetTemperature(String targetTemperature) {
-        this.targetTemperature = targetTemperature;
-    }
-
-    public String getCurrentTemperature() {
-        return currentTemperature;
-    }
-
-    public void setCurrentTemperature(String currentTemperature) {
-        this.currentTemperature = currentTemperature;
-    }
-
-    public void resetAllData(){
-        address = "";
-        serialNumber = "";
-        modelNumber = "";
-        nickName = "";
-        batteryLevel = "";
-        remainingTime ="";
-        targetTemperature = "";
-        currentTemperature = "";
+    public List<BluetoothGattService> getServices(String address){
 
         List<BluetoothGattService> bleGattServices = null;
+
+        if(address != null){
+            for(Device device : devices){
+                if(device.getAddress().equals(address)){
+                    Log.d(TAG, "Found ble services: " +  device.getAddress());
+                    bleGattServices = device.getBluetoothService();
+                    break;
+                }
+                else{
+                    // Do nothing
+                }
+            }
+        }
+
+        return bleGattServices;
     }
 }
 
