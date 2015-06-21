@@ -2,6 +2,7 @@ package com.firstbuild.androidapp.cookingMethod;
 
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
+
+import java.util.List;
 
 
 public class CookingMethodActivity extends ActionBarActivity {
@@ -77,6 +81,8 @@ public class CookingMethodActivity extends ActionBarActivity {
 
             // Initialize Ble manager
             BleManager.getInstance().initBleManager(this);
+
+            BleManager.getInstance().addListener(bleListener);
         }
     }
 
@@ -118,4 +124,29 @@ public class CookingMethodActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private BleListener bleListener = new BleListener() {
+        @Override
+        public void onScan(String action, String address) {
+            super.onScan(action, address);
+
+            Log.d(TAG, "[onScan] Action: " + action + ", address: " + address);
+        }
+
+        @Override
+        public void onConnectionStateChange(String address, String status) {
+            super.onConnectionStateChange(address, status);
+
+            Log.d(TAG, "[onConnectionStateChange] address: " + address + ", status: " + status);
+        }
+
+        @Override
+        public void onServicesDiscovered(String address, List<BluetoothGattService> bleGattServices) {
+            super.onServicesDiscovered(address, bleGattServices);
+
+            Log.d(TAG, "[onServicesDiscovered] address: " + address);
+
+            BleManager.getInstance().displayGattServices(address);
+        }
+    };
 }

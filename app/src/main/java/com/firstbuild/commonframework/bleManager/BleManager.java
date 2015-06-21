@@ -31,6 +31,7 @@ import com.firstbuild.commonframework.deviceManager.DeviceManager;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -67,7 +68,7 @@ public class BleManager {
     // Post Delayed handler
     private Handler handler = new Handler();
 
-    private String deviceAddress = null;
+    private String deviceAddress = "";
 
     private Context context = null;
 
@@ -124,6 +125,47 @@ public class BleManager {
         }
     }
 
+
+    /**
+     * Send update to subscribers
+     * @param listener subscriber
+     * @param args corresponding arguments
+     */
+    public void sendUpdate(String listener, Object... args){
+        Log.d(TAG, "sendUpdate: " + "IN");
+
+        // Clone hashmap to avoid java.util.ConcurrentModificationException
+        HashMap<String, BleListener> callbackClone = (HashMap) callbacks.clone();
+        for (Map.Entry<String, BleListener> entry : callbackClone.entrySet()) {
+            BleListener callback = entry.getValue();
+
+            if (callback != null && listener.equals("onScan")) {
+                callback.onScan((String) args[0], (String) args[1]);
+            }
+            else if (callback != null && listener.equals("onConnectionStateChanged")) {
+                callback.onConnectionStateChange((String) args[0], (String) args[1]);
+            }
+            else if (callback != null && listener.equals("onServicesDiscovered")) {
+                callback.onServicesDiscovered((String) args[0], (List<BluetoothGattService>) args[1]);
+            }
+//            else if (callback != null && listener.equals("onRosterUpdated")) {
+//                callback.onRosterUpdated((ArrayList<XmppRosterResponse>) args[0]);
+//            }
+//            else if (callback != null && listener.equals("onReceivedData")) {
+//                callback.onReceivedData((XmppDataResponse) args[0]);
+//            }
+//            else if (callback != null && listener.equals("onCheckCertificate")) {
+//                callback.onCheckCertificate((Boolean) args[0]);
+//            }
+//            else if (callback != null && listener.equals("onError")) {
+//                callback.onError((XmppError) args[0]);
+//            }
+            else{
+                // Do nothing
+            }
+        }
+    }
+
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -138,7 +180,9 @@ public class BleManager {
             }
 
             // Automatically connects to the device upon successful start-up initialization.
-            if (deviceAddress != null) {
+            if (!deviceAddress.equals("")) {
+
+                Log.d(TAG, "Address: " + deviceAddress);
                 bluetoothLeService.connect(deviceAddress);
             }
         }
@@ -218,6 +262,8 @@ public class BleManager {
                 stopScan();
             }
         }, SCAN_PERIOD);
+
+        sendUpdate("onScan", new Object[]{"start", ""});
     }
 
     /**
@@ -228,6 +274,8 @@ public class BleManager {
 
         isScanning = false;
         bluetoothAdapter.stopLeScan(leScanCallback);
+
+        sendUpdate("onScan", new Object[]{"stop", deviceAddress});
     }
 
     public void unregisterService(){
@@ -294,26 +342,33 @@ public class BleManager {
 
                 isConnected = true;
                 DeviceManager.getInstance().setAddress(address);
+
+                sendUpdate("onConnectionStateChanged", new Object[]{address, action});
             }
             else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.d(TAG, "BLE device is disconnected!");
 
                 isConnected = false;
                 DeviceManager.getInstance().resetAllData();
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+
+                sendUpdate("onConnectionStateChanged", new Object[]{address, action});
+            }
+            else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 Log.d(TAG, "BLE service discovered");
 
                 List<BluetoothGattService> bleGattServices = bluetoothLeService.getSupportedGattServices();
                 DeviceManager.getInstance().setServices(bleGattServices);
 
                 // Show all the supported services and characteristics on the user interface.
-                displayGattServices(address);
+//                displayGattServices(address);
 
                 // Stop Scan
                 stopScan();
 
                 // Stop GATT Server
                 stopGattServer();
+
+                sendUpdate("onServicesDiscovered", new Object[]{address, bleGattServices});
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 Log.d(TAG, "BLE data available");
@@ -331,7 +386,7 @@ public class BleManager {
         return intentFilter;
     }
 
-    private void displayGattServices(String address) {
+    public void displayGattServices(String address) {
         Log.d(TAG, "displayGattServices IN");
 
         List<BluetoothGattService> bleGattServices = DeviceManager.getInstance().getServices();
