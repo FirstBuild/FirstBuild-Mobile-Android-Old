@@ -18,11 +18,9 @@ public abstract class BleListener {
 
     public void onServicesDiscovered(final String address, final List<BluetoothGattService> bleGattServices){}
 
-    public void onCharacteristicWrite(BluetoothGatt gatt,
-                                      final BluetoothGattCharacteristic characteristic,
-                                      int status){}
+    public void onCharacteristicChanged(final String address, final String UUID, final String value){}
 
-    public void onCharacteristicRead(BluetoothGatt gatt,
-                                     final BluetoothGattCharacteristic characteristic,
-                                     int status){}
+    public void onCharacteristicWrite(final String address, final String UUID, final String value){}
+
+    public void onCharacteristicRead(final String address, final String UUID, final String value){}
 }

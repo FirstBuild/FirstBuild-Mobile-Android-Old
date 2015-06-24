@@ -10,6 +10,7 @@ package com.firstbuild.commonframework.bleManager;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
@@ -126,7 +127,6 @@ public class BleManager {
         }
     }
 
-
     /**
      * Send update to subscribers
      * @param listener subscriber
@@ -148,6 +148,9 @@ public class BleManager {
             }
             else if (callback != null && listener.equals("onServicesDiscovered")) {
                 callback.onServicesDiscovered((String) args[0], (List<BluetoothGattService>) args[1]);
+            }
+            else if (callback != null && listener.equals("onCharacteristicChanged")){
+                callback.onCharacteristicChanged((String) args[0], (String) args[1], (String) args[2]);
             }
             else{
                 // Do nothing
@@ -330,7 +333,7 @@ public class BleManager {
                 Log.d(TAG, "BLE device is connected!");
 
                 isConnected = true;
-                DeviceManager.getInstance().add(new Device(deviceAddress));
+                DeviceManager.getInstance().add(new Device(address));
 
                 sendUpdate("onConnectionStateChanged", new Object[]{address, action});
             }
@@ -338,7 +341,7 @@ public class BleManager {
                 Log.d(TAG, "BLE device is disconnected!");
 
                 isConnected = false;
-                DeviceManager.getInstance().remove(deviceAddress);
+                DeviceManager.getInstance().remove(address);
 
                 sendUpdate("onConnectionStateChanged", new Object[]{address, action});
             }
@@ -346,10 +349,10 @@ public class BleManager {
                 Log.d(TAG, "BLE service discovered");
 
                 List<BluetoothGattService> bleGattServices = bluetoothLeService.getSupportedGattServices();
-                DeviceManager.getInstance().setServices(deviceAddress, bleGattServices);
+                DeviceManager.getInstance().setServices(address, bleGattServices);
 
                 // Show all the supported services and characteristics on the user interface.
-//                displayGattServices(address);
+                displayGattServices(address);
 
                 // Stop Scan
                 stopScan();
@@ -361,7 +364,10 @@ public class BleManager {
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 Log.d(TAG, "BLE data available");
-//                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
+                Log.d(TAG, "Received Data: " + data);
+
+                sendUpdate("onCharacteristicChanged", new Object[]{address, data});
             }
         }
     };
@@ -401,6 +407,30 @@ public class BleManager {
         }
     }
 
+    public void readCharacteristics(String Uuid){
+        Log.d(TAG, "readCharacteristics IN");
+
+        BluetoothGattService service = new  BluetoothGattService(UUID.fromString(Uuid), BluetoothGattService.SERVICE_TYPE_PRIMARY);
+        BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(Uuid));
+        bluetoothLeService.readCharacteristic(characteristic);
+    }
+
+    public void writeCharateristics(String Uuid, byte[] value){
+
+        BluetoothGattService service = new BluetoothGattService(UUID.fromString(Uuid), BluetoothGattService.SERVICE_TYPE_PRIMARY);
+        BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(Uuid));
+
+        if (characteristic == null) {
+            Log.e(TAG, "char not found!");
+        }else{
+            characteristic.setValue(value);
+        }
+    }
+
+    public void disconnect(){
+        bluetoothLeService.disconnect();
+    }
+
     public void startGattServer() throws InterruptedException {
         Log.d(TAG, "startGattServer IN");
         BluetoothGattService service;
@@ -409,6 +439,8 @@ public class BleManager {
         Thread.sleep(10);
         service = new BluetoothGattService(UUID.fromString(GATT_SERVER_SERVICE_UUID), BluetoothGattService.SERVICE_TYPE_PRIMARY);
         bluetoothGattServer.addService(service);
+        Thread.sleep(100);
+        Log.d(TAG, "startGattServer OUT");
     }
 
     public void stopGattServer(){

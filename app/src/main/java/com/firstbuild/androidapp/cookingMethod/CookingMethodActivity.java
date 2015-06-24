@@ -96,6 +96,13 @@ public class CookingMethodActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onPause(){
+        Log.d(TAG, "onPaused IN");
+        BleManager.getInstance().disconnect();
+        super.onPause();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_cooking_method, menu);
