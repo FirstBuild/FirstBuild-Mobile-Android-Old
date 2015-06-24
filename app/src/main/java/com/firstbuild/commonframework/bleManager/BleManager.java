@@ -457,7 +457,7 @@ public class BleManager {
 
             super.onConnectionStateChange(device, status, newState);
         }
-
+ 
         @Override
         public void onServiceAdded(int status, BluetoothGattService service) {
             Log.d(TAG, "Our gatt server service was added.");
