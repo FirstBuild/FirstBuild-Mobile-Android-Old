@@ -42,7 +42,6 @@
             android:screenOrientation="portrait"
             android:label="@string/title_activity_sousvide" >
         </activity>
-        <service android:name="com.firstbuild.commonframework.bleManager.BluetoothLeService" android:enabled="true"/>
     </application>
 
 </manifest>

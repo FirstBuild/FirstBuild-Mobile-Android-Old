@@ -2,6 +2,7 @@ package com.firstbuild.androidapp.cookingMethod;
 
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
@@ -16,11 +17,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
+import com.firstbuild.commonframework.bleManager.BleValues;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class CookingMethodActivity extends ActionBarActivity {
@@ -91,14 +96,23 @@ public class CookingMethodActivity extends ActionBarActivity {
         super.onResume();
         Log.d(TAG, "onResume IN");
 
-        // Enable bluetooth feature in the system, and then start scan
-        BleManager.getInstance().enableBluetoothAndStartScan();
+        // Check bluetooth adapter. If the adapter is disabled, enable it
+        boolean result = BleManager.getInstance().isBluetoothEnabled();
+
+        if(!result){
+            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
+        }
+        else{
+            Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
+            BleManager.getInstance().startScan();
+        }
     }
 
     @Override
     protected void onPause(){
         Log.d(TAG, "onPaused IN");
-        BleManager.getInstance().disconnect();
         super.onPause();
     }
 
@@ -134,17 +148,56 @@ public class CookingMethodActivity extends ActionBarActivity {
 
     private BleListener bleListener = new BleListener() {
         @Override
-        public void onScan(String action, String address) {
-            super.onScan(action, address);
+        public void onScanStateChanged(int status) {
+            super.onScanStateChanged(status);
 
-            Log.d(TAG, "[onScan] Action: " + action + ", address: " + address);
+            Log.d(TAG, "[onScanStateChanged] status: " + status);
+
+            if(status == BleValues.START_SCAN){
+                Log.d(TAG, "Scanning BLE devices");
+            }
+            else{
+                Log.d(TAG, "Stop scanning BLE devices");
+            }
         }
 
         @Override
-        public void onConnectionStateChange(String address, String status) {
-            super.onConnectionStateChange(address, status);
+        public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
+            super.onScanDevices(bluetoothDevices);
 
-            Log.d(TAG, "[onConnectionStateChange] address: " + address + ", status: " + status);
+            Log.d(TAG, "onScanDevices IN");
+
+            Log.d(TAG, "bluetoothDevices size: " +  bluetoothDevices.size());
+            for (Map.Entry<String, BluetoothDevice> entry : bluetoothDevices.entrySet()) {
+
+                // Retrieves address and name
+                BluetoothDevice device = entry.getValue();
+                String address = device.getAddress();
+                String name = device.getName();
+
+                Log.d(TAG, "------------------------------------");
+                Log.d(TAG, "Device address: " + address);
+                Log.d(TAG, "Device name: " + name);
+
+                if(ParagonValues.TARGET_DEVICE_NAME.equals(name)){
+                    Log.d(TAG, "device found: " + device.getName());
+
+                    // Connect to device
+                    BleManager.getInstance().connect(address);
+
+                    // Stop ble device scanning
+                    BleManager.getInstance().stopScan();
+                    break;
+                }
+            }
+            Log.d(TAG, "====================================");
+        }
+
+        @Override
+        public void onConnectionStateChanged(final String address, final int status) {
+            super.onConnectionStateChanged(address, status);
+
+            Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
         }
 
         @Override
