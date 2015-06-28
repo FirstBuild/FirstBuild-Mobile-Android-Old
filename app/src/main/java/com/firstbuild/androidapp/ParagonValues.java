@@ -15,9 +15,9 @@ public class ParagonValues {
 
     //cooking specific characteristics
     public static final String CHARACTERISTIC_BURNER_STATUS             = "A1B9F907-D440-4278-97FE-0FBB4AEE93FD";
-    public static final String CHARACTERISTIC_TARGET_TEMPERATURE        = "71B1A100-E3AE-46FF-BB0A-E37D0BA79496";
     public static final String CHARACTERISTIC_ELAPSED_TIME              = "998142D1-658E-33E2-DFC0-32091E2354EC";
     public static final String CHARACTERISTIC_COOK_TIME                 = "C4510188-9062-4D28-97EF-4FB32FFE1AC5";
+    public static final String CHARACTERISTIC_TARGET_TEMPERATURE        = "71B1A100-E3AE-46FF-BB0A-E37D0BA79496";
     public static final String CHARACTERISTIC_CURRENT_TEMPERATURE       = "8F080B1C-7C3B-FBB9-584A-F0AFD57028F0";
 
     // Target device's name

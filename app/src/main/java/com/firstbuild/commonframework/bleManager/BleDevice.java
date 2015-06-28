@@ -1,26 +1,29 @@
-package com.firstbuild.commonframework.deviceManager;
+package com.firstbuild.commonframework.bleManager;
 
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
+import android.util.Log;
+
+import com.firstbuild.androidapp.ParagonValues;
 
 import java.util.List;
 
 /**
  * Created by RyanLee on 6/21/15/FW26.
  */
-public class Device {
+public class BleDevice {
     private String address = "";
-    private String serialNumber = "";
-    private String modelNumber = "";
     private String nickName = "";
     private String batteryLevel = "";
     private String remainingTime ="";
+    private String cookTime ="";
     private String targetTemperature = "";
     private String currentTemperature = "";
 
     private List<BluetoothGattService> bleGattServices = null;
 
-    public Device(String address){
-        this.address = address;
+    public BleDevice(){
+        // Default constructor
     }
 
     /**
@@ -38,42 +41,6 @@ public class Device {
     public void setNickName(String nickName) {
         if(nickName != null) {
             this.nickName = nickName;
-        }
-    }
-
-    /**
-     * Retrieves device's model number
-     * @return model number
-     */
-    public String getModelNumber() {
-        return modelNumber;
-    }
-
-    /**
-     * Set device's model number
-     * @param modelNumber model number
-     */
-    public void setModelNumber(String modelNumber) {
-        if(modelNumber != null) {
-            this.modelNumber = modelNumber;
-        }
-    }
-
-    /**
-     * Retrieves device's serial number
-     * @return serial number
-     */
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    /**
-     * Set device's serial number
-     * @param serialNumber serial number
-     */
-    public void setSerialNumber(String serialNumber) {
-        if(serialNumber != null) {
-            this.serialNumber = serialNumber;
         }
     }
 
@@ -176,6 +143,46 @@ public class Device {
     public void setBluetoothServices(List<BluetoothGattService> bleGattServices){
         if(bleGattServices != null) {
             this.bleGattServices = bleGattServices;
+
+            // Iterate services and characteristic and save values
+            for(BluetoothGattService service : bleGattServices){
+                for(BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
+
+                    if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL)){
+//                        this.batteryLevel = characteristic.getValue();
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_PROBE_FIRMWARE_INFO)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_SPECIAL_FEATURES)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_ERROR_STATE)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_APP_INFO)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_BURNER_STATUS)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_ELAPSED_TIME)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_COOK_TIME)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE)){
+
+                    }
+                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE)){
+
+                    }
+                }
+            }
         }
     }
 
@@ -189,8 +196,6 @@ public class Device {
 
     public void resetAllData(){
         address = "";
-        serialNumber = "";
-        modelNumber = "";
         nickName = "";
         batteryLevel = "";
         remainingTime ="";

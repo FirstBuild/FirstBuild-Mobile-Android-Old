@@ -50,7 +50,7 @@ public class CookingMethodActivity extends ActionBarActivity {
         findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.d(TAG, "Custom button clicked");
             }
         });
 
@@ -84,9 +84,10 @@ public class CookingMethodActivity extends ActionBarActivity {
                 // Do nothing
             }
 
-            // Initialize Ble manager
+            // Initialize ble manager
             BleManager.getInstance().initBleManager(this);
 
+            // Add ble event listener
             BleManager.getInstance().addListener(bleListener);
         }
     }
@@ -111,7 +112,7 @@ public class CookingMethodActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         Log.d(TAG, "onPaused IN");
         super.onPause();
     }
@@ -207,6 +208,27 @@ public class CookingMethodActivity extends ActionBarActivity {
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
 
             BleManager.getInstance().displayGattServices(address);
+        }
+
+        @Override
+        public void onCharacteristicRead(String address, String uuid, byte[] value) {
+            super.onCharacteristicRead(address, uuid, value);
+
+            Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
+        }
+
+        @Override
+        public void onCharacteristicWrite(String address, String uuid, byte[] value) {
+            super.onCharacteristicWrite(address, uuid, value);
+
+            Log.d(TAG, "[onCharacteristicWrite] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
+        }
+
+        @Override
+        public void onCharacteristicChanged(String address, String uuid, byte[] value) {
+            super.onCharacteristicChanged(address, uuid, value);
+
+            Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
         }
     };
 }
