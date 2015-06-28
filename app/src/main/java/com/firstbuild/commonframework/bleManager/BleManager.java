@@ -16,11 +16,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.ServiceConnection;
 import android.os.Handler;
-import android.os.IBinder;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -50,10 +47,10 @@ public class BleManager {
     // Post Delayed handler
     private Handler handler = new Handler();
     private Runnable stopScanRunnable = null;
-//    private String deviceAddress = "";
     private Context context = null;
     private HashMap<String, BleListener> callbacks = null;
 
+    // BleDevice Object variable
     private BleDevice bleDevice = new BleDevice();
 
     public static BleManager instance = new BleManager();
@@ -70,6 +67,8 @@ public class BleManager {
 
         this.context = context;
         bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+
+        // Get bluetooth adaptor
         bluetoothAdapter = bluetoothManager.getAdapter();
     }
 
@@ -274,6 +273,8 @@ public class BleManager {
         Log.d(TAG, "startScan IN");
 
         isScanning = true;
+
+        // Set callback to leScanCallback
         bluetoothAdapter.startLeScan(leScanCallback);
 
         // Stops scanning after a pre-defined scan period.
@@ -291,6 +292,7 @@ public class BleManager {
         isScanning = false;
         bluetoothAdapter.stopLeScan(leScanCallback);
 
+        // Stop postDelayed method
         if(stopScanRunnable != null){
             Log.d(TAG, "Remove delayed stopScan task");
             handler.removeCallbacks(stopScanRunnable);
@@ -300,6 +302,7 @@ public class BleManager {
     }
 
     private Runnable setStopScanRunnable(){
+        // Create runnable object for stop scanning
         stopScanRunnable = new Runnable() {
             @Override
             public void run() {
@@ -452,6 +455,7 @@ public class BleManager {
     private void printGattValue(byte[] values){
         StringBuilder hexValue = new StringBuilder();
 
+        // Print value in hexa decimal format
         System.out.print("Value: ");
         for(byte value : values){
             hexValue.append(String.format("0x%02x ", value));
@@ -561,7 +565,9 @@ public class BleManager {
         }
 
         @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+        public void onCharacteristicWrite(BluetoothGatt gatt,
+                                          BluetoothGattCharacteristic characteristic,
+                                          int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
             Log.d(TAG, "onCharacteristicWrite");
 
