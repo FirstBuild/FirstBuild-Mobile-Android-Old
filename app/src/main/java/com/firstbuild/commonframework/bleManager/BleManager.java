@@ -61,6 +61,10 @@ public class BleManager {
         // Default constructor
     }
 
+    /**
+     * Initialize BleManager
+     * @param context activity's context
+     */
     public void initBleManager(Context context){
         Log.d(TAG, "initBleManager IN");
 
@@ -71,6 +75,10 @@ public class BleManager {
         bluetoothAdapter = bluetoothManager.getAdapter();
     }
 
+    /**
+     * Add a listener to subscribe ble event
+     * @param listener listener instance
+     */
     public void addListener(BleListener listener){
         if (callbacks == null) {
             callbacks = new HashMap<String, BleListener>();
@@ -84,6 +92,10 @@ public class BleManager {
         callbacks.put(listener.toString(), listener);
     }
 
+    /**
+     * Remove a listener for ble event
+     * @param listener listener instance
+     */
     public void removeListener(BleListener listener){
         if (callbacks != null && !callbacks.isEmpty()) {
             callbacks.remove(listener.toString());
