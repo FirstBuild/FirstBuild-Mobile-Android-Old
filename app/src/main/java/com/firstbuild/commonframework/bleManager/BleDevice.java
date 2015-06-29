@@ -1,29 +1,63 @@
+/**
+ * @file BleDevice.java
+ * @brief This class keeps BLE device's information
+ * @author Ryan Lee (strike77@gmail.com)
+ * @date Jun/29/2015
+ */
+
 package com.firstbuild.commonframework.bleManager;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.util.Log;
-
-import com.firstbuild.androidapp.ParagonValues;
 
 import java.util.List;
 
-/**
- * Created by RyanLee on 6/21/15/FW26.
- */
-public class BleDevice {
-    private String address = "";
-    private String nickName = "";
-    private String batteryLevel = "";
-    private String remainingTime ="";
-    private String cookTime ="";
-    private String targetTemperature = "";
-    private String currentTemperature = "";
 
+public class BleDevice {
+    // Keeping ble device's address
+    private String address = "";
+
+    // Keeping ble device's nick name
+    private String nickName = "";
+
+    // Keeping bleGattServices
     private List<BluetoothGattService> bleGattServices = null;
 
+    /**
+     * Default constructor
+     */
     public BleDevice(){
         // Default constructor
+    }
+
+    /**
+     * Retrieves characteristic value
+     * @param characteristicUuid a desired characteristic's UUID
+     * @return a desired characteristic's value
+     */
+    public byte[] getValue(String characteristicUuid){
+
+        byte[] result = null;
+
+        // Check bleGattServices size.
+        if(bleGattServices != null && bleGattServices.size() > 0) {
+
+            // Iterate services and characteristic and find a desired value
+            for (BluetoothGattService service : bleGattServices) {
+                for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+
+                    if (characteristic.getUuid().toString().equals(characteristicUuid)) {
+                        // Characteristic found
+                        result = characteristic.getValue();
+                    }
+                }
+            }
+        }
+        else{
+            // Do nothing
+        }
+
+        return result;
     }
 
     /**
@@ -63,126 +97,12 @@ public class BleDevice {
     }
 
     /**
-     * Retrieves ble device's battery level in percentage
-     * @return battery level
-     */
-    public String getBatteryLevel() {
-        return batteryLevel;
-    }
-
-    /**
-     * Set battery level read from a ble device
-     * @param batteryLevel battery level in percentage
-     */
-    public void setBatteryLevel(String batteryLevel) {
-        if(batteryLevel != null) {
-            this.batteryLevel = batteryLevel;
-        }
-    }
-
-    /**
-     * Retrieves current remaining cook time
-     * @return remaining time
-     */
-    public String getRemainingTime() {
-        return remainingTime;
-    }
-
-    /**
-     * Set remaining cook time.
-     * @param remainingTime remaining time fed from a ble device
-     */
-    public void setRemainingTime(String remainingTime) {
-        if(remainingTime != null){
-            this.remainingTime = remainingTime;
-        }
-    }
-
-    /**
-     * Retrieves target temperature
-     * @return target temperature
-     */
-    public String getTargetTemperature() {
-        return targetTemperature;
-    }
-
-    /**
-     * Set target temperature provided by a app
-     * @param targetTemperature target Temperature
-     */
-    public void setTargetTemperature(String targetTemperature) {
-        if (targetTemperature != null){
-            this.targetTemperature = targetTemperature;
-        }
-
-        // TODO send message to a ble device
-    }
-
-    /**
-     * Retrieve current temperature a ble device reads
-     * @return current temperature
-     */
-    public String getCurrentTemperature() {
-        return currentTemperature;
-    }
-
-    /**
-     * Set current temperature a ble device reads
-     * @param currentTemperature current temperature
-     */
-    public void setCurrentTemperature(String currentTemperature) {
-        if(currentTemperature != null) {
-            this.currentTemperature = currentTemperature;
-        }
-    }
-
-    /**
      * Set bluetooth Gatt service
      * @param bleGattServices services retrieves from bluetooth device
      */
     public void setBluetoothServices(List<BluetoothGattService> bleGattServices){
         if(bleGattServices != null) {
             this.bleGattServices = bleGattServices;
-
-            // Iterate services and characteristic and save values
-            for(BluetoothGattService service : bleGattServices){
-                for(BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
-
-                    if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL)){
-//                        this.batteryLevel = characteristic.getValue();
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_PROBE_FIRMWARE_INFO)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_SPECIAL_FEATURES)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_ERROR_STATE)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_APP_INFO)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_BURNER_STATUS)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_ELAPSED_TIME)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_COOK_TIME)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE)){
-
-                    }
-                    else if(characteristic.getUuid().toString().equals(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE)){
-
-                    }
-                }
-            }
         }
     }
 
@@ -194,13 +114,13 @@ public class BleDevice {
         return bleGattServices;
     }
 
+    /**
+     * reset all the ble related variables
+     */
     public void resetAllData(){
+        // Clear all the data
         address = "";
         nickName = "";
-        batteryLevel = "";
-        remainingTime ="";
-        targetTemperature = "";
-        currentTemperature = "";
         bleGattServices = null;
     }
 }

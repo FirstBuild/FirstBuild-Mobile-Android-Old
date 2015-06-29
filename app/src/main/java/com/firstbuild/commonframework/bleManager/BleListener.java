@@ -1,3 +1,10 @@
+/**
+ * @file BleListener.java
+ * @brief This class contains callback methods for handling important ble related event.
+ * @author Ryan Lee (strike77@gmail.com)
+ * @date Jun/29/2015
+ */
+
 package com.firstbuild.commonframework.bleManager;
 
 import android.bluetooth.BluetoothDevice;
@@ -10,9 +17,7 @@ import android.content.Intent;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by ryanlee on 3/17/15.
- */
+
 public abstract class BleListener {
     public void onScanDevices(final HashMap<String, BluetoothDevice> bluetoothDevices){};
 

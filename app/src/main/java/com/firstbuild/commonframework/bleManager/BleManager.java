@@ -1,9 +1,8 @@
 /**
  * @file BleManager.java
  * @brief BleManager handles all kind of interface with ble devices
- * @author Ryan Lee - 320006284
+ * @author Ryan Lee (strike77@gmail.com)
  * @date May/22/2015
- * Copyright (c) 2014 General Electric Corporation - Confidential - All rights reserved.
  */
 
 package com.firstbuild.commonframework.bleManager;
