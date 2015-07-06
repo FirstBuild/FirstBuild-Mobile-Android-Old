@@ -19,6 +19,7 @@ public class ProductManager {
 
     private void read() {
 
+        //TODO: currently added for test. It should come from internal storage.
         products.add(new ProductInfo(1, "1111", "MyParagon"));
         products.add(new ProductInfo(0, "2222", "MyChillHub"));
 
@@ -36,6 +37,10 @@ public class ProductManager {
         return products.get(index);
     }
 
+    /**
+     * Once added product app store these
+     * @param productInfo
+     */
     public void addProduct(ProductInfo productInfo){
         products.add(productInfo);
 
