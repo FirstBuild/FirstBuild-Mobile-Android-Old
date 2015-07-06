@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#404143</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimary">#d1d4d5</color>
+    <color name="colorPrimaryDark">#404143</color>
     <color name="colorAccent">#00b5cc</color>
     <color name="colorHighlight">#de4a32</color>
     <color name="colorPrimaryText">#f1f2f2</color>
     <color name="colorSecondaryText">#6d6e71</color>
     <color name="colorDivider">#B6B6B6</color>
+
+    <color name="colorParagonPrimary">#404143</color>
+    <color name="colorParagonPrimaryDark">#000000</color>
+    <color name="colorParagonAccent">#00b5cc</color>
+    <color name="colorParagonHighlight">#de4a32</color>
+    <color name="colorParagonPrimaryText">#f1f2f2</color>
+    <color name="colorParagonSecondaryText">#6d6e71</color>
+    <color name="colorParagonDivider">#B6B6B6</color>
 
     <color name="colorKitchenPrimary">#9E9E9E</color>
     <color name="colorKitchenPrimaryDark">#616161</color>

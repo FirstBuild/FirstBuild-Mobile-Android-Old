@@ -25,7 +25,7 @@
             android:gravity="center_horizontal"
             android:text="Now Cooking"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="@color/colorParagonPrimaryText"
             android:textSize="41sp"
             ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="Steak (medium-rare) at 140.5°F"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="@color/colorParagonPrimaryText"
             android:textSize="21sp"
             ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -90,7 +90,7 @@
                         android:gravity="center_horizontal"
                         android:text="1"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="50sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -101,7 +101,7 @@
                         android:gravity="center_horizontal"
                         android:text="H"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="25sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -112,7 +112,7 @@
                         android:gravity="center_horizontal"
                         android:text=":"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="50sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -124,7 +124,7 @@
                         android:gravity="center_horizontal"
                         android:text="34"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="50sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -135,7 +135,7 @@
                         android:gravity="center_horizontal"
                         android:text="min"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="25sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -150,7 +150,7 @@
                     android:gravity="center_horizontal"
                     android:text="Time Remaining"
                     android:textAllCaps="true"
-                    android:textColor="@color/colorSecondaryText"
+                    android:textColor="@color/colorParagonSecondaryText"
                     android:textSize="19sp"
                     ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -161,7 +161,7 @@
                     android:layout_below="@id/layout_timer_remain"
                     android:gravity="center_horizontal"
                     android:text="Fool will be done at"
-                    android:textColor="@color/colorPrimaryText"
+                    android:textColor="@color/colorParagonPrimaryText"
                     android:textSize="19sp"
                     android:layout_marginTop="-10dp"
                     ge:typeface="fonts/PTSansNarrowBold" />
@@ -179,7 +179,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="9:37"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="32sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -189,7 +189,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:text="AM"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="19sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 

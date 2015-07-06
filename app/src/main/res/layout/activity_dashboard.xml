@@ -1,0 +1,60 @@
+<FrameLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.firstbuild.androidapp.dashboard.DashboardActivity"
+    xmlns:ge="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/app_bar"
+            layout="@layout/include_app_bar_1b"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/nav_drawer_header_height">
+
+            <LinearLayout
+                android:id="@+id/layoutMyProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.firstbuild.viewUtil.StyledTextView
+                    android:id="@+id/textMyProducts"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:text="MY PRODUCTS"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="19sp"
+                    ge:typeface="fonts/PTSansNarrowRegular"/>
+
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#6e6a6b" />
+
+            </LinearLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/listProduct"
+                android:layout_below="@+id/layoutMyProducts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</FrameLayout>
