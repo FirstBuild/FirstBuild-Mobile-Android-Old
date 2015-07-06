@@ -16,6 +16,7 @@ import com.firstbuild.androidapp.Paragon.ParagonMainActivity;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.commonframework.bleManager.BleManager;
 
 import java.util.ArrayList;
 
@@ -65,7 +66,7 @@ public class DashboardActivity extends ActionBarActivity implements DashboardAda
     protected void onResume() {
         super.onResume();
 
-
+        BleManager.getInstance().disconnect();
     }
 
     @Override

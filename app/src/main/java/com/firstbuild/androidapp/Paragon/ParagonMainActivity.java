@@ -93,7 +93,13 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
             BleManager.getInstance().startScan();
         }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        BleManager.getInstance().disconnect();
     }
 
     @Override

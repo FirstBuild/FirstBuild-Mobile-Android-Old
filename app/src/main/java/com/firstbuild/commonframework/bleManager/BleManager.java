@@ -198,9 +198,6 @@ public class BleManager {
         // Disconnect bluetooth connection
         if (bluetoothGatt != null) {
             bluetoothGatt.disconnect();
-
-            bluetoothGatt = null;
-            bluetoothAdapter = null;
         }
         else{
             // Do nothing
