@@ -1,9 +1,8 @@
-package com.firstbuild.androidapp.sousvideUI;
+package com.firstbuild.androidapp.Paragon;
 
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,18 +10,20 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.commonframework.bleManager.BleManager;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class BeefFragment extends Fragment implements View.OnTouchListener {
 
-    private final String DONENESS_R = "Rare";
-    private final String DONENESS_MR = "Medium-Rare";
-    private final String DONENESS_M = "Medium";
-    private final String DONENESS_MW = "Medium-Well";
-    private final String DONENESS_W = "Well";
+    private final int DONENESS_R = 0;
+    private final int DONENESS_MR = 1;
+    private final int DONENESS_M = 2;
+    private final int DONENESS_MW = 3;
+    private final int DONENESS_W = 4;
 
     private String TAG = BeefFragment.class.getSimpleName();
     private int xDelta;
@@ -34,6 +35,11 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
     private TextView textDoneness;
     private TextView textThickness;
     private int thicknessIndex = 0;
+
+    private int targetTime;
+    private int targetTemp;
+    private float setThickness;
+    private int setDoneness;
 
     public BeefFragment() {
         // Required empty public constructor
@@ -58,11 +64,12 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().
-                        beginTransaction().
-                        replace(R.id.frame_content, new ReadyToPreheatFragment()).
-                        addToBackStack(null).
-                        commit();
+                ParagonMainActivity activity = (ParagonMainActivity) getActivity();
+
+                //TODO: Should convert the target temp value properly.
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, targetTemp );
+
+                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_READY_PREHEAT);
             }
         });
 
@@ -70,39 +77,45 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
-                textDoneness.setText(DONENESS_R);
+                updateUiDoneness(DONENESS_R);
             }
         });
         view.findViewById(R.id.doneness_mr).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
-                textDoneness.setText(DONENESS_MR);
+                updateUiDoneness(DONENESS_MR);
             }
         });
         view.findViewById(R.id.doneness_m).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
-                textDoneness.setText(DONENESS_M);
+                updateUiDoneness(DONENESS_M);
             }
         });
         view.findViewById(R.id.doneness_mw).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
-                textDoneness.setText(DONENESS_MW);
+                updateUiDoneness(DONENESS_MW);
             }
         });
         view.findViewById(R.id.doneness_w).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDonenessChanged(v);
-                textDoneness.setText(DONENESS_W);
+                updateUiDoneness(DONENESS_W);
             }
         });
 
         return view;
+    }
+
+    private void updateUiDoneness(int doneness) {
+        setDoneness = doneness;
+        String strDoneness = getResources().getStringArray(R.array.string_doneness)[setDoneness];
+        textDoneness.setText(strDoneness);
     }
 
     public void onDonenessChanged(View v) {
@@ -136,19 +149,23 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
 
                     if (posX < widthGrid) {
                         layoutParams.leftMargin = 0;
-                        textDoneness.setText(DONENESS_R);
-                    } else if (widthGrid <= posX && posX < widthGrid * 2) {
+                        updateUiDoneness(DONENESS_R);
+                    }
+                    else if (widthGrid <= posX && posX < widthGrid * 2) {
                         layoutParams.leftMargin = widthGrid;
-                        textDoneness.setText(DONENESS_MR);
-                    } else if (widthGrid * 2 <= posX && posX < widthGrid * 3) {
+                        updateUiDoneness(DONENESS_MR);
+                    }
+                    else if (widthGrid * 2 <= posX && posX < widthGrid * 3) {
                         layoutParams.leftMargin = widthGrid * 2;
-                        textDoneness.setText(DONENESS_M);
-                    } else if (widthGrid * 3 <= posX && posX < widthGrid * 4) {
+                        updateUiDoneness(DONENESS_M);
+                    }
+                    else if (widthGrid * 3 <= posX && posX < widthGrid * 4) {
                         layoutParams.leftMargin = widthGrid * 3;
-                        textDoneness.setText(DONENESS_MW);
-                    } else {
+                        updateUiDoneness(DONENESS_MW);
+                    }
+                    else {
                         layoutParams.leftMargin = widthGrid * 4;
-                        textDoneness.setText(DONENESS_W);
+                        updateUiDoneness(DONENESS_W);
                     }
 
                     layoutParams.rightMargin = -250;
@@ -179,14 +196,16 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
                         imgMeat.setLayoutParams(layoutParamsMeat);
 
                         thicknessIndex = (int) (posY / (maxHeight / 8.0));
-                        Log.d(TAG, "Thickness Index  :" + thicknessIndex);
+//                        Log.d(TAG, "Thickness Index  :" + thicknessIndex);
 
                         String[] arrayThickness = getResources().getStringArray(R.array.string_thickness);
 
-                        textThickness.setText(arrayThickness[thicknessIndex]+" Inches Thick");
+                        textThickness.setText(arrayThickness[thicknessIndex] + " Inches Thick");
+                        setThickness = Float.parseFloat(arrayThickness[thicknessIndex]);
                     }
 
-                } else if (v.getId() == R.id.doneness_knob) {           // Slide for doneness knob.
+                }
+                else if (v.getId() == R.id.doneness_knob) {           // Slide for doneness knob.
 //                    Log.d(TAG, "ACTION_MOVE " + X + ", " + xDelta + ", " + (X - xDelta));
 
                     if (0 < X - xDelta && X - xDelta < (containerDoneness.getWidth() - v.getWidth())) {
@@ -204,6 +223,11 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
     }
 
     private void calcuTimeTemp() {
+        targetTemp = 0;
+        targetTime = 0;
+
+        //TODO: Should make a hash table for the temp/ timer.
+
 //        @134.5: @{
 //            @0.2:@[@1,@00],
 //            @0.4:@[@1,@15],

@@ -1,8 +1,9 @@
-package com.firstbuild.androidapp.cookingMethod;
+package com.firstbuild.androidapp.Paragon;
 
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import com.firstbuild.androidapp.R;
  */
 public class Step1Fragment extends Fragment {
 
+
+    private String TAG = Step1Fragment.class.getSimpleName();
 
     public Step1Fragment() {
         // Required empty public constructor
@@ -28,12 +31,17 @@ public class Step1Fragment extends Fragment {
         view.findViewById(R.id.step1_sousvide).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().
-                        beginTransaction().
-                        replace(R.id.frame_content, new Step2Fragment()).
-                        commit();
+                ((ParagonMainActivity)getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_METHOD_2);
             }
         });
+
+        view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Custom button clicked");
+            }
+        });
+
 
         return view;
     }

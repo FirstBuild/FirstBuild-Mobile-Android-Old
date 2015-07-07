@@ -1,13 +1,7 @@
 package com.firstbuild.androidapp.cookingMethod;
 
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,17 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import com.firstbuild.androidapp.ParagonValues;
+import com.firstbuild.androidapp.Paragon.Step1Fragment;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.commonframework.bleManager.BleListener;
-import com.firstbuild.commonframework.bleManager.BleManager;
-import com.firstbuild.commonframework.bleManager.BleValues;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class CookingMethodActivity extends ActionBarActivity {

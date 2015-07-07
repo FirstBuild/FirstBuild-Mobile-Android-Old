@@ -377,7 +377,7 @@ public class BleManager {
             for(BluetoothGattService service : bleGattServices){
                 for(BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
 
-                    if(characteristic.getUuid().toString().equals(characteristicsUuid)){
+                    if(characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)){
                         Log.d(TAG, "Found Characteristic: " + characteristic.getUuid().toString());
                         result = bluetoothGatt.readCharacteristic(characteristic);
                         break;
@@ -412,7 +412,7 @@ public class BleManager {
             for(BluetoothGattService service : bleGattServices){
                 for(BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
 
-                    if(characteristic.getUuid().toString().equals(characteristicsUuid)){
+                    if(characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)){
                         Log.d(TAG, "Found Characteristic: " + characteristic.getUuid().toString());
 
                         characteristic.setValue(values);
@@ -429,10 +429,10 @@ public class BleManager {
     /**
      * Enables or disables notification on a give characteristic.
      *
-     * @param characteristic Characteristic to act on.
+     * @param characteristicsUuid Characteristic to act on.
      * @param enabled If true, enable notification.  False otherwise.
      */
-    public boolean setCharacteristicNotification(BluetoothGattCharacteristic characteristic,
+    public boolean setCharacteristicNotification(final String characteristicsUuid,
                                               boolean enabled) {
         Log.d(TAG, "setCharacteristicNotification IN");
 
@@ -444,8 +444,23 @@ public class BleManager {
             result = false;
         }
         else {
-            // Set notification
-            result = bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+
+            // Read a value from the characteristic
+            List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
+
+            // Iterate services and characteristic
+            for(BluetoothGattService service : bleGattServices){
+                for(BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
+
+                    if(characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)){
+                        Log.d(TAG, "Found Characteristic for notification: " + characteristic.getUuid().toString());
+
+                        // Set notification
+                        result = bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+                        break;
+                    }
+                }
+            }
         }
 
         return result;

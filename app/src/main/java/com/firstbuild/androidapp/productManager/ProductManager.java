@@ -25,10 +25,17 @@ public class ProductManager {
 
     }
 
+    /**
+     * Store product information into intenal storage.
+     */
     private void save(){
 
     }
 
+    /**
+     * Get the number of product.
+     * @return Number of product.
+     */
     public int getSize(){
         return products.size();
     }
@@ -38,7 +45,7 @@ public class ProductManager {
     }
 
     /**
-     * Once added product app store these
+     * Once add a product app store its information into internal storage.
      * @param productInfo
      */
     public void addProduct(ProductInfo productInfo){

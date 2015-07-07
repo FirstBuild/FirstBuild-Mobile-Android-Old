@@ -1,5 +1,7 @@
 package com.firstbuild.androidapp.Paragon;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
@@ -7,8 +9,9 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.sousvideUI.ReadyToPreheatFragment;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
@@ -29,11 +33,106 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
+    private ParagonSteps currentStep = ParagonSteps.STEP_COOKING_METHOD_1;
+    private BleListener bleListener = new BleListener() {
+        @Override
+        public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
+            super.onScanDevices(bluetoothDevices);
+
+            Log.d(TAG, "onScanDevices IN");
+
+            Log.d(TAG, "bluetoothDevices size: " + bluetoothDevices.size());
+            for (Map.Entry<String, BluetoothDevice> entry : bluetoothDevices.entrySet()) {
+
+                // Retrieves address and name
+                BluetoothDevice device = entry.getValue();
+                String address = device.getAddress();
+                String name = device.getName();
+
+                Log.d(TAG, "------------------------------------");
+                Log.d(TAG, "Device address: " + address);
+                Log.d(TAG, "Device name: " + name);
+
+                if (ParagonValues.TARGET_DEVICE_NAME.equals(name)) {
+                    Log.d(TAG, "device found: " + device.getName());
+
+                    // Connect to device
+                    BleManager.getInstance().connect(address);
+
+                    // Stop ble device scanning
+                    BleManager.getInstance().stopScan();
+
+                    nextStep(ParagonSteps.STEP_COOKING_METHOD_1);
+                    break;
+                }
+            }
+            Log.d(TAG, "====================================");
+        }
+
+        @Override
+        public void onScanStateChanged(int status) {
+            super.onScanStateChanged(status);
+
+            Log.d(TAG, "[onScanStateChanged] status: " + status);
+
+            if (status == BleValues.START_SCAN) {
+                Log.d(TAG, "Scanning BLE devices");
+            }
+            else {
+                Log.d(TAG, "Stop scanning BLE devices");
+            }
+        }
+
+        @Override
+        public void onConnectionStateChanged(final String address, final int status) {
+            super.onConnectionStateChanged(address, status);
+
+            Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
+        }
+
+        @Override
+        public void onServicesDiscovered(String address, List<BluetoothGattService> bleGattServices) {
+            super.onServicesDiscovered(address, bleGattServices);
+
+            Log.d(TAG, "[onServicesDiscovered] address: " + address);
+
+            BleManager.getInstance().displayGattServices(address);
+
+            // Set notification
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+        }
+
+        @Override
+        public void onCharacteristicRead(String address, String uuid, byte[] value) {
+            super.onCharacteristicRead(address, uuid, value);
+
+            Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
+        }
+
+        @Override
+        public void onCharacteristicWrite(String address, String uuid, byte[] value) {
+            super.onCharacteristicWrite(address, uuid, value);
+
+            Log.d(TAG, "[onCharacteristicWrite] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
+        }
+
+        @Override
+        public void onCharacteristicChanged(String address, String uuid, byte[] value) {
+            super.onCharacteristicChanged(address, uuid, value);
+
+            Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paragon_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+
 
         // Use this check to determine whether BLE is supported on the device. Then
         // you can selectively disable BLE-related features.
@@ -78,31 +177,6 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Check bluetooth adapter. If the adapter is disabled, enable it
-        boolean result = BleManager.getInstance().isBluetoothEnabled();
-
-        if(!result){
-            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
-        }
-        else{
-            Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
-            BleManager.getInstance().startScan();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        BleManager.getInstance().disconnect();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -117,91 +191,89 @@ public class ParagonMainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-    private BleListener bleListener = new BleListener() {
-        @Override
-        public void onScanStateChanged(int status) {
-            super.onScanStateChanged(status);
+        // Check bluetooth adapter. If the adapter is disabled, enable it
+        boolean result = BleManager.getInstance().isBluetoothEnabled();
 
-            Log.d(TAG, "[onScanStateChanged] status: " + status);
-
-            if(status == BleValues.START_SCAN){
-                Log.d(TAG, "Scanning BLE devices");
-            }
-            else{
-                Log.d(TAG, "Stop scanning BLE devices");
-            }
+        if (!result) {
+            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
+        }
+        else {
+            Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
+            BleManager.getInstance().startScan();
         }
 
-        @Override
-        public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
-            super.onScanDevices(bluetoothDevices);
+    }
 
-            Log.d(TAG, "onScanDevices IN");
 
-            Log.d(TAG, "bluetoothDevices size: " +  bluetoothDevices.size());
-            for (Map.Entry<String, BluetoothDevice> entry : bluetoothDevices.entrySet()) {
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
-                // Retrieves address and name
-                BluetoothDevice device = entry.getValue();
-                String address = device.getAddress();
-                String name = device.getName();
+        FragmentManager fm = getFragmentManager();
 
-                Log.d(TAG, "------------------------------------");
-                Log.d(TAG, "Device address: " + address);
-                Log.d(TAG, "Device name: " + name);
+        if (fm.getBackStackEntryCount() > 1) {
+            fm.popBackStack();
+        } else {
+            finish();
+        }
+    }
 
-                if(ParagonValues.TARGET_DEVICE_NAME.equals(name)){
-                    Log.d(TAG, "device found: " + device.getName());
+    public void nextStep(ParagonSteps step) {
+        Fragment fragment = null;
 
-                    // Connect to device
-                    BleManager.getInstance().connect(address);
+        switch (step) {
+            case STEP_COOKING_METHOD_1:
+                fragment = new Step1Fragment();
+                break;
 
-                    // Stop ble device scanning
-                    BleManager.getInstance().stopScan();
-                    break;
-                }
-            }
-            Log.d(TAG, "====================================");
+            case STEP_COOKING_METHOD_2:
+                fragment = new Step2Fragment();
+                break;
+
+            case STEP_SOUSVIDE_BEEF:
+                fragment = new BeefFragment();
+                break;
+
+            case STEP_SOUSVIDE_READY_PREHEAT:
+                fragment = new ReadyToPreheatFragment();
+                break;
+
+            default:
+                break;
+
         }
 
-        @Override
-        public void onConnectionStateChanged(final String address, final int status) {
-            super.onConnectionStateChanged(address, status);
+        if(fragment != null){
+            getFragmentManager().
+                    beginTransaction().
+                    replace(R.id.frame_content, fragment).
+                    addToBackStack(null).
+                    commit();
+        }
+        else{
 
-            Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
         }
 
-        @Override
-        public void onServicesDiscovered(String address, List<BluetoothGattService> bleGattServices) {
-            super.onServicesDiscovered(address, bleGattServices);
 
-            Log.d(TAG, "[onServicesDiscovered] address: " + address);
 
-            BleManager.getInstance().displayGattServices(address);
-        }
 
-        @Override
-        public void onCharacteristicRead(String address, String uuid, byte[] value) {
-            super.onCharacteristicRead(address, uuid, value);
+    }
 
-            Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
-        }
-
-        @Override
-        public void onCharacteristicWrite(String address, String uuid, byte[] value) {
-            super.onCharacteristicWrite(address, uuid, value);
-
-            Log.d(TAG, "[onCharacteristicWrite] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
-        }
-
-        @Override
-        public void onCharacteristicChanged(String address, String uuid, byte[] value) {
-            super.onCharacteristicChanged(address, uuid, value);
-
-            Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
-        }
-    };
+    public enum ParagonSteps {
+        STEP_COOKING_METHOD_1,
+        STEP_COOKING_METHOD_2,
+        STEP_SOUSVIDE_BEEF,
+        STEP_SOUSVIDE_READY_PREHEAT,
+        STEP_SOUSVIDE_PREHEATING,
+        STEP_SOUSVIDE_READY_COOK,
+        STEP_SOUSVIDE_COOKING,
+    }
 
 
 }

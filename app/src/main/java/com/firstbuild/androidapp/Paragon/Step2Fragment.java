@@ -1,22 +1,21 @@
-package com.firstbuild.androidapp.cookingMethod;
+package com.firstbuild.androidapp.Paragon;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.SplashActivity;
-import com.firstbuild.androidapp.sousvideUI.SousvideActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class Step2Fragment extends Fragment {
 
+    private String TAG = Step2Fragment.class.getSimpleName();
 
     public Step2Fragment() {
         // Required empty public constructor
@@ -32,11 +31,20 @@ public class Step2Fragment extends Fragment {
         view.findViewById(R.id.step2_beef).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SousvideActivity.class);
-                startActivity(intent);
+                ((ParagonMainActivity)getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_BEEF);
+//                Intent intent = new Intent(getActivity(), SousvideActivity.class);
+//                startActivity(intent);
 
             }
         });
+
+        view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Custom button clicked");
+            }
+        });
+
 
         return view;
     }
