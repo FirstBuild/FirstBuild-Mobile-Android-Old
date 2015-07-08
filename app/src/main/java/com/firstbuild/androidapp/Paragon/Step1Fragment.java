@@ -42,7 +42,12 @@ public class Step1Fragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "Custom button clicked1");
                 // For read test purpose - by Ryan
-                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
+//                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
+
+                byte[] sendData = new byte[2];
+                sendData[0] = (byte)58;
+                sendData[1] = (byte)152;
+                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, sendData);
             }
         });
 

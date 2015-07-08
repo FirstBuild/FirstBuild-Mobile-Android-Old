@@ -139,7 +139,7 @@ public class BleManager {
                 callback.onCharacteristicRead((String) args[0], (String) args[1], (byte[]) args[2]);
             }
             else if(callback != null && listener.equals("onCharacteristicWrite")){
-                callback.onCharacteristicRead((String) args[0], (String) args[1], (byte[]) args[2]);
+                callback.onCharacteristicWrite((String) args[0], (String) args[1], (byte[]) args[2]);
             }
             else if(callback != null && listener.equals("onDescriptorWrite")){
                 callback.onDescriptorWrite((String) args[0], (String) args[1], (byte[]) args[2]);
