@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.firstbuild.androidapp.Paragon.ParagonMainActivity;
 import com.firstbuild.androidapp.R;
 
 /**
@@ -22,6 +23,7 @@ public class PreheatingFragment extends Fragment {
     private Runnable runnable;
     private View imgPulse;
     private View containerCurrentTemp;
+    private float scaleTempIndicator = 10.0f;
 
     public PreheatingFragment() {
         // Required empty public constructor
@@ -77,5 +79,13 @@ public class PreheatingFragment extends Fragment {
         imgPulse.setLayoutParams(layoutParams);
     }
 
+    public void updateUiCurrentTemp(){
+        int delta = ((ParagonMainActivity)getActivity()).targetTemp - ((ParagonMainActivity)getActivity()).currentTemp;
+
+        RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) containerCurrentTemp.getLayoutParams();
+        lParams.topMargin = (int)(delta * scaleTempIndicator);
+
+        containerCurrentTemp.invalidate();
+    }
 
 }

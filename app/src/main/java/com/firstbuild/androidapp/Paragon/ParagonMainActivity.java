@@ -34,6 +34,10 @@ public class ParagonMainActivity extends ActionBarActivity {
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_COOKING_METHOD_1;
+
+    protected int targetTemp;
+    protected int currentTemp;
+
     private BleListener bleListener = new BleListener() {
         @Override
         public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {

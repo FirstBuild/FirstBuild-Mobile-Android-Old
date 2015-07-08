@@ -63,7 +63,7 @@
                 android:id="@+id/container_current_temp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="300dp"
                 android:layout_weight="1"
                 android:background="#80de4a32"
                 android:orientation="vertical">

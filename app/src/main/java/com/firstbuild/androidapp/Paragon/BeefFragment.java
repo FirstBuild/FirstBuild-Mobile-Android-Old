@@ -14,6 +14,8 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.commonframework.bleManager.BleManager;
 
+import java.nio.ByteBuffer;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -67,7 +69,13 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
                 ParagonMainActivity activity = (ParagonMainActivity) getActivity();
 
                 //TODO: Should convert the target temp value properly.
-//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, targetTemp );
+                ByteBuffer valueBuffer = ByteBuffer.allocate(4);
+
+                valueBuffer.putInt(targetTemp);
+                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array() );
+
+                valueBuffer.putInt(targetTime);
+                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
 
                 ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_READY_PREHEAT);
             }
