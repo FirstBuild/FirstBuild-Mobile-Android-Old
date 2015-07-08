@@ -80,12 +80,12 @@ public class PreheatingFragment extends Fragment {
     }
 
     public void updateUiCurrentTemp(){
-        int delta = ((ParagonMainActivity)getActivity()).targetTemp - ((ParagonMainActivity)getActivity()).currentTemp;
+//        int delta = ((ParagonMainActivity)getActivity()).targetTemp - ((ParagonMainActivity)getActivity()).currentTemp;
 
-        RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) containerCurrentTemp.getLayoutParams();
-        lParams.topMargin = (int)(delta * scaleTempIndicator);
-
-        containerCurrentTemp.invalidate();
+//        RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) containerCurrentTemp.getLayoutParams();
+//        lParams.topMargin = (int)(delta * scaleTempIndicator);
+//
+//        containerCurrentTemp.invalidate();
     }
 
 }
