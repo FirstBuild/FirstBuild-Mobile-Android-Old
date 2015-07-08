@@ -461,6 +461,9 @@ public class BleManager {
 
                         // Set notification
                         result = bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+                        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                        bluetoothGatt.writeDescriptor(descriptor); //descriptor write operation successfully started?
                         break;
                     }
                 }
