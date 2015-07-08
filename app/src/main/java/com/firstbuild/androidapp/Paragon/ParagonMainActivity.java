@@ -99,28 +99,35 @@ public class ParagonMainActivity extends ActionBarActivity {
             BleManager.getInstance().displayGattServices(address);
 
             // Set notification
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, true);
         }
 
         @Override
         public void onCharacteristicRead(String address, String uuid, byte[] value) {
             super.onCharacteristicRead(address, uuid, value);
 
-            Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
+            Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
         }
 
         @Override
         public void onCharacteristicWrite(String address, String uuid, byte[] value) {
             super.onCharacteristicWrite(address, uuid, value);
 
-            Log.d(TAG, "[onCharacteristicWrite] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
+            Log.d(TAG, "[onCharacteristicWrite] address: " + address + ", uuid: " + uuid);
         }
 
         @Override
         public void onCharacteristicChanged(String address, String uuid, byte[] value) {
             super.onCharacteristicChanged(address, uuid, value);
 
-            Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid + ", value: " + value.toString());
+            Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid);
+        }
+
+        @Override
+        public void onDescriptorWrite(String address, String uuid, byte[] value) {
+            super.onDescriptorWrite(address, uuid, value);
+
+            Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
 

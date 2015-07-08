@@ -41,7 +41,7 @@ public class Step2Fragment extends Fragment {
         view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Custom button clicked");
+                Log.d(TAG, "Custom button clicked2");
             }
         });
 

@@ -12,6 +12,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class BleManager {
 
@@ -112,7 +114,6 @@ public class BleManager {
      * @param args corresponding arguments
      */
     public void sendUpdate(String listener, Object... args){
-        Log.d(TAG, "sendUpdate: " + "IN");
 
         // Clone hashmap to avoid java.util.ConcurrentModificationException
         HashMap<String, BleListener> callbackClone = (HashMap) callbacks.clone();
@@ -139,6 +140,9 @@ public class BleManager {
             }
             else if(callback != null && listener.equals("onCharacteristicWrite")){
                 callback.onCharacteristicRead((String) args[0], (String) args[1], (byte[]) args[2]);
+            }
+            else if(callback != null && listener.equals("onDescriptorWrite")){
+                callback.onDescriptorWrite((String) args[0], (String) args[1], (byte[]) args[2]);
             }
             else{
                 // Do nothing
@@ -466,6 +470,41 @@ public class BleManager {
         return result;
     }
 
+    public boolean writeDescriptor(final String characteristicsUuid){
+
+        Log.d(TAG, "writeDescriptor IN");
+
+        boolean result = false;
+
+        if (bluetoothAdapter == null || bluetoothGatt == null) {
+            // Check BluetoothGatt is available
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            result = false;
+        }
+        else {
+
+            // Read a value from the characteristic
+            List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
+
+            // Iterate services and characteristic
+            for(BluetoothGattService service : bleGattServices){
+                for(BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
+
+                    if(characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)){
+                        Log.d(TAG, "Found  characteristic for write descriptor: " + characteristic.getUuid().toString());
+
+                        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                        bluetoothGatt.writeDescriptor(descriptor); //descriptor write operation successfully started?
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
 
     /**
      * Returns a BleDevice's instance
@@ -475,7 +514,7 @@ public class BleManager {
         return bleDevice;
     }
 
-    private void printGattValue(byte[] values){
+    public void printGattValue(byte[] values){
         StringBuilder hexValue = new StringBuilder();
 
         // Print value in hexa decimal format
@@ -574,17 +613,14 @@ public class BleManager {
             // Retrieves address
             String address = gatt.getDevice().getAddress();
 
-            if (status == BluetoothGatt.GATT_SUCCESS) {
+            // Retrieves uuid and value
+            String uuid = characteristic.getUuid().toString();
+            Log.d(TAG, "Read Characteristic UUID: " + uuid);
 
-                // Retrieves uuid and value
-                String uuid = characteristic.getUuid().toString();
-                Log.d(TAG, "Characteristic UUID: " + uuid);
+            byte[] value = characteristic.getValue();
+            printGattValue(value);
 
-                byte[] value = characteristic.getValue();
-                printGattValue(value);
-
-                sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value});
-            }
+            sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value});
         }
 
         @Override
@@ -599,7 +635,7 @@ public class BleManager {
 
             // Retrieves uuid and value
             String uuid = characteristic.getUuid().toString();
-            Log.d(TAG, "Characteristic UUID: " + uuid);
+            Log.d(TAG, "Write Characteristic UUID: " + uuid);
 
             byte[] value = characteristic.getValue();
             printGattValue(value);
@@ -623,6 +659,25 @@ public class BleManager {
             printGattValue(value);
 
             sendUpdate("onCharacteristicChanged", new Object[]{address, uuid, value});
+        }
+
+
+        @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorWrite(gatt, descriptor, status);
+            Log.d(TAG, "onDescriptorWrite");
+
+            // Retrieves address
+            String address = gatt.getDevice().getAddress();
+
+            // Retrieves uuid and value
+            String uuid = descriptor.getUuid().toString();
+            Log.d(TAG, "Characteristic UUID: " + uuid);
+
+            byte[] value = descriptor.getValue();
+
+            sendUpdate("onDescriptorWrite", new Object[]{address, uuid, value});
+
         }
     };
 }

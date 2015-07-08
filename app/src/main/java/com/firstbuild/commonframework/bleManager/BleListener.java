@@ -32,4 +32,7 @@ public abstract class BleListener {
     public void onCharacteristicWrite(final String address, final String uuid, final byte[] value){}
 
     public void onCharacteristicChanged(final String address, final String uuid, final byte[] value){}
+
+    public void onDescriptorWrite(final String address, final String uuid, final byte[] value){}
+
 }

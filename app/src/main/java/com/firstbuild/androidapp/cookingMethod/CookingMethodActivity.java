@@ -11,7 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firstbuild.androidapp.Paragon.Step1Fragment;
+import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.commonframework.bleManager.BleManager;
 
 
 public class CookingMethodActivity extends ActionBarActivity {
