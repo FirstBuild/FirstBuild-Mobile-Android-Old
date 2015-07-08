@@ -362,6 +362,12 @@ public class BleManager {
                     Log.d(TAG, "Characteristic UUID: " + CharacteristicUuid +
                             ", Permission: " + gattCharacteristic.getPermissions() +
                             ", Write Type: " + gattCharacteristic.getWriteType());
+
+                    if(gattCharacteristic.getValue() != null){
+                        printGattValue(gattCharacteristic.getValue());
+                    }
+
+
                 }
 
                 Log.d(TAG, "=====================================");

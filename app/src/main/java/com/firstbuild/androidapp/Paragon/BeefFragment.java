@@ -38,8 +38,6 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
     private TextView textThickness;
     private int thicknessIndex = 0;
 
-    private int targetTime;
-    private int targetTemp;
     private float setThickness;
     private int setDoneness;
 
@@ -68,14 +66,20 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
             public void onClick(View v) {
                 ParagonMainActivity activity = (ParagonMainActivity) getActivity();
 
-                //TODO: Should convert the target temp value properly.
-                ByteBuffer valueBuffer = ByteBuffer.allocate(4);
 
-                valueBuffer.putInt(targetTemp);
+                calcuTimeTemp();
+
+                //TODO: Should convert the target temp value properly.
+                ByteBuffer valueBuffer = ByteBuffer.allocate(2);
+
+                short setValue = (short)(activity.getTargetTemp() * 100);
+
+                valueBuffer.putShort(setValue);
                 BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array() );
 
-                valueBuffer.putInt(targetTime);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
+//                valueBuffer.clear();
+//                valueBuffer.putInt(activity.getTargetTime());
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
 
                 ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_READY_PREHEAT);
             }
@@ -231,8 +235,10 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
     }
 
     private void calcuTimeTemp() {
-        targetTemp = 0;
-        targetTime = 0;
+        ParagonMainActivity activity = (ParagonMainActivity)getActivity();
+
+        activity.setTargetTemp(134);
+        activity.setTargetTime(120);
 
         //TODO: Should make a hash table for the temp/ timer.
 

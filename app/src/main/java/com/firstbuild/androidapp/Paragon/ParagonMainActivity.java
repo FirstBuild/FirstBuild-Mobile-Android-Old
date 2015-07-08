@@ -24,9 +24,12 @@ import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class ParagonMainActivity extends ActionBarActivity {
     private String TAG = ParagonMainActivity.class.getSimpleName();
@@ -34,10 +37,13 @@ public class ParagonMainActivity extends ActionBarActivity {
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_COOKING_METHOD_1;
-
-    protected int targetTemp;
-    protected int currentTemp;
-
+    private float targetTemp;
+    private float currentTemp;
+    private int targetTime;
+    private byte batteryLevel;
+    private Queue requestQueue = new LinkedList();
+    private String REQUEST_METHOD_READ = "READ";
+    private String REQUEST_METHOD_NOTIFICATION = "NOTIFICATION";
     private BleListener bleListener = new BleListener() {
         @Override
         public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
@@ -67,6 +73,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                     BleManager.getInstance().stopScan();
 
                     nextStep(ParagonSteps.STEP_COOKING_METHOD_1);
+
+
                     break;
                 }
             }
@@ -102,8 +110,17 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             BleManager.getInstance().displayGattServices(address);
 
-            // Set notification
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, true);
+            // Get Initial values.
+            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
+            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+
+//            // Set notification
+            requestQueue.offer(REQUEST_METHOD_NOTIFICATION + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+            requestQueue.offer(REQUEST_METHOD_NOTIFICATION + "/" + ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+
+            nextCharacteristicRead();
         }
 
         @Override
@@ -111,6 +128,10 @@ public class ParagonMainActivity extends ActionBarActivity {
             super.onCharacteristicRead(address, uuid, value);
 
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
+
+            onReceivedData(uuid, value);
+
+            nextCharacteristicRead();
         }
 
         @Override
@@ -125,6 +146,10 @@ public class ParagonMainActivity extends ActionBarActivity {
             super.onCharacteristicChanged(address, uuid, value);
 
             Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid);
+
+            onReceivedData(uuid, value);
+
+            nextCharacteristicRead();
         }
 
         @Override
@@ -134,6 +159,100 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
+
+    private void nextCharacteristicRead() {
+
+        String nextRequest = (String) requestQueue.poll();
+
+        if (nextRequest != null) {
+            String method = nextRequest.split("/")[0];
+            String characteristic = nextRequest.split("/")[1];
+
+            if (method.equals(REQUEST_METHOD_READ)) {
+                BleManager.getInstance().readCharacteristics(characteristic);
+            }
+            else if (method.equals(REQUEST_METHOD_NOTIFICATION)) {
+                BleManager.getInstance().setCharacteristicNotification(characteristic, true);
+            }
+            else {
+
+            }
+
+        }
+    }
+
+    public int getTargetTime() {
+        return targetTime;
+    }
+
+    public void setTargetTime(int targetTime) {
+        this.targetTime = targetTime;
+    }
+
+    public float getTargetTemp() {
+        return targetTemp;
+    }
+
+    public void setTargetTemp(int targetTemp) {
+        this.targetTemp = targetTemp;
+    }
+
+    public float getCurrentTemp() {
+        return currentTemp;
+    }
+
+    private void onReceivedData(String uuid, byte[] value) {
+
+        Log.d(TAG, "onReceivedData :" + uuid);
+
+        ByteBuffer byteBuffer = ByteBuffer.wrap(value);
+
+
+        switch (uuid.toUpperCase()) {
+            case ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE:
+                Log.d(TAG, "CHARACTERISTIC_CURRENT_TEMPERATURE");
+
+                currentTemp = (byteBuffer.getShort() / 100.0f);
+
+                Log.d(TAG, "currentTemp is :" + currentTemp);
+
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+                                if (fragment instanceof PreheatingFragment) {
+                                    ((PreheatingFragment) fragment).updateUiCurrentTemp();
+                                }
+                                else {
+
+                                }
+
+                            }
+                        });
+                    }
+                }).start();
+                break;
+
+            case ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE:
+                Log.d(TAG, "CHARACTERISTIC_TARGET_TEMPERATURE");
+                targetTemp = (float) byteBuffer.getShort() / 100.0f;
+
+                Log.d(TAG, "target temp is :" + targetTemp);
+                break;
+
+            case ParagonValues.CHARACTERISTIC_BATTERY_LEVEL:
+                Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL");
+                batteryLevel = byteBuffer.get();
+
+                Log.d(TAG, "battery level is :" + batteryLevel);
+                break;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,6 +300,20 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        FragmentManager fm = getFragmentManager();
+
+        if (fm.getBackStackEntryCount() > 1) {
+            fm.popBackStack();
+        }
+        else {
+            finish();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_paragon_main, menu);
@@ -221,20 +354,6 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     }
 
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        FragmentManager fm = getFragmentManager();
-
-        if (fm.getBackStackEntryCount() > 1) {
-            fm.popBackStack();
-        } else {
-            finish();
-        }
-    }
-
     public void nextStep(ParagonSteps step) {
         Fragment fragment = null;
 
@@ -260,18 +379,16 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         }
 
-        if(fragment != null){
+        if (fragment != null) {
             getFragmentManager().
                     beginTransaction().
                     replace(R.id.frame_content, fragment).
                     addToBackStack(null).
                     commit();
         }
-        else{
+        else {
 
         }
-
-
 
 
     }

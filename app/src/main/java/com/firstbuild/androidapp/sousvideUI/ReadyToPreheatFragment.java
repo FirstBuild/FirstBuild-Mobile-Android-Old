@@ -6,7 +6,10 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.firstbuild.androidapp.Paragon.ParagonMainActivity;
+import com.firstbuild.androidapp.Paragon.PreheatingFragment;
 import com.firstbuild.androidapp.R;
 
 /**
@@ -36,6 +39,8 @@ public class ReadyToPreheatFragment extends Fragment {
                         commit();
             }
         });
+
+        ((TextView)view.findViewById(R.id.textTargetTemp)).setText(((ParagonMainActivity)getActivity()).getTargetTemp()+"℉");
 
         return view;
     }

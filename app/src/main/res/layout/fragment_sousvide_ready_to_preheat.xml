@@ -19,6 +19,7 @@
         ge:typeface="fonts/PTSansNarrowBold" />
 
     <com.firstbuild.viewUtil.StyledTextView
+        android:id="@+id/textTargetTemp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
