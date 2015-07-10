@@ -77,9 +77,9 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
                 valueBuffer.putShort(setValue);
                 BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array() );
 
-//                valueBuffer.clear();
-//                valueBuffer.putInt(activity.getTargetTime());
-//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
+                valueBuffer.clear();
+                valueBuffer.putInt(activity.getTargetTime());
+                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
 
                 ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_READY_PREHEAT);
             }
