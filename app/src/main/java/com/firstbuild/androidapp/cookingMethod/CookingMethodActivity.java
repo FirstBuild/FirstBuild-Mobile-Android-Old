@@ -1,12 +1,7 @@
 package com.firstbuild.androidapp.cookingMethod;
 
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,13 +9,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import com.firstbuild.androidapp.Paragon.Step1Fragment;
+import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
-
-import java.util.List;
 
 
 public class CookingMethodActivity extends ActionBarActivity {
@@ -28,8 +21,6 @@ public class CookingMethodActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
 
-    // Bluetooth adapter handler
-    private BluetoothAdapter bluetoothAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +36,7 @@ public class CookingMethodActivity extends ActionBarActivity {
         findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.d(TAG, "Custom button clicked");
             }
         });
 
@@ -55,50 +46,18 @@ public class CookingMethodActivity extends ActionBarActivity {
                 addToBackStack(null).
                 commit();
 
-        // Use this check to determine whether BLE is supported on the device. Then
-        // you can selectively disable BLE-related features.
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Log.d(TAG, "BLE is not supported - Stop activity!");
 
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        else {
-            // Initializes Bluetooth adapter.
-            final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-            bluetoothAdapter = bluetoothManager.getAdapter();
-
-            // Checks if Bluetooth is supported on the device.
-            if (bluetoothAdapter == null) {
-                Log.d(TAG, "Bluetooth is not supported - Stop activity!");
-
-                Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
-                finish();
-            }
-            else {
-                // Do nothing
-            }
-
-            // Initialize Ble manager
-            BleManager.getInstance().initBleManager(this);
-
-            BleManager.getInstance().addListener(bleListener);
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume IN");
-
-        // Enable bluetooth feature in the system, and then start scan
-        BleManager.getInstance().enableBluetoothAndStartScan();
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         Log.d(TAG, "onPaused IN");
-        BleManager.getInstance().disconnect();
         super.onPause();
     }
 
@@ -131,29 +90,4 @@ public class CookingMethodActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    private BleListener bleListener = new BleListener() {
-        @Override
-        public void onScan(String action, String address) {
-            super.onScan(action, address);
-
-            Log.d(TAG, "[onScan] Action: " + action + ", address: " + address);
-        }
-
-        @Override
-        public void onConnectionStateChange(String address, String status) {
-            super.onConnectionStateChange(address, status);
-
-            Log.d(TAG, "[onConnectionStateChange] address: " + address + ", status: " + status);
-        }
-
-        @Override
-        public void onServicesDiscovered(String address, List<BluetoothGattService> bleGattServices) {
-            super.onServicesDiscovered(address, bleGattServices);
-
-            Log.d(TAG, "[onServicesDiscovered] address: " + address);
-
-            BleManager.getInstance().displayGattServices(address);
-        }
-    };
 }

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.cookingMethod.Step1Fragment">
+              android:background="@drawable/img_bg_cooking_method_0"
+    tools:context="com.firstbuild.androidapp.Paragon.Step1Fragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -24,7 +25,7 @@
                 android:gravity="center_horizontal|center_vertical"
                 android:text="What would you like to "
                 android:textAllCaps="true"
-                android:textColor="@color/colorPrimaryText"
+                android:textColor="@color/colorParagonPrimaryText"
                 android:textSize="19sp"
                 ge:typeface="fonts/PTSansNarrowRegular" />
 
@@ -34,7 +35,7 @@
                 android:gravity="center_horizontal|center_vertical"
                 android:text="Sous Vide?"
                 android:textAllCaps="true"
-                android:textColor="@color/colorHighlight"
+                android:textColor="@color/colorParagonHighlight"
                 android:textSize="19sp"
                 ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -57,7 +58,7 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="Beef"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="@color/colorParagonPrimaryText"
             android:textSize="19sp"
             ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -69,6 +70,28 @@
             android:src="@drawable/line_dot" />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <com.firstbuild.viewUtil.StyledButton
+            android:id="@+id/btn_custom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/footer_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/btn_custom"
+            android:text="Custom"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            ge:typeface="fonts/PTSansNarrowBold"/>
+
+    </LinearLayout>
+
 
 
 </LinearLayout>

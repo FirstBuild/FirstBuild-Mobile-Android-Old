@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.sousvideUI;
+package com.firstbuild.androidapp.Paragon;
 
 
 import android.os.Bundle;
@@ -6,7 +6,10 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.firstbuild.androidapp.Paragon.ParagonMainActivity;
+import com.firstbuild.androidapp.Paragon.PreheatingFragment;
 import com.firstbuild.androidapp.R;
 
 /**
@@ -26,7 +29,7 @@ public class ReadyToPreheatFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_ready_to_preheat, container, false);
 
-        view.findViewById(R.id.layout_picture).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFragmentManager().
@@ -36,6 +39,8 @@ public class ReadyToPreheatFragment extends Fragment {
                         commit();
             }
         });
+
+        ((TextView)view.findViewById(R.id.textTargetTemp)).setText(((ParagonMainActivity)getActivity()).getTargetTemp()+"℉");
 
         return view;
     }

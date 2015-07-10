@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.sousvideUI.PreheatingFragment">
+    tools:context="com.firstbuild.androidapp.Paragon.PreheatingFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:gravity="center_horizontal"
             android:text="Preheating To"
             android:textAllCaps="true"
-            android:textColor="@color/colorSecondaryText"
+            android:textColor="@color/colorParagonSecondaryText"
             android:textSize="19sp"
             ge:typeface="fonts/PTSansNarrowRegular" />
 
@@ -29,7 +29,7 @@
             android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:text="140℉"
-            android:textColor="@color/colorHighlight"
+            android:textColor="@color/colorParagonHighlight"
             android:textSize="50sp"
             ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -40,7 +40,7 @@
             android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:text="Press STOP on Paragon to cancel"
-            android:textColor="@color/colorSecondaryText"
+            android:textColor="@color/colorParagonSecondaryText"
             android:textSize="19sp"
             ge:typeface="fonts/PTSansNarrowRegular" />
 
@@ -63,7 +63,7 @@
                 android:id="@+id/container_current_temp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="300dp"
                 android:layout_weight="1"
                 android:background="#80de4a32"
                 android:orientation="vertical">
@@ -79,7 +79,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="4dp"
-                    android:background="@color/colorHighlight"
+                    android:background="@color/colorParagonHighlight"
                     android:src="@drawable/line_solid" />
 
                 <LinearLayout
@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
-                    android:background="@color/colorHighlight"
+                    android:background="@color/colorParagonHighlight"
                     android:orientation="vertical">
 
                     <com.firstbuild.viewUtil.StyledTextView
@@ -97,7 +97,7 @@
                         android:gravity="center_horizontal"
                         android:text="Current Temp"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="19sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -107,7 +107,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="127℉"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="@color/colorParagonPrimaryText"
                         android:textSize="40sp"
                         ge:typeface="fonts/PTSansNarrowBold" />
 

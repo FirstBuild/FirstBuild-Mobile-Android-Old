@@ -83,7 +83,7 @@ public class TimerCycle extends View {
         circleDiarkPaint.setStyle(Paint.Style.STROKE);
         circleDiarkPaint.setStrokeWidth(thickness);
 
-        circleWideBackPaint.setColor(getResources().getColor(R.color.colorHighlight));
+        circleWideBackPaint.setColor(getResources().getColor(R.color.colorParagonHighlight));
         circleWideBackPaint.setAlpha(204);
         circleWideBackPaint.setAntiAlias(true);
         circleWideBackPaint.setStyle(Paint.Style.STROKE);

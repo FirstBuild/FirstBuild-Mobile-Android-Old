@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.sousvideUI.BeefFragment">
+    tools:context="com.firstbuild.androidapp.Paragon.BeefFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,18 +17,18 @@
             android:layout_marginTop="15dp"
             android:gravity="center_horizontal"
             android:text="BEEF SETTINGS"
-            android:textColor="@color/colorSecondaryText"
+            android:textColor="@color/colorParagonSecondaryText"
             android:textSize="19sp"
             ge:typeface="fonts/PTSansNarrowRegular" />
 
         <com.firstbuild.viewUtil.StyledTextView
-            android:id="@+id/text_timer_temp"
+            android:id="@+id/textTargetTempTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:gravity="center_horizontal"
             android:text="1H : 47MIN   |   140.5° F"
-            android:textColor="@color/colorSecondaryText"
+            android:textColor="@color/colorParagonSecondaryText"
             android:textSize="24sp"
             ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -74,7 +74,7 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
                 android:text="Medium-Rare"
-                android:textColor="@color/colorPrimaryText"
+                android:textColor="@color/colorParagonPrimaryText"
                 android:textSize="24sp"
                 ge:typeface="fonts/PTSansNarrowRegular" />
 
@@ -89,7 +89,7 @@
             android:paddingBottom="10dp"
             android:text="1 inch"
             android:textAllCaps="true"
-            android:textColor="@color/colorSecondaryText"
+            android:textColor="@color/colorParagonSecondaryText"
             android:textSize="24sp"
             ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -117,7 +117,7 @@
                 android:width="30dp"
                 android:gravity="center"
                 android:text="R"
-                android:textColor="@color/colorPrimaryText"
+                android:textColor="@color/colorParagonPrimaryText"
                 android:textSize="19sp"
                 ge:typeface="fonts/PTSansNarrowRegular" />
 
@@ -129,7 +129,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="MR"
-                android:textColor="@color/colorPrimaryText"
+                android:textColor="@color/colorParagonPrimaryText"
                 android:textSize="19sp"
                 ge:typeface="fonts/PTSansNarrowRegular" />
 
@@ -141,7 +141,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="M"
-                android:textColor="@color/colorPrimaryText"
+                android:textColor="@color/colorParagonPrimaryText"
                 android:textSize="19sp"
                 ge:typeface="fonts/PTSansNarrowRegular" />
 
@@ -153,7 +153,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="MW"
-                android:textColor="@color/colorPrimaryText"
+                android:textColor="@color/colorParagonPrimaryText"
                 android:textSize="19sp"
                 ge:typeface="fonts/PTSansNarrowRegular" />
 
@@ -165,7 +165,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="W"
-                android:textColor="@color/colorPrimaryText"
+                android:textColor="@color/colorParagonPrimaryText"
                 android:textSize="19sp"
                 ge:typeface="fonts/PTSansNarrowRegular" />
 

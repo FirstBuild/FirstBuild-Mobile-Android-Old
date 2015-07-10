@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.firstbuild.androidapp.cookingMethod.CookingMethodActivity;
+import com.firstbuild.androidapp.dashboard.DashboardActivity;
 
 
 public class SplashActivity extends Activity {
@@ -27,7 +28,8 @@ public class SplashActivity extends Activity {
         runnable = new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, CookingMethodActivity.class);
+//                Intent intent = new Intent(SplashActivity.this, CookingMethodActivity.class);
+                Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
                 startActivity(intent);
             }
         };

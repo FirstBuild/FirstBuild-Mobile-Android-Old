@@ -26,4 +26,19 @@
         <item>0.5</item>
         <item>0.25</item>
     </string-array>
+
+    <string-array name="string_doneness">
+        <item>Rare</item>
+        <item>Medium-Rare</item>
+        <item>Medium</item>
+        <item>Medium-Well</item>
+        <item>Well</item>
+    </string-array>
+
+    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="title_activity_paragon_main">ParagonMainActivity</string>
+
+    <string name="descript_paragon">Precision cooking on your cooktop</string>
+    <string name="descript_chilhub">USB-enabled refrigerator accessories</string>
+    <string name="title_activity_add_product">AddProductActivity</string>
 </resources>

@@ -24,8 +24,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".SplashActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_splash" >
+            android:label="@string/title_activity_splash"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,15 +34,28 @@
         </activity>
         <activity
             android:name=".cookingMethod.CookingMethodActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_cooking_method" >
+            android:label="@string/title_activity_cooking_method"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".sousvideUI.SousvideActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_sousvide" >
+            android:label="@string/title_activity_sousvide"
+            android:screenOrientation="portrait" >
         </activity>
-        <service android:name="com.firstbuild.commonframework.bleManager.BluetoothLeService" android:enabled="true"/>
+        <activity
+            android:name=".dashboard.DashboardActivity"
+            android:label="@string/title_activity_dashboard"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".Paragon.ParagonMainActivity"
+            android:label="@string/title_activity_paragon_main"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".AddProduct.AddProductActivity"
+            android:label="@string/title_activity_add_product" >
+        </activity>
     </application>
 
 </manifest>

@@ -2,11 +2,11 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="AppTheme.Base">
-        <item name="android:colorPrimary">@color/colorPrimary</item>
-        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:colorPrimary">@color/colorParagonPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorParagonPrimaryDark</item>
+        <item name="android:colorAccent">@color/colorParagonAccent</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:colorControlHighlight">@color/colorHighlight</item>
+        <item name="android:colorControlHighlight">@color/colorParagonHighlight</item>
 
         <!--<item name="android:windowContentTransitions">true</item>-->
         <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>-->

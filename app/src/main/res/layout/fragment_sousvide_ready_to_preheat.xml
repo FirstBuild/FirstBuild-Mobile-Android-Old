@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.sousvideUI.ReadyToPreheatFragment">
+    tools:context="com.firstbuild.androidapp.Paragon.ReadyToPreheatFragment">
 
 
     <com.firstbuild.viewUtil.StyledTextView
@@ -14,16 +14,17 @@
         android:gravity="center_horizontal"
         android:text="Ready To Preheat"
         android:textAllCaps="true"
-        android:textColor="@color/colorHighlight"
+        android:textColor="@color/colorParagonHighlight"
         android:textSize="41sp"
         ge:typeface="fonts/PTSansNarrowBold" />
 
     <com.firstbuild.viewUtil.StyledTextView
+        android:id="@+id/textTargetTemp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="140°F"
-        android:textColor="@color/colorHighlight"
+        android:textColor="@color/colorParagonHighlight"
         android:textSize="50sp"
         ge:typeface="fonts/PTSansNarrowBold" />
 
@@ -33,7 +34,7 @@
         android:layout_marginTop="15dp"
         android:gravity="center_horizontal"
         android:text="Press the START button on your \nParagon cooktop to continue."
-        android:textColor="@color/colorSecondaryText"
+        android:textColor="@color/colorParagonSecondaryText"
         android:textSize="19sp"
         ge:typeface="fonts/PTSansNarrowBold" />
 
