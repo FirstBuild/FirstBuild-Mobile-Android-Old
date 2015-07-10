@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.sousvideUI.ReadyToCookFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -97,14 +96,9 @@ public class PreheatingFragment extends Fragment {
 
         int delta = (int)(activity.getTargetTemp()) - (int)(activity.getCurrentTemp());
 
-        if(delta >= 0){
-            LinearLayout.LayoutParams lParams = (LinearLayout.LayoutParams) containerCurrentTemp.getLayoutParams();
-            containerCurrentTemp.startAnimation(makeAnimation(lParams.topMargin, (int) (delta * scaleTempIndicator)));
-        }
-        else{
-            // Translate limit is not up over the top.
-        }
-
+        delta = Math.max(0, delta);
+        LinearLayout.LayoutParams lParams = (LinearLayout.LayoutParams) containerCurrentTemp.getLayoutParams();
+        containerCurrentTemp.startAnimation(makeAnimation(lParams.topMargin, (int) (delta * scaleTempIndicator)));
 
         textCurrentTemp.setText(activity.getCurrentTemp() + "℉");
     }

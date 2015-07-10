@@ -15,11 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.sousvideUI.ReadyToPreheatFragment;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
@@ -36,15 +36,18 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
-    private ParagonSteps currentStep = ParagonSteps.STEP_COOKING_METHOD_1;
+    private ParagonSteps     currentStep      = ParagonSteps.STEP_COOKING_METHOD_1;
     private float targetTemp;
     private float currentTemp;
-    private int targetTime;
-    private byte batteryLevel;
-    private Queue requestQueue = new LinkedList();
-    private String REQUEST_METHOD_READ = "READ";
-    private String REQUEST_METHOD_NOTIFICATION = "NOTIFICATION";
-    private BleListener bleListener = new BleListener() {
+    private int   targetTime;
+    private byte  batteryLevel;
+
+    Toolbar toolbar;
+
+    private Queue       requestQueue                = new LinkedList();
+    private String      REQUEST_METHOD_READ         = "READ";
+    private String      REQUEST_METHOD_NOTIFICATION = "NOTIFICATION";
+    private BleListener bleListener                 = new BleListener() {
         @Override
         public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
             super.onScanDevices(bluetoothDevices);
@@ -111,16 +114,20 @@ public class ParagonMainActivity extends ActionBarActivity {
             BleManager.getInstance().displayGattServices(address);
 
             // Get Initial values.
-            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
-            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
 
-//            // Set notification
-            requestQueue.offer(REQUEST_METHOD_NOTIFICATION + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-            requestQueue.offer(REQUEST_METHOD_NOTIFICATION + "/" + ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
-//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
-//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
 
-            nextCharacteristicRead();
+//            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
+//            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+//
+//            requestQueue.offer(REQUEST_METHOD_NOTIFICATION + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+//            requestQueue.offer(REQUEST_METHOD_NOTIFICATION + "/" + ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
+
+//            nextCharacteristicRead();
         }
 
         @Override
@@ -131,7 +138,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             onReceivedData(uuid, value);
 
-            nextCharacteristicRead();
+//            nextCharacteristicRead();
         }
 
         @Override
@@ -193,7 +200,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         return targetTemp;
     }
 
-    public void setTargetTemp(int targetTemp) {
+    public void setTargetTemp(float targetTemp) {
         this.targetTemp = targetTemp;
     }
 
@@ -227,9 +234,16 @@ public class ParagonMainActivity extends ActionBarActivity {
 
                                 if (fragment instanceof PreheatingFragment) {
                                     ((PreheatingFragment) fragment).updateUiCurrentTemp();
+
+                                    if(currentTemp >= targetTemp){
+                                        nextStep(ParagonSteps.STEP_SOUSVIDE_READY_COOK);
+                                    }
+                                    else{
+                                        //do nothing
+                                    }
                                 }
                                 else {
-
+                                    //do nothing
                                 }
 
                             }
@@ -239,17 +253,34 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
             case ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE:
-                Log.d(TAG, "CHARACTERISTIC_TARGET_TEMPERATURE");
                 targetTemp = (float) byteBuffer.getShort() / 100.0f;
 
-                Log.d(TAG, "target temp is :" + targetTemp);
+                Log.d(TAG, "CHARACTERISTIC_TARGET_TEMPERATURE :" + targetTemp);
                 break;
 
             case ParagonValues.CHARACTERISTIC_BATTERY_LEVEL:
-                Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL");
                 batteryLevel = byteBuffer.get();
 
-                Log.d(TAG, "battery level is :" + batteryLevel);
+                Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL :" + batteryLevel);
+
+
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((TextView) toolbar.findViewById(R.id.text_battery_level)).setText(batteryLevel + "%");
+                            }
+                        });
+                    }
+                }).start();
+                break;
+
+            case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
+                Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + byteBuffer.getShort());
+
                 break;
         }
     }
@@ -259,10 +290,9 @@ public class ParagonMainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paragon_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-
 
         // Use this check to determine whether BLE is supported on the device. Then
         // you can selectively disable BLE-related features.
@@ -372,6 +402,10 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             case STEP_SOUSVIDE_READY_PREHEAT:
                 fragment = new ReadyToPreheatFragment();
+                break;
+
+            case STEP_SOUSVIDE_READY_COOK:
+                fragment = new ReadyToCookFragment();
                 break;
 
             default:

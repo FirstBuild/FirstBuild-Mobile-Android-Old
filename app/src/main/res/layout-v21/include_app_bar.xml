@@ -15,12 +15,12 @@
         android:src="@drawable/ic_logo"/>
 
     <com.firstbuild.viewUtil.StyledTextView
-        android:id="@+id/text_target_temp"
+        android:id="@+id/text_battery_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="viewEnd"
         android:gravity="end"
-        android:text="50%"
+        android:text="--%"
         android:textColor="@color/colorPrimaryText"
         android:textSize="20sp"
         ge:typeface="fonts/PTSasNarrowRegular" />

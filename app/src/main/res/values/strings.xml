@@ -40,4 +40,5 @@
 
     <string name="descript_paragon">Precision cooking on your cooktop</string>
     <string name="descript_chilhub">USB-enabled refrigerator accessories</string>
+    <string name="title_activity_add_product">AddProductActivity</string>
 </resources>

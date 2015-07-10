@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.sousvideUI;
+package com.firstbuild.androidapp.Paragon;
 
 
 import android.os.Bundle;
@@ -29,7 +29,7 @@ public class ReadyToPreheatFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_ready_to_preheat, container, false);
 
-        view.findViewById(R.id.layout_picture).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFragmentManager().
