@@ -75,7 +75,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                     // Stop ble device scanning
                     BleManager.getInstance().stopScan();
 
-                    nextStep(ParagonSteps.STEP_COOKING_METHOD_1);
+                    //TODO: block below code for test.
+//                    nextStep(ParagonSteps.STEP_COOKING_METHOD_1);
 
 
                     break;
@@ -116,10 +117,12 @@ public class ParagonMainActivity extends ActionBarActivity {
             // Get Initial values.
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
 
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
 
 //            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
 //            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
@@ -271,7 +274,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ((TextView) toolbar.findViewById(R.id.text_battery_level)).setText(batteryLevel + "%");
+//                                ((TextView) toolbar.findViewById(R.id.text_battery_level)).setText(batteryLevel + "%");
                             }
                         });
                     }
@@ -281,6 +284,18 @@ public class ParagonMainActivity extends ActionBarActivity {
             case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
                 Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + byteBuffer.getShort());
 
+                break;
+
+
+
+            case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
+
+                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS "+
+                        String.format("%02x", value[0]) + ", "+
+                        String.format("%02x", value[1]) + ", "+
+                        String.format("%02x", value[2]) + ", "+
+                        String.format("%02x", value[3]) + ", "+
+                        String.format("%02x", value[4]));
                 break;
         }
     }
@@ -325,6 +340,9 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         // Add ble event listener
         BleManager.getInstance().addListener(bleListener);
+
+        //TODO: remove below code after test.
+        nextStep(ParagonSteps.STEP_COOKING_MODE);
 
 
     }
@@ -388,6 +406,10 @@ public class ParagonMainActivity extends ActionBarActivity {
         Fragment fragment = null;
 
         switch (step) {
+            case STEP_COOKING_MODE:
+                fragment = new SelectModeFragment();
+                break;
+
             case STEP_COOKING_METHOD_1:
                 fragment = new Step1Fragment();
                 break;
@@ -428,6 +450,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     public enum ParagonSteps {
+        STEP_COOKING_MODE,
         STEP_COOKING_METHOD_1,
         STEP_COOKING_METHOD_2,
         STEP_SOUSVIDE_BEEF,

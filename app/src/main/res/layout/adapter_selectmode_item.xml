@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/rootItem"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="64dp"
+    android:layout_marginRight="64dp"
+    android:background="@drawable/btn_select_mode_bg">
+
+
+    <com.firstbuild.viewUtil.StyledTextView
+        android:id="@+id/item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:fontFamily="sans-serif-medium"
+        android:text="My name"
+        android:textColor="@color/colorParagonPrimary"
+        android:textSize="19sp"/>
+
+
+</RelativeLayout>
+

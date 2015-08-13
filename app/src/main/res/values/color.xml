@@ -8,10 +8,10 @@
     <color name="colorSecondaryText">#6d6e71</color>
     <color name="colorDivider">#B6B6B6</color>
 
-    <color name="colorParagonPrimary">#404143</color>
+    <color name="colorParagonPrimary">#000000</color>
     <color name="colorParagonPrimaryDark">#000000</color>
-    <color name="colorParagonAccent">#00b5cc</color>
-    <color name="colorParagonHighlight">#de4a32</color>
+    <color name="colorParagonAccent">#d13239</color>
+    <color name="colorParagonHighlight">#F1582C</color>
     <color name="colorParagonPrimaryText">#f1f2f2</color>
     <color name="colorParagonSecondaryText">#6d6e71</color>
     <color name="colorParagonDivider">#B6B6B6</color>

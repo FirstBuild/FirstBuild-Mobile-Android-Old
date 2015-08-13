@@ -7,11 +7,11 @@
 
     <!--<style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">-->
     <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/app_background</item>
         <item name="colorPrimary">@color/colorParagonPrimary</item>
         <item name="colorPrimaryDark">@color/colorParagonPrimaryDark</item>
         <item name="colorAccent">@color/colorParagonAccent</item>
         <item name="colorControlHighlight">@color/colorParagonHighlight</item>
-        <item name="android:windowBackground">@android:color/white</item>
 
     </style>
 
