@@ -75,8 +75,8 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         selectModeAdapter.setClickListener(this);
 
         SlideInUpAnimator animator = new SlideInUpAnimator();
-        animator.setRemoveDuration(500);
-        animator.setAddDuration(200);
+        animator.setRemoveDuration(200);
+        animator.setAddDuration(500);
         listMode.setItemAnimator(animator);
         listMode.setAdapter(selectModeAdapter);
         listMode.setLayoutManager(new LinearLayoutManager(getActivity()));
