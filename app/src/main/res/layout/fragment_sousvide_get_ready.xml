@@ -1,0 +1,34 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.firstbuild.androidapp.Paragon.GetReadyFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/bottom_bar_height">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="400dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/img_sousvide_get_ready"
+            android:cropToPadding="false"
+            android:padding="40dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/describe_get_ready"
+            android:textColor="@color/colorParagonPrimary"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+
+</FrameLayout>

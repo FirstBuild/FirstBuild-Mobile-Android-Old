@@ -17,7 +17,7 @@
         android:singleLine="true"
         android:textAllCaps="true"
         android:text="Toolbar Title"
-        android:textColor="@color/colorParagonHighlight"
+        android:textColor="@color/colorParagonAccent"
         android:textSize="25sp"
         android:fontFamily="sans-serif-medium"/>
 

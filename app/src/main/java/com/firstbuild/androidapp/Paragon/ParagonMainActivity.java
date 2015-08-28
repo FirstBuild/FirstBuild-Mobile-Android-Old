@@ -402,12 +402,24 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     }
 
+    /**
+     *
+     * @param step
+     */
     public void nextStep(ParagonSteps step) {
         Fragment fragment = null;
 
         switch (step) {
             case STEP_COOKING_MODE:
                 fragment = new SelectModeFragment();
+                break;
+
+            case STEP_SOUSVIDE_SETTINGS:
+                fragment = new SettingsFragment();
+                break;
+
+            case STEP_SOUSVIDE_GETREADY:
+                fragment = new GetReadyFragment();
                 break;
 
             case STEP_COOKING_METHOD_1:
@@ -451,6 +463,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     public enum ParagonSteps {
         STEP_COOKING_MODE,
+        STEP_SOUSVIDE_SETTINGS,
+        STEP_SOUSVIDE_GETREADY,
         STEP_COOKING_METHOD_1,
         STEP_COOKING_METHOD_2,
         STEP_SOUSVIDE_BEEF,

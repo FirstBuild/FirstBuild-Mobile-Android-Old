@@ -75,8 +75,8 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         selectModeAdapter.setClickListener(this);
 
         SlideInUpAnimator animator = new SlideInUpAnimator();
-        animator.setRemoveDuration(200);
-        animator.setAddDuration(500);
+        animator.setRemoveDuration(100);
+        animator.setAddDuration(200);
         listMode.setItemAnimator(animator);
         listMode.setAdapter(selectModeAdapter);
         listMode.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -136,7 +136,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
 
             case STEP_HOW_TO_COOK:
                 if(position == 0){
-                    ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_READY_PREHEAT);
+                    ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
                 }
                 else{
                     //do nothing
