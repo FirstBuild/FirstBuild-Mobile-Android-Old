@@ -484,7 +484,7 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
                     int posY = Y - yDelta;
                     int maxHeight = (containerThickness.getHeight() - v.getHeight());
 
-                    // Slide for thickness knob
+                    // Slide for thicknessBack knob
                     if (0 < posY && posY < (containerThickness.getHeight() - v.getHeight())) {
                         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
                         layoutParams.topMargin = posY;

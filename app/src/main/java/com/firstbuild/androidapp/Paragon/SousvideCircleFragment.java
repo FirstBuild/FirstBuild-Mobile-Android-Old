@@ -14,11 +14,9 @@ import com.firstbuild.androidapp.R;
  */
 public class SousvideCircleFragment extends Fragment {
 
-
     public SousvideCircleFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

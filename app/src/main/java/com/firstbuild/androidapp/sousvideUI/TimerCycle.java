@@ -124,7 +124,7 @@ public class TimerCycle extends View {
         canvas.restore();
 
 //        circleFrontPaint.setAlpha(100);
-//        canvas.drawArc(rectOuter, progress, 1.0f, false, circleFrontPaint);
+//        canvas.drawArc(rectBack, progress, 1.0f, false, circleFrontPaint);
 
         scheduleRedraw();
     }
