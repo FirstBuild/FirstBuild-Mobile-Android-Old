@@ -422,6 +422,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                 fragment = new GetReadyFragment();
                 break;
 
+            case STEP_SOUSVIDE_CIRCLE:
+                fragment = new SousvideCircleFragment();
+                break;
+
             case STEP_COOKING_METHOD_1:
                 fragment = new Step1Fragment();
                 break;
@@ -465,6 +469,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_COOKING_MODE,
         STEP_SOUSVIDE_SETTINGS,
         STEP_SOUSVIDE_GETREADY,
+        STEP_SOUSVIDE_CIRCLE,
         STEP_COOKING_METHOD_1,
         STEP_COOKING_METHOD_2,
         STEP_SOUSVIDE_BEEF,
