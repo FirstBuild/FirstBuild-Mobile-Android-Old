@@ -8,7 +8,7 @@
 
     <include
         android:id="@+id/app_bar"
-        layout="@layout/include_app_bar_1b"/>
+        layout="@layout/include_app_bar_paragon"/>
 
     <FrameLayout
         android:id="@+id/content_frame"

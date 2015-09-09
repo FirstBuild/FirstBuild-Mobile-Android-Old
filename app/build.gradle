@@ -24,4 +24,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:+'
     compile 'com.getbase:floatingactionbutton:1.9.0'
+    compile 'jp.wasabeef:recyclerview-animators:1.2.1'
 }
