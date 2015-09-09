@@ -81,7 +81,7 @@
         </RelativeLayout>
 
         <com.firstbuild.viewUtil.StyledTextView
-            android:id="@+id/text_thickness"
+            android:id="@+id/text_status_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/img_meat"

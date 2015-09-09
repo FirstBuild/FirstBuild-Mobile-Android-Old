@@ -58,7 +58,7 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         knobDoneness = view.findViewById(R.id.doneness_knob);
         imgMeat = view.findViewById(R.id.img_meat);
         textDoneness = (TextView) view.findViewById(R.id.text_doneness);
-        textThickness = (TextView) view.findViewById(R.id.text_thickness);
+        textThickness = (TextView) view.findViewById(R.id.text_status_name);
         textTargetTempTime = (TextView) view.findViewById(R.id.textTargetTempTime);
 
         view.findViewById(R.id.thickness_knob).setOnTouchListener(this);

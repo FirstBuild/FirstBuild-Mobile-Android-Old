@@ -38,7 +38,7 @@
                     android:textSize="19sp"/>
 
                 <TextView
-                    android:id="@+id/time_value"
+                    android:id="@+id/text_set_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -71,7 +71,7 @@
                     android:textSize="19sp"/>
 
                 <TextView
-                    android:id="@+id/temp_value"
+                    android:id="@+id/text_set_temp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -105,7 +105,7 @@
                 android:textSize="19sp"/>
 
             <TextView
-                android:id="@+id/text_thickness"
+                android:id="@+id/text_status_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

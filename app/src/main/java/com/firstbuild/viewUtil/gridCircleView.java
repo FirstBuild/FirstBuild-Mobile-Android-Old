@@ -5,7 +5,7 @@
  * @date Aug/26/2015
  * Copyright (c) 2014 General Electric Corporation - Confidential - All rights reserved.
  */
-package com.firstbuild.androidapp.Paragon;
+package com.firstbuild.viewUtil;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -20,6 +20,7 @@ import com.firstbuild.androidapp.R;
 
 public class gridCircleView extends View {
 
+    private static final float LENGTH_GRID = 1.5f;
     private static final int THICKNESS_GRID = 10;
     private static final int THICKNESS_BAR = 30;
     private static final int THICKNESS_DASH = 8;
@@ -99,13 +100,11 @@ public class gridCircleView extends View {
         gridBackPaint.setColor(getResources().getColor(R.color.colorDivider));
         gridBackPaint.setAntiAlias(true);
         gridBackPaint.setStyle(Paint.Style.STROKE);
-        gridBackPaint.setPathEffect(new DashPathEffect(new float[]{2, 20}, 0));
         gridBackPaint.setStrokeWidth(THICKNESS_GRID * 2);
 
         gridPaint.setColor(getResources().getColor(R.color.colorParagonAccent));
         gridPaint.setAntiAlias(true);
         gridPaint.setStyle(Paint.Style.STROKE);
-        gridPaint.setPathEffect(new DashPathEffect(new float[]{2, 20}, 0));
         gridPaint.setStrokeWidth(THICKNESS_GRID * 2);
 
         barPaint.setColor(getResources().getColor(R.color.colorParagonAccent));
@@ -133,11 +132,19 @@ public class gridCircleView extends View {
 
         // Draw background.
         canvas.drawArc(rectBack, 0.0f, 360.0f, false, circleBackPaint);
-        canvas.drawArc(rectGrid, -90, 360.f, false, gridBackPaint);
 
         // Draw grid.
-        canvas.drawArc(rectGrid, -90, 360.f * gridValue, false, gridPaint);
+        for (int i = 0; i < NUM_GRID; i++){
+            float start = i * 360.f / NUM_GRID - 90;
 
+            if(i >= gridValue * NUM_GRID){
+                canvas.drawArc(rectGrid, start, LENGTH_GRID, false, gridBackPaint);
+            }
+            else{
+                canvas.drawArc(rectGrid, start, LENGTH_GRID, false, gridPaint);
+            }
+
+        }
         // Draw bar.
         canvas.drawArc(rectBar, -90, 360.f * barValue, false, barPaint);
 
