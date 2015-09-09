@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                   xmlns:ge="http://schemas.android.com/tools"
-                                   android:layout_width="match_parent"
-                                   android:layout_height="wrap_content"
-                                   android:background="?android:colorPrimary"
-                                   android:paddingTop="@dimen/app_bar_top_padding"
-                                   app:popupTheme="@style/ThemeOverlay.AppCompat.Dark">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_logo"/>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ge="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:colorPrimary"
+    android:paddingTop="@dimen/app_bar_top_padding"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Dark">
 
     <com.firstbuild.viewUtil.StyledTextView
-        android:id="@+id/text_battery_level"
+        android:id="@+id/toolbar_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="viewEnd"
-        android:gravity="end"
-        android:text="--%"
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="20sp"
-        ge:typeface="fonts/PTSasNarrowRegular" />
-
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:textAllCaps="true"
+        android:text="Toolbar Title"
+        android:textColor="@color/colorParagonAccent"
+        android:textSize="25sp"
+        android:fontFamily="sans-serif-medium"/>
 
 </android.support.v7.widget.Toolbar>

@@ -63,12 +63,14 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ViewHolderDashboard holderDashboard = (ViewHolderDashboard)holder;
 
         if (currentProduct.type == ProductInfo.PRODUCT_TYPE_CILLHUB) {
-            holderDashboard.imageLogo.setImageResource(R.drawable.ic_logo_name_chillhub);
-            holderDashboard.textDescription.setText(R.string.descript_chilhub);
+            holderDashboard.imageLogo.setImageResource(R.drawable.ic_paragon_logo);
+            holderDashboard.imageMark.setImageResource(R.drawable.ic_paragon_mark);
+            holderDashboard.textNickname.setText("My Paragon2");
         }
         else if (currentProduct.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
-            holderDashboard.imageLogo.setImageResource(R.drawable.ic_logo_name_paragon);
-            holderDashboard.textDescription.setText(R.string.descript_paragon);
+            holderDashboard.imageLogo.setImageResource(R.drawable.ic_paragon_logo);
+            holderDashboard.imageMark.setImageResource(R.drawable.ic_paragon_mark);
+            holderDashboard.textNickname.setText("My Paragon");
         }
         else {
         }
@@ -112,8 +114,9 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * ViewHolder for CardList.
      */
     class ViewHolderDashboard extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final ImageView imageMark;
         private final ImageView imageLogo;
-        private final TextView textDescription;
+        private final TextView  textNickname;
 
         /**
          * Basic constructor.
@@ -124,8 +127,9 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
             itemView.setOnClickListener(this);
 
-            imageLogo = (ImageView) itemView.findViewById(R.id.imageLogo);
-            textDescription = (TextView) itemView.findViewById(R.id.itemDescription);
+            imageMark = (ImageView) itemView.findViewById(R.id.image_mark);
+            imageLogo = (ImageView) itemView.findViewById(R.id.image_logo);
+            textNickname = (TextView) itemView.findViewById(R.id.item_nickname);
         }
 
         @Override

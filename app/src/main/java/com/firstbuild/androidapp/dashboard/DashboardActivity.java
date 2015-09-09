@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.firstbuild.androidapp.AddProduct.AddProductActivity;
 import com.firstbuild.androidapp.Paragon.ParagonMainActivity;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 
 public class DashboardActivity extends ActionBarActivity implements DashboardAdapter.ClickListener {
 
-    private Toolbar toolbar;
     private String TAG = DashboardActivity.class.getSimpleName();
     private RecyclerView listViewProduct;
     private DashboardAdapter adapterDashboard;
@@ -36,8 +36,10 @@ public class DashboardActivity extends ActionBarActivity implements DashboardAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("");
+        ((TextView) toolbar.findViewById(R.id.toolbar_title)).setText("My Products");
+
         setSupportActionBar(toolbar);
 
         listViewProduct = (RecyclerView) findViewById(R.id.listProduct);
