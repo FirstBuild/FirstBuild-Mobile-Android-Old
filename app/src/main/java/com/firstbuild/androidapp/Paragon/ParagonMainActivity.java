@@ -117,19 +117,12 @@ public class ParagonMainActivity extends ActionBarActivity {
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
 
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
-
-//            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
-//            requestQueue.offer(REQUEST_METHOD_READ + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-//
-//            requestQueue.offer(REQUEST_METHOD_NOTIFICATION + "/" + ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-//            requestQueue.offer(REQUEST_METHOD_NOTIFICATION + "/" + ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
-
-//            nextCharacteristicRead();
         }
 
         @Override
@@ -284,8 +277,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
 
             case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
-
-                Log.d(TAG, "cookState = COOK_STATE.STATE_PREHEAT; " +
+                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" +
                         String.format("%02x", value[0]) + ", " +
                         String.format("%02x", value[1]) + ", " +
                         String.format("%02x", value[2]) + ", " +
@@ -303,6 +295,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                         break;
                     }
                 }
+
+                Log.d(TAG, "isSousVid : "+isSousVide + ", isPreheat : " +isPreheat);
 
                 final boolean isFinalPreaheat = isPreheat;
 

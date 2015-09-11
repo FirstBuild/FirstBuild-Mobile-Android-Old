@@ -46,6 +46,9 @@ public class SousvideStatusFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Log.d(TAG, "onCreateView IN");
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_circle, container, false);
 
@@ -101,8 +104,11 @@ public class SousvideStatusFragment extends Fragment {
         if (isPreaheat) {
             UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
         }
-        else {
+        else if(cookState == COOK_STATE.STATE_PREHEAT){
             UpdateUiCookState(COOK_STATE.STATE_READY_TO_COOK);
+        }
+        else{
+            //nothing.
         }
 
     }
@@ -112,80 +118,88 @@ public class SousvideStatusFragment extends Fragment {
      * Update UI progress bar top of the screen and on circle view.
      */
     public void UpdateUiCookState(COOK_STATE state) {
+        Log.d(TAG, "UpdateUiCookState " + state);
 
-        cookState = state;
+        if(cookState != state){
+            cookState = state;
 
-        switch (cookState) {
-            case STATE_PREHEAT:
-                textStatusName.setText("PREHEATING");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+            switch (cookState) {
+                case STATE_PREHEAT:
+                    textStatusName.setText("PREHEATING");
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
-                layoutStatus.setVisibility(View.VISIBLE);
-                imgStatus.setVisibility(View.GONE);
-                btnContinue.setVisibility(View.GONE);
+                    layoutStatus.setVisibility(View.VISIBLE);
+                    imgStatus.setVisibility(View.GONE);
+                    btnContinue.setVisibility(View.GONE);
 
-                textLabelCurrent.setText("Current:");
-                textTempCurrent.setText("");
-                break;
+                    textLabelCurrent.setText("Current:");
+                    textTempCurrent.setText("");
+                    break;
 
-            case STATE_READY_TO_COOK:
-                textStatusName.setText("READY TO COOK");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                case STATE_READY_TO_COOK:
+                    textStatusName.setText("READY TO COOK");
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
-                layoutStatus.setVisibility(View.GONE);
-                imgStatus.setVisibility(View.VISIBLE);
-                btnContinue.setVisibility(View.VISIBLE);
+                    layoutStatus.setVisibility(View.GONE);
+                    imgStatus.setVisibility(View.VISIBLE);
+                    btnContinue.setVisibility(View.VISIBLE);
 
-                imgStatus.setImageResource(R.drawable.img_ready_to_cook);
+                    imgStatus.setImageResource(R.drawable.img_ready_to_cook);
 
-                circle.setGridValue(1.0f);
-                break;
+                    circle.setGridValue(1.0f);
+                    break;
 
-            case STATE_COOKING:
-                textStatusName.setText("COOKING");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                case STATE_COOKING:
+                    textStatusName.setText("COOKING");
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
-                layoutStatus.setVisibility(View.VISIBLE);
-                imgStatus.setVisibility(View.GONE);
-                btnContinue.setVisibility(View.GONE);
+                    layoutStatus.setVisibility(View.VISIBLE);
+                    imgStatus.setVisibility(View.GONE);
+                    btnContinue.setVisibility(View.GONE);
 
-                textTempTarget.setText(((ParagonMainActivity) getActivity()).getTargetTemp() + "℉");
-                textLabelCurrent.setText("Food ready at");
-                textTempCurrent.setText("");
+                    textTempTarget.setText(((ParagonMainActivity) getActivity()).getTargetTemp() + "℉");
+                    textLabelCurrent.setText("Food ready at");
+                    textTempCurrent.setText("");
 
-                circle.setGridValue(1.0f);
-                break;
+                    circle.setGridValue(1.0f);
+                    break;
 
-            case STATE_DONE:
-                textStatusName.setText("DONE");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_current);
+                case STATE_DONE:
+                    textStatusName.setText("DONE");
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_current);
 
-                layoutStatus.setVisibility(View.VISIBLE);
-                imgStatus.setVisibility(View.GONE);
-                btnContinue.setVisibility(View.GONE);
+                    layoutStatus.setVisibility(View.VISIBLE);
+                    imgStatus.setVisibility(View.GONE);
+                    btnContinue.setVisibility(View.GONE);
 
-                textTempTarget.setText(((ParagonMainActivity) getActivity()).getTargetTemp() + "℉");
-                textLabelCurrent.setText("Food is");
-                textTempCurrent.setText("READY");
+                    textTempTarget.setText(((ParagonMainActivity) getActivity()).getTargetTemp() + "℉");
+                    textLabelCurrent.setText("Food is");
+                    textTempCurrent.setText("READY");
 
-                circle.setGridValue(1.0f);
-                break;
+                    circle.setGridValue(1.0f);
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
+
         }
+        else{
+            //do nothing.
+        }
+
 
     }
 
@@ -207,8 +221,6 @@ public class SousvideStatusFragment extends Fragment {
         else {
             //do nothing.
         }
-
-
     }
 
 
