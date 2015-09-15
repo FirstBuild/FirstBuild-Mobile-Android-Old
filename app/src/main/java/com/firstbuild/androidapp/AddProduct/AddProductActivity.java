@@ -1,14 +1,9 @@
 package com.firstbuild.androidapp.AddProduct;
 
-import android.animation.Animator;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewAnimationUtils;
 
 import com.firstbuild.androidapp.R;
 
@@ -20,8 +15,6 @@ public class AddProductActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_add_product);
-
-
 
         getFragmentManager().
                 beginTransaction().

@@ -21,6 +21,6 @@ public class ParagonValues {
     public static final String CHARACTERISTIC_CURRENT_TEMPERATURE       = "8F080B1C-7C3B-FBB9-584A-F0AFD57028F0";
 
     // Target device's name
-    public static final String TARGET_DEVICE_NAME = "GE Appliance";
+    public static final String TARGET_DEVICE_NAME = "BLE ACM";
 //    public static final String TARGET_DEVICE_NAME = "CC2650 SensorTag";
 }

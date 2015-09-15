@@ -389,8 +389,6 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         //TODO: remove below code after test.
 //        nextStep(ParagonSteps.STEP_COOKING_MODE);
-
-
     }
 
     @Override

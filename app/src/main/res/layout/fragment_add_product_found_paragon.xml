@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/imgSpinner"
+        android:id="@+id/image_got_it"
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_marginTop="50dp"
@@ -19,11 +19,11 @@
         android:layout_gravity="center_horizontal"
         android:layout_margin="16dp"
         android:gravity="center_vertical"
-        android:text="Searching for your Paragon\nThis might take a few minutes."
+        android:text="Got it!\nWe found your Paragon"
         android:textAlignment="center"
         android:textSize="19sp"
-        ge:typeface="fonts/PTSansNarrowRegular"/>
-
+        ge:typeface="fonts/PTSansNarrowRegular"
+        android:id="@+id/got_it_guide_text" />
 
 </LinearLayout>
 

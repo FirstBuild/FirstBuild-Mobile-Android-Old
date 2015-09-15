@@ -1,7 +1,5 @@
 package com.firstbuild.androidapp.AddProduct;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,7 +30,7 @@ public class AddProductSelectFragment extends Fragment {
             public void onClick(View v) {
                 getFragmentManager().
                         beginTransaction().
-                        replace(R.id.content_frame, new AddProductParagonFragment()).
+                        replace(R.id.content_frame, new AddProductSearchingParagonFragment()).
                         addToBackStack(null).
                         commit();
             }
