@@ -121,8 +121,14 @@ public class SettingsFragment extends Fragment {
                 BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array());
 
                 valueBuffer.clear();
-                valueBuffer.putShort((short)(setTargetTime));
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
+                valueBuffer.putShort((short)0);
+                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, valueBuffer.array());
+
+                ByteBuffer cookTimeBuffer = ByteBuffer.allocate(8);
+
+                cookTimeBuffer.putInt(120);
+                cookTimeBuffer.putInt(4, 30);
+                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, cookTimeBuffer.array());
 
                 ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
             }

@@ -23,4 +23,6 @@ public class ParagonValues {
     // Target device's name
     public static final String TARGET_DEVICE_NAME = "BLE ACM";
 //    public static final String TARGET_DEVICE_NAME = "CC2650 SensorTag";
+
+    public static final int MAX_COOK_TIME = 100;
 }
