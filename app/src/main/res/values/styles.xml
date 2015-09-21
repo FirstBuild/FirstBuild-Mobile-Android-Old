@@ -12,7 +12,14 @@
         <item name="colorPrimaryDark">@color/colorParagonPrimaryDark</item>
         <item name="colorAccent">@color/colorParagonAccent</item>
         <item name="colorControlHighlight">@color/colorParagonHighlight</item>
+    </style>
 
+    <style name="drawer_menu_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">@color/colorParagonPrimaryText</item>
+        <item name="android:textSize">19sp</item>
     </style>
 
 </resources>

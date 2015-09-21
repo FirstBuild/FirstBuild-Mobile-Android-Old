@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firstbuild.androidapp.Paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.commonframework.bleManager.BleListener;
@@ -162,6 +164,9 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
     };
     private int MAX_BURNER = 5;
+
+    // Navigation drawer.
+    private NavigationDrawerFragment drawerFragment;
 
     private void nextCharacteristicRead() {
 
@@ -429,6 +434,13 @@ public class ParagonMainActivity extends ActionBarActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
+
+        // Setup drawer navigation.
+        drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+
         // Use this check to determine whether BLE is supported on the device. Then
         // you can selectively disable BLE-related features.
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
@@ -461,7 +473,12 @@ public class ParagonMainActivity extends ActionBarActivity {
         // Add ble event listener
         BleManager.getInstance().addListener(bleListener);
 
-        isCheckingCurrentStatus = false;
+
+        //TODO: remove this after test.
+        nextStep(ParagonSteps.STEP_COOKING_MODE);
+//        isCheckingCurrentStatus = false;
+
+
     }
 
     @Override

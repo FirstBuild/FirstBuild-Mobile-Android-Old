@@ -5,4 +5,5 @@
     <dimen name="footer_height">100dp</dimen>
     <dimen name="footer_button_height">70dp</dimen>
     <dimen name="bottom_bar_height">55dp</dimen>
+    <dimen name="nav_drawer_width">280dp</dimen>
 </resources>

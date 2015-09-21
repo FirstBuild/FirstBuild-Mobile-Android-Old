@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.productManager.ProductInfo;
 
 import java.util.ArrayList;
 

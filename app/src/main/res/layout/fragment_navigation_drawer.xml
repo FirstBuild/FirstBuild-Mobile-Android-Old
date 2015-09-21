@@ -1,0 +1,36 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorParagonPrimary"
+    tools:context="com.ge.kitchen.applianceUI.Navigation.NavigationDrawerFragment">
+
+    <LinearLayout
+        android:id="@+id/containerDrawerImage"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/nav_drawer_header_height"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/drawer_menu_text"
+            android:text="My Products"/>
+
+        <TextView
+            style="@style/drawer_menu_text"
+            android:text="Settings"/>
+
+        <TextView
+            style="@style/drawer_menu_text"
+            android:text="Helps"/>
+
+        <TextView
+            style="@style/drawer_menu_text"
+            android:text="Feedback"/>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

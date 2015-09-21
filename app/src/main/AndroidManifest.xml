@@ -56,6 +56,10 @@
             android:name=".AddProduct.AddProductActivity"
             android:label="@string/title_activity_add_product" >
         </activity>
+        <activity
+            android:name=".Paragon.settings.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>
