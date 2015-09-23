@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="℉"
+        android:entries="@array/list_temp_unit"
+        android:entryValues="@array/list_temp_unit_values"
+        android:key="pref_temp_unit"
+        android:title="Temperature"/>
+
+    <ListPreference
+        android:defaultValue="Metrics"
+        android:entries="@array/list_metric_unit"
+        android:entryValues="@array/list_metric_unit_values"
+        android:key="pref_unit"
+        android:title="Unit"/>
+
+    <PreferenceCategory android:title="Paragon Details">
+
+        <EditTextPreference
+            android:key="pref_name"
+            android:summary="Your Paragon's name"
+            android:title="Name">
+        </EditTextPreference>
+
+        <Preference
+            android:key="pref_serial_number"
+            android:selectable="false"
+            android:title="Serial number"
+            android:summary="-----"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -60,6 +60,10 @@
             android:name=".Paragon.settings.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+        <activity
+            android:name=".Paragon.settings.TermsActivity"
+            android:label="@string/title_activity_terms" >
+        </activity>
     </application>
 
 </manifest>

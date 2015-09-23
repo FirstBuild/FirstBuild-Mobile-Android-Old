@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="pref_serial_number"
+        android:selectable="false"
+        android:title="Version"
+        android:summary="0.1"/>
+
+    <Preference
+        android:key="pref_term_service"
+        android:title="Term of services"
+        android:summary=""/>
+
+    <Preference
+        android:key="pref_licenses"
+        android:title="Open Source Licenses"
+        android:summary=""/>
+
+</PreferenceScreen>

@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firstbuild.androidapp.Paragon.navigation.NavigationDrawerFragment;
+import com.firstbuild.androidapp.Paragon.settings.SettingsActivity;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.commonframework.bleManager.BleListener;
@@ -276,7 +277,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
                 Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + byteBuffer.getShort());
-                onElapsedTime((int)byteBuffer.getShort());
+                onElapsedTime((int) byteBuffer.getShort());
 
                 break;
 
@@ -324,7 +325,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         final int elapsedTimeValue = elapsedTime;
         Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
-        if (fragment instanceof SousvideStatusFragment){
+        if (fragment instanceof SousvideStatusFragment) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -341,7 +342,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             }).start();
 
         }
-        else{
+        else {
 
         }
 
@@ -350,7 +351,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     private void onBurnerStatus(boolean isSousVide, boolean isPreheat) {
         final boolean isPreheatValue = isPreheat;
 
-        Log.d(TAG, "onBurnerStatus : " + "isSousvide "+isSousVide +", isPreheat "+isPreheatValue);
+        Log.d(TAG, "onBurnerStatus : " + "isSousvide " + isSousVide + ", isPreheat " + isPreheatValue);
 
         // Checking current step, if very first step..
         if (currentStep == ParagonSteps.STEP_CHECK_CURRENT_STATUS) {
@@ -511,6 +512,18 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            Intent intent = new Intent(this, SettingsActivity.class);
+
+            intent.putExtra("SelectedMenu", "MenuSettings");
+            startActivity(intent);
+            return true;
+        }
+        else if (id == R.id.action_about) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+
+            intent.putExtra("SelectedMenu", "MenuAbout");
+            startActivity(intent);
             return true;
         }
 
