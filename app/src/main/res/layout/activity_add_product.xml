@@ -4,7 +4,7 @@
     xmlns:ge="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.firstbuild.androidapp.AddProduct.AddProductActivity">
+    tools:context="com.firstbuild.androidapp.addProduct.AddProductActivity">
 
     <include
         android:id="@+id/app_bar"

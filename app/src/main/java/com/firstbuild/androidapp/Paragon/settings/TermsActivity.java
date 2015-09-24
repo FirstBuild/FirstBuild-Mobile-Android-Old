@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.Paragon.settings;
+package com.firstbuild.androidapp.paragon.settings;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;

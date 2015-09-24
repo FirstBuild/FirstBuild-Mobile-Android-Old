@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.Paragon;
+package com.firstbuild.androidapp.paragon;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.Paragon;
+package com.firstbuild.androidapp.paragon;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -19,8 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.firstbuild.androidapp.Paragon.navigation.NavigationDrawerFragment;
-import com.firstbuild.androidapp.Paragon.settings.SettingsActivity;
+import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
+import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.commonframework.bleManager.BleListener;

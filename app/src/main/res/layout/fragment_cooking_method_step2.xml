@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
               android:background="@drawable/img_bg_cooking_method_0"
-    tools:context="com.firstbuild.androidapp.Paragon.Step1Fragment">
+    tools:context="com.firstbuild.androidapp.paragon.Step1Fragment">
 
     <RelativeLayout
         android:layout_width="match_parent"

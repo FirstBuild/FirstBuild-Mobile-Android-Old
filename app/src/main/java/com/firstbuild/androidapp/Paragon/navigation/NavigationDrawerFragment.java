@@ -1,5 +1,5 @@
 
-package com.firstbuild.androidapp.Paragon.navigation;
+package com.firstbuild.androidapp.paragon.navigation;
 
 
 import android.os.Bundle;

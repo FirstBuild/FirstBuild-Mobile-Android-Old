@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.Paragon.SelectModeFragment">
+    tools:context="com.firstbuild.androidapp.paragon.SelectModeFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_mode"

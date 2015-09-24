@@ -48,20 +48,20 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".Paragon.ParagonMainActivity"
+            android:name=".paragon.ParagonMainActivity"
             android:label="@string/title_activity_paragon_main"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".AddProduct.AddProductActivity"
+            android:name=".addProduct.AddProductActivity"
             android:label="@string/title_activity_add_product" >
         </activity>
         <activity
-            android:name=".Paragon.settings.SettingsActivity"
+            android:name=".paragon.settings.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name=".Paragon.settings.TermsActivity"
+            android:name=".paragon.settings.TermsActivity"
             android:label="@string/title_activity_terms" >
         </activity>
     </application>

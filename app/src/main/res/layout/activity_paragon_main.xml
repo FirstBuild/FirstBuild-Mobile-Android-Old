@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.firstbuild.androidapp.Paragon.ParagonMainActivity">
+        tools:context="com.firstbuild.androidapp.paragon.ParagonMainActivity">
 
         <include
             android:id="@+id/app_bar"
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/fragment_navigation_drawer"
-        android:name="com.firstbuild.androidapp.Paragon.navigation.NavigationDrawerFragment"
+        android:name="com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment"
         android:layout_width="@dimen/nav_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"

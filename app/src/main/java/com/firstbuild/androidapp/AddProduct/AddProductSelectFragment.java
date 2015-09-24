@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.AddProduct;
+package com.firstbuild.androidapp.addProduct;
 
 import android.os.Bundle;
 import android.app.Fragment;

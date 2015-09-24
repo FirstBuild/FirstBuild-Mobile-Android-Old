@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.Paragon;
+package com.firstbuild.androidapp.paragon;
 
 
 import android.app.Fragment;

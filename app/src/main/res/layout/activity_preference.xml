@@ -7,7 +7,7 @@
     android:background="@color/colorParagonPrimary"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    tools:context="com.firstbuild.androidapp.Paragon.settings.SettingsActivity">
+    tools:context="com.firstbuild.androidapp.paragon.settings.SettingsActivity">
 
     <RelativeLayout
         android:id="@+id/header"

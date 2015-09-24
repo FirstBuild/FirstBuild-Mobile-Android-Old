@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.Paragon.settings;
+package com.firstbuild.androidapp.paragon.settings;
 
 import android.content.SharedPreferences;
 import android.preference.Preference;
