@@ -6,6 +6,7 @@ import android.preference.PreferenceFragment;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
@@ -21,7 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
         android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         String menu = getIntent().getStringExtra("SelectedMenu");
@@ -33,6 +34,17 @@ public class SettingsActivity extends AppCompatActivity {
             getFragmentManager().beginTransaction().replace(R.id.content_frame, new PreferenceAbout()).commit();
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static class PreferenceSettings extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -90,6 +102,23 @@ public class SettingsActivity extends AppCompatActivity {
                             .title(R.string.term_of_service_title)
                             .content(R.string.term_of_service_content)
                             .positiveText(R.string.term_of_service_ok)
+                            .show();
+
+                    return false;
+                }
+            });
+
+            Preference opensource_license = findPreference("pref_licenses");
+
+            opensource_license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Log.d(TAG, "onPreferenceClick pref_term_service");
+
+                    new MaterialDialog.Builder(getActivity())
+                            .title(R.string.opensource_license_title)
+                            .content(R.string.opensource_license_content)
+                            .positiveText(R.string.opensource_license_ok)
                             .show();
 
                     return false;

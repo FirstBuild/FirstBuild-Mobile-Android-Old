@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -524,6 +525,31 @@ public class ParagonMainActivity extends ActionBarActivity {
             startActivity(intent);
             return true;
         }
+        else if (id == R.id.action_my_product) {
+            finish();
+            return true;
+        }
+        else if (id == R.id.action_help) {
+            String url = getResources().getString(R.string.url_manual);
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            return true;
+        }
+        else if (id == R.id.action_feedback) {
+            final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+            emailIntent.setType("plain/text");
+            emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"master@firstbuild.com"});
+            emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Feedback Paragon] ");
+            emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Text");
+
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+        }
+        else{
+            // do nothing.
+        }
+
+
+
 
         return super.onOptionsItemSelected(item);
     }
