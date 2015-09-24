@@ -475,9 +475,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         BleManager.getInstance().addListener(bleListener);
 
 
-        //TODO: remove this after test.
-        nextStep(ParagonSteps.STEP_COOKING_MODE);
-//        isCheckingCurrentStatus = false;
+        isCheckingCurrentStatus = false;
 
 
     }
