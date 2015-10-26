@@ -113,6 +113,29 @@ public class SettingsFragment extends Fragment {
                 activity.setTargetTemp(setTargetTemp);
 
                 //TODO: Should convert the target temp value properly.
+                ByteBuffer valueBuffer = ByteBuffer.allocate(40);
+
+                //TODO: temp temp.
+
+                for(int i = 0; i < 5; i++){
+                    valueBuffer.put(8 * i, (byte) 10);
+                    valueBuffer.putShort(1+8*i, (short)(setTargetTime+i));
+                    valueBuffer.putShort(3+8*i, (short)(setTargetTime+i));
+                    valueBuffer.putShort(5 + 8 * i, (short) ((setTargetTemp + i) * 100));
+
+                    if(i == 4){
+                        valueBuffer.put(7+8*i, (byte) 0x02);
+                    }
+                    else{
+                        valueBuffer.put(7+8*i, (byte) 0x01);
+                    }
+
+                }
+
+
+                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
+                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
+
 //                ByteBuffer valueBuffer = ByteBuffer.allocate(2);
 //
 //                short setValue = (short) (setTargetTemp * 100);
@@ -122,7 +145,7 @@ public class SettingsFragment extends Fragment {
 //
 //                valueBuffer.clear();
 //                valueBuffer.putShort((short)0);
-//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, valueBuffer.array());
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME, valueBuffer.array());
 //
 //                ByteBuffer cookTimeBuffer = ByteBuffer.allocate(8);
 //
@@ -360,6 +383,10 @@ public class SettingsFragment extends Fragment {
                 break;
 
         }
+
+        //TODO: user correct table value.
+        setTargetTemp = 110;
+        setTargetTime = 5;
 
         textSetTemp.setText(setTargetTemp + "℉");
         textSetTime.setText(setTargetTime / 60 + "H : " + setTargetTime % 60 + "M");

@@ -121,13 +121,15 @@ public class ParagonMainActivity extends ActionBarActivity {
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
 
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
+
         }
 
         @Override
@@ -277,9 +279,11 @@ public class ParagonMainActivity extends ActionBarActivity {
                 }).start();
                 break;
 
-            case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
-                Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + byteBuffer.getShort());
-                onElapsedTime((int) byteBuffer.getShort());
+            case ParagonValues.CHARACTERISTIC_REMAINING_TIME:
+                Log.d(TAG, "CHARACTERISTIC_REMAINING_TIME :" + byteBuffer.getShort());
+                String buffer = String.format("%02x%02x", value[0], value[1]);
+                int remainingTime = Integer.parseInt(buffer, 16);
+                onElapsedTime(remainingTime);
 
                 break;
 
@@ -328,9 +332,46 @@ public class ParagonMainActivity extends ActionBarActivity {
 //                }
 //
 //                onBurnerStatus(isSousVide, isPreheat);
+                onBurnerStatus(false, false);
+
+                break;
+
+
+            case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE:
+                Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STATE :" + String.format("%02x", value[0]));
+                onCookState(value[0]);
 
                 break;
         }
+    }
+
+    private void onCookState(final byte state) {
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+        if (fragment instanceof GetReadyFragment) {
+            nextStep(ParagonSteps.STEP_SOUSVIDE_CIRCLE);
+        }
+        else if (fragment instanceof SousvideStatusFragment) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+                            ((SousvideStatusFragment) fragment).updateCookStatus(state);
+
+                        }
+                    });
+                }
+            }).start();
+        }
+        else{
+            // nothing.
+        }
+
     }
 
     private void onElapsedTime(int elapsedTime) {
@@ -373,20 +414,20 @@ public class ParagonMainActivity extends ActionBarActivity {
                 // Then go to the Status Screen.
                 nextStep(ParagonSteps.STEP_SOUSVIDE_CIRCLE);
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
-
-                                ((SousvideStatusFragment) fragment).updateCookStatus(isPreheatValue);
-
-                            }
-                        });
-                    }
-                }).start();
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+//
+//                                ((SousvideStatusFragment) fragment).updateCookStatus(isPreheatValue);
+//
+//                            }
+//                        });
+//                    }
+//                }).start();
 
             }
             else {
@@ -397,35 +438,35 @@ public class ParagonMainActivity extends ActionBarActivity {
         else {
 
             if (isSousVide) {
-
-                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
-
-                if (fragment instanceof GetReadyFragment) {
-
-                    nextStep(ParagonSteps.STEP_SOUSVIDE_CIRCLE);
-
-                }
-                else if (fragment instanceof SousvideStatusFragment) {
-
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
-
-                                    ((SousvideStatusFragment) fragment).updateCookStatus(isPreheatValue);
-
-                                }
-                            });
-                        }
-                    }).start();
-
-                }
-                else {
-                    // do nothing
-                }
+//
+//                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+//
+//                if (fragment instanceof GetReadyFragment) {
+//
+//                    nextStep(ParagonSteps.STEP_SOUSVIDE_CIRCLE);
+//
+//                }
+//                else if (fragment instanceof SousvideStatusFragment) {
+//
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+//
+//                                    ((SousvideStatusFragment) fragment).updateCookStatus(isPreheatValue);
+//
+//                                }
+//                            });
+//                        }
+//                    }).start();
+//
+//                }
+//                else {
+//                    // do nothing
+//                }
             }
             else {
                 //do nothging.

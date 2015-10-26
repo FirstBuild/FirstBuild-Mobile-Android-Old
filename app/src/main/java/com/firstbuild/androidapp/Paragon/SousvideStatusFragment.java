@@ -15,6 +15,8 @@ import com.firstbuild.androidapp.R;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
+import java.nio.ByteBuffer;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -79,21 +81,29 @@ public class SousvideStatusFragment extends Fragment {
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
-                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
-                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_TIME);
+//                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
+//                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+//                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_TIME);
+//
+//                UpdateUiCookState(COOK_STATE.STATE_COOKING);
+
+                ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+
+                valueBuffer.put((byte)0x01);
+                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
                 UpdateUiCookState(COOK_STATE.STATE_COOKING);
+
             }
         });
 
-        //TODO: remove code below after debug.
-        view.findViewById(R.id.progress_dot_2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateCookStatus(false);
-            }
-        });
+//        //TODO: remove code below after debug.
+//        view.findViewById(R.id.progress_dot_2).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                updateCookStatus(false);
+//            }
+//        });
 
         updateUiCurrentTemp();
 
@@ -103,18 +113,62 @@ public class SousvideStatusFragment extends Fragment {
     }
 
 
-    public void updateCookStatus(boolean isPreaheat) {
-        Log.d(TAG, "updateCookStatus IN "+isPreaheat);
+//    public void updateCookStatus(boolean isPreaheat) {
+//        Log.d(TAG, "updateCookStatus IN "+isPreaheat);
+//
+//        if(isPreaheat){
+//            UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
+//        }
+//        else if (cookState == COOK_STATE.STATE_PREHEAT) {
+//            UpdateUiCookState(COOK_STATE.STATE_READY_TO_COOK);
+//        }
+//        else{
+//            //nothing.
+//        }
+//
+//    }
 
-        if(isPreaheat){
-            UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
+    /**
+     * Update cooking state, Off -> Heating -> Ready -> Cooking -> Done
+     * @param state
+     */
+    public void updateCookStatus(byte state) {
+        Log.d(TAG, "updateCookStatus IN "+state);
+
+        switch(state){
+            case ParagonValues.COOK_STATE_OFF:
+                break;
+
+            case ParagonValues.COOK_STATE_HEATING:
+                UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
+                break;
+
+            case ParagonValues.COOK_STATE_READY:
+                UpdateUiCookState(COOK_STATE.STATE_READY_TO_COOK);
+                break;
+
+            case ParagonValues.COOK_STATE_COOKING:
+                UpdateUiCookState(COOK_STATE.STATE_COOKING);
+                break;
+
+            case ParagonValues.COOK_STATE_DONE:
+                UpdateUiCookState(COOK_STATE.STATE_DONE);
+                break;
+
+            default:
+                Log.d(TAG, "Error in onCookState :" + state);
+                break;
         }
-        else if (cookState == COOK_STATE.STATE_PREHEAT) {
-            UpdateUiCookState(COOK_STATE.STATE_READY_TO_COOK);
-        }
-        else{
-            //nothing.
-        }
+
+//        if(isPreaheat){
+//            UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
+//        }
+//        else if (cookState == COOK_STATE.STATE_PREHEAT) {
+//            UpdateUiCookState(COOK_STATE.STATE_READY_TO_COOK);
+//        }
+//        else{
+//            //nothing.
+//        }
 
     }
 
@@ -163,19 +217,20 @@ public class SousvideStatusFragment extends Fragment {
             case STATE_COOKING:
                 textStatusName.setText("COOKING");
                 progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                    progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
-                    progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
+                progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
+                progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
                 progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
-                    layoutStatus.setVisibility(View.VISIBLE);
-                    imgStatus.setVisibility(View.GONE);
-                    btnContinue.setVisibility(View.GONE);
+                layoutStatus.setVisibility(View.VISIBLE);
+                imgStatus.setVisibility(View.GONE);
+                btnContinue.setVisibility(View.GONE);
 
                 textTempTarget.setText(((ParagonMainActivity) getActivity()).getTargetTemp() + "℉");
                 textLabelCurrent.setText("Food ready at");
-                    textTempCurrent.setText("");
 
-                    circle.setGridValue(1.0f);
+                textTempCurrent.setText("");
+
+                circle.setGridValue(1.0f);
                 break;
 
             case STATE_DONE:
@@ -215,7 +270,7 @@ public class SousvideStatusFragment extends Fragment {
         ParagonMainActivity activity = (ParagonMainActivity) getActivity();
 
         if (cookState == COOK_STATE.STATE_PREHEAT) {
-            textTempCurrent.setText(Math.round(activity.getCurrentTemp()) + "℉");
+            textTempCurrent.setText(Math.floor(activity.getCurrentTemp()) + "℉");
             textTempTarget.setText("Target: " + activity.getTargetTemp() + "℉");
 
             float ratioTemp = activity.getCurrentTemp() / activity.getTargetTemp();
@@ -237,12 +292,16 @@ public class SousvideStatusFragment extends Fragment {
      * @param elapsedTime
      */
     public void updateUiElapsedTime(int elapsedTime) {
+        Log.d(TAG, "updateUiElapsedTime :"+elapsedTime);
         ParagonMainActivity activity = (ParagonMainActivity) getActivity();
 
         if (cookState == COOK_STATE.STATE_COOKING) {
             float ratioTime = elapsedTime / activity.getTargetTime();
 
             ratioTime = Math.min(ratioTime, 1.0f);
+
+            Log.d(TAG, "updateUiElapsedTime elapsedTime: "+elapsedTime +", getTargetTime: "+activity.getTargetTime()+", ratio :"+ratioTime);
+
             circle.setBarValue(ratioTime);
         }
         else {
