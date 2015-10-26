@@ -113,24 +113,24 @@ public class SettingsFragment extends Fragment {
                 activity.setTargetTemp(setTargetTemp);
 
                 //TODO: Should convert the target temp value properly.
-                ByteBuffer valueBuffer = ByteBuffer.allocate(2);
-
-                short setValue = (short) (setTargetTemp * 100);
-
-                valueBuffer.putShort(setValue);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array());
-
-                valueBuffer.clear();
-                valueBuffer.putShort((short)0);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, valueBuffer.array());
-
-                ByteBuffer cookTimeBuffer = ByteBuffer.allocate(8);
-
-                cookTimeBuffer.putInt(120);
-                cookTimeBuffer.putInt(4, 30);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, cookTimeBuffer.array());
-
-                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
+//                ByteBuffer valueBuffer = ByteBuffer.allocate(2);
+//
+//                short setValue = (short) (setTargetTemp * 100);
+//
+//                valueBuffer.putShort(setValue);
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array());
+//
+//                valueBuffer.clear();
+//                valueBuffer.putShort((short)0);
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, valueBuffer.array());
+//
+//                ByteBuffer cookTimeBuffer = ByteBuffer.allocate(8);
+//
+//                cookTimeBuffer.putInt(120);
+//                cookTimeBuffer.putInt(4, 30);
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, cookTimeBuffer.array());
+//
+//                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
             }
         });
 

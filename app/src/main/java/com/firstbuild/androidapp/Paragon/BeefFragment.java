@@ -72,18 +72,18 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
                 calculateTimeTemp();
 
                 //TODO: Should convert the target temp value properly.
-                ByteBuffer valueBuffer = ByteBuffer.allocate(2);
-
-                short setValue = (short) (activity.getTargetTemp() * 100);
-
-                valueBuffer.putShort(setValue);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array());
-
-                valueBuffer.clear();
-                valueBuffer.putShort((short)(activity.getTargetTime()));
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
-
-                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_READY_PREHEAT);
+//                ByteBuffer valueBuffer = ByteBuffer.allocate(2);
+//
+//                short setValue = (short) (activity.getTargetTemp() * 100);
+//
+//                valueBuffer.putShort(setValue);
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array());
+//
+//                valueBuffer.clear();
+//                valueBuffer.putShort((short)(activity.getTargetTime()));
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
+//
+//                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_READY_PREHEAT);
             }
         });
 

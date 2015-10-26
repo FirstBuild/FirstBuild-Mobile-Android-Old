@@ -118,11 +118,12 @@ public class ParagonMainActivity extends ActionBarActivity {
             BleManager.getInstance().displayGattServices(address);
 
             // Get Initial values.
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
 
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
@@ -251,11 +252,11 @@ public class ParagonMainActivity extends ActionBarActivity {
                 }).start();
                 break;
 
-            case ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE:
-                targetTemp = (float) byteBuffer.getShort() / 100.0f;
-
-                Log.d(TAG, "CHARACTERISTIC_TARGET_TEMPERATURE :" + targetTemp);
-                break;
+//            case ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE:
+//                targetTemp = (float) byteBuffer.getShort() / 100.0f;
+//
+//                Log.d(TAG, "CHARACTERISTIC_TARGET_TEMPERATURE :" + targetTemp);
+//                break;
 
             case ParagonValues.CHARACTERISTIC_BATTERY_LEVEL:
                 batteryLevel = byteBuffer.get();
@@ -283,40 +284,50 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
 
-            case ParagonValues.CHARACTERISTIC_COOK_TIME:
-                Log.d(TAG, "CHARACTERISTIC_COOK_TIME :" + byteBuffer.getShort());
+//            case ParagonValues.CHARACTERISTIC_COOK_TIME:
+//                Log.d(TAG, "CHARACTERISTIC_COOK_TIME :" + byteBuffer.getShort());
+//                break;
+
+            case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
+                Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :");
+
+                for(int i = 0; i < 32; i++){
+                    Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :" + String.format("%02x", value[i]));
+                }
                 break;
 
 
             case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
-                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" +
-                        String.format("%02x", value[0]) + ", " +
-                        String.format("%02x", value[1]) + ", " +
-                        String.format("%02x", value[2]) + ", " +
-                        String.format("%02x", value[3]) + ", " +
-                        String.format("%02x", value[4]));
+                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" + String.format("%02x", value[0]));
 
-                boolean isSousVide = false;
-                boolean isPreheat = false;
-
-                //There are 5 burner statuses and and 5 bytes. Each byte is a status
-                //the statuses are:
-                //
-                //Bit 7: 0 - Off, 1 - On
-                //Bit 6: Normal / Sous Vide
-                //Bit 5: 0 - Cook, 1 - Preheat
-                //Bits 4-0: Burner PwrLevel
-
-                for (int i = 0; i < MAX_BURNER; i++) {
-                    if (getBit(value[i], 6)) {
-                        isSousVide = true;
-                        isPreheat = getBit(value[i], 5);
-
-                        break;
-                    }
-                }
-
-                onBurnerStatus(isSousVide, isPreheat);
+//                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" +
+//                        String.format("%02x", value[0]) + ", " +
+//                        String.format("%02x", value[1]) + ", " +
+//                        String.format("%02x", value[2]) + ", " +
+//                        String.format("%02x", value[3]) + ", " +
+//                        String.format("%02x", value[4]));
+//
+//                boolean isSousVide = false;
+//                boolean isPreheat = false;
+//
+//                //There are 5 burner statuses and and 5 bytes. Each byte is a status
+//                //the statuses are:
+//                //
+//                //Bit 7: 0 - Off, 1 - On
+//                //Bit 6: Normal / Sous Vide
+//                //Bit 5: 0 - Cook, 1 - Preheat
+//                //Bits 4-0: Burner PwrLevel
+//
+//                for (int i = 0; i < MAX_BURNER; i++) {
+//                    if (getBit(value[i], 6)) {
+//                        isSousVide = true;
+//                        isPreheat = getBit(value[i], 5);
+//
+//                        break;
+//                    }
+//                }
+//
+//                onBurnerStatus(isSousVide, isPreheat);
 
                 break;
         }
