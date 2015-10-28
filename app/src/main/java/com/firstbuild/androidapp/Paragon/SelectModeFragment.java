@@ -1,6 +1,7 @@
 package com.firstbuild.androidapp.paragon;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     private SelectModeAdapter selectModeAdapter;
     private SelectModeSteps selectModeSteps;
     private View layoutButtons;
+    private ParagonMainActivity attached;
 
     private enum SelectModeSteps {
         STEP_COOKING_METHOD,
@@ -37,6 +39,12 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        attached = (ParagonMainActivity)getActivity();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +63,9 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onclick custom");
+                Log.d(TAG, "onclick Quick Start");
+
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_QUICK_START);
 
             }
         });
@@ -141,7 +151,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
             case STEP_HOW_TO_COOK:
                 if(position == 0){
                     SetTitle("Settings");
-                    ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
+                    attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
                 }
                 else{
                     //do nothing

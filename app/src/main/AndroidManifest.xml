@@ -33,11 +33,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".cookingMethod.CookingMethodActivity"
-            android:label="@string/title_activity_cooking_method"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".sousvideUI.SousvideActivity"
             android:label="@string/title_activity_sousvide"
             android:screenOrientation="portrait" >

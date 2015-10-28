@@ -26,9 +26,6 @@ import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.trash.BeefFragment;
-import com.firstbuild.androidapp.paragon.trash.Step1Fragment;
-import com.firstbuild.androidapp.paragon.trash.Step2Fragment;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
@@ -45,7 +42,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
-    private ParagonSteps currentStep = ParagonSteps.STEP_COOKING_METHOD_1;
+    private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
     private float targetTemp;
     private float currentTemp;
     private int targetTime = ParagonValues.MAX_COOK_TIME;
@@ -671,6 +668,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                 fragment = new CompleteFragment();
                 break;
 
+            case STEP_QUICK_START:
+                fragment = new QuickStartFragment();
+                break;
+
 //            case STEP_COOKING_METHOD_1:
 //                fragment = new Step1Fragment();
 //                break;
@@ -711,19 +712,21 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     public enum ParagonSteps {
+        STEP_NONE,
         STEP_CHECK_CURRENT_STATUS,
         STEP_COOKING_MODE,
         STEP_SOUSVIDE_SETTINGS,
         STEP_SOUSVIDE_GETREADY,
         STEP_SOUSVIDE_CIRCLE,
         STEP_SOUSVIDE_COMPLETE,
-        STEP_COOKING_METHOD_1,
-        STEP_COOKING_METHOD_2,
-        STEP_SOUSVIDE_BEEF,
-        STEP_SOUSVIDE_READY_PREHEAT,
-        STEP_SOUSVIDE_PREHEATING,
-        STEP_SOUSVIDE_READY_COOK,
-        STEP_SOUSVIDE_COOKING,
+        STEP_QUICK_START,
+//        STEP_COOKING_METHOD_1,
+//        STEP_COOKING_METHOD_2,
+//        STEP_SOUSVIDE_BEEF,
+//        STEP_SOUSVIDE_READY_PREHEAT,
+//        STEP_SOUSVIDE_PREHEATING,
+//        STEP_SOUSVIDE_READY_COOK,
+//        STEP_SOUSVIDE_COOKING,
     }
 
 
