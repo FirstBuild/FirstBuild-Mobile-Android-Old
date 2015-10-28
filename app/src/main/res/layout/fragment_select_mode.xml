@@ -10,10 +10,10 @@
         android:id="@+id/list_mode"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="16dp"
         android:layout_weight="1"/>
 
     <LinearLayout
+        android:id="@+id/layout_buttons"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_gravity="bottom"
@@ -39,7 +39,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="8dp"
                 android:fontFamily="sans-serif-thin"
-                android:text="My Recipes"
+                android:text="@string/fragment_select_mode_myrecipes"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"/>
@@ -71,7 +71,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="8dp"
                 android:fontFamily="sans-serif-thin"
-                android:text="Custom"
+                android:text="@string/fragment_select_mode_button_quickstart"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"/>

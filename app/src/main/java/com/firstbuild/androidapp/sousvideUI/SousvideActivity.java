@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.firstbuild.androidapp.paragon.BeefFragment;
+import com.firstbuild.androidapp.paragon.trash.BeefFragment;
 import com.firstbuild.androidapp.R;
 
 public class SousvideActivity extends ActionBarActivity {

@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.paragon;
+package com.firstbuild.androidapp.paragon.trash;
 
 
 import android.app.Fragment;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 
 /**
  * A simple {@link Fragment} subclass.

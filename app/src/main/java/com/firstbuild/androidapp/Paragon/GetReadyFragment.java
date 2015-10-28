@@ -33,6 +33,8 @@ public class GetReadyFragment extends Fragment {
             }
         });
 
+        ((ParagonMainActivity)getActivity()).setTitle("Get Ready");
+
         return view;
     }
 

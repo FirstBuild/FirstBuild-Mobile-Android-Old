@@ -17,12 +17,18 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.trash.BeefFragment;
+import com.firstbuild.androidapp.paragon.trash.Step1Fragment;
+import com.firstbuild.androidapp.paragon.trash.Step2Fragment;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
@@ -172,6 +178,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     // Navigation drawer.
     private NavigationDrawerFragment drawerFragment;
+    private TextView toolbarText;
+    private ImageView toolbarImage;
 
     private void nextCharacteristicRead() {
 
@@ -198,7 +206,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         return targetTime;
     }
 
-    public void setTargetTime(int targetTime) {
+    public void setTargetTime(int targetTime, int setTargetTimeMax) {
         this.targetTime = targetTime;
     }
 
@@ -490,6 +498,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setHomeButtonEnabled(true);
+        toolbarText = (TextView) toolbar.findViewById(R.id.toolbar_title_text);
+        toolbarImage = (ImageView) toolbar.findViewById(R.id.toolbar_title_image);
 
         // Setup drawer navigation.
         drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
@@ -529,6 +539,10 @@ public class ParagonMainActivity extends ActionBarActivity {
 
 
         isCheckingCurrentStatus = false;
+
+
+        //TODO: remove this code after test.
+        nextStep(ParagonSteps.STEP_COOKING_MODE);
 
 
     }
@@ -654,25 +668,25 @@ public class ParagonMainActivity extends ActionBarActivity {
                 fragment = new SousvideStatusFragment();
                 break;
 
-            case STEP_COOKING_METHOD_1:
-                fragment = new Step1Fragment();
-                break;
-
-            case STEP_COOKING_METHOD_2:
-                fragment = new Step2Fragment();
-                break;
-
-            case STEP_SOUSVIDE_BEEF:
-                fragment = new BeefFragment();
-                break;
-
-            case STEP_SOUSVIDE_READY_PREHEAT:
-                fragment = new ReadyToPreheatFragment();
-                break;
-
-            case STEP_SOUSVIDE_READY_COOK:
-                fragment = new ReadyToCookFragment();
-                break;
+//            case STEP_COOKING_METHOD_1:
+//                fragment = new Step1Fragment();
+//                break;
+//
+//            case STEP_COOKING_METHOD_2:
+//                fragment = new Step2Fragment();
+//                break;
+//
+//            case STEP_SOUSVIDE_BEEF:
+//                fragment = new BeefFragment();
+//                break;
+//
+//            case STEP_SOUSVIDE_READY_PREHEAT:
+//                fragment = new ReadyToPreheatFragment();
+//                break;
+//
+//            case STEP_SOUSVIDE_READY_COOK:
+//                fragment = new ReadyToCookFragment();
+//                break;
 
             default:
                 break;
@@ -708,5 +722,23 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_SOUSVIDE_COOKING,
     }
 
+
+    /**
+     * Set title.
+     * @param title String to be title
+     */
+    protected void setTitle(String title){
+        if(title.equals("Paragon")){
+            toolbarText.setVisibility(View.GONE);
+            toolbarImage.setVisibility(View.VISIBLE);
+        }
+        else{
+            toolbarText.setVisibility(View.VISIBLE);
+            toolbarImage.setVisibility(View.GONE);
+
+            toolbarText.setText(title);
+        }
+
+    }
 
 }

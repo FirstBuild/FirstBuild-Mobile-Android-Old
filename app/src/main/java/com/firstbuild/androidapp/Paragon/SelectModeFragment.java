@@ -24,6 +24,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     private RecyclerView listMode;
     private SelectModeAdapter selectModeAdapter;
     private SelectModeSteps selectModeSteps;
+    private View layoutButtons;
 
     private enum SelectModeSteps {
         STEP_COOKING_METHOD,
@@ -58,6 +59,8 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
 
             }
         });
+
+        layoutButtons = view.findViewById(R.id.layout_buttons);
 
         listMode = (RecyclerView) view.findViewById(R.id.list_mode);
 
@@ -98,41 +101,60 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
 
 
     @Override
-    public void itemClicked(View view, int position) {
+    public void itemClicked(View view, int position, String text) {
         Log.d(TAG, "itemclicked "+position);
 
         switch(selectModeSteps){
             case STEP_COOKING_METHOD:
                 if(position == 2){
                     selectModeSteps = SelectModeSteps.STEP_MATERIAL;
+
+                    SetTitle(text);
+
                     removeAllList();
                     fillList(R.array.paragon_modes_sousvide);
+                    layoutButtons.setVisibility(View.GONE);
                 }
                 else{
                     //do nothing
                 }
+
                 break;
 
             case STEP_MATERIAL:
                 if(position == 0){
                     selectModeSteps = SelectModeSteps.STEP_HOW_TO_COOK;
+                    SetTitle(text);
+
                     removeAllList();
                     fillList(R.array.paragon_modes_beef);
+                    layoutButtons.setVisibility(View.GONE);
                 }
                 else{
                     //do nothing
                 }
+
                 break;
 
             case STEP_HOW_TO_COOK:
                 if(position == 0){
+                    SetTitle("Settings");
                     ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
                 }
                 else{
                     //do nothing
                 }
+
                 break;
         }
 
+    }
+
+    /**
+     * Set title text on header.
+     * @param text string to be title.
+     */
+    private void SetTitle(String text) {
+        ((ParagonMainActivity)getActivity()).setTitle(text);
     }
 }

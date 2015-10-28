@@ -71,7 +71,7 @@ public class SelectModeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     public interface ClickListener {
-        void itemClicked(View view, int position);
+        void itemClicked(View view, int position, String text);
     }
 
 
@@ -96,7 +96,7 @@ public class SelectModeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @Override
         public void onClick(View v) {
             if (clickListener != null) {
-                clickListener.itemClicked(v, getPosition());
+                clickListener.itemClicked(v, getPosition(), (String) modeName.getText());
             }
 
         }

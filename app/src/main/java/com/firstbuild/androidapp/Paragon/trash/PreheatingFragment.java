@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.paragon;
+package com.firstbuild.androidapp.paragon.trash;
 
 
 import android.app.Fragment;
@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 
 /**
  * A simple {@link Fragment} subclass.

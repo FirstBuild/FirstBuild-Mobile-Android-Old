@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.firstbuild.androidapp.paragon.Step1Fragment;
+import com.firstbuild.androidapp.paragon.trash.Step1Fragment;
 import com.firstbuild.androidapp.R;
 
 

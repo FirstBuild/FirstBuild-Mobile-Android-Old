@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.paragon;
+package com.firstbuild.androidapp.paragon.trash;
 
 
 import android.app.Fragment;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 import com.firstbuild.commonframework.bleManager.BleManager;
 
 /**
