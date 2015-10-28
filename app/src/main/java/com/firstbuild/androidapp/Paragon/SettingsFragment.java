@@ -3,6 +3,7 @@ package com.firstbuild.androidapp.paragon;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -371,66 +372,14 @@ public class SettingsFragment extends Fragment {
 
         }
 
-        textSetTemp.setText(setTargetTemp + "℉");
-        textSetTimeMin.setText(setTargetTimeMin / 60 + "H : " + setTargetTimeMin % 60 + "M");
+        textSetTemp.setText(Html.fromHtml(setTargetTemp + "<small>℉</small>"));
 
+        String hour = (setTargetTimeMin / 60) + "";
+        String minutes = String.format("%02d", setTargetTimeMin % 60);
 
-        //            @0.2:@[@1,@00],
-//            @0.4:@[@1,@15],
-//            @0.6:@[@1,@30],
-//            @0.8:@[@1,@45],
-//            @1.2:@[@2,@00],
-//            @1.4:@[@2,@15],
-//            @1.6:@[@2,@30],
-//            @2.0:@[@3,@07],
-//            @2.15:@[@3,@45],
-//            @2.35:@[@4,@15],
-//            @2.5:@[@4,@45],
-//            @2.75:@[@5,@15]
+        textSetTimeMin.setText(Html.fromHtml(hour + "<small>H : </small>" + minutes + "<small>M</small>"));
 
-
-//        @143.5: @{
-//            @0.2:@[@0,@25],
-//            @0.4:@[@0,@30],
-//            @0.6:@[@0,@45],
-//            @0.8:@[@0,@55],
-//            @1.2:@[@1,@30],
-//            @1.4:@[@1,@30],
-//            @1.6:@[@1,@45],
-//            @2.0:@[@2,@31],
-//            @2.15:@[@2,@45],
-//            @2.35:@[@3,@00],
-//            @2.5:@[@3,@15],
-//            @2.75:@[@3,@45]
-//        },
-//        @151.0: @{
-//            @0.2:@[@0,@13],
-//            @0.4:@[@0,@25],
-//            @0.6:@[@0,@35],
-//            @0.8:@[@0,@45],
-//            @1.2:@[@1,@15],
-//            @1.4:@[@1,@15],
-//            @1.6:@[@1,@30],
-//            @2.0:@[@2,@28],
-//            @2.15:@[@2,@15],
-//            @2.35:@[@2,@30],
-//            @2.5:@[@2,@45],
-//            @2.75:@[@3,@15]
-//        },
-//        @160: @{
-//            @0.2:@[@0,@13],
-//            @0.4:@[@0,@25],
-//            @0.6:@[@0,@35],
-//            @0.8:@[@0,@45],
-//            @1.2:@[@1,@15],
-//            @1.4:@[@1,@15],
-//            @1.6:@[@1,@30],
-//            @2.0:@[@2,@28],
-//            @2.15:@[@2,@15],
-//            @2.35:@[@2,@30],
-//            @2.5:@[@2,@45],
-//            @2.75:@[@3,@15]
-//        },
+        textSetTimeMax.setText(Html.fromHtml("00<small>M</small>"));
     }
 
 

@@ -1,6 +1,5 @@
 package com.firstbuild.androidapp.paragon;
 
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
@@ -12,12 +11,11 @@ import android.widget.TextView;
 import com.firstbuild.androidapp.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Created by Hollis on 10/28/15.
  */
-public class GetReadyFragment extends Fragment {
+public class CompleteFragment extends Fragment {
 
-
-    public GetReadyFragment() {
+    public CompleteFragment() {
         // Required empty public constructor
     }
 
@@ -28,22 +26,22 @@ public class GetReadyFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_get_ready, container, false);
 
-        view.findViewById(R.id.btn_done).setVisibility(View.GONE);
-
-        ((TextView)view.findViewById(R.id.text_explanation)).setText(Html.fromHtml("Press <b>START</b> on your Paragon"));
-
-        //TODO: remove below listener after test.
-        view.setOnClickListener(new View.OnClickListener() {
+        View btnDone = view.findViewById(R.id.btn_done);
+        btnDone.setVisibility(View.VISIBLE);
+        btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_CIRCLE);
+            public void onClick(View v) {
+                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
             }
         });
 
-        ((ParagonMainActivity)getActivity()).setTitle("Get Ready");
+        ((TextView)view.findViewById(R.id.text_explanation)).setText(Html.fromHtml("Press <b>STOP</b> on your Paragon"));
+
+        ((ParagonMainActivity)getActivity()).setTitle("Complete");
 
         return view;
     }
+
 
 
 }

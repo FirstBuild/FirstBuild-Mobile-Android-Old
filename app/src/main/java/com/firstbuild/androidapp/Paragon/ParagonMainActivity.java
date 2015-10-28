@@ -549,7 +549,6 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
 
         FragmentManager fm = getFragmentManager();
 
@@ -668,6 +667,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                 fragment = new SousvideStatusFragment();
                 break;
 
+            case STEP_SOUSVIDE_COMPLETE:
+                fragment = new CompleteFragment();
+                break;
+
 //            case STEP_COOKING_METHOD_1:
 //                fragment = new Step1Fragment();
 //                break;
@@ -713,6 +716,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_SOUSVIDE_SETTINGS,
         STEP_SOUSVIDE_GETREADY,
         STEP_SOUSVIDE_CIRCLE,
+        STEP_SOUSVIDE_COMPLETE,
         STEP_COOKING_METHOD_1,
         STEP_COOKING_METHOD_2,
         STEP_SOUSVIDE_BEEF,

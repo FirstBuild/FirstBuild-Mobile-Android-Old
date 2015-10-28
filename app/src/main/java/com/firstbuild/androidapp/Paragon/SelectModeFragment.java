@@ -78,6 +78,8 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         removeAllList();
         fillList(R.array.paragon_modes);
 
+        ((ParagonMainActivity)getActivity()).setTitle("Paragon");
+
         return view;
     }
 
