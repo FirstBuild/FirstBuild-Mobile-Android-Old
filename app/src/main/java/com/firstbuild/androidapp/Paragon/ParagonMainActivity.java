@@ -672,6 +672,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                 fragment = new QuickStartFragment();
                 break;
 
+            case STEP_MY_RECIPES:
+                fragment = new MyRecipesFragment();
+                break;
+
 //            case STEP_COOKING_METHOD_1:
 //                fragment = new Step1Fragment();
 //                break;
@@ -720,6 +724,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_SOUSVIDE_CIRCLE,
         STEP_SOUSVIDE_COMPLETE,
         STEP_QUICK_START,
+        STEP_MY_RECIPES,
 //        STEP_COOKING_METHOD_1,
 //        STEP_COOKING_METHOD_2,
 //        STEP_SOUSVIDE_BEEF,

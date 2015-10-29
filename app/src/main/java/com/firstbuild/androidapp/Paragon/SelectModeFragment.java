@@ -56,6 +56,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onclick my recipes");
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_MY_RECIPES);
 
             }
         });

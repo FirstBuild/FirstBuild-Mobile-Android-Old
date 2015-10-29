@@ -108,6 +108,9 @@
     <string name="url_manual">http://www.firstbuild.com</string>
     <string name="fragment_select_mode_button_quickstart">Quick Start</string>
     <string name="fragment_select_mode_myrecipes">My Recipes</string>
+
+    <string name="fragment_my_recipes_add">Add</string>
+
     <string name="fragment_soudvide_status_explanation_placefood">Place food to continue</string>
     <string name="fragment_soudvide_status_explanation_donekeep">Keeping the temperature until press Stop button</string>
 
