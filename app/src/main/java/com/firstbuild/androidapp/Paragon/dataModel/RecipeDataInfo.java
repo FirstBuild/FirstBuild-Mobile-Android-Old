@@ -1,4 +1,6 @@
-package com.firstbuild.androidapp.paragon;
+package com.firstbuild.androidapp.paragon.dataModel;
+
+import com.firstbuild.androidapp.paragon.StageAdapter;
 
 import java.util.ArrayList;
 
@@ -33,6 +35,9 @@ public class RecipeDataInfo {
         stages.remove(index);
     }
 
+    public StageInfo getStage(int index){
+        return stages.get(index);
+    }
 
     public String getImageFileName() {
         return imageFileName;

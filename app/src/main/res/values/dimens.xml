@@ -7,4 +7,5 @@
     <dimen name="bottom_bar_height">55dp</dimen>
     <dimen name="nav_drawer_width">280dp</dimen>
     <dimen name="action_bar_height">148dp</dimen>
+    <dimen name="paragon_editbox_height">40dp</dimen>
 </resources>

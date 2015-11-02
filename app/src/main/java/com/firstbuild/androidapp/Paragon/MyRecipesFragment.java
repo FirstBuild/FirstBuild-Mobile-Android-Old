@@ -12,8 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
-
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,25 +55,13 @@ public class MyRecipesFragment extends Fragment implements RecipesAdapter.ClickL
      * Read recipes from file.
      */
     private void readRecipes() {
-        RecipeDataInfo recipe = new RecipeDataInfo(
-                "a.png", "Hollis world famous pot roast",
-                "ingredient 1\ningredient 2\ningredient 3",
-                "direction 1\ndirection 2"
-        );
-        recipe.addStage(new StageInfo(30, 120, 10, true, "direction A"));
+        RecipeManager.getInstance().ReadFromFile();
 
-        recipesAdapter.addItem(recipe);
+        int size = RecipeManager.getInstance().getSize();
 
-
-        recipe = new RecipeDataInfo(
-                "b.png", "Sous vide special ribeye",
-                "ingredient 1\ningredient 2\ningredient 3",
-                "direction 1\ndirection 2"
-        );
-        recipe.addStage(new StageInfo(30, 120, 10, true, "direction A"));
-
-        recipesAdapter.addItem(recipe);
-
+        for(int i = 0; i < size; i++){
+            recipesAdapter.addItem(RecipeManager.getInstance().get(i));
+        }
     }
 
     @Override
@@ -87,5 +74,8 @@ public class MyRecipesFragment extends Fragment implements RecipesAdapter.ClickL
     @Override
     public void itemClicked(View view, int position) {
         Log.d(TAG, "recipe clicked");
+
+        RecipeManager.getInstance().setCurrentRecipe(position);
+        attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_EDIT_RECIPES);
     }
 }
