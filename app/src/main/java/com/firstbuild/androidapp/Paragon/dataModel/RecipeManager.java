@@ -6,6 +6,9 @@ import java.util.ArrayList;
  * Created by Hollis on 11/2/15.
  */
 public class RecipeManager {
+
+    public static final int INVALID_INDEX = -1;
+
     private ArrayList<RecipeDataInfo> recipeDataInfos = new ArrayList<>();
     private int currentRecipe = -1;
     private int currentStage = -1;
@@ -19,40 +22,58 @@ public class RecipeManager {
     private RecipeManager() {
     }
 
-    public void add(RecipeDataInfo data){
+    public void add(RecipeDataInfo data) {
         recipeDataInfos.add(data);
     }
 
-    public void remove(int index){
+    public void remove(int index) {
         recipeDataInfos.remove(index);
     }
 
-    public RecipeDataInfo get(int index){
+    public RecipeDataInfo get(int index) {
         return recipeDataInfos.get(index);
     }
 
-    public int getSize(){
+    public int getSize() {
         return recipeDataInfos.size();
     }
 
-    public RecipeDataInfo getCurrentRecipe(){
-        return recipeDataInfos.get(currentRecipe);
+    public RecipeDataInfo getCurrentRecipe() {
+        RecipeDataInfo recipeDataInfo;
+
+        if (currentRecipe == INVALID_INDEX) {
+            recipeDataInfo = null;
+        }
+        else {
+            recipeDataInfo = recipeDataInfos.get(currentRecipe);
+        }
+
+        return recipeDataInfo;
     }
 
-    public void setCurrentRecipe(int index){
+    public void setCurrentRecipe(int index) {
         currentRecipe = index;
     }
 
-    public StageInfo getCurrentStage(){
-        return recipeDataInfos.get(currentRecipe).getStage(currentStage);
+    public StageInfo getCurrentStage() {
+        StageInfo stageInfo;
+
+        if (currentRecipe == INVALID_INDEX || currentStage == INVALID_INDEX) {
+            stageInfo = null;
+        }
+        else {
+            stageInfo = recipeDataInfos.get(currentRecipe).getStage(currentStage);
+        }
+
+        return stageInfo;
     }
 
-    public void setCurrentStage(int index){
+    public void setCurrentStage(int index) {
         currentStage = index;
     }
 
 
-    public void ReadFromFile(){
+    public void ReadFromFile() {
 
         //TODO: Mocking up of reading from file.
 
@@ -79,8 +100,12 @@ public class RecipeManager {
 
     }
 
-    public void WriteToFile(){
+    public void WriteToFile() {
         //TODO:
 
+    }
+
+    public int getCurrentStageIndex() {
+        return currentStage;
     }
 }
