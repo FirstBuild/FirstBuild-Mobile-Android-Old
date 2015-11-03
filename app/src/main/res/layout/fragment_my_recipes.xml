@@ -6,7 +6,8 @@
     android:orientation="vertical"
     tools:context="com.firstbuild.androidapp.paragon.MyRecipesFragment">
 
-    <android.support.v7.widget.RecyclerView
+
+    <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
         android:id="@+id/list_recipes"
         android:layout_width="match_parent"
         android:layout_height="0dp"

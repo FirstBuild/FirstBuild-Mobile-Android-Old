@@ -1,13 +1,11 @@
 package com.firstbuild.androidapp.paragon.dataModel;
 
-import com.firstbuild.androidapp.paragon.StageAdapter;
-
 import java.util.ArrayList;
 
 /**
  * Created by Hollis on 10/28/15.
  */
-public class RecipeDataInfo {
+public class RecipeInfo {
     private String imageFileName;
     private String name;
     private String ingredients;
@@ -16,7 +14,7 @@ public class RecipeDataInfo {
     private ArrayList<StageInfo> stages = new ArrayList<>();
 
 
-    public RecipeDataInfo(String imageFileName, String name, String ingredients, String directions) {
+    public RecipeInfo(String imageFileName, String name, String ingredients, String directions) {
         this.imageFileName = imageFileName;
         this.name = name;
         this.ingredients = ingredients;

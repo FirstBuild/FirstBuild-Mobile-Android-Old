@@ -9,7 +9,7 @@ public class RecipeManager {
 
     public static final int INVALID_INDEX = -1;
 
-    private ArrayList<RecipeDataInfo> recipeDataInfos = new ArrayList<>();
+    private ArrayList<RecipeInfo> recipeInfos = new ArrayList<>();
     private int currentRecipe = -1;
     private int currentStage = -1;
 
@@ -22,33 +22,33 @@ public class RecipeManager {
     private RecipeManager() {
     }
 
-    public void add(RecipeDataInfo data) {
-        recipeDataInfos.add(data);
+    public void add(RecipeInfo data) {
+        recipeInfos.add(data);
     }
 
     public void remove(int index) {
-        recipeDataInfos.remove(index);
+        recipeInfos.remove(index);
     }
 
-    public RecipeDataInfo get(int index) {
-        return recipeDataInfos.get(index);
+    public RecipeInfo get(int index) {
+        return recipeInfos.get(index);
     }
 
     public int getSize() {
-        return recipeDataInfos.size();
+        return recipeInfos.size();
     }
 
-    public RecipeDataInfo getCurrentRecipe() {
-        RecipeDataInfo recipeDataInfo;
+    public RecipeInfo getCurrentRecipe() {
+        RecipeInfo recipeInfo;
 
         if (currentRecipe == INVALID_INDEX) {
-            recipeDataInfo = null;
+            recipeInfo = null;
         }
         else {
-            recipeDataInfo = recipeDataInfos.get(currentRecipe);
+            recipeInfo = recipeInfos.get(currentRecipe);
         }
 
-        return recipeDataInfo;
+        return recipeInfo;
     }
 
     public void setCurrentRecipe(int index) {
@@ -62,7 +62,7 @@ public class RecipeManager {
             stageInfo = null;
         }
         else {
-            stageInfo = recipeDataInfos.get(currentRecipe).getStage(currentStage);
+            stageInfo = recipeInfos.get(currentRecipe).getStage(currentStage);
         }
 
         return stageInfo;
@@ -76,8 +76,9 @@ public class RecipeManager {
     public void ReadFromFile() {
 
         //TODO: Mocking up of reading from file.
+        recipeInfos.clear();
 
-        RecipeDataInfo recipe = new RecipeDataInfo(
+        RecipeInfo recipe = new RecipeInfo(
                 "a.png", "Hollis world famous pot roast",
                 "ingredient 1\ningredient 2\ningredient 3",
                 "direction 1\ndirection 2"
@@ -87,7 +88,7 @@ public class RecipeManager {
         add(recipe);
 
 
-        recipe = new RecipeDataInfo(
+        recipe = new RecipeInfo(
                 "b.png", "Sous vide special ribeye",
                 "ingredient 1\ningredient 2\ningredient 3",
                 "direction 1\ndirection 2"

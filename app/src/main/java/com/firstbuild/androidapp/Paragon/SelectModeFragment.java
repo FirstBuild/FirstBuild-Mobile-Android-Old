@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.helper.SelectModeAdapter;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
