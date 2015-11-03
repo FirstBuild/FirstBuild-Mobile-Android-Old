@@ -14,7 +14,6 @@ import android.view.animation.BounceInterpolator;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
@@ -91,7 +90,7 @@ public class MyRecipesFragment extends Fragment {
 
                 switch (index) {
                     case 0:
-                        // open
+                        // edit
                         Log.d(TAG, "onMenuItemClick 0");
                         RecipeManager.getInstance().setCurrentRecipe(position);
                         attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_EDIT_RECIPES);
@@ -112,15 +111,17 @@ public class MyRecipesFragment extends Fragment {
         recipeListView.setCloseInterpolator(new BounceInterpolator());
 
         // test item long click
-        recipeListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
-                Toast.makeText(attached.getApplicationContext(), position + " long click", Toast.LENGTH_SHORT).show();
-                return false;
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RecipeManager.getInstance().setCurrentRecipe(position);
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_VIEW_RECIPE);
             }
         });
+
+
+
 
 
         readRecipes();

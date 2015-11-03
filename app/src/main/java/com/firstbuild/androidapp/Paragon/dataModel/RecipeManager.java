@@ -10,8 +10,11 @@ public class RecipeManager {
     public static final int INVALID_INDEX = -1;
 
     private ArrayList<RecipeInfo> recipeInfos = new ArrayList<>();
-    private int currentRecipe = -1;
-    private int currentStage = -1;
+    private int currentRecipeIndex = -1;
+    private int currentStageIndex = -1;
+
+    private RecipeInfo currentRecipeInfo = null;
+    private StageInfo currentStageInfo = null;
 
     private static RecipeManager ourInstance = new RecipeManager();
 
@@ -39,37 +42,54 @@ public class RecipeManager {
     }
 
     public RecipeInfo getCurrentRecipe() {
-        RecipeInfo recipeInfo;
-
-        if (currentRecipe == INVALID_INDEX) {
-            recipeInfo = null;
-        }
-        else {
-            recipeInfo = recipeInfos.get(currentRecipe);
-        }
-
-        return recipeInfo;
+        return currentRecipeInfo;
     }
 
     public void setCurrentRecipe(int index) {
-        currentRecipe = index;
+        currentRecipeIndex = index;
+        RecipeInfo recipe = recipeInfos.get(index);
+
+        currentRecipeInfo = new RecipeInfo(recipe.getImageFileName(), recipe.getName(),
+                recipe.getIngredients(), recipe.getDirections());
+        currentRecipeInfo.setStageList(recipe.getStageList());
+    }
+
+    public void restoreCurrentRecipe() {
+        RecipeInfo recipe = recipeInfos.get(currentRecipeIndex);
+
+        recipe.setImageFileName(currentRecipeInfo.getImageFileName());
+        recipe.setName(currentRecipeInfo.getName());
+        recipe.setIngredients(currentRecipeInfo.getIngredients());
+        recipe.setDirections(currentRecipeInfo.getDirections());
+        recipe.setStageList(currentRecipeInfo.getStageList());
+
+        currentRecipeInfo = null;
+        currentRecipeIndex = INVALID_INDEX;
     }
 
     public StageInfo getCurrentStage() {
-        StageInfo stageInfo;
-
-        if (currentRecipe == INVALID_INDEX || currentStage == INVALID_INDEX) {
-            stageInfo = null;
-        }
-        else {
-            stageInfo = recipeInfos.get(currentRecipe).getStage(currentStage);
-        }
-
-        return stageInfo;
+        return currentStageInfo;
     }
 
     public void setCurrentStage(int index) {
-        currentStage = index;
+        currentStageIndex = index;
+        StageInfo stage = getCurrentRecipe().getStage(index);
+
+        currentStageInfo = new StageInfo(stage.getTime(), stage.getTemp(), stage.getSpeed(),
+                stage.isAutoTransition(), stage.getDirection());
+    }
+
+    public void restoreCurrentStage() {
+        StageInfo stage = getCurrentRecipe().getStage(currentStageIndex);
+
+        stage.setTime(currentStageInfo.getTime());
+        stage.setTemp(currentStageInfo.getTemp());
+        stage.setSpeed(currentStageInfo.getSpeed());
+        stage.setAutoTransition(currentStageInfo.isAutoTransition());
+        stage.setDirection(currentStageInfo.getDirection());
+
+        currentStageInfo = null;
+        currentStageIndex = INVALID_INDEX;
     }
 
 
@@ -80,7 +100,18 @@ public class RecipeManager {
 
         RecipeInfo recipe = new RecipeInfo(
                 "a.png", "Hollis world famous pot roast",
-                "ingredient 1\ningredient 2\ningredient 3",
+                "ingredient 1\ningredient 2\ningredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3\n" +
+                        "ingredient 3",
                 "direction 1\ndirection 2"
         );
         recipe.addStage(new StageInfo(30, 120, 10, true, "direction A"));
@@ -107,6 +138,6 @@ public class RecipeManager {
     }
 
     public int getCurrentStageIndex() {
-        return currentStage;
+        return currentStageIndex;
     }
 }

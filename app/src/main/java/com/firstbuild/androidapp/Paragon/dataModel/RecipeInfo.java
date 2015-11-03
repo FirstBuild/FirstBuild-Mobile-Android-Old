@@ -37,6 +37,14 @@ public class RecipeInfo {
         return stages.get(index);
     }
 
+    public void setStageList(ArrayList<StageInfo> stageList){
+        this.stages = (ArrayList)stageList.clone();
+    }
+
+    public ArrayList<StageInfo> getStageList(){
+        return stages;
+    }
+
     public String getImageFileName() {
         return imageFileName;
     }

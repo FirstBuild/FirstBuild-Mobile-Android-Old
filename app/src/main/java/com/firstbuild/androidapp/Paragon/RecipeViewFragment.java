@@ -29,9 +29,10 @@ import com.firstbuild.androidapp.viewUtil.SwipeMenuListView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecipeEditFragment extends Fragment {
+public class RecipeViewFragment extends Fragment {
 
-    private String TAG = RecipeEditFragment.class.getSimpleName();
+
+    private String TAG = RecipeViewFragment.class.getSimpleName();
 
     private EditText editIngredients;
     private EditText editDirections;
@@ -42,8 +43,7 @@ public class RecipeEditFragment extends Fragment {
     private EditText editName;
     private ParagonMainActivity attached = null;
 
-
-    public RecipeEditFragment() {
+    public RecipeViewFragment() {
         // Required empty public constructor
     }
 
@@ -54,20 +54,31 @@ public class RecipeEditFragment extends Fragment {
         attached = (ParagonMainActivity) getActivity();
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         attached.setTitle("Edit");
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recipe_edit, container, false);
 
         editName = (EditText) view.findViewById(R.id.edit_name);
-
         editIngredients = (EditText) view.findViewById(R.id.edit_ingredients);
         editDirections = (EditText) view.findViewById(R.id.edit_directions);
         groupDetail = (RadioGroup) view.findViewById(R.id.group_recipe_detail);
+
+        editName.setKeyListener(null);
+        editName.setBackgroundColor(0xFFFFFFFF);
+        editName.setTextColor(getResources().getColor(R.color.colorParagonAccent));
+
+        editIngredients.setKeyListener(null);
+        editIngredients.setBackgroundColor(0xFFFFFFFF);
+        editIngredients.setTextColor(0xFF000000);
+
+        editDirections.setKeyListener(null);
+        editDirections.setBackgroundColor(0xFFFFFFFF);
+        editDirections.setTextColor(0xFF000000);
 
         groupDetail.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -101,77 +112,10 @@ public class RecipeEditFragment extends Fragment {
         stageListView = (SwipeMenuListView) view.findViewById(R.id.list_stages);
         stageListView.setAdapter(stageListAdapter);
 
-        // step 1. create a MenuCreator
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
 
-            @Override
-            public void create(SwipeMenu menu) {
-                SwipeMenuItem item;
-
-                // create "delete" item
-                item = new SwipeMenuItem(attached.getApplicationContext());
-                item.setBackground(R.color.colorParagonHighlight);
-                item.setWidth(90);
-                item.setTitle("Delete");
-                item.setTitleSize(18);
-                item.setTitleColor(Color.WHITE);
-                menu.addMenuItem(item);
-            }
-        };
-        // set creator
-        stageListView.setMenuCreator(creator);
-
-        // step 2. listener item click event
-        stageListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-
-                switch (index) {
-                    case 1:
-                        // delete
-                        Log.d(TAG, "onMenuItemClick 1");
-                        RecipeManager.getInstance().getCurrentRecipe().deleteStage(position);
-                        stageListAdapter.notifyDataSetChanged();
-                        break;
-                }
-                return false;
-            }
-        });
-
-
-        // other setting
-        stageListView.setCloseInterpolator(new BounceInterpolator());
-
-        // test item long click
-        stageListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
-                Toast.makeText(attached.getApplicationContext(), position + " long click", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
-
-
-        stageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == stageListAdapter.getCount() - 1) {
-                    // Case for Add stage button.
-                }
-                else {
-                    // Case for edit selected stage.
-                    RecipeManager.getInstance().setCurrentStage(position);
-                }
-
-                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_EDIT_STAGE);
-            }
-        });
-
+//        stageListView.OnItemClickListener(new )
 
         getCurrentRecipe();
-
 
         return view;
     }
@@ -179,9 +123,11 @@ public class RecipeEditFragment extends Fragment {
     private void getCurrentRecipe() {
         RecipeInfo recipe = RecipeManager.getInstance().getCurrentRecipe();
 
-        StageInfo stageAdd = new StageInfo(0, 0, 0, false, "");
-        stageAdd.setType(StageInfo.TYPE_ADD_ITEM);
-        recipe.addStage(stageAdd);
+
+        editName.setText(recipe.getName());
+        editIngredients.setText(recipe.getIngredients());
+        editDirections.setText(recipe.getDirections());
+
     }
 
 
@@ -207,7 +153,7 @@ public class RecipeEditFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             StageInfo stage = getItem(position);
 
-            if (convertView == null) {
+//            if (convertView == null) {
 
                 if (stage.getType() == StageInfo.TYPE_ADD_ITEM) {
                     convertView = View.inflate(attached.getApplicationContext(), R.layout.adapter_stage_add, null);
@@ -217,10 +163,18 @@ public class RecipeEditFragment extends Fragment {
                 }
 
                 new ViewHolder(convertView);
-            }
+//            }
 
             ViewHolder holder = (ViewHolder) convertView.getTag();
-            holder.name.setText("Stage " + (position + 1));
+
+            if (stage.getType() == StageInfo.TYPE_ADD_ITEM) {
+                // do nothing
+            }
+            else {
+                holder.name.setText("Stage " + (position + 1));
+            }
+
+
 
             return convertView;
         }
@@ -236,4 +190,5 @@ public class RecipeEditFragment extends Fragment {
         }
 
     }
+
 }

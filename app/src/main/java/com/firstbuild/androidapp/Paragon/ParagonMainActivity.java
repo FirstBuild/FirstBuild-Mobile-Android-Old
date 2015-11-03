@@ -684,6 +684,14 @@ public class ParagonMainActivity extends ActionBarActivity {
                 fragment = new StageEditFragment();
                 break;
 
+            case STEP_VIEW_RECIPE:
+                fragment = new RecipeViewFragment();
+                break;
+
+            case STEP_VIEW_STAGE:
+                fragment = new StageViewFragment();
+                break;
+
 //            case STEP_COOKING_METHOD_1:
 //                fragment = new Step1Fragment();
 //                break;
@@ -735,6 +743,8 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_MY_RECIPES,
         STEP_EDIT_RECIPES,
         STEP_EDIT_STAGE,
+        STEP_VIEW_RECIPE,
+        STEP_VIEW_STAGE,
 //        STEP_COOKING_METHOD_1,
 //        STEP_COOKING_METHOD_2,
 //        STEP_SOUSVIDE_BEEF,
