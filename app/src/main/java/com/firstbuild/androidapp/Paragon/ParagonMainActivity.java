@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
 import com.firstbuild.androidapp.ParagonValues;
@@ -43,9 +44,9 @@ public class ParagonMainActivity extends ActionBarActivity {
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
-    private float targetTemp;
+//    private float targetTemp;
     private float currentTemp;
-    private int targetTime = ParagonValues.MAX_COOK_TIME;
+//    private int targetTime = ParagonValues.MAX_COOK_TIME;
     private byte batteryLevel;
 
     Toolbar toolbar;
@@ -200,19 +201,25 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     public int getTargetTime() {
-        return targetTime;
+        return RecipeManager.getInstance().getCurrentStage().getTime();
+
+//        return targetTime;
     }
 
     public void setTargetTime(int targetTime, int setTargetTimeMax) {
-        this.targetTime = targetTime;
+        RecipeManager.getInstance().getCurrentStage().setTime(targetTime);
+        RecipeManager.getInstance().getCurrentStage().setMaxTime(targetTime);
+//        this.targetTime = targetTime;
     }
 
     public float getTargetTemp() {
-        return targetTemp;
+        return RecipeManager.getInstance().getCurrentStage().getTemp();
+//        return targetTemp;
     }
 
     public void setTargetTemp(float targetTemp) {
-        this.targetTemp = targetTemp;
+        RecipeManager.getInstance().getCurrentStage().setTemp((int)targetTemp);
+//        this.targetTemp = targetTemp;
     }
 
     public float getCurrentTemp() {
@@ -498,9 +505,9 @@ public class ParagonMainActivity extends ActionBarActivity {
         toolbarText = (TextView) toolbar.findViewById(R.id.toolbar_title_text);
         toolbarImage = (ImageView) toolbar.findViewById(R.id.toolbar_title_image);
 
-        // Setup drawer navigation.
-        drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+//        // Setup drawer navigation.
+//        drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+//        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
         // Use this check to determine whether BLE is supported on the device. Then
         // you can selectively disable BLE-related features.
@@ -606,6 +613,11 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
         }
+        else if (id == android.R.id.home) {
+            onBackPressed();
+
+            return true;
+        }
         else{
             // do nothing.
         }
@@ -678,10 +690,19 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             case STEP_EDIT_RECIPES:
                 fragment = new RecipeEditFragment();
+                setTitle("Edit");
                 break;
 
             case STEP_EDIT_STAGE:
                 fragment = new StageEditFragment();
+                int index = RecipeManager.getInstance().getCurrentStageIndex();
+
+                if(index == RecipeManager.INVALID_INDEX){
+                    setTitle("New Stage");
+                }
+                else{
+                    setTitle("Stage " + (index + 1));
+                }
                 break;
 
             case STEP_VIEW_RECIPE:
@@ -691,6 +712,22 @@ public class ParagonMainActivity extends ActionBarActivity {
             case STEP_VIEW_STAGE:
                 fragment = new StageViewFragment();
                 break;
+
+            case STEP_ADD_RECIPE_MUTISTAGE:
+                fragment = new RecipeEditFragment();
+                setTitle("Multi-Stage");
+                break;
+
+            case STEP_ADD_RECIPE_SOUSVIDE:
+                fragment = new SousVideEditFragment();
+                setTitle("Sous vide");
+                break;
+
+            case STEP_ADD_SOUSVIDE_SETTING:
+                fragment = new QuickStartFragment();
+                setTitle("Sous Vide Settings");
+                break;
+
 
 //            case STEP_COOKING_METHOD_1:
 //                fragment = new Step1Fragment();
@@ -745,6 +782,9 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_EDIT_STAGE,
         STEP_VIEW_RECIPE,
         STEP_VIEW_STAGE,
+        STEP_ADD_RECIPE_MUTISTAGE,
+        STEP_ADD_RECIPE_SOUSVIDE,
+        STEP_ADD_SOUSVIDE_SETTING
 //        STEP_COOKING_METHOD_1,
 //        STEP_COOKING_METHOD_2,
 //        STEP_SOUSVIDE_BEEF,

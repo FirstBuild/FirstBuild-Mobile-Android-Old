@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
@@ -117,6 +118,41 @@ public class MyRecipesFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RecipeManager.getInstance().setCurrentRecipe(position);
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_VIEW_RECIPE);
+            }
+        });
+
+
+        view.findViewById(R.id.btn_add_recipe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(attached)
+                        .title(R.string.my_recipes_add_recipe)
+                        .items(R.array.kind_of_recipe)
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                Log.d(TAG, "selected " + which + ", " + text);
+
+                                switch (which) {
+                                    case 0:
+                                        //case for multi-stage.
+                                        RecipeManager.getInstance().createRecipeMultiStage();
+                                        attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_ADD_RECIPE_MUTISTAGE);
+                                        break;
+
+                                    case 1:
+                                        // case for sous vide.
+                                        RecipeManager.getInstance().createRecipeSousVide();
+                                        attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_ADD_RECIPE_SOUSVIDE);
+                                        break;
+                                }
+
+
+                            }
+                        })
+                        .show();
+
+
             }
         });
 

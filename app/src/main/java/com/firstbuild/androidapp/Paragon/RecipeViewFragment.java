@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +59,9 @@ public class RecipeViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        attached.setTitle("Edit");
+        attached.setTitle("My Recipes");
+
+        attached.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recipe_edit, container, false);
@@ -113,7 +116,23 @@ public class RecipeViewFragment extends Fragment {
         stageListView.setAdapter(stageListAdapter);
 
 
-//        stageListView.OnItemClickListener(new )
+        stageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RecipeManager.getInstance().setCurrentStage(position);
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_VIEW_STAGE);
+            }
+        });
+
+
+        view.findViewById(R.id.btn_save).setVisibility(View.GONE);
+        view.findViewById(R.id.btn_cook).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         getCurrentRecipe();
 

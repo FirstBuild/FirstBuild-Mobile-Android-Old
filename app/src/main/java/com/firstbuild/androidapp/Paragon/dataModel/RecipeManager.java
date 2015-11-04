@@ -13,6 +13,8 @@ public class RecipeManager {
     private int currentRecipeIndex = -1;
     private int currentStageIndex = -1;
 
+    private boolean isCreated = false;
+
     private RecipeInfo currentRecipeInfo = null;
     private StageInfo currentStageInfo = null;
 
@@ -55,16 +57,33 @@ public class RecipeManager {
     }
 
     public void restoreCurrentRecipe() {
-        RecipeInfo recipe = recipeInfos.get(currentRecipeIndex);
 
-        recipe.setImageFileName(currentRecipeInfo.getImageFileName());
-        recipe.setName(currentRecipeInfo.getName());
-        recipe.setIngredients(currentRecipeInfo.getIngredients());
-        recipe.setDirections(currentRecipeInfo.getDirections());
-        recipe.setStageList(currentRecipeInfo.getStageList());
+        if(isCreated){
+            //if created new one.
+            recipeInfos.add(currentRecipeInfo);
+            isCreated = false;
+        }
+        else{
+            // or if get from recipe list.
 
+            RecipeInfo recipe = recipeInfos.get(currentRecipeIndex);
+
+            recipe.setImageFileName(currentRecipeInfo.getImageFileName());
+            recipe.setName(currentRecipeInfo.getName());
+            recipe.setIngredients(currentRecipeInfo.getIngredients());
+            recipe.setDirections(currentRecipeInfo.getDirections());
+            recipe.setStageList(currentRecipeInfo.getStageList());
+
+            currentRecipeInfo = null;
+            currentRecipeIndex = INVALID_INDEX;
+        }
+
+    }
+
+    public void trashCurrentRecipe(){
         currentRecipeInfo = null;
         currentRecipeIndex = INVALID_INDEX;
+        isCreated = false;
     }
 
     public StageInfo getCurrentStage() {
@@ -139,5 +158,21 @@ public class RecipeManager {
 
     public int getCurrentStageIndex() {
         return currentStageIndex;
+    }
+
+    public void createRecipeMultiStage() {
+        currentRecipeIndex = INVALID_INDEX;
+        currentRecipeInfo = new RecipeInfo("", "", "", "");
+        currentRecipeInfo.setType(RecipeInfo.TYPE_MULTI_STAGE);
+
+        isCreated = true;
+    }
+
+    public void createRecipeSousVide() {
+        currentRecipeIndex = INVALID_INDEX;
+        currentRecipeInfo = new RecipeInfo("", "", "", "");
+        currentRecipeInfo.setType(RecipeInfo.TYPE_SOUSVIDE);
+
+        isCreated = true;
     }
 }

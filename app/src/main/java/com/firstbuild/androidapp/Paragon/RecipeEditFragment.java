@@ -58,8 +58,6 @@ public class RecipeEditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        attached.setTitle("Edit");
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recipe_edit, container, false);
 
@@ -169,6 +167,14 @@ public class RecipeEditFragment extends Fragment {
             }
         });
 
+        view.findViewById(R.id.btn_cook).setVisibility(View.GONE);
+        view.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         getCurrentRecipe();
 
@@ -207,20 +213,23 @@ public class RecipeEditFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             StageInfo stage = getItem(position);
 
-            if (convertView == null) {
-
-                if (stage.getType() == StageInfo.TYPE_ADD_ITEM) {
-                    convertView = View.inflate(attached.getApplicationContext(), R.layout.adapter_stage_add, null);
-                }
-                else {
-                    convertView = View.inflate(attached.getApplicationContext(), R.layout.adapter_stage_item, null);
-                }
-
-                new ViewHolder(convertView);
+            if (stage.getType() == StageInfo.TYPE_ADD_ITEM) {
+                convertView = View.inflate(attached.getApplicationContext(), R.layout.adapter_stage_add, null);
+            }
+            else {
+                convertView = View.inflate(attached.getApplicationContext(), R.layout.adapter_stage_item, null);
             }
 
+            new ViewHolder(convertView);
+
             ViewHolder holder = (ViewHolder) convertView.getTag();
-            holder.name.setText("Stage " + (position + 1));
+
+            if (stage.getType() == StageInfo.TYPE_ADD_ITEM) {
+                // do nothing
+            }
+            else {
+                holder.name.setText("Stage " + (position + 1));
+            }
 
             return convertView;
         }

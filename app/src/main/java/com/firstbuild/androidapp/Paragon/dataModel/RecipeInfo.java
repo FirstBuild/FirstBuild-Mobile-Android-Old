@@ -6,6 +6,11 @@ import java.util.ArrayList;
  * Created by Hollis on 10/28/15.
  */
 public class RecipeInfo {
+
+    public static final int TYPE_SOUSVIDE = 1;
+    public static final int TYPE_MULTI_STAGE = 2;
+
+    private int type;
     private String imageFileName;
     private String name;
     private String ingredients;
@@ -15,10 +20,19 @@ public class RecipeInfo {
 
 
     public RecipeInfo(String imageFileName, String name, String ingredients, String directions) {
+        this.type = TYPE_MULTI_STAGE;
         this.imageFileName = imageFileName;
         this.name = name;
         this.ingredients = ingredients;
         this.directions = directions;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public void addStage(StageInfo stage){

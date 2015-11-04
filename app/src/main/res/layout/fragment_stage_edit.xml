@@ -198,8 +198,22 @@
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center_vertical|center_horizontal"
                     android:text=""
+                    android:visibility="gone"
                     android:textColor="@color/colorParagonPrimary"
                     android:textSize="19sp"/>
+
+                <TextView
+                    android:id="@+id/text_auto_transition"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center_vertical|end"
+                    android:visibility="visible"
+                    android:text=""
+                    android:textColor="@color/colorParagonPrimary"
+                    android:textSize="19sp"/>
+
 
             </LinearLayout>
 

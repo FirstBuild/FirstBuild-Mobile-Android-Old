@@ -9,6 +9,7 @@ public class StageInfo {
 
     private int type;
     private int time;
+    private int maxTime;
     private int temp;
     private int speed;
     private boolean autoTransition;
@@ -17,6 +18,7 @@ public class StageInfo {
     public StageInfo(int time, int temp, int speed, boolean autoTransition, String direction) {
         this.type = TYPE_NORMAL;
         this.time = time;
+        this.maxTime = 0;
         this.temp = temp;
         this.speed = speed;
         this.autoTransition = autoTransition;
@@ -69,5 +71,13 @@ public class StageInfo {
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+    public void setMaxTime(int maxTime) {
+        this.maxTime = maxTime;
+    }
+
+    public int getMaxTime() {
+        return maxTime;
     }
 }

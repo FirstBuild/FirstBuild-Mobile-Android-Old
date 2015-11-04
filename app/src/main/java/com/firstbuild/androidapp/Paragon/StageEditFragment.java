@@ -55,6 +55,8 @@ public class StageEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_stage_edit, container, false);
 
@@ -182,14 +184,6 @@ public class StageEditFragment extends Fragment {
         });
 
 
-        int index = RecipeManager.getInstance().getCurrentStageIndex();
-
-        if(index == RecipeManager.INVALID_INDEX){
-            attached.setTitle("New Stage");
-        }
-        else{
-            attached.setTitle("Stage " + (index+1));
-        }
 
         updateUi();
 
