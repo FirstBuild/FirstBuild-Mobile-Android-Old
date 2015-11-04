@@ -1,5 +1,9 @@
 package com.firstbuild.androidapp.paragon.dataModel;
 
+import com.firstbuild.androidapp.ParagonValues;
+import com.firstbuild.commonframework.bleManager.BleManager;
+
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 /**
@@ -172,7 +176,30 @@ public class RecipeManager {
         currentRecipeIndex = INVALID_INDEX;
         currentRecipeInfo = new RecipeInfo("", "", "", "");
         currentRecipeInfo.setType(RecipeInfo.TYPE_SOUSVIDE);
+        currentRecipeInfo.addStage(new StageInfo());
+
+        currentStageInfo = currentRecipeInfo.getStage(0);
+        currentStageIndex = 0;
 
         isCreated = true;
+    }
+
+    public void sendCurrentStages() {
+        ByteBuffer valueBuffer = ByteBuffer.allocate(40);
+
+        int numStage = getCurrentRecipe().numStage();
+
+        for (int i = 0; i < numStage; i++) {
+            StageInfo stage = getCurrentRecipe().getStage(i);
+
+            valueBuffer.put(8 * i, (byte) stage.getSpeed());
+            valueBuffer.putShort(1 + 8 * i, (short) (stage.getTime()));
+            valueBuffer.putShort(3 + 8 * i, (short) (stage.getMaxTime()));
+            valueBuffer.putShort(5 + 8 * i, (short) (stage.getTemp() * 100));
+            valueBuffer.put(7 + 8 * i, (byte) (stage.isAutoTransition() ? 0x02 : 0x01));
+        }
+
+        BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
+
     }
 }

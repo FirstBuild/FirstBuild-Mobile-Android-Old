@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.commonframework.bleManager.BleManager;
 
 import java.nio.ByteBuffer;
@@ -111,37 +112,12 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParagonMainActivity activity = (ParagonMainActivity) getActivity();
+                RecipeManager.getInstance().getCurrentStage().setTime(setTargetTimeMin);
+                RecipeManager.getInstance().getCurrentStage().setMaxTime(setTargetTimeMax);
+                RecipeManager.getInstance().getCurrentStage().setTemp((int) setTargetTemp);
+                RecipeManager.getInstance().sendCurrentStages();
 
-                activity.setTargetTime(setTargetTimeMin, setTargetTimeMax);
-                activity.setTargetTemp(setTargetTemp);
-
-                ByteBuffer valueBuffer = ByteBuffer.allocate(40);
-
-                // Not support multi stage for SousVide.
-                valueBuffer.put(8 , (byte) 10);
-                valueBuffer.putShort(1, (short)(setTargetTimeMin));
-                valueBuffer.putShort(3, (short)(setTargetTimeMax));
-                valueBuffer.putShort(5, (short) ((setTargetTemp) * 100));
-
-//                for(int i = 0; i < 5; i++){
-//                    valueBuffer.put(8 * i, (byte) 10);
-//                    valueBuffer.putShort(1+8*i, (short)(setTargetTimeMin +i));
-//                    valueBuffer.putShort(3+8*i, (short)(setTargetTimeMin +i));
-//                    valueBuffer.putShort(5 + 8 * i, (short) ((setTargetTemp + i) * 100));
-//
-//                    if(i == 4){
-//                        valueBuffer.put(7+8*i, (byte) 0x02);
-//                    }
-//                    else{
-//                        valueBuffer.put(7+8*i, (byte) 0x01);
-//                    }
-//
-//                }
-
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
                 ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
-
             }
         });
 
@@ -153,7 +129,20 @@ public class SettingsFragment extends Fragment {
         });
 
 
+        initRecipeSetting();
+
+
         return view;
+    }
+
+    /**
+     * Create recipe temprorally and put selected values.
+     */
+    private void initRecipeSetting() {
+        // Now create a sousvide recipe and pointing the recipe as currentRecipe.
+        RecipeManager.getInstance().createRecipeSousVide();
+
+
     }
 
     private void calculateTimeTemp() {

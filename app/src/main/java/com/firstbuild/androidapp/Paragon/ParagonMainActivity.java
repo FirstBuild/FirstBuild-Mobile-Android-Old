@@ -546,7 +546,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
 
         //TODO: remove this code after test.
-        nextStep(ParagonSteps.STEP_COOKING_MODE);
+//        nextStep(ParagonSteps.STEP_COOKING_MODE);
 
 
     }
@@ -729,26 +729,6 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
 
-//            case STEP_COOKING_METHOD_1:
-//                fragment = new Step1Fragment();
-//                break;
-//
-//            case STEP_COOKING_METHOD_2:
-//                fragment = new Step2Fragment();
-//                break;
-//
-//            case STEP_SOUSVIDE_BEEF:
-//                fragment = new BeefFragment();
-//                break;
-//
-//            case STEP_SOUSVIDE_READY_PREHEAT:
-//                fragment = new ReadyToPreheatFragment();
-//                break;
-//
-//            case STEP_SOUSVIDE_READY_COOK:
-//                fragment = new ReadyToCookFragment();
-//                break;
-
             default:
                 break;
 
@@ -785,13 +765,6 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_ADD_RECIPE_MUTISTAGE,
         STEP_ADD_RECIPE_SOUSVIDE,
         STEP_ADD_SOUSVIDE_SETTING
-//        STEP_COOKING_METHOD_1,
-//        STEP_COOKING_METHOD_2,
-//        STEP_SOUSVIDE_BEEF,
-//        STEP_SOUSVIDE_READY_PREHEAT,
-//        STEP_SOUSVIDE_PREHEATING,
-//        STEP_SOUSVIDE_READY_COOK,
-//        STEP_SOUSVIDE_COOKING,
     }
 
 

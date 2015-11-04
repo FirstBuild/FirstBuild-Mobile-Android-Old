@@ -15,6 +15,16 @@ public class StageInfo {
     private boolean autoTransition;
     private String direction;
 
+    public StageInfo(){
+        this.type = TYPE_NORMAL;
+        this.time = 0;
+        this.maxTime = 0;
+        this.temp = 100;
+        this.speed = 1;
+        this.autoTransition = false;
+        this.direction = "";
+    }
+
     public StageInfo(int time, int temp, int speed, boolean autoTransition, String direction) {
         this.type = TYPE_NORMAL;
         this.time = time;
