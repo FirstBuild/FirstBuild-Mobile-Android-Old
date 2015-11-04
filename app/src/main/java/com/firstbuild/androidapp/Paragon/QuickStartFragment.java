@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.commonframework.bleManager.BleManager;
 
 import java.nio.ByteBuffer;
@@ -192,22 +193,28 @@ public class QuickStartFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                int setTargetTimeMin = pickerMinHour.getValue() * 60 + pickerMinMin.getValue();
-                int setTargetTimeMax = pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue();
-                float setTargetTemp = (float)pickerTemp.getValue();
+                RecipeManager.getInstance().getCurrentStage().setTime(pickerMinHour.getValue() * 60 + pickerMinMin.getValue());
+                RecipeManager.getInstance().getCurrentStage().setMaxTime(pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue());
+                RecipeManager.getInstance().getCurrentStage().setTemp(pickerTemp.getValue());
+                RecipeManager.getInstance().getCurrentStage().setSpeed(10);
+                RecipeManager.getInstance().sendCurrentStages();
 
-                attached.setTargetTime(setTargetTimeMin, setTargetTimeMax);
-                attached.setTargetTemp(setTargetTemp);
+//                int setTargetTimeMin = pickerMinHour.getValue() * 60 + pickerMinMin.getValue();
+//                int setTargetTimeMax = pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue();
+//                float setTargetTemp = (float)pickerTemp.getValue();
 
-                ByteBuffer valueBuffer = ByteBuffer.allocate(40);
+//                attached.setTargetTime(setTargetTimeMin, setTargetTimeMax);
+//                attached.setTargetTemp(setTargetTemp);
 
-                // Not support multi stage for SousVide.
-                valueBuffer.put(8 , (byte) 10);
-                valueBuffer.putShort(1, (short)(setTargetTimeMin));
-                valueBuffer.putShort(3, (short)(setTargetTimeMax));
-                valueBuffer.putShort(5, (short) ((setTargetTemp) * 100));
-
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
+//                ByteBuffer valueBuffer = ByteBuffer.allocate(40);
+//
+//                // Not support multi stage for SousVide.
+//                valueBuffer.put(8 , (byte) 10);
+//                valueBuffer.putShort(1, (short)(setTargetTimeMin));
+//                valueBuffer.putShort(3, (short)(setTargetTimeMax));
+//                valueBuffer.putShort(5, (short) ((setTargetTemp) * 100));
+//
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
             }
         });

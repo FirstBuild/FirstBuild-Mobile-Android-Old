@@ -43,6 +43,7 @@ public class RecipeViewFragment extends Fragment {
     private StageListAdapter stageListAdapter;
     private EditText editName;
     private ParagonMainActivity attached = null;
+    private View layoutStages;
 
     public RecipeViewFragment() {
         // Required empty public constructor
@@ -70,6 +71,8 @@ public class RecipeViewFragment extends Fragment {
         editIngredients = (EditText) view.findViewById(R.id.edit_ingredients);
         editDirections = (EditText) view.findViewById(R.id.edit_directions);
         groupDetail = (RadioGroup) view.findViewById(R.id.group_recipe_detail);
+        layoutStages = view.findViewById(R.id.layout_stages);
+        view.findViewById(R.id.fab_add_stage).setVisibility(View.GONE);
 
         editName.setKeyListener(null);
         editName.setBackgroundColor(0xFFFFFFFF);
@@ -90,19 +93,19 @@ public class RecipeViewFragment extends Fragment {
                     case R.id.radio_ingredients:
                         editIngredients.setVisibility(View.VISIBLE);
                         editDirections.setVisibility(View.GONE);
-                        stageListView.setVisibility(View.GONE);
+                        layoutStages.setVisibility(View.GONE);
                         break;
 
                     case R.id.radio_directions:
                         editIngredients.setVisibility(View.GONE);
                         editDirections.setVisibility(View.VISIBLE);
-                        stageListView.setVisibility(View.GONE);
+                        layoutStages.setVisibility(View.GONE);
                         break;
 
                     case R.id.radio_settings:
                         editIngredients.setVisibility(View.GONE);
                         editDirections.setVisibility(View.GONE);
-                        stageListView.setVisibility(View.VISIBLE);
+                        layoutStages.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -141,7 +144,6 @@ public class RecipeViewFragment extends Fragment {
 
     private void getCurrentRecipe() {
         RecipeInfo recipe = RecipeManager.getInstance().getCurrentRecipe();
-
 
         editName.setText(recipe.getName());
         editIngredients.setText(recipe.getIngredients());

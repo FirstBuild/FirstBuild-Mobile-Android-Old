@@ -165,12 +165,19 @@ public class MyRecipesFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        recipeListAdapter.notifyDataSetChanged();
+        recipeListView.invalidateViews();
+    }
 
     /**
      * Read recipes from file.
      */
     private void readRecipes() {
-        RecipeManager.getInstance().ReadFromFile();
+
 
 
 //

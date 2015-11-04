@@ -122,7 +122,7 @@ public class RecipeManager {
         recipeInfos.clear();
 
         RecipeInfo recipe = new RecipeInfo(
-                "a.png", "Hollis world famous pot roast",
+                "a.png", "Hollis's world famous pot roast",
                 "ingredient 1\ningredient 2\ningredient 3\n" +
                         "ingredient 3\n" +
                         "ingredient 3\n" +
@@ -137,7 +137,9 @@ public class RecipeManager {
                         "ingredient 3",
                 "direction 1\ndirection 2"
         );
-        recipe.addStage(new StageInfo(30, 120, 10, true, "direction A"));
+        recipe.addStage(new StageInfo(10, 120, 10, true, "direction A"));
+        recipe.addStage(new StageInfo(11, 125, 5, false, "direction B"));
+        recipe.addStage(new StageInfo(12, 130, 10, false, "direction C"));
 
         add(recipe);
 
@@ -148,8 +150,6 @@ public class RecipeManager {
                 "direction 1\ndirection 2"
         );
         recipe.addStage(new StageInfo(10, 110, 10, true, "direction A"));
-        recipe.addStage(new StageInfo(20, 120, 30, false, "direction B"));
-        recipe.addStage(new StageInfo(30, 130, 40, true, "direction C"));
 
         add(recipe);
 

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.helper.SelectModeAdapter;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
@@ -57,6 +58,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onclick my recipes");
+                RecipeManager.getInstance().ReadFromFile();
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_MY_RECIPES);
 
             }
@@ -67,6 +69,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
             public void onClick(View v) {
                 Log.d(TAG, "onclick Quick Start");
 
+                RecipeManager.getInstance().createRecipeSousVide();
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_QUICK_START);
 
             }

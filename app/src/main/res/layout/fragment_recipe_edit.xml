@@ -166,11 +166,30 @@
             android:visibility="gone"
             android:windowSoftInputMode="adjustPan"/>
 
-        <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
-            android:id="@+id/list_stages"
+
+        <RelativeLayout
+            android:id="@+id/layout_stages"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:visibility="gone">
+
+            <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
+                android:id="@+id/list_stages"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_add_stage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:src="@drawable/ic_add_stage_white"
+                app:elevation="6dp"
+                app:fabSize="mini"
+                app:pressedTranslationZ="12dp"/>
+        </RelativeLayout>
 
 
     </RelativeLayout>

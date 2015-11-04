@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class RecipeEditFragment extends Fragment {
     private StageListAdapter stageListAdapter;
     private EditText editName;
     private ParagonMainActivity attached = null;
+    private View layoutStages;
 
 
     public RecipeEditFragment() {
@@ -66,6 +68,7 @@ public class RecipeEditFragment extends Fragment {
         editIngredients = (EditText) view.findViewById(R.id.edit_ingredients);
         editDirections = (EditText) view.findViewById(R.id.edit_directions);
         groupDetail = (RadioGroup) view.findViewById(R.id.group_recipe_detail);
+        layoutStages = view.findViewById(R.id.layout_stages);
 
         groupDetail.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -74,19 +77,19 @@ public class RecipeEditFragment extends Fragment {
                     case R.id.radio_ingredients:
                         editIngredients.setVisibility(View.VISIBLE);
                         editDirections.setVisibility(View.GONE);
-                        stageListView.setVisibility(View.GONE);
+                        layoutStages.setVisibility(View.GONE);
                         break;
 
                     case R.id.radio_directions:
                         editIngredients.setVisibility(View.GONE);
                         editDirections.setVisibility(View.VISIBLE);
-                        stageListView.setVisibility(View.GONE);
+                        layoutStages.setVisibility(View.GONE);
                         break;
 
                     case R.id.radio_settings:
                         editIngredients.setVisibility(View.GONE);
                         editDirections.setVisibility(View.GONE);
-                        stageListView.setVisibility(View.VISIBLE);
+                        layoutStages.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -109,7 +112,7 @@ public class RecipeEditFragment extends Fragment {
                 // create "delete" item
                 item = new SwipeMenuItem(attached.getApplicationContext());
                 item.setBackground(R.color.colorParagonHighlight);
-                item.setWidth(90);
+                item.setWidth(dp2px(90));
                 item.setTitle("Delete");
                 item.setTitleSize(18);
                 item.setTitleColor(Color.WHITE);
@@ -155,14 +158,14 @@ public class RecipeEditFragment extends Fragment {
         stageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == stageListAdapter.getCount() - 1) {
-                    // Case for Add stage button.
-                }
-                else {
-                    // Case for edit selected stage.
-                    RecipeManager.getInstance().setCurrentStage(position);
-                }
+                RecipeManager.getInstance().setCurrentStage(position);
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_EDIT_STAGE);
+            }
+        });
 
+        view.findViewById(R.id.fab_add_stage).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_EDIT_STAGE);
             }
         });
@@ -171,7 +174,14 @@ public class RecipeEditFragment extends Fragment {
         view.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                RecipeInfo recipe = RecipeManager.getInstance().getCurrentRecipe();
 
+                recipe.setName(editName.getText().toString());
+                recipe.setIngredients(editIngredients.getText().toString());
+                recipe.setDirections(editDirections.getText().toString());
+
+                RecipeManager.getInstance().restoreCurrentRecipe();
+                attached.getFragmentManager().popBackStack();
             }
         });
 
@@ -182,12 +192,17 @@ public class RecipeEditFragment extends Fragment {
         return view;
     }
 
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                attached.getResources().getDisplayMetrics());
+    }
+
     private void getCurrentRecipe() {
         RecipeInfo recipe = RecipeManager.getInstance().getCurrentRecipe();
 
-        StageInfo stageAdd = new StageInfo(0, 0, 0, false, "");
-        stageAdd.setType(StageInfo.TYPE_ADD_ITEM);
-        recipe.addStage(stageAdd);
+        editName.setText(recipe.getName());
+        editIngredients.setText(recipe.getIngredients());
+        editDirections.setText(recipe.getDirections());
     }
 
 
