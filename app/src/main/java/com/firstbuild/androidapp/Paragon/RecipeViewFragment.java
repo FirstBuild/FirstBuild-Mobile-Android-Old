@@ -132,6 +132,8 @@ public class RecipeViewFragment extends Fragment {
         view.findViewById(R.id.btn_cook).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RecipeManager.getInstance().sendCurrentStages();
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
 
             }
         });

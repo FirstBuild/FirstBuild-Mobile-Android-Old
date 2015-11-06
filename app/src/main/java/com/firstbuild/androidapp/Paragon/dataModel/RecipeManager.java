@@ -1,5 +1,7 @@
 package com.firstbuild.androidapp.paragon.dataModel;
 
+import android.util.Log;
+
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.commonframework.bleManager.BleManager;
 
@@ -10,6 +12,8 @@ import java.util.ArrayList;
  * Created by Hollis on 11/2/15.
  */
 public class RecipeManager {
+
+    private String TAG = RecipeManager.class.getSimpleName();
 
     public static final int INVALID_INDEX = -1;
 
@@ -197,6 +201,10 @@ public class RecipeManager {
             valueBuffer.putShort(3 + 8 * i, (short) (stage.getMaxTime()));
             valueBuffer.putShort(5 + 8 * i, (short) (stage.getTemp() * 100));
             valueBuffer.put(7 + 8 * i, (byte) (stage.isAutoTransition() ? 0x02 : 0x01));
+        }
+
+        for (int i = 0; i < 40; i++) {
+            Log.d(TAG, "RecipeManager.sendCurrentStages:" + String.format("0x%02x", valueBuffer.array()[i]));
         }
 
         BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());

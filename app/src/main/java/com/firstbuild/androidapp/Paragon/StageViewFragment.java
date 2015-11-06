@@ -93,7 +93,7 @@ public class StageViewFragment extends Fragment {
             textAutoTransition.setText("Off");
         }
         editDirection.setText(stageInfo.getDirection());
-        textTime.setText((stageInfo.getTime() / 60) + "H:" + (stageInfo.getTime() / 60) + "M");
+        textTime.setText((stageInfo.getTime() / 60) + "H:" + (stageInfo.getTime() % 60) + "M");
         textTemp.setText(stageInfo.getTemp() + "℉");
         textSpeed.setText(stageInfo.getSpeed() + "");
     }
