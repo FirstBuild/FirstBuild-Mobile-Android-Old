@@ -36,7 +36,7 @@ public class ParagonValues {
     public static final String CHARACTERISTIC_ERROR_STATE = "7EE9F201-120D-1CB9-E248-9D4855F68335";
 
     // Target device's name
-    public static final String TARGET_DEVICE_NAME = "Paragon Master";
+    public static final String TARGET_DEVICE_NAME = "Paragon MastYH";
     //TODO: This is only for debug pupose. please remove below code after test.
 //    public static final String TARGET_DEVICE_NAME = "Paragon Mobile";
 

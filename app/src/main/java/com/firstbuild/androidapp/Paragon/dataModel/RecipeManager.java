@@ -141,9 +141,12 @@ public class RecipeManager {
                         "ingredient 3",
                 "direction 1\ndirection 2"
         );
-        recipe.addStage(new StageInfo(10, 120, 10, true, "direction A"));
-        recipe.addStage(new StageInfo(11, 125, 5, false, "direction B"));
-        recipe.addStage(new StageInfo(12, 130, 10, false, "direction C"));
+        recipe.addStage(new StageInfo(3, 90, 10, true, "direction A"));
+        recipe.addStage(new StageInfo(5, 95, 10, true, "direction B"));
+        recipe.addStage(new StageInfo(6, 100, 10, true, "direction C"));
+        recipe.addStage(new StageInfo(7, 105, 10, false, "direction C"));
+        recipe.addStage(new StageInfo(6, 110, 10, false, "direction C"));
+
 
         add(recipe);
 
@@ -200,7 +203,7 @@ public class RecipeManager {
             valueBuffer.putShort(1 + 8 * i, (short) (stage.getTime()));
             valueBuffer.putShort(3 + 8 * i, (short) (stage.getMaxTime()));
             valueBuffer.putShort(5 + 8 * i, (short) (stage.getTemp() * 100));
-            valueBuffer.put(7 + 8 * i, (byte) (stage.isAutoTransition() ? 0x02 : 0x01));
+            valueBuffer.put(7 + 8 * i, (byte) (stage.isAutoTransition() ? 0x01 : 0x02));
         }
 
         for (int i = 0; i < 40; i++) {

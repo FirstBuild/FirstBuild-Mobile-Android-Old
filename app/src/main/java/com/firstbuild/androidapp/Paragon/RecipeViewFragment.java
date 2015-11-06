@@ -133,6 +133,7 @@ public class RecipeViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 RecipeManager.getInstance().sendCurrentStages();
+                RecipeManager.getInstance().setCurrentStage(0);
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
 
             }
