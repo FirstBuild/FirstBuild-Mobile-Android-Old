@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.paragon;
+package com.firstbuild.androidapp.paragon.trash;
 
 
 import android.app.Fragment;
@@ -10,11 +10,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.commonframework.bleManager.BleManager;
-
-import java.nio.ByteBuffer;
+import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -347,7 +344,7 @@ public class BeefFragment extends Fragment implements View.OnTouchListener {
         }
 
 
-        activity.setTargetTime(setTargetTime);
+        activity.setTargetTime(setTargetTime, 0);
         activity.setTargetTemp(setTargetTemp);
 
         textTargetTempTime.setText(setTargetTime / 60 + "H " + setTargetTime % 60 + "MIN | " + setTargetTemp + "℉");

@@ -1,0 +1,260 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    tools:context="com.firstbuild.androidapp.paragon.RecipeEditFragment">
+
+    <!--<ScrollView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="1">-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical">-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical">-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/colorParagonDivider">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_camera"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/paragon_editbox_height"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:background="@drawable/img_edit_background"
+        android:ems="10"
+        android:gravity="center_vertical|center_horizontal"
+        android:hint="Enter recipe's name"
+        android:inputType="textMultiLine"
+        android:textColor="@color/colorParagonPrimary"
+        android:windowSoftInputMode="adjustPan"/>
+
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:background="@color/colorParagonDivider"/>
+
+    <!--</LinearLayout>-->
+
+
+    <RadioGroup
+        android:id="@+id/group_recipe_detail"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        android:layout_marginStart="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_ingredients"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/btn_recipe_toggle_bg"
+            android:button="@null"
+            android:checked="true"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal|top"
+            android:singleLine="false"
+            android:text="Ingredients"
+            android:textColor="@drawable/btn_recipe_toggle_text"
+            android:textSize="19sp"
+            android:visibility="visible"/>
+
+        <RadioButton
+            android:id="@+id/radio_directions"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_recipe_toggle_bg"
+            android:button="@null"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal|top"
+            android:text="Directions"
+            android:textColor="@drawable/btn_recipe_toggle_text"
+            android:textSize="19sp"
+            android:visibility="visible"/>
+
+        <RadioButton
+            android:id="@+id/radio_settings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_recipe_toggle_bg"
+            android:button="@null"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal|top"
+            android:text="Settings"
+            android:textColor="@drawable/btn_recipe_toggle_text"
+            android:textSize="19sp"
+            android:visibility="visible"/>
+
+    </RadioGroup>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorParagonDivider"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+
+        <EditText
+            android:id="@+id/edit_ingredients"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/activity_vertical_margin"
+            android:background="@drawable/img_edit_background"
+            android:ems="10"
+            android:gravity="top"
+            android:hint="Enter you ingredients"
+            android:inputType="textMultiLine"
+            android:padding="@dimen/activity_vertical_margin"
+            android:visibility="visible"
+            android:windowSoftInputMode="adjustPan"/>
+
+        <EditText
+            android:id="@+id/edit_directions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/activity_vertical_margin"
+            android:background="@drawable/img_edit_background"
+            android:ems="10"
+            android:gravity="top"
+            android:hint="Enter you directions"
+            android:inputType="textMultiLine"
+            android:padding="@dimen/activity_vertical_margin"
+            android:visibility="gone"
+            android:windowSoftInputMode="adjustPan"/>
+
+
+        <RelativeLayout
+            android:id="@+id/layout_stages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
+                android:id="@+id/list_stages"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_add_stage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:src="@drawable/ic_add_stage_white"
+                app:elevation="6dp"
+                app:fabSize="mini"
+                app:pressedTranslationZ="12dp"/>
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_bar_height"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/btn_save"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/colorParagonHighlight"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_heart_plussign"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-thin"
+                android:text="Save"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btn_cook"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/colorParagonHighlight"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_continue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-thin"
+                android:text="Cook"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

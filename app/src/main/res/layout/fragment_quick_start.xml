@@ -1,0 +1,258 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true"
+    tools:context="com.firstbuild.androidapp.paragon.QuickStartFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Time"
+            android:textColor="@color/colorParagonAccent"
+            android:textSize="19sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Min"
+                android:textColor="@color/colorParagonAccent"
+                android:textSize="19sp"/>
+
+            <TextView
+                android:id="@+id/text_time_min"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:background="@drawable/img_edit_background"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="0H:30M"
+                android:textColor="@color/colorParagonPrimary"
+                android:textSize="19sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_picker_min"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/picker_min_hour"
+                android:layout_width="40dp"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content">
+
+            </NumberPicker>
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_horizontal|center_vertical"
+                android:text=":"
+                android:textSize="25sp"/>
+
+            <NumberPicker
+                android:id="@+id/picker_min_min"
+                android:layout_width="40dp"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content">
+            </NumberPicker>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.4"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center_horizontal"
+                    android:text="Max"
+                    android:textColor="@color/colorParagonAccent"
+                    android:textSize="19sp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-thin"
+                    android:layout_marginTop="18dp"
+                    android:gravity="center_horizontal"
+                    android:text="(optional)"
+                    android:textColor="@color/colorParagonAccent"
+                    android:textSize="15sp"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/text_time_max"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:background="@drawable/img_edit_background"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="0H:00M"
+                android:textColor="@color/colorParagonPrimary"
+                android:textSize="19sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_picker_max"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/picker_max_hour"
+                android:layout_width="40dp"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content">
+
+            </NumberPicker>
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_horizontal|center_vertical"
+                android:text=":"
+                android:textSize="25sp"/>
+
+            <NumberPicker
+                android:id="@+id/picker_max_min"
+                android:layout_width="40dp"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content">
+            </NumberPicker>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:text="Temp"
+                android:textColor="@color/colorParagonAccent"
+                android:textSize="19sp"/>
+
+            <TextView
+                android:id="@+id/text_temp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:background="@drawable/img_edit_background"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="100℉"
+                android:textColor="@color/colorParagonPrimary"
+                android:textSize="19sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_picker_temp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/picker_temp"
+                android:layout_width="match_parent"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content">
+            </NumberPicker>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_bar_height"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/btn_continue"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/colorParagonHighlight"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_continue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-thin"
+                android:text="Continue"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

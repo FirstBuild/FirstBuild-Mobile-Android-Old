@@ -3,6 +3,7 @@ package com.firstbuild.androidapp.paragon;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.nio.ByteBuffer;
 public class SousvideStatusFragment extends Fragment {
 
     private String TAG = "SousvideStatusFragment";
+    private int countDown = 10;
 
     public enum COOK_STATE {
         STATE_PREHEAT,
@@ -39,7 +41,9 @@ public class SousvideStatusFragment extends Fragment {
     private TextView textTempTarget;
     private TextView textStatusName;
     private TextView textLabelCurrent;
+    private TextView textExplanation;
     private View btnContinue;
+    private View btnComplete;
     private COOK_STATE cookState = COOK_STATE.STATE_PREHEAT;
 
     public SousvideStatusFragment() {
@@ -70,6 +74,9 @@ public class SousvideStatusFragment extends Fragment {
 
         textTempCurrent = (TextView) view.findViewById(R.id.text_temp_current);
         textTempTarget = (TextView) view.findViewById(R.id.text_temp_target);
+        textExplanation = (TextView) view.findViewById(R.id.text_explanation);
+
+        textExplanation.setVisibility(View.GONE);
 
         layoutStatus = view.findViewById(R.id.layout_status);
         imgStatus = (ImageView) view.findViewById(R.id.img_status);
@@ -78,6 +85,7 @@ public class SousvideStatusFragment extends Fragment {
         imgStatus.setVisibility(View.GONE);
 
         btnContinue = view.findViewById(R.id.btn_continue);
+        btnContinue.setVisibility(View.GONE);
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +97,7 @@ public class SousvideStatusFragment extends Fragment {
 
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
 
-                valueBuffer.put((byte)0x01);
+                valueBuffer.put((byte) 0x01);
                 BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
                 UpdateUiCookState(COOK_STATE.STATE_COOKING);
@@ -97,13 +105,40 @@ public class SousvideStatusFragment extends Fragment {
             }
         });
 
-//        //TODO: remove code below after debug.
-//        view.findViewById(R.id.progress_dot_2).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                updateCookStatus(false);
-//            }
-//        });
+        btnComplete = view.findViewById(R.id.btn_complete);
+        btnComplete.setVisibility(View.GONE);
+        btnComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_COMPLETE);
+            }
+        });
+
+
+        //TODO: remove code below after debug.
+        view.findViewById(R.id.progress_dot_3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateCookStatus(ParagonValues.COOK_STATE_COOKING);
+            }
+        });
+
+        view.findViewById(R.id.progress_dot_4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateCookStatus(ParagonValues.COOK_STATE_DONE);
+            }
+        });
+
+
+        layoutStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ParagonMainActivity) getActivity()).setTargetTime(10, 0);
+                updateUiElapsedTime(countDown--);
+            }
+        });
+        //TODO: remove code above.
 
         updateUiCurrentTemp();
 
@@ -130,12 +165,13 @@ public class SousvideStatusFragment extends Fragment {
 
     /**
      * Update cooking state, Off -> Heating -> Ready -> Cooking -> Done
+     *
      * @param state
      */
     public void updateCookStatus(byte state) {
-        Log.d(TAG, "updateCookStatus IN "+state);
+        Log.d(TAG, "updateCookStatus IN " + state);
 
-        switch(state){
+        switch (state) {
             case ParagonValues.COOK_STATE_OFF:
                 break;
 
@@ -182,80 +218,96 @@ public class SousvideStatusFragment extends Fragment {
         if (cookState != state) {
             cookState = state;
 
-        switch (cookState) {
-            case STATE_PREHEAT:
-                textStatusName.setText("PREHEATING");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+            switch (cookState) {
+                case STATE_PREHEAT:
+                    textStatusName.setText("PREHEATING");
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
-                layoutStatus.setVisibility(View.VISIBLE);
-                imgStatus.setVisibility(View.GONE);
+                    layoutStatus.setVisibility(View.VISIBLE);
+                    imgStatus.setVisibility(View.GONE);
                     btnContinue.setVisibility(View.GONE);
+                    btnComplete.setVisibility(View.GONE);
 
-                textLabelCurrent.setText("Current:");
+                    textLabelCurrent.setText("Current:");
                     textTempCurrent.setText("");
-                break;
+                    textExplanation.setVisibility(View.GONE);
+                    break;
 
-            case STATE_READY_TO_COOK:
-                textStatusName.setText("READY TO COOK");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                case STATE_READY_TO_COOK:
+                    textStatusName.setText("READY TO COOK");
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
-                layoutStatus.setVisibility(View.GONE);
-                imgStatus.setVisibility(View.VISIBLE);
+                    layoutStatus.setVisibility(View.GONE);
+                    imgStatus.setVisibility(View.VISIBLE);
                     btnContinue.setVisibility(View.VISIBLE);
+                    btnComplete.setVisibility(View.GONE);
 
-                imgStatus.setImageResource(R.drawable.img_ready_to_cook);
+                    imgStatus.setImageResource(R.drawable.img_ready_to_cook);
 
                     circle.setGridValue(1.0f);
-                break;
 
-            case STATE_COOKING:
-                textStatusName.setText("COOKING");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                    textExplanation.setVisibility(View.VISIBLE);
+                    textExplanation.setText(R.string.fragment_soudvide_status_explanation_placefood);
+                    break;
 
-                layoutStatus.setVisibility(View.VISIBLE);
-                imgStatus.setVisibility(View.GONE);
-                btnContinue.setVisibility(View.GONE);
+                case STATE_COOKING:
+                    textStatusName.setText("COOKING");
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
-                textTempTarget.setText(((ParagonMainActivity) getActivity()).getTargetTemp() + "℉");
-                textLabelCurrent.setText("Food ready at");
+                    layoutStatus.setVisibility(View.VISIBLE);
+                    imgStatus.setVisibility(View.GONE);
+                    btnContinue.setVisibility(View.GONE);
+                    btnComplete.setVisibility(View.GONE);
 
-                textTempCurrent.setText("");
+                    int targetTemp = (int) Math.floor(((ParagonMainActivity) getActivity()).getTargetTemp());
 
-                circle.setGridValue(1.0f);
-                break;
+                    textTempTarget.setText(Html.fromHtml(targetTemp + "<small>℉</small>"));
 
-            case STATE_DONE:
-                textStatusName.setText("DONE");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
+                    textLabelCurrent.setText("Food ready at");
+
+                    textTempCurrent.setText("");
+
+                    circle.setGridValue(1.0f);
+
+                    textExplanation.setVisibility(View.GONE);
+                    break;
+
+                case STATE_DONE:
+                    textStatusName.setText("DONE");
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[3].setImageResource(R.drawable.ic_step_dot_current);
 
                     layoutStatus.setVisibility(View.VISIBLE);
                     imgStatus.setVisibility(View.GONE);
                     btnContinue.setVisibility(View.GONE);
+                    btnComplete.setVisibility(View.VISIBLE);
 
-                textTempTarget.setText(((ParagonMainActivity) getActivity()).getTargetTemp() + "℉");
-                textLabelCurrent.setText("Food is");
-                textTempCurrent.setText("READY");
+                    textTempTarget.setText(((ParagonMainActivity) getActivity()).getTargetTemp() + "℉");
+                    textLabelCurrent.setText("Food is");
+                    textTempCurrent.setText("READY");
 
                     circle.setGridValue(1.0f);
-                break;
 
-            default:
-                break;
+                    textExplanation.setVisibility(View.VISIBLE);
+                    textExplanation.setText(R.string.fragment_soudvide_status_explanation_donekeep);
+                    break;
+
+                default:
+                    break;
+            }
+
         }
-
-    }
         else {
             //do nothing.
         }
@@ -284,23 +336,21 @@ public class SousvideStatusFragment extends Fragment {
     }
 
 
-    
-
-
     /**
      * Update UI current elapsed time. Elapsed time is increase from 0 until selected cook time.
+     *
      * @param elapsedTime
      */
     public void updateUiElapsedTime(int elapsedTime) {
-        Log.d(TAG, "updateUiElapsedTime :"+elapsedTime);
+        Log.d(TAG, "updateUiElapsedTime :" + elapsedTime);
         ParagonMainActivity activity = (ParagonMainActivity) getActivity();
 
         if (cookState == COOK_STATE.STATE_COOKING) {
-            float ratioTime = elapsedTime / activity.getTargetTime();
+            float ratioTime = (float) elapsedTime / (float) activity.getTargetTime();
 
             ratioTime = Math.min(ratioTime, 1.0f);
 
-            Log.d(TAG, "updateUiElapsedTime elapsedTime: "+elapsedTime +", getTargetTime: "+activity.getTargetTime()+", ratio :"+ratioTime);
+            Log.d(TAG, "updateUiElapsedTime elapsedTime: " + elapsedTime + ", getTargetTime: " + activity.getTargetTime() + ", ratio :" + ratioTime);
 
             circle.setBarValue(ratioTime);
         }

@@ -90,6 +90,12 @@
         <item>Vegetables</item>
     </string-array>
 
+    <string-array name="kind_of_recipe">
+        <item>Multi-stage</item>
+        <item>Sous vide</item>
+    </string-array>
+
+
     <string-array name="paragon_modes_beef">
         <item>Steak</item>
         <item>Roast</item>
@@ -106,5 +112,13 @@
     <string name="opensource_license_ok">OK</string>
 
     <string name="url_manual">http://www.firstbuild.com</string>
+    <string name="fragment_select_mode_button_quickstart">Quick Start</string>
+    <string name="fragment_select_mode_myrecipes">My Recipes</string>
+
+    <string name="fragment_my_recipes_add">Add</string>
+
+    <string name="fragment_soudvide_status_explanation_placefood">Place food to continue</string>
+    <string name="fragment_soudvide_status_explanation_donekeep">Keeping the temperature until press Stop button</string>
+    <string name="my_recipes_add_recipe">Add Recipe</string>
 
 </resources>
