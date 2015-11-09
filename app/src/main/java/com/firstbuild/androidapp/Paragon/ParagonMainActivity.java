@@ -9,9 +9,12 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,7 +34,11 @@ import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +47,8 @@ import java.util.Queue;
 
 public class ParagonMainActivity extends ActionBarActivity {
     private String TAG = ParagonMainActivity.class.getSimpleName();
+
+    static final int REQUEST_TAKE_PHOTO = 1;
 
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
@@ -178,6 +187,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     private NavigationDrawerFragment drawerFragment;
     private TextView toolbarText;
     private ImageView toolbarImage;
+    private String currentPhotoPath;
 
     private void nextCharacteristicRead() {
 
@@ -658,7 +668,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         switch (currentStep) {
             case STEP_CHECK_CURRENT_STATUS:
                 isCheckingCurrentStatus = true;
-                break;
+                return;
 
             case STEP_COOKING_MODE:
                 fragment = new SelectModeFragment();
@@ -785,5 +795,94 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
 
     }
+
+    /**
+     * Create image file for recipe.
+     * @return String dir + file name of image file.
+     * @throws IOException
+     */
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    /**
+     * Take picture and store in file.
+     */
+    protected void dispatchTakePictureIntent() {
+        Log.d(TAG, "dispatchTakePictureIntent IN");
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                Log.d(TAG, "dispatchTakePictureIntent error : "+ex);
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath, options);
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+            if (fragment instanceof RecipeEditFragment) {
+                ((RecipeEditFragment) fragment).setRecipeImage(imageBitmap, currentPhotoPath);
+            }
+        }
+    }
+
+
+    /**
+     * Get recipe's title image from file.
+     *
+     * @param imageFileName File name of external storage.
+     */
+    public void loadImageFromFile(String imageFileName) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap imageBitmap;
+        try {
+            imageBitmap = BitmapFactory.decodeFile(imageFileName, options);
+
+        }
+        catch (Exception e) {
+            imageBitmap = null;
+        }
+
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+        if (fragment instanceof RecipeViewFragment) {
+            ((RecipeViewFragment) fragment).setRecipeImage(imageBitmap);
+        }
+    }
+
 
 }
