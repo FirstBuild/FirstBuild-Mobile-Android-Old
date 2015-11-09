@@ -126,7 +126,7 @@ public class RecipeManager {
         recipeInfos.clear();
 
         RecipeInfo recipe = new RecipeInfo(
-                "a.png", "Hollis's world famous pot roast",
+                "", "Hollis's world famous pot roast",
                 "ingredient 1\ningredient 2\ningredient 3\n" +
                         "ingredient 3\n" +
                         "ingredient 3\n" +
@@ -152,7 +152,7 @@ public class RecipeManager {
 
 
         recipe = new RecipeInfo(
-                "b.png", "Sous vide special ribeye",
+                "", "Sous vide special ribeye",
                 "ingredient 1\ningredient 2\ningredient 3",
                 "direction 1\ndirection 2"
         );

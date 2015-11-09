@@ -192,7 +192,7 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:src="@drawable/ic_custom" />
+                android:src="@drawable/ic_continue" />
 
             <TextView
                 android:layout_width="wrap_content"

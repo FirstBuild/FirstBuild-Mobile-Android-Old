@@ -53,9 +53,9 @@ public class ParagonMainActivity extends ActionBarActivity {
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
-//    private float targetTemp;
+    //    private float targetTemp;
     private float currentTemp;
-//    private int targetTime = ParagonValues.MAX_COOK_TIME;
+    //    private int targetTime = ParagonValues.MAX_COOK_TIME;
     private byte batteryLevel;
 
     Toolbar toolbar;
@@ -210,27 +210,27 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
     }
 
-    public int getTargetTime() {
-        return RecipeManager.getInstance().getCurrentStage().getTime();
+//    public int getTargetTime() {
+//        return RecipeManager.getInstance().getCurrentStage().getTime();
+//
+////        return targetTime;
+//    }
 
-//        return targetTime;
-    }
+//    public void setTargetTime(int targetTime, int setTargetTimeMax) {
+//        RecipeManager.getInstance().getCurrentStage().setTime(targetTime);
+//        RecipeManager.getInstance().getCurrentStage().setMaxTime(targetTime);
+////        this.targetTime = targetTime;
+//    }
 
-    public void setTargetTime(int targetTime, int setTargetTimeMax) {
-        RecipeManager.getInstance().getCurrentStage().setTime(targetTime);
-        RecipeManager.getInstance().getCurrentStage().setMaxTime(targetTime);
-//        this.targetTime = targetTime;
-    }
+//    public float getTargetTemp() {
+//        return RecipeManager.getInstance().getCurrentStage().getTemp();
+////        return targetTemp;
+//    }
 
-    public float getTargetTemp() {
-        return RecipeManager.getInstance().getCurrentStage().getTemp();
-//        return targetTemp;
-    }
-
-    public void setTargetTemp(float targetTemp) {
-        RecipeManager.getInstance().getCurrentStage().setTemp((int)targetTemp);
-//        this.targetTemp = targetTemp;
-    }
+//    public void setTargetTemp(float targetTemp) {
+//        RecipeManager.getInstance().getCurrentStage().setTemp((int)targetTemp);
+////        this.targetTemp = targetTemp;
+//    }
 
     public float getCurrentTemp() {
         return currentTemp;
@@ -317,7 +317,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
                 Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :");
 
-                for(int i = 0; i < 32; i++){
+                for (int i = 0; i < 32; i++) {
                     Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :" + String.format("%02x", value[i]));
                 }
                 break;
@@ -364,7 +364,43 @@ public class ParagonMainActivity extends ActionBarActivity {
                 onCookState(value[0]);
 
                 break;
+
+
+            case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE:
+                Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STAGE :" + String.format("%02x", value[0]));
+                onCookStage(value[0]);
+                break;
+
         }
+    }
+
+    private void onCookStage(byte stage) {
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+        final int newStage = (int) stage;
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+                        if (fragment instanceof MultiStageStatusFragment) {
+                            ((MultiStageStatusFragment) fragment).updateCookStage(newStage);
+                        }
+                        else if (fragment instanceof SousvideStatusFragment) {
+                            ((SousvideStatusFragment) fragment).updateCookStage(newStage);
+                        }
+                        else {
+                            //do nothing.
+                        }
+
+
+                    }
+                });
+            }
+        }).start();
     }
 
     private void onCookState(final byte state) {
@@ -373,8 +409,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         if (fragment instanceof GetReadyFragment) {
             nextStep(ParagonSteps.STEP_SOUSVIDE_CIRCLE);
         }
-        else if (fragment instanceof SousvideStatusFragment) {
-
+        else {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -383,45 +418,52 @@ public class ParagonMainActivity extends ActionBarActivity {
                         public void run() {
                             Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
-                            ((SousvideStatusFragment) fragment).updateCookStatus(state);
+                            if (fragment instanceof SousvideStatusFragment) {
+                                ((SousvideStatusFragment) fragment).updateCookStatus(state);
+                            }
+                            else if (fragment instanceof MultiStageStatusFragment) {
+                                ((MultiStageStatusFragment) fragment).updateCookStatus(state);
+                            }
+                            else {
+                                // do nothing.
+                            }
+
 
                         }
                     });
                 }
             }).start();
-        }
-        else{
-            // nothing.
         }
 
     }
 
     private void onElapsedTime(int elapsedTime) {
         final int elapsedTimeValue = elapsedTime;
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
-        if (fragment instanceof SousvideStatusFragment) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
+                        if (fragment instanceof SousvideStatusFragment) {
                             ((SousvideStatusFragment) fragment).updateUiElapsedTime(elapsedTimeValue);
-
                         }
-                    });
-                }
-            }).start();
+                        else if (fragment instanceof MultiStageStatusFragment) {
+                            ((MultiStageStatusFragment) fragment).updateUiElapsedTime(elapsedTimeValue);
+                        }
+                        else {
+                            // do nothing.
+                        }
 
-        }
-        else {
-
-        }
-
+                    }
+                });
+            }
+        }).start();
     }
+
 
     private void onBurnerStatus(boolean isSousVide, boolean isPreheat) {
         final boolean isPreheatValue = isPreheat;
@@ -628,11 +670,9 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             return true;
         }
-        else{
+        else {
             // do nothing.
         }
-
-
 
 
         return super.onOptionsItemSelected(item);
@@ -707,10 +747,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                 fragment = new StageEditFragment();
                 int index = RecipeManager.getInstance().getCurrentStageIndex();
 
-                if(index == RecipeManager.INVALID_INDEX){
+                if (index == RecipeManager.INVALID_INDEX) {
                     setTitle("New Stage");
                 }
-                else{
+                else {
                     setTitle("Stage " + (index + 1));
                 }
                 break;
@@ -780,14 +820,15 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     /**
      * Set title.
+     *
      * @param title String to be title
      */
-    protected void setTitle(String title){
-        if(title.equals("Paragon")){
+    protected void setTitle(String title) {
+        if (title.equals("Paragon")) {
             toolbarText.setVisibility(View.GONE);
             toolbarImage.setVisibility(View.VISIBLE);
         }
-        else{
+        else {
             toolbarText.setVisibility(View.VISIBLE);
             toolbarImage.setVisibility(View.GONE);
 
@@ -798,6 +839,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     /**
      * Create image file for recipe.
+     *
      * @return String dir + file name of image file.
      * @throws IOException
      */
@@ -831,9 +873,10 @@ public class ParagonMainActivity extends ActionBarActivity {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
-            } catch (IOException ex) {
+            }
+            catch (IOException ex) {
                 // Error occurred while creating the File
-                Log.d(TAG, "dispatchTakePictureIntent error : "+ex);
+                Log.d(TAG, "dispatchTakePictureIntent error : " + ex);
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
