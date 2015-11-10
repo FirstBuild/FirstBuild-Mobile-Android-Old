@@ -35,7 +35,7 @@ public class ParagonValues {
     public static final String CHARACTERISTIC_PARAGON_PROBE_SERVICE = "CFA29500-5F33-498E-9F43-C50960D223F8";
     public static final String CHARACTERISTIC_ERROR_STATE = "7EE9F201-120D-1CB9-E248-9D4855F68335";
     public static final String CHARACTERISTIC_COOK_MODE = "69248452-5AA7-A745-C89F-D327C73D06D244";
-
+//                                                          "69248452-5AA7-45C8-9FD3-27C73D06D244"
 
     // Target device's name
 //    public static final String TARGET_DEVICE_NAME = "Paragon Master";
@@ -44,10 +44,10 @@ public class ParagonValues {
 
     public static final int MAX_COOK_TIME = 100;
 
-    public static final byte COOK_STATE_OFF = 0x00;
-    public static final byte COOK_STATE_HEATING = 0x01;
-    public static final byte COOK_STATE_READY = 0x02;
-    public static final byte COOK_STATE_COOKING = 0x03;
-    public static final byte COOK_STATE_DONE = 0x04;
+    public static final byte COOK_STATE_OFF = 00;
+    public static final byte COOK_STATE_HEATING = 01;
+    public static final byte COOK_STATE_READY = 02;
+    public static final byte COOK_STATE_COOKING = 03;
+    public static final byte COOK_STATE_DONE = 04;
 
 }

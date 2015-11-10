@@ -136,12 +136,14 @@ public class ParagonMainActivity extends ActionBarActivity {
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE);
 
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, true);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
 
         }
