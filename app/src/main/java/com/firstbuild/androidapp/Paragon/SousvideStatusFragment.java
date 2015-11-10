@@ -30,6 +30,7 @@ public class SousvideStatusFragment extends Fragment {
     private int countDown = 10;
 
     public enum COOK_STATE {
+        STATE_NONE,
         STATE_PREHEAT,
         STATE_READY_TO_COOK,
         STATE_COOKING,
@@ -47,7 +48,7 @@ public class SousvideStatusFragment extends Fragment {
     private TextView textExplanation;
     private View btnContinue;
     private View btnComplete;
-    private COOK_STATE cookState = COOK_STATE.STATE_PREHEAT;
+    private COOK_STATE cookState = COOK_STATE.STATE_NONE;
 
     private ParagonMainActivity attached = null;
 
@@ -329,11 +330,11 @@ public class SousvideStatusFragment extends Fragment {
         StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
 
         if (cookState == COOK_STATE.STATE_COOKING) {
-            float ratioTime = (float) elapsedTime / (float) stageInfo.getTemp();
+            float ratioTime = (float) elapsedTime / (float) stageInfo.getTime();
 
             ratioTime = Math.min(ratioTime, 1.0f);
 
-            circle.setBarValue(ratioTime);
+            circle.setBarValue(1.0f - ratioTime);
         }
         else {
             //do nothing

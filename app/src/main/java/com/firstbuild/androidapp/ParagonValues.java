@@ -34,11 +34,13 @@ public class ParagonValues {
     public static final String CHARACTERISTIC_USER_INFO = "007A7511-0D69-4749-AAE3-856CFF257912";
     public static final String CHARACTERISTIC_PARAGON_PROBE_SERVICE = "CFA29500-5F33-498E-9F43-C50960D223F8";
     public static final String CHARACTERISTIC_ERROR_STATE = "7EE9F201-120D-1CB9-E248-9D4855F68335";
+    public static final String CHARACTERISTIC_COOK_MODE = "69248452-5AA7-A745-C89F-D327C73D06D244";
+
 
     // Target device's name
-    public static final String TARGET_DEVICE_NAME = "Paragon Master";
+//    public static final String TARGET_DEVICE_NAME = "Paragon Master";
     //TODO: This is only for debug pupose. please remove below code after test.
-//    public static final String TARGET_DEVICE_NAME = "Paragon Mobile";
+    public static final String TARGET_DEVICE_NAME = "Paragon M____1";
 
     public static final int MAX_COOK_TIME = 100;
 

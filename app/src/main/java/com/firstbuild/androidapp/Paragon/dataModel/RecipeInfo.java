@@ -9,6 +9,8 @@ public class RecipeInfo {
 
     public static final int TYPE_SOUSVIDE = 1;
     public static final int TYPE_MULTI_STAGE = 2;
+    private final int MAX_RECIPE = 5;
+    private final int STAGE_CHUNK_SIZE = 8;
 
     private int type;
     private String imageFileName;
@@ -25,6 +27,30 @@ public class RecipeInfo {
         this.name = name;
         this.ingredients = ingredients;
         this.directions = directions;
+    }
+
+    public RecipeInfo(byte[] value) {
+        for (int i = 0; i < MAX_RECIPE; i++) {
+            byte powerLevel = value[i*STAGE_CHUNK_SIZE];
+            short holdTime = (short)(value[i * STAGE_CHUNK_SIZE + 1]);
+            short maxHoldTime = (short)(value[i* STAGE_CHUNK_SIZE + 2]);
+            short targetTemp = (short)(value[i*STAGE_CHUNK_SIZE + 2]);
+            byte transitionType = value[i*STAGE_CHUNK_SIZE + 2];
+
+            if(powerLevel == 0){
+                break;
+            }
+            else{
+                StageInfo newStage = new StageInfo();
+                newStage.setSpeed(powerLevel);
+                newStage.setTime(holdTime);
+                newStage.setMaxTime(maxHoldTime);
+                newStage.setTemp(targetTemp);
+                newStage.setAutoTransition(transitionType == 0x01);
+
+                addStage(newStage);
+            }
+        }
     }
 
     public int getType() {

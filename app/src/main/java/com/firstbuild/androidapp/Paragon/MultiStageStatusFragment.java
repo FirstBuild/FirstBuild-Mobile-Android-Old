@@ -41,10 +41,11 @@ public class MultiStageStatusFragment extends Fragment {
     private View btnNextStage;
     private View btnComplete;
     private View btnContinue;
-    private MULTI_STAGE_COOK_STATE cookState = MULTI_STAGE_COOK_STATE.STATE_HEAT_COOL;
+    private MULTI_STAGE_COOK_STATE cookState = MULTI_STAGE_COOK_STATE.STATE_NONE;
     private ParagonMainActivity attached = null;
 
     public enum MULTI_STAGE_COOK_STATE {
+        STATE_NONE,
         STATE_HEAT_COOL,
         STATE_TARGET_TEMP_REACHED,
         STATE_HOLDING_TEMP,
@@ -80,7 +81,7 @@ public class MultiStageStatusFragment extends Fragment {
         progressDots[0] = (ImageView) view.findViewById(R.id.progress_dot_1);
         progressDots[1] = (ImageView) view.findViewById(R.id.progress_dot_2);
         progressDots[2] = (ImageView) view.findViewById(R.id.progress_dot_3);
-        progressDots[3] = (ImageView) view.findViewById(R.id.progress_dot_4);
+        view.findViewById(R.id.progress_dot_4).setVisibility(View.GONE);
 
         textTempCurrent = (TextView) view.findViewById(R.id.text_temp_current);
         textTempTarget = (TextView) view.findViewById(R.id.text_temp_target);
@@ -195,29 +196,19 @@ public class MultiStageStatusFragment extends Fragment {
 
             if(currentStageIndex == 0){
                 // show the 'Ready to Cook' image only for first stage.
-                progressDots[3].setVisibility(View.VISIBLE);
+                progressDots[2].setVisibility(View.VISIBLE);
             }
             else{
                 //other than hide the image.
-                progressDots[3].setVisibility(View.GONE);
+                progressDots[2].setVisibility(View.GONE);
             }
 
             switch (cookState) {
                 case STATE_HEAT_COOL:
-                    int currentTemp = (int)attached.getCurrentTemp();
-                    int targetTep = stageInfo.getTemp();
-
-                    if(currentTemp < targetTep){
-                        textStatusName.setText("HEATING");
-                    }
-                    else{
-                        textStatusName.setText("COOLING");
-                    }
-
+                    textStatusName.setText("");
                     progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
                     progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
                     layoutStatus.setVisibility(View.VISIBLE);
                     imgStatus.setVisibility(View.GONE);
@@ -237,7 +228,6 @@ public class MultiStageStatusFragment extends Fragment {
                     progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
                     layoutStatus.setVisibility(View.GONE);
                     imgStatus.setVisibility(View.VISIBLE);
@@ -260,7 +250,6 @@ public class MultiStageStatusFragment extends Fragment {
                     progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
                     layoutStatus.setVisibility(View.VISIBLE);
                     imgStatus.setVisibility(View.GONE);
@@ -283,7 +272,6 @@ public class MultiStageStatusFragment extends Fragment {
                     progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
                     layoutStatus.setVisibility(View.VISIBLE);
                     imgStatus.setVisibility(View.GONE);
@@ -306,7 +294,6 @@ public class MultiStageStatusFragment extends Fragment {
                     progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
                     layoutStatus.setVisibility(View.VISIBLE);
                     imgStatus.setVisibility(View.GONE);
@@ -345,7 +332,17 @@ public class MultiStageStatusFragment extends Fragment {
         StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
 
         if (cookState == MULTI_STAGE_COOK_STATE.STATE_HEAT_COOL) {
-            float currentTemp = attached.getCurrentTemp();
+
+            int currentTemp = (int)attached.getCurrentTemp();
+            int targetTep = stageInfo.getTemp();
+
+            if(currentTemp < targetTep){
+                textStatusName.setText("HEATING");
+            }
+            else{
+                textStatusName.setText("COOLING");
+            }
+
             textTempCurrent.setText(Math.floor(currentTemp) + "℉");
 
             float ratioTemp = currentTemp / (float)stageInfo.getTemp();
@@ -369,11 +366,11 @@ public class MultiStageStatusFragment extends Fragment {
         StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
 
         if (cookState == MULTI_STAGE_COOK_STATE.STATE_HOLDING_TEMP) {
-            float ratioTime = (float) elapsedTime / (float) stageInfo.getTemp();
+            float ratioTime = (float) elapsedTime / (float) stageInfo.getTime();
 
             ratioTime = Math.min(ratioTime, 1.0f);
 
-            circle.setBarValue(ratioTime);
+            circle.setBarValue(1.0f - ratioTime);
         }
         else {
             //do nothing

@@ -34,11 +34,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".sousvideUI.SousvideActivity"
-            android:label="@string/title_activity_sousvide"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".dashboard.DashboardActivity"
             android:label="@string/title_activity_dashboard"
             android:screenOrientation="portrait" >

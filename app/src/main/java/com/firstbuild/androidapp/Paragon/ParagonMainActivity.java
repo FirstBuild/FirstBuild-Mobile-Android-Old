@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
@@ -258,13 +259,9 @@ public class ParagonMainActivity extends ActionBarActivity {
 
                                 if (fragment instanceof SousvideStatusFragment) {
                                     ((SousvideStatusFragment) fragment).updateUiCurrentTemp();
-
-//                                    if(currentTemp >= targetTemp){
-//                                        nextStep(ParagonSteps.STEP_SOUSVIDE_READY_COOK);
-//                                    }
-//                                    else{
-//                                        //do nothing
-//                                    }
+                                }
+                                else if (fragment instanceof MultiStageStatusFragment) {
+                                    ((MultiStageStatusFragment) fragment).updateUiCurrentTemp();
                                 }
                                 else {
                                     //do nothing
@@ -317,9 +314,11 @@ public class ParagonMainActivity extends ActionBarActivity {
             case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
                 Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :");
 
-                for (int i = 0; i < 32; i++) {
+                for (int i = 0; i < 39; i++) {
                     Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :" + String.format("%02x", value[i]));
                 }
+
+                onCookConfiguration(value);
                 break;
 
 
@@ -371,8 +370,21 @@ public class ParagonMainActivity extends ActionBarActivity {
                 onCookStage(value[0]);
                 break;
 
+
+            case ParagonValues.CHARACTERISTIC_COOK_MODE:
+                Log.d(TAG, "CHARACTERISTIC_COOK_MODE :" + String.format("%02x", value[0]));
+                break;
+
         }
     }
+
+
+    private void onCookConfiguration(byte[] value) {
+        RecipeInfo newRecipe = new RecipeInfo(value);
+
+        RecipeManager.getInstance().setCurrentRecipe(newRecipe);
+    }
+
 
     private void onCookStage(byte stage) {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
@@ -407,7 +419,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
         if (fragment instanceof GetReadyFragment) {
-            nextStep(ParagonSteps.STEP_SOUSVIDE_CIRCLE);
+            nextStep(ParagonSteps.STEP_COOK_STATUS);
         }
         else {
             new Thread(new Runnable() {
@@ -476,7 +488,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             // And Cook Top already start sousvide mode.
             if (isSousVide) {
                 // Then go to the Status Screen.
-                nextStep(ParagonSteps.STEP_SOUSVIDE_CIRCLE);
+                nextStep(ParagonSteps.STEP_COOK_STATUS);
 
 //                new Thread(new Runnable() {
 //                    @Override
@@ -507,7 +519,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 //
 //                if (fragment instanceof GetReadyFragment) {
 //
-//                    nextStep(ParagonSteps.STEP_SOUSVIDE_CIRCLE);
+//                    nextStep(ParagonSteps.STEP_COOK_STATUS);
 //
 //                }
 //                else if (fragment instanceof SousvideStatusFragment) {
@@ -722,8 +734,13 @@ public class ParagonMainActivity extends ActionBarActivity {
                 fragment = new GetReadyFragment();
                 break;
 
-            case STEP_SOUSVIDE_CIRCLE:
-                fragment = new SousvideStatusFragment();
+            case STEP_COOK_STATUS:
+                if(RecipeManager.getInstance().getCurrentRecipe().numStage() == 1){
+                    fragment = new SousvideStatusFragment();
+                }
+                else{
+                    fragment = new MultiStageStatusFragment();
+                }
                 break;
 
             case STEP_SOUSVIDE_COMPLETE:
@@ -804,7 +821,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_COOKING_MODE,
         STEP_SOUSVIDE_SETTINGS,
         STEP_SOUSVIDE_GETREADY,
-        STEP_SOUSVIDE_CIRCLE,
+        STEP_COOK_STATUS,
         STEP_SOUSVIDE_COMPLETE,
         STEP_QUICK_START,
         STEP_MY_RECIPES,

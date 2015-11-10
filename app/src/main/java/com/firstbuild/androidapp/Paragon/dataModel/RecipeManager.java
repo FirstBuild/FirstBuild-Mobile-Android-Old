@@ -64,6 +64,11 @@ public class RecipeManager {
         currentRecipeInfo.setStageList(recipe.getStageList());
     }
 
+    public void setCurrentRecipe(RecipeInfo recipe){
+        currentRecipeInfo = recipe;
+        currentRecipeIndex = INVALID_INDEX;
+    }
+
     public void restoreCurrentRecipe() {
 
         if(isCreated){
@@ -141,10 +146,10 @@ public class RecipeManager {
                         "ingredient 3",
                 "direction 1\ndirection 2"
         );
-        recipe.addStage(new StageInfo(3, 90, 10, true, "direction A"));
-        recipe.addStage(new StageInfo(5, 95, 10, true, "direction B"));
-        recipe.addStage(new StageInfo(6, 100, 10, true, "direction C"));
-        recipe.addStage(new StageInfo(7, 105, 10, false, "direction C"));
+        recipe.addStage(new StageInfo(3, 95, 10, true, "direction A"));
+        recipe.addStage(new StageInfo(5, 100, 10, true, "direction B"));
+        recipe.addStage(new StageInfo(6, 105, 10, true, "direction C"));
+        recipe.addStage(new StageInfo(7, 107, 10, false, "direction C"));
         recipe.addStage(new StageInfo(6, 110, 10, false, "direction C"));
 
 

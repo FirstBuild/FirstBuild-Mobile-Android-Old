@@ -73,12 +73,13 @@
         <TextView
             android:id="@+id/text_status_name"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
             android:fontFamily="sans-serif-medium"
-            android:text="PREHEATING"
+            android:gravity="center_horizontal|center_vertical"
+            android:text=""
             android:textColor="@color/colorParagonAccent"
-            android:textSize="25sp" />
+            android:textSize="22sp" />
 
         <ImageView
             android:id="@+id/imageView"
