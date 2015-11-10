@@ -32,13 +32,13 @@ public class GetReadyFragment extends Fragment {
 
         ((TextView)view.findViewById(R.id.text_explanation)).setText(Html.fromHtml("Press <b>START</b> on your Paragon"));
 
-        //TODO: remove below listener after test.
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_CIRCLE);
-            }
-        });
+//        //TODO: remove below listener after test.
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_COOK_STATUS);
+//            }
+//        });
 
         ((ParagonMainActivity)getActivity()).setTitle("Get Ready");
 

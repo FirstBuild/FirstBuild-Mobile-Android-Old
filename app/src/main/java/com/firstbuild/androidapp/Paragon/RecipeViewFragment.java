@@ -2,29 +2,23 @@ package com.firstbuild.androidapp.paragon;
 
 
 import android.app.Activity;
-import android.graphics.Color;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.androidapp.viewUtil.SwipeMenu;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuCreator;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuItem;
 import com.firstbuild.androidapp.viewUtil.SwipeMenuListView;
 
 /**
@@ -44,6 +38,7 @@ public class RecipeViewFragment extends Fragment {
     private EditText editName;
     private ParagonMainActivity attached = null;
     private View layoutStages;
+    private ImageView imageTitle;
 
     public RecipeViewFragment() {
         // Required empty public constructor
@@ -72,6 +67,7 @@ public class RecipeViewFragment extends Fragment {
         editDirections = (EditText) view.findViewById(R.id.edit_directions);
         groupDetail = (RadioGroup) view.findViewById(R.id.group_recipe_detail);
         layoutStages = view.findViewById(R.id.layout_stages);
+        imageTitle = (ImageView) view.findViewById(R.id.image_title);
         view.findViewById(R.id.fab_add_stage).setVisibility(View.GONE);
 
         editName.setKeyListener(null);
@@ -133,8 +129,9 @@ public class RecipeViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 RecipeManager.getInstance().sendCurrentStages();
-                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
+                RecipeManager.getInstance().setCurrentStage(0);
 
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
             }
         });
 
@@ -150,7 +147,11 @@ public class RecipeViewFragment extends Fragment {
         editName.setText(recipe.getName());
         editIngredients.setText(recipe.getIngredients());
         editDirections.setText(recipe.getDirections());
+        attached.loadImageFromFile(recipe.getImageFileName());
+    }
 
+    public void setRecipeImage(Bitmap imageBitmap) {
+        imageTitle.setImageBitmap(imageBitmap);
     }
 
 

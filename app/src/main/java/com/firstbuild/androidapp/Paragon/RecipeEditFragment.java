@@ -2,6 +2,7 @@ package com.firstbuild.androidapp.paragon;
 
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.animation.BounceInterpolator;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +45,7 @@ public class RecipeEditFragment extends Fragment {
     private EditText editName;
     private ParagonMainActivity attached = null;
     private View layoutStages;
+    private ImageView imageTitle;
 
 
     public RecipeEditFragment() {
@@ -69,6 +72,14 @@ public class RecipeEditFragment extends Fragment {
         editDirections = (EditText) view.findViewById(R.id.edit_directions);
         groupDetail = (RadioGroup) view.findViewById(R.id.group_recipe_detail);
         layoutStages = view.findViewById(R.id.layout_stages);
+        imageTitle = (ImageView) view.findViewById(R.id.image_title);
+
+        view.findViewById(R.id.layout_title_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attached.dispatchTakePictureIntent();
+            }
+        });
 
         groupDetail.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -203,6 +214,12 @@ public class RecipeEditFragment extends Fragment {
         editName.setText(recipe.getName());
         editIngredients.setText(recipe.getIngredients());
         editDirections.setText(recipe.getDirections());
+    }
+
+
+    public void setRecipeImage(Bitmap imageBitmap, String currentPhotoPath) {
+        imageTitle.setImageBitmap(imageBitmap);
+        RecipeManager.getInstance().getCurrentRecipe().setImageFileName(currentPhotoPath);
     }
 
 

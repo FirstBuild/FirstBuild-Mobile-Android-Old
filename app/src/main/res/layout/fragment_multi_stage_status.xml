@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.paragon.SousvideStatusFragment"
-    tools:ignore="contentDescription">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="com.firstbuild.androidapp.paragon.MultiStageStatusFragment"
+              tools:ignore="contentDescription">
 
 
     <LinearLayout
@@ -37,9 +37,8 @@
 
                 <ImageView
                     android:id="@+id/progress_dot_1"
-                    android:layout_width="0dp"
+                    android:layout_width="20dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:scaleType="fitStart"
                     android:src="@drawable/ic_step_dot_done" />
 
@@ -48,7 +47,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:scaleType="fitStart"
+                    android:scaleType="fitEnd"
                     android:src="@drawable/ic_step_dot_current" />
 
                 <ImageView
@@ -56,14 +55,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:scaleType="fitStart"
+                    android:scaleType="fitEnd"
                     android:src="@drawable/ic_step_dot_todo" />
 
                 <ImageView
                     android:id="@+id/progress_dot_4"
-                    android:layout_width="20dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:scaleType="fitStart"
+                    android:layout_weight="1"
+                    android:scaleType="fitEnd"
                     android:src="@drawable/ic_step_dot_todo" />
 
             </LinearLayout>
@@ -73,12 +73,13 @@
         <TextView
             android:id="@+id/text_status_name"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
             android:fontFamily="sans-serif-medium"
-            android:text="PREHEATING"
+            android:gravity="center_horizontal|center_vertical"
+            android:text=""
             android:textColor="@color/colorParagonAccent"
-            android:textSize="25sp" />
+            android:textSize="22sp" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -201,6 +202,32 @@
                 android:layout_marginStart="8dp"
                 android:fontFamily="sans-serif-thin"
                 android:text="Continue"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btn_next_stage"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/colorParagonHighlight"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_continue" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-thin"
+                android:text="Next Stage"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
