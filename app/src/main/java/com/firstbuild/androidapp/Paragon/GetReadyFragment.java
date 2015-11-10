@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.commonframework.bleManager.BleManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +43,7 @@ public class GetReadyFragment extends Fragment {
 //        });
 
         ((ParagonMainActivity)getActivity()).setTitle("Get Ready");
+
 
         return view;
     }

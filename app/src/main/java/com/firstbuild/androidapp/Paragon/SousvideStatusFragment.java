@@ -20,6 +20,7 @@ import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
 import java.nio.ByteBuffer;
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -166,6 +167,7 @@ public class SousvideStatusFragment extends Fragment {
 
         switch (state) {
             case ParagonValues.COOK_STATE_OFF:
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
                 break;
 
             case ParagonValues.COOK_STATE_HEATING:
@@ -307,7 +309,7 @@ public class SousvideStatusFragment extends Fragment {
 
         if (cookState == COOK_STATE.STATE_PREHEAT) {
             float currentTemp = attached.getCurrentTemp();
-            textTempCurrent.setText(Math.floor(currentTemp) + "℉");
+            textTempCurrent.setText((int)currentTemp + "℉");
 
             float ratioTemp = currentTemp / (float)stageInfo.getTemp();
 
@@ -335,6 +337,8 @@ public class SousvideStatusFragment extends Fragment {
             ratioTime = Math.min(ratioTime, 1.0f);
 
             circle.setBarValue(1.0f - ratioTime);
+
+            updateReadyTime(elapsedTime);
         }
         else {
             //do nothing
@@ -347,9 +351,25 @@ public class SousvideStatusFragment extends Fragment {
      * @param newStage integer value of stage 1 - 5.
      */
     public void updateCookStage(int newStage) {
-        RecipeManager.getInstance().setCurrentStage(newStage);
+        RecipeManager.getInstance().setCurrentStage(newStage-1);
     }
 
+
+    private void updateReadyTime(int minute){
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.MINUTE, minute);
+        String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
+        String ampm = "";
+
+        if(now.get(Calendar.AM_PM) == Calendar.AM){
+            ampm = "AM";
+        }
+        else{
+            ampm = "PM";
+        }
+
+        textTempCurrent.setText(Html.fromHtml(timeText + "<small>"+ampm+"</small>"));
+    }
 
 
 }
