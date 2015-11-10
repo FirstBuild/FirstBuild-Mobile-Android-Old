@@ -21,6 +21,7 @@ import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
 import java.nio.ByteBuffer;
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -67,7 +68,8 @@ public class MultiStageStatusFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        attached.setTitle("Multi Stage");
+
         View view = inflater.inflate(R.layout.fragment_multi_stage_status, container, false);
 
         circle = (gridCircleView) view.findViewById(R.id.circle);
@@ -155,6 +157,7 @@ public class MultiStageStatusFragment extends Fragment {
 
         switch (state) {
             case ParagonValues.COOK_STATE_OFF:
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
                 break;
 
             case ParagonValues.COOK_STATE_HEATING:
@@ -196,11 +199,11 @@ public class MultiStageStatusFragment extends Fragment {
 
             if(currentStageIndex == 0){
                 // show the 'Ready to Cook' image only for first stage.
-                progressDots[2].setVisibility(View.VISIBLE);
+                progressDots[1].setVisibility(View.VISIBLE);
             }
             else{
                 //other than hide the image.
-                progressDots[2].setVisibility(View.GONE);
+                progressDots[1].setVisibility(View.GONE);
             }
 
             switch (cookState) {
@@ -221,6 +224,8 @@ public class MultiStageStatusFragment extends Fragment {
                     textLabelCurrent.setText("Current:");
                     textTempCurrent.setText("");
                     textExplanation.setText(recipeInfo.getDirections());
+
+                    circle.setBarValue(0);
                     break;
 
                 case STATE_TARGET_TEMP_REACHED:
@@ -241,6 +246,7 @@ public class MultiStageStatusFragment extends Fragment {
                     imgStatus.setImageResource(R.drawable.img_ready_to_cook);
 
                     circle.setGridValue(1.0f);
+                    circle.setBarValue(0);
 
                     textExplanation.setText(recipeInfo.getDirections());
                     break;
@@ -343,7 +349,7 @@ public class MultiStageStatusFragment extends Fragment {
                 textStatusName.setText("COOLING");
             }
 
-            textTempCurrent.setText(Math.floor(currentTemp) + "℉");
+            textTempCurrent.setText((int)currentTemp + "℉");
 
             float ratioTemp = currentTemp / (float)stageInfo.getTemp();
 
@@ -371,6 +377,8 @@ public class MultiStageStatusFragment extends Fragment {
             ratioTime = Math.min(ratioTime, 1.0f);
 
             circle.setBarValue(1.0f - ratioTime);
+
+            updateReadyTime(elapsedTime);
         }
         else {
             //do nothing
@@ -383,8 +391,26 @@ public class MultiStageStatusFragment extends Fragment {
      * @param newStage integer value of stage 1 - 5.
      */
     public void updateCookStage(int newStage) {
-        RecipeManager.getInstance().setCurrentStage(newStage);
+        RecipeManager.getInstance().setCurrentStage(newStage-1);
+
+        attached.setTitle("Stage "+newStage);
     }
 
+
+    private void updateReadyTime(int minute){
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.MINUTE, minute);
+        String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
+        String ampm = "";
+
+        if(now.get(Calendar.AM_PM) == Calendar.AM){
+            ampm = "AM";
+        }
+        else{
+            ampm = "PM";
+        }
+
+        textTempCurrent.setText(Html.fromHtml(timeText + "<small>"+ampm+"</small>"));
+    }
 
 }

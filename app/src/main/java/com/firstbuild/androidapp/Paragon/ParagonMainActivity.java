@@ -141,13 +141,13 @@ public class ParagonMainActivity extends ActionBarActivity {
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
 
-//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, true);
+
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
 //            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
 //            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
-//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
 
         }
@@ -418,11 +418,11 @@ public class ParagonMainActivity extends ActionBarActivity {
         RecipeInfo newRecipe = new RecipeInfo(value);
 
         RecipeManager.getInstance().setCurrentRecipe(newRecipe);
+        RecipeManager.getInstance().setCurrentStage(0);
     }
 
 
     private void onCookStage(byte stage) {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
         final int newStage = (int) stage;
 
         new Thread(new Runnable() {
@@ -448,6 +448,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                 });
             }
         }).start();
+
     }
 
     private void onCookState(final byte state) {
@@ -765,6 +766,9 @@ public class ParagonMainActivity extends ActionBarActivity {
                 return;
 
             case STEP_COOKING_MODE:
+                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, false);
+                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, false);
+
                 fragment = new SelectModeFragment();
                 break;
 
@@ -773,10 +777,22 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
             case STEP_SOUSVIDE_GETREADY:
+                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
+                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+
+                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
+
                 fragment = new GetReadyFragment();
                 break;
 
             case STEP_COOK_STATUS:
+                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
+                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+
+                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
+
                 if(RecipeManager.getInstance().getCurrentRecipe().numStage() == 1){
                     fragment = new SousvideStatusFragment();
                 }
