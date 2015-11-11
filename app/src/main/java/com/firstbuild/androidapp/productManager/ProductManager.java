@@ -21,7 +21,7 @@ public class ProductManager {
 
         //TODO: currently added for test. It should come from internal storage.
         products.add(new ProductInfo(1, "1111", "MyParagon"));
-        products.add(new ProductInfo(0, "2222", "MyChillHub"));
+//        products.add(new ProductInfo(0, "2222", "MyChillHub"));
 
     }
 
