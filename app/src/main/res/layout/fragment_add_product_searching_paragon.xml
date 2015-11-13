@@ -3,26 +3,41 @@
     xmlns:ge="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorParagonAccent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/imgSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/ic_spinner_orange"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:layout_marginBottom="50dp">
 
-    <com.firstbuild.viewUtil.StyledTextView
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="16dp"
-        android:gravity="center_vertical"
-        android:text="Searching for your Paragon\nThis might take a few minutes."
-        android:textAlignment="center"
-        android:textSize="19sp"
-        ge:typeface="fonts/PTSansNarrowRegular"/>
+        <ImageView
+            android:id="@+id/imgSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            android:src="@drawable/ic_spinner_orange"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="100dp" />
+
+        <ImageView
+            android:id="@+id/imgParagonLogo"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:src="@drawable/img_paragon_log_gray"
+            android:layout_below="@+id/imgSpinner"
+            android:layout_marginTop="100dp" />
+
+        <com.firstbuild.viewUtil.StyledTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/searching_your_paragon"
+            android:textSize="20sp"
+            ge:typeface="fonts/PTSansNarrowRegular"
+            android:gravity="center"
+            android:layout_below="@+id/imgParagonLogo"
+            android:layout_marginTop="40dp" />
+    </RelativeLayout>
 
 </LinearLayout>
 

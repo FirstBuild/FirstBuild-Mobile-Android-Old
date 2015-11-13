@@ -4,84 +4,124 @@
     xmlns:ge="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorParagonAccent"
     android:orientation="vertical">
 
-    <com.firstbuild.viewUtil.StyledTextView
-        android:gravity="center_vertical"
-        android:id="@+id/textMyProducts"
-        android:layout_height="60dp"
-        android:layout_margin="16dp"
+    <RelativeLayout
+        android:id="@+id/relative_layout_add_product_guide"
         android:layout_width="match_parent"
-        android:text="Select a product below to set-up and add it to your MY PRODUCTS home screen."
-        android:textSize="19sp"
-        ge:typeface="fonts/PTSansNarrowRegular"/>
-
-    <ImageView
+        android:layout_height="70dp"
         android:background="@android:color/white"
-        android:layout_height="1dp"
-        android:layout_width="match_parent"/>
+        android:layout_marginTop="0dp">
 
-    <LinearLayout
-        android:id="@+id/layoutParagon"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        <com.firstbuild.viewUtil.StyledTextView
+            android:id="@+id/textMyProducts"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:text="@string/select_product_below"
+            android:textSize="19sp"
+            ge:typeface="fonts/PTSansNarrowRegular"
+            android:gravity="center"
+            android:textColor="@android:color/black" />
+
+        <ImageView
+            android:background="@color/colorParagonDivider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_add_product_chillhub"
         android:layout_width="match_parent"
-        android:orientation="vertical">
-
-        <com.firstbuild.viewUtil.StyledTextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:text="Paragon"
-            android:textColor="@android:color/white"
-            android:textSize="25sp"
-            ge:typeface="fonts/PTSansNarrowBold"/>
-
-        <com.firstbuild.viewUtil.StyledTextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:text="Sous vide simplified."
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            ge:typeface="fonts/PTSansNarrowRegular"/>
-
-    </LinearLayout>
-
-    <ImageView
+        android:layout_height="70dp"
         android:background="@android:color/white"
-        android:layout_height="1dp"
-        android:layout_width="match_parent"/>
+        android:layout_marginTop="0dp">
 
-
-    <LinearLayout
-        android:id="@+id/layoutChillHub"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_width="match_parent"
-        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/add_product_chillhub_plus_icon"
+            style="@style/add_product_plus_icon"
+            android:src="@drawable/img_plus"/>
 
         <com.firstbuild.viewUtil.StyledTextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
+            style="@style/add_product_item_text"
             android:text="ChillHub"
-            android:textColor="@android:color/white"
-            android:textSize="25sp"
-            ge:typeface="fonts/PTSansNarrowBold"/>
+            android:layout_toRightOf="@+id/add_product_chillhub_plus_icon"/>
+
+        <ImageView
+            android:background="@color/colorParagonDivider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_add_product_paragon"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@android:color/white"
+        android:layout_marginTop="0dp">
+
+        <ImageView
+            android:id="@+id/add_product_Paragon_plus_icon"
+            style="@style/add_product_plus_icon"
+            android:src="@drawable/img_plus"/>
 
         <com.firstbuild.viewUtil.StyledTextView
-            android:layout_height="wrap_content"
+            style="@style/add_product_item_text"
+            android:text="Paragon"
+            android:layout_toRightOf="@+id/add_product_Paragon_plus_icon"/>
+
+        <ImageView
+            android:background="@color/colorParagonDivider"
+            android:layout_height="1dp"
             android:layout_width="match_parent"
-            android:text="USB-enabled fridge for cool add-ons."
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            ge:typeface="fonts/PTSansNarrowRegular"/>
+            android:layout_alignParentBottom="true" />
 
-    </LinearLayout>
+    </RelativeLayout>
+    <!--<LinearLayout-->
+        <!--android:id="@+id/layoutParagon"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:orientation="vertical">-->
 
-    <ImageView
-        android:background="@android:color/white"
-        android:layout_height="1dp"
-        android:layout_width="match_parent"/>
+        <!--<com.firstbuild.viewUtil.StyledTextView-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:text="Paragon"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textSize="25sp"-->
+            <!--ge:typeface="fonts/PTSansNarrowBold"/>-->
+    <!--</LinearLayout>-->
+
+    <!--<ImageView-->
+        <!--android:background="@android:color/darker_gray"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:layout_width="match_parent"/>-->
+
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/layoutChillHub"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<com.firstbuild.viewUtil.StyledTextView-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:text="ChillHub"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textSize="25sp"-->
+            <!--ge:typeface="fonts/PTSansNarrowBold"/>-->
+
+    <!--</LinearLayout>-->
+
+    <!--<ImageView-->
+        <!--android:background="@android:color/darker_gray"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:layout_width="match_parent"/>-->
 
 </LinearLayout>
 

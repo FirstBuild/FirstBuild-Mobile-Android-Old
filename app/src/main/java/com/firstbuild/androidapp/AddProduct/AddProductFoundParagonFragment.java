@@ -3,12 +3,11 @@ package com.firstbuild.androidapp.addProduct;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 
 import com.firstbuild.androidapp.R;
 
@@ -17,10 +16,13 @@ import com.firstbuild.androidapp.R;
  */
 public class AddProductFoundParagonFragment extends Fragment {
     private String TAG = AddProductActivity.class.getSimpleName();
+    private Handler handler;
+    private Runnable runnable;
+
 
     public AddProductFoundParagonFragment() {
         // Required empty public constructor
-        Log.d(TAG, "AddProductSearchingParagonFragment IN");
+        Log.d(TAG, "AddProductSearchParagonFragment IN");
     }
 
     @Override
@@ -29,30 +31,20 @@ public class AddProductFoundParagonFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_product_found_paragon, container, false);
 
-//        view.findViewById(R.id.imgSpinner).startAnimation(makeAnimation());
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                getFragmentManager().
+                        beginTransaction().
+                        replace(R.id.content_frame, new AddProductSetParagonNameFragment()).
+                        addToBackStack(null).
+                        commit();
+            }
+        };
+
+        handler = new Handler();
+        handler.postDelayed(runnable, 3000);
 
         return view;
-    }
-
-    private RotateAnimation makeAnimation() {
-
-        RotateAnimation animation = new RotateAnimation(0, 360);
-        animation.setDuration(250);
-
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        return animation;
     }
 }

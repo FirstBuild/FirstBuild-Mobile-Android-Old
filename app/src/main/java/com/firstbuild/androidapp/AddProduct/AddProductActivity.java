@@ -2,12 +2,15 @@ package com.firstbuild.androidapp.addProduct;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
 
-public class AddProductActivity extends Activity {
+public class AddProductActivity extends ActionBarActivity {
     private String TAG = AddProductActivity.class.getSimpleName();
 
     @Override
@@ -15,6 +18,13 @@ public class AddProductActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_add_product);
+
+        // Set title name
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar.setTitle("");
+        ((TextView) toolbar.findViewById(R.id.toolbar_title)).setText("ADD PRODUCT");
+
+        setSupportActionBar(toolbar);
 
         getFragmentManager().
                 beginTransaction().

@@ -69,6 +69,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     private String REQUEST_METHOD_READ = "READ";
     private String REQUEST_METHOD_NOTIFICATION = "NOTIFICATION";
     private boolean isCheckingCurrentStatus = false;
+
     private BleListener bleListener = new BleListener() {
         @Override
         public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {

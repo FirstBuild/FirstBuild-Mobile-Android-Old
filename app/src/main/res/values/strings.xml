@@ -121,4 +121,13 @@
     <string name="fragment_soudvide_status_explanation_donekeep">Keeping the temperature until press Stop button</string>
     <string name="my_recipes_add_recipe">Add Recipe</string>
 
+    <!-- Add appliance -->
+    <string name="searching_your_paragon">Searching for your Paragon\nThis might take a few minutes</string>
+    <string name="select_product_below">Select a product below to set-up\nand add it to your home screen</string>
+    <string name="got_it">Got it!</string>
+    <string name="we_found_your_paragon">We found your Paragon</string>
+    <string name="connection_error">Connection Error</string>
+    <string name="connection_error_explanation">We were unable to connect to Paragon.\nPlease try again</string>
+    <string name="name_your_paragon">Name your Paragon</string>
+    <string name="name_your_paragon_explanation">This is how your Paragon will appear\nin the list. You can change it later.</string>
 </resources>

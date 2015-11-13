@@ -36,7 +36,7 @@ public class ParagonValues {
     // Target device's name
 //    public static final String TARGET_DEVICE_NAME = "Paragon Master";
     //TODO: This is only for debug pupose. please remove below code after test.
-    public static final String TARGET_DEVICE_NAME = "Paragon M____1";
+    public static final String TARGET_DEVICE_NAME = "Paragon Master";
 
     public static final int MAX_COOK_TIME = 100;
 

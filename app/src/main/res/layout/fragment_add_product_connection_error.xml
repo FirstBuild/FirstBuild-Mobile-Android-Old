@@ -3,42 +3,54 @@
     xmlns:ge="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:layout_marginBottom="50dp">
+        android:background="@android:color/white">
 
         <ImageView
-            android:id="@+id/image_got_it"
+            android:id="@+id/image_connection_error"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
             android:layout_marginTop="50dp"
-            android:src="@drawable/img_got_it"/>
+            android:src="@drawable/img_connection_error"/>
 
         <com.firstbuild.viewUtil.StyledTextView
-            android:id="@+id/text_got_it"
+            android:id="@+id/text_connection_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/got_it"
-            android:textSize="50sp"
+            android:text="@string/connection_error"
+            android:textSize="30sp"
             ge:typeface="fonts/PTSansNarrowBold"
             android:gravity="center"
-            android:layout_below="@+id/image_got_it"
+            android:layout_below="@+id/image_connection_error"
             android:layout_marginTop="20dp"
             android:textColor="@color/colorParagonHighlight" />
 
         <com.firstbuild.viewUtil.StyledTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/we_found_your_paragon"
-            android:textSize="23sp"
+            android:text="@string/connection_error_explanation"
+            android:textSize="20sp"
             ge:typeface="fonts/PTSansNarrowRegular"
             android:gravity="center"
-            android:layout_below="@+id/text_got_it"
+            android:layout_below="@+id/text_connection_error"
             android:layout_marginTop="15dp" />
+
+        <Button
+            android:id="@+id/button_try_again"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:background="@drawable/img_try_again"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="0dp" />
+
     </RelativeLayout>
 </LinearLayout>
 
