@@ -88,7 +88,7 @@ public class AddProductSearchParagonFragment extends Fragment {
             if (resultCode == -1) {
                 // Success
                 Log.d(TAG, "Bluetooth adapter is enabled. Start scanning.");
-                spinningAnimation.setRepeatCount(10);
+                spinningAnimation.setRepeatCount(30);
                 BleManager.getInstance().startScan();
             }
             else if(resultCode == 0){
@@ -123,11 +123,7 @@ public class AddProductSearchParagonFragment extends Fragment {
                 BleManager.getInstance().stopScan();
 
                 // Cannot found paragon - go to error screen
-                getFragmentManager().
-                        beginTransaction().
-                        replace(R.id.content_frame, new AddProductConnectionErrorFragment()).
-                        addToBackStack(null).
-                        commit();
+                goToErrorScreen();
             }
 
             public void onAnimationRepeat(Animation animation) {
@@ -152,19 +148,32 @@ public class AddProductSearchParagonFragment extends Fragment {
                 BluetoothDevice device = entry.getValue();
                 deviceAddress = device.getAddress();
                 String name = device.getName();
+                int bondState = device.getBondState();
 
                 Log.d(TAG, "------------------------------------");
                 Log.d(TAG, "Device address: " + deviceAddress);
                 Log.d(TAG, "Device name: " + name);
+                Log.d(TAG, "Device Bond state: " +device.getBondState());
 
-                if (ParagonValues.TARGET_DEVICE_NAME.equals(name)) {
+
+                if (ParagonValues.TARGET_DEVICE_NAME.equals(name)){
                     Log.d(TAG, "device found: " + device.getName());
-
-                    // Connect to device
-                    BleManager.getInstance().connect(deviceAddress);
 
                     // Stop ble device scanning
                     BleManager.getInstance().stopScan();
+
+                    if(bondState == device.BOND_NONE) {
+                        Log.d(TAG, "device not bonded: " + bondState);
+                        // Connect to device
+                        BleManager.getInstance().connect(deviceAddress);
+                    }
+                    else{
+                        Log.d(TAG, "device bonded or bonding state: " + bondState);
+
+                        // Paragon already found - go to error screen
+                        // This part must be replace with proper warning page
+                        goToErrorScreen();
+                    }
 
                     break;
                 }
@@ -223,4 +232,12 @@ public class AddProductSearchParagonFragment extends Fragment {
             }
         }
     };
+
+    private void goToErrorScreen(){
+        getFragmentManager().
+                beginTransaction().
+                replace(R.id.content_frame, new AddProductConnectionErrorFragment()).
+                addToBackStack(null).
+                commit();
+    }
 }

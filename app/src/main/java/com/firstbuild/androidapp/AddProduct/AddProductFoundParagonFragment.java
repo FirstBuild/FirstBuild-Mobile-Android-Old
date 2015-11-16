@@ -47,4 +47,21 @@ public class AddProductFoundParagonFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        handler.postDelayed(runnable, 1000);
+    }
+
+    @Override
+    public void onPause() {
+        Log.d(TAG, "onPause");
+
+        // Cancel the runnable
+        handler.removeCallbacks(runnable);
+
+        super.onPause();
+    }
 }
