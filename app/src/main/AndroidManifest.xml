@@ -46,7 +46,8 @@
         </activity>
         <activity
             android:name=".addProduct.AddProductActivity"
-            android:label="@string/title_activity_add_product" >
+            android:label="@string/title_activity_add_product"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".paragon.settings.SettingsActivity"

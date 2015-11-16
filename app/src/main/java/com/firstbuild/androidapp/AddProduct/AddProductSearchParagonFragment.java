@@ -87,12 +87,12 @@ public class AddProductSearchParagonFragment extends Fragment {
         if (requestCode == BleValues.REQUEST_ENABLE_BT) {
             if (resultCode == -1) {
                 // Success
-                Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
+                Log.d(TAG, "Bluetooth adapter is enabled. Start scanning.");
                 spinningAnimation.setRepeatCount(10);
                 BleManager.getInstance().startScan();
             }
             else if(resultCode == 0){
-
+                Log.d(TAG, "Bluetooth adapter is still disabled");
                 getFragmentManager().
                         beginTransaction().
                         replace(R.id.content_frame, new AddProductSelectFragment()).
@@ -200,8 +200,15 @@ public class AddProductSearchParagonFragment extends Fragment {
 
             BleManager.getInstance().displayGattServices(address);
 
-            // Get Initial values.
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+            // Request data to check connectivity
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+
+            // Transit to success UI
+            getFragmentManager().
+                    beginTransaction().
+                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
+                    addToBackStack(null).
+                    commit();
         }
 
         @Override
@@ -211,15 +218,8 @@ public class AddProductSearchParagonFragment extends Fragment {
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
 
             if(deviceAddress != null & deviceAddress.equals(address) &&
-            ParagonValues.CHARACTERISTIC_BATTERY_LEVEL.toLowerCase().equals(uuid)){
+            ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION.toLowerCase().equals(uuid)){
                 Log.d(TAG, "[Found!!!] address: " + address + ", uuid: " + uuid);
-
-             // Transit to success UI
-            getFragmentManager().
-                    beginTransaction().
-                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
-                    addToBackStack(null).
-                    commit();
             }
         }
     };
