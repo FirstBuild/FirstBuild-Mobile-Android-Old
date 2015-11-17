@@ -12,11 +12,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.firstbuild.androidapp.AddProduct.AddProductActivity;
-import com.firstbuild.androidapp.Paragon.ParagonMainActivity;
+import com.firstbuild.androidapp.addProduct.AddProductActivity;
+import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;

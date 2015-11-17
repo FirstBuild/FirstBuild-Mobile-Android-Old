@@ -1,20 +1,38 @@
-<RelativeLayout
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.firstbuild.androidapp.cookingMethod.CookingMethodActivity">
+    android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/app_bar"
-        layout="@layout/include_app_bar_paragon"/>
 
-    <FrameLayout
-        android:id="@+id/frame_content"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_bar">
+        tools:context="com.firstbuild.androidapp.paragon.ParagonMainActivity">
 
-    </FrameLayout>
+        <include
+            android:id="@+id/app_bar"
+            layout="@layout/include_app_bar_paragon"/>
 
-</RelativeLayout>
+        <FrameLayout
+            android:id="@+id/frame_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/app_bar">
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/fragment_navigation_drawer"
+        android:name="com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment"
+        android:layout_width="@dimen/nav_drawer_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:layout="@layout/fragment_navigation_drawer"
+        tools:layout="@layout/fragment_navigation_drawer"/>
+
+</android.support.v4.widget.DrawerLayout>

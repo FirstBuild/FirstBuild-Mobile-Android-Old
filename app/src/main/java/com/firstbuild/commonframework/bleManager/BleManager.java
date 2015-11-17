@@ -582,6 +582,32 @@ public class BleManager {
         System.out.println(hexValue);
     }
 
+
+    public boolean setDeviceName(String name){
+        boolean result = false;
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if(bluetoothAdapter != null) {
+            bluetoothAdapter.setName(name);
+
+            result = true;
+        }
+
+        return result;
+    }
+
+    public String getDeviceName(){
+        String result = null;
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(bluetoothAdapter != null) {
+            result = bluetoothAdapter.getName();
+        }
+
+        Log.d(TAG, "device name: " + result);
+
+        return result;
+    }
+
     /**
      * Device scan callback
      */
@@ -671,7 +697,9 @@ public class BleManager {
             Log.d(TAG, "Read Characteristic UUID: " + uuid);
 
             byte[] value = characteristic.getValue();
-            printGattValue(value);
+            if(value != null) {
+                printGattValue(value);
+            }
 
             sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value});
 

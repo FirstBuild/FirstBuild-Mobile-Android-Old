@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.commonframework.bleManager.BleManager;
 
 import java.util.ArrayList;
 
@@ -70,7 +71,9 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         else if (currentProduct.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
             holderDashboard.imageLogo.setImageResource(R.drawable.ic_paragon_logo);
             holderDashboard.imageMark.setImageResource(R.drawable.ic_paragon_mark);
-            holderDashboard.textNickname.setText("My Paragon");
+
+            String nickName = BleManager.getInstance().getDeviceName();
+            holderDashboard.textNickname.setText(nickName);
         }
         else {
         }

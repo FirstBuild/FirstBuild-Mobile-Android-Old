@@ -2,7 +2,13 @@
 <resources>
 
     <string name="app_name">1B | firstbuild</string>
+
+    <string name="action_my_products">My Products</string>
     <string name="action_settings">Settings</string>
+    <string name="action_help">Help</string>
+    <string name="action_feedback">Feedback</string>
+    <string name="action_about">About</string>
+
     <string name="title_activity_ble_device">BleDeviceActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_splash">FirstBuild</string>
@@ -35,6 +41,26 @@
         <item>Well</item>
     </string-array>
 
+    <string-array name="list_temp_unit">
+        <item>Fahrenheit - ℉</item>
+        <item>Celsius - ℃</item>
+    </string-array>
+
+    <string-array name="list_temp_unit_values">
+        <item>℉</item>
+        <item>℃</item>
+    </string-array>
+
+    <string-array name="list_metric_unit">
+        <item>Metrics</item>
+        <item>Imperial</item>
+    </string-array>
+
+    <string-array name="list_metric_unit_values">
+        <item>Metrics</item>
+        <item>Imperial</item>
+    </string-array>
+
     <string name="title_activity_dashboard">DashboardActivity</string>
     <string name="title_activity_paragon_main">ParagonMainActivity</string>
 
@@ -42,6 +68,8 @@
     <string name="descript_chilhub">USB-enabled refrigerator accessories</string>
     <string name="title_activity_add_product">AddProductActivity</string>
     <string name="describe_get_ready"><i>Press <b>START</b> on your Paragon</i></string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
 
     <string-array name="paragon_modes">
         <item>Boil</item>
@@ -62,10 +90,44 @@
         <item>Vegetables</item>
     </string-array>
 
+    <string-array name="kind_of_recipe">
+        <item>Multi-stage</item>
+        <item>Sous vide</item>
+    </string-array>
+
+
     <string-array name="paragon_modes_beef">
         <item>Steak</item>
         <item>Roast</item>
     </string-array>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_terms">TermsActivity</string>
 
+    <string name="term_of_service_title">Term of service</string>
+    <string name="term_of_service_content">FirstBuild Terms of Service\nMicrofactory, Inc. and its affiliates (collectively "Microfactory" or "We") provide service and content on Firstbuild.com and all other web properties owned or operated by Microfactory (the "Website") to you subject to the following Terms and Conditions (the "Terms"). We may periodically change the Terms without notice, so please check back from time to time. These Terms of Service constitute a binding agreement between you and Microfactory governing your use of the Website and any/all content represented herein. By using and/or visiting the www.Firstbuild.com Website, or any other Websites owned and operated by Microfactory, you signify you understand and agree to both these Terms of Service and the Microfactory Privacy Policy, which is incorporated into the Microfactory Terms of Service, and is included in the Website. These Terms of Service apply to all users of the Website, including users who contribute information, ideas, and other materials or services on the Website. Only those who agree to and abide by all applicable laws, and to these Terms of Service, are authorized to use the Website. Please read these Terms of Service carefully. If you do not agree to these Terms of Service, please do not use the Website.\nThe Website may contain links to third party websites that are not owned or controlled by Microfactory. Microfactory has no control over, and therefore assumes no responsibility for the content, privacy policies, or practices of any third party websites. By using the Website, you specifically release and indemnify Microfactory from any and all liability arising from your use of any third-party website.</string>
+    <string name="term_of_service_ok">OK</string>
 
+    <string name="opensource_license_title">Open source license</string>
+    <string name="opensource_license_content">FirstBuild Terms of Service\nMicrofactory, Inc. and its affiliates (collectively "Microfactory" or "We") provide service and content on Firstbuild.com and all other web properties owned or operated by Microfactory (the "Website") to you subject to the following Terms and Conditions (the "Terms"). We may periodically change the Terms without notice, so please check back from time to time. These Terms of Service constitute a binding agreement between you and Microfactory governing your use of the Website and any/all content represented herein. By using and/or visiting the www.Firstbuild.com Website, or any other Websites owned and operated by Microfactory, you signify you understand and agree to both these Terms of Service and the Microfactory Privacy Policy, which is incorporated into the Microfactory Terms of Service, and is included in the Website. These Terms of Service apply to all users of the Website, including users who contribute information, ideas, and other materials or services on the Website. Only those who agree to and abide by all applicable laws, and to these Terms of Service, are authorized to use the Website. Please read these Terms of Service carefully. If you do not agree to these Terms of Service, please do not use the Website.\nThe Website may contain links to third party websites that are not owned or controlled by Microfactory. Microfactory has no control over, and therefore assumes no responsibility for the content, privacy policies, or practices of any third party websites. By using the Website, you specifically release and indemnify Microfactory from any and all liability arising from your use of any third-party website.</string>
+    <string name="opensource_license_ok">OK</string>
+
+    <string name="url_manual">http://www.firstbuild.com</string>
+    <string name="fragment_select_mode_button_quickstart">Quick Start</string>
+    <string name="fragment_select_mode_myrecipes">My Recipes</string>
+
+    <string name="fragment_my_recipes_add">Add</string>
+
+    <string name="fragment_soudvide_status_explanation_placefood">Place food to continue</string>
+    <string name="fragment_soudvide_status_explanation_donekeep">Keeping the temperature until press Stop button</string>
+    <string name="my_recipes_add_recipe">Add Recipe</string>
+
+    <!-- Add appliance -->
+    <string name="searching_your_paragon">Searching for your Paragon\nThis might take a few minutes</string>
+    <string name="select_product_below">Select a product below to set-up\nand add it to your home screen</string>
+    <string name="got_it">Got it!</string>
+    <string name="we_found_your_paragon">We found your Paragon</string>
+    <string name="connection_error">Connection Error</string>
+    <string name="connection_error_explanation">We were unable to connect to Paragon.\nPlease try again</string>
+    <string name="name_your_paragon">Name your Paragon</string>
+    <string name="name_your_paragon_explanation">This is how your Paragon will appear\nin the list. You can change it later.</string>
 </resources>

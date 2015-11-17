@@ -1,0 +1,71 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ge="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/image_name_your_paragon"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/img_name_your_paragon"/>
+
+        <com.firstbuild.viewUtil.StyledTextView
+            android:id="@+id/text_name_your_paragon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/name_your_paragon"
+            android:textSize="30sp"
+            ge:typeface="fonts/PTSansNarrowBold"
+            android:gravity="center"
+            android:layout_below="@+id/image_name_your_paragon"
+            android:textColor="@color/colorParagonHighlight" />
+
+        <com.firstbuild.viewUtil.StyledTextView
+            android:id="@+id/text_name_your_paragon_explanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/name_your_paragon_explanation"
+            android:textSize="20sp"
+            ge:typeface="fonts/PTSansNarrowRegular"
+            android:gravity="center"
+            android:layout_below="@+id/text_name_your_paragon"
+            android:layout_marginTop="15dp" />
+
+        <EditText
+            android:id="@+id/edit_paragon_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/paragon_editbox_height"
+            android:layout_margin="@dimen/activity_vertical_margin"
+            android:background="@drawable/img_edit_background"
+            android:ems="10"
+            android:hint="My Paragon"
+            android:textColor="@color/colorParagonPrimary"
+            android:layout_below="@+id/text_name_your_paragon_explanation"
+            android:windowSoftInputMode="adjustPan"
+            android:paddingLeft="10dp"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/button_add_product_complete"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:background="@drawable/img_add_product_complete"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="0dp" />
+
+    </RelativeLayout>
+</LinearLayout>
+
+

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.Paragon.SettingsFragment">
+    tools:context="com.firstbuild.androidapp.paragon.SettingsFragment">
 
 
     <LinearLayout
@@ -16,55 +16,119 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:layout_height="90dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_weight="2"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
                     android:fontFamily="sans-serif-medium"
+                    android:gravity="center_horizontal"
                     android:text="Time"
                     android:textColor="@color/colorParagonPrimary"
                     android:textSize="19sp"/>
 
-                <TextView
-                    android:id="@+id/text_set_time"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="1H:30M"
-                    android:textColor="@color/colorParagonAccent"
-                    android:textSize="25sp"/>
+                    android:layout_marginTop="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
-            </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center_horizontal"
+                            android:text="Min"
+                            android:textAllCaps="true"
+                            android:textColor="@color/colorParagonPrimary"
+                            android:textSize="15sp"/>
+
+                        <TextView
+                            android:id="@+id/text_set_time_min"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="1H:30M"
+                            android:textColor="@color/colorParagonAccent"
+                            android:textSize="25sp"/>
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorParagonAccent"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center_horizontal"
+                            android:text="Max"
+                            android:textAllCaps="true"
+                            android:textColor="@color/colorParagonPrimary"
+                            android:textSize="15sp"/>
+
+                        <TextView
+                            android:id="@+id/text_set_time_max"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="00M"
+                            android:textColor="@color/colorParagonAccent"
+                            android:textSize="25sp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </RelativeLayout>
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/img_sousvide_divider"/>
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorParagonAccent"/>
 
-            <LinearLayout
+
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
                     android:fontFamily="sans-serif-medium"
                     android:text="Temp"
                     android:textColor="@color/colorParagonPrimary"
@@ -74,13 +138,15 @@
                     android:id="@+id/text_set_temp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="33dp"
                     android:fontFamily="sans-serif-medium"
                     android:text="140 F"
                     android:textColor="@color/colorParagonAccent"
                     android:textSize="25sp"/>
 
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 
@@ -118,12 +184,11 @@
                 android:id="@+id/seekbar_thickness"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
                 android:indeterminate="false"
                 android:max="7"
-                android:progress="2"
-                />
+                android:progress="2"/>
 
         </RelativeLayout>
 
@@ -155,8 +220,8 @@
                 android:id="@+id/seekbar_doneness"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
                 android:max="4"
                 android:progress="2"/>
 
@@ -166,10 +231,10 @@
             android:id="@+id/switch_frozen"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginBottom="50dp"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="50dp"
             android:layout_weight="1"
             android:text="Frozen"
             android:textColor="@color/colorParagonPrimary"
@@ -181,6 +246,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_bar_height"
+        android:background="@android:color/white"
         android:layout_gravity="bottom"
         android:orientation="horizontal">
 
@@ -189,14 +255,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/colorParagonAccent"
+            android:background="@color/colorParagonHighlight"
             android:gravity="center"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:src="@drawable/ic_ic_my_recipes"/>
+                android:src="@drawable/ic_heart_plussign"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -222,13 +288,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/colorParagonAccent"
+            android:background="@color/colorParagonHighlight"
             android:gravity="center">
 
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:src="@drawable/ic_custom"/>
+                android:src="@drawable/ic_continue"/>
 
             <TextView
                 android:layout_width="wrap_content"

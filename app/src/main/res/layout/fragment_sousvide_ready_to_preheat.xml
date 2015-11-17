@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.Paragon.ReadyToPreheatFragment">
+    tools:context="com.firstbuild.androidapp.paragon.trash.ReadyToPreheatFragment">
 
 
     <com.firstbuild.viewUtil.StyledTextView

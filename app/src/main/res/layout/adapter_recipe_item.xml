@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/rootItem"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/activity_vertical_margin"
+    android:background="@android:color/white">
+
+
+    <ImageView
+        android:id="@+id/image_thumbnail"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/img_recipe_blank"/>
+
+
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_toRightOf="@+id/image_thumbnail"
+        android:fontFamily="sans-serif-medium"
+        android:layout_centerVertical="true"
+        android:text="name"
+        android:textColor="@color/colorParagonPrimary"
+        android:textSize="19sp"/>
+
+
+    <!--<ImageView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="@color/colorParagonDivider"/>-->
+
+</RelativeLayout>
+

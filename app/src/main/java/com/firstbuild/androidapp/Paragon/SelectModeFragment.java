@@ -1,9 +1,9 @@
-package com.firstbuild.androidapp.Paragon;
+package com.firstbuild.androidapp.paragon;
 
 
-import android.os.Bundle;
+import android.app.Activity;
 import android.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,16 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.dashboard.DashboardAdapter;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
+import com.firstbuild.androidapp.paragon.helper.SelectModeAdapter;
 
-import jp.wasabeef.recyclerview.animators.FadeInDownAnimator;
-import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
-import jp.wasabeef.recyclerview.animators.FlipInTopXAnimator;
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
-import jp.wasabeef.recyclerview.animators.OvershootInLeftAnimator;
-import jp.wasabeef.recyclerview.animators.ScaleInAnimator;
-import jp.wasabeef.recyclerview.animators.ScaleInTopAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 /**
@@ -34,6 +27,8 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     private RecyclerView listMode;
     private SelectModeAdapter selectModeAdapter;
     private SelectModeSteps selectModeSteps;
+    private View layoutButtons;
+    private ParagonMainActivity attached;
 
     private enum SelectModeSteps {
         STEP_COOKING_METHOD,
@@ -46,6 +41,12 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        attached = (ParagonMainActivity)getActivity();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +58,8 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onclick my recipes");
+                RecipeManager.getInstance().ReadFromFile();
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_MY_RECIPES);
 
             }
         });
@@ -64,10 +67,15 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onclick custom");
+                Log.d(TAG, "onclick Quick Start");
+
+                RecipeManager.getInstance().createRecipeSousVide();
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_QUICK_START);
 
             }
         });
+
+        layoutButtons = view.findViewById(R.id.layout_buttons);
 
         listMode = (RecyclerView) view.findViewById(R.id.list_mode);
 
@@ -84,6 +92,8 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         selectModeSteps = SelectModeSteps.STEP_COOKING_METHOD;
         removeAllList();
         fillList(R.array.paragon_modes);
+
+        ((ParagonMainActivity)getActivity()).setTitle("Paragon");
 
         return view;
     }
@@ -108,41 +118,60 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
 
 
     @Override
-    public void itemClicked(View view, int position) {
+    public void itemClicked(View view, int position, String text) {
         Log.d(TAG, "itemclicked "+position);
 
         switch(selectModeSteps){
             case STEP_COOKING_METHOD:
                 if(position == 2){
                     selectModeSteps = SelectModeSteps.STEP_MATERIAL;
+
+                    SetTitle(text);
+
                     removeAllList();
                     fillList(R.array.paragon_modes_sousvide);
+                    layoutButtons.setVisibility(View.GONE);
                 }
                 else{
                     //do nothing
                 }
+
                 break;
 
             case STEP_MATERIAL:
                 if(position == 0){
                     selectModeSteps = SelectModeSteps.STEP_HOW_TO_COOK;
+                    SetTitle(text);
+
                     removeAllList();
                     fillList(R.array.paragon_modes_beef);
+                    layoutButtons.setVisibility(View.GONE);
                 }
                 else{
                     //do nothing
                 }
+
                 break;
 
             case STEP_HOW_TO_COOK:
                 if(position == 0){
-                    ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
+                    SetTitle("Settings");
+                    attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
                 }
                 else{
                     //do nothing
                 }
+
                 break;
         }
 
+    }
+
+    /**
+     * Set title text on header.
+     * @param text string to be title.
+     */
+    private void SetTitle(String text) {
+        ((ParagonMainActivity)getActivity()).setTitle(text);
     }
 }

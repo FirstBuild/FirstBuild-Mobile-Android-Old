@@ -1,8 +1,9 @@
-package com.firstbuild.androidapp.Paragon;
+package com.firstbuild.androidapp.paragon;
 
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.commonframework.bleManager.BleManager;
 
 import java.nio.ByteBuffer;
@@ -34,9 +36,11 @@ public class SettingsFragment extends Fragment {
     private float    setThickness;
     private int      setDoneness;
     private float setTargetTemp = 0.0f;
-    private int setTargetTime = 0;
+    private int setTargetTimeMin = 0;
+    private int setTargetTimeMax = 0;
 
-    private TextView textSetTime;
+    private TextView textSetTimeMin;
+    private TextView textSetTimeMax;
     private TextView textSetTemp;
 
     public SettingsFragment() {
@@ -50,7 +54,8 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_settings, container, false);
 
-        textSetTime = (TextView) view.findViewById(R.id.text_set_time);
+        textSetTimeMin = (TextView) view.findViewById(R.id.text_set_time_min);
+        textSetTimeMax = (TextView) view.findViewById(R.id.text_set_time_max);
         textSetTemp = (TextView) view.findViewById(R.id.text_set_temp);
 
         textThickness = (TextView) view.findViewById(R.id.text_status_name);
@@ -107,22 +112,10 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParagonMainActivity activity = (ParagonMainActivity) getActivity();
-
-                activity.setTargetTime(setTargetTime);
-                activity.setTargetTemp(setTargetTemp);
-
-                //TODO: Should convert the target temp value properly.
-                ByteBuffer valueBuffer = ByteBuffer.allocate(2);
-
-                short setValue = (short) (setTargetTemp * 100);
-
-                valueBuffer.putShort(setValue);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE, valueBuffer.array());
-
-                valueBuffer.clear();
-                valueBuffer.putShort((short)(setTargetTime));
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_TIME, valueBuffer.array());
+                RecipeManager.getInstance().getCurrentStage().setTime(setTargetTimeMin);
+                RecipeManager.getInstance().getCurrentStage().setMaxTime(setTargetTimeMax);
+                RecipeManager.getInstance().getCurrentStage().setTemp((int) setTargetTemp);
+                RecipeManager.getInstance().sendCurrentStages();
 
                 ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
             }
@@ -136,7 +129,20 @@ public class SettingsFragment extends Fragment {
         });
 
 
+        initRecipeSetting();
+
+
         return view;
+    }
+
+    /**
+     * Create recipe temprorally and put selected values.
+     */
+    private void initRecipeSetting() {
+        // Now create a sousvide recipe and pointing the recipe as currentRecipe.
+        RecipeManager.getInstance().createRecipeSousVide();
+
+
     }
 
     private void calculateTimeTemp() {
@@ -148,42 +154,42 @@ public class SettingsFragment extends Fragment {
                 setTargetTemp = 134.5f;
 
                 if (setThickness <= 0.2) {
-                    setTargetTime = 60;
+                    setTargetTimeMin = 60;
                 }
                 else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTime = 60 + 15;
+                    setTargetTimeMin = 60 + 15;
                 }
                 else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTime = 60 + 30;
+                    setTargetTimeMin = 60 + 30;
 
                 }
                 else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTime = 60 + 45;
+                    setTargetTimeMin = 60 + 45;
 
                 }
                 else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTime = 60 * 2;
+                    setTargetTimeMin = 60 * 2;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTime = 60 * 2 + 15;
+                    setTargetTimeMin = 60 * 2 + 15;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTime = 60 * 2 + 30;
+                    setTargetTimeMin = 60 * 2 + 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTime = 60 * 3 + 7;
+                    setTargetTimeMin = 60 * 3 + 7;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTime = 60 * 3 + 45;
+                    setTargetTimeMin = 60 * 3 + 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTime = 60 * 4 + 15;
+                    setTargetTimeMin = 60 * 4 + 15;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTime = 60 * 4 + 45;
+                    setTargetTimeMin = 60 * 4 + 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTime = 60 * 5 + 15;
+                    setTargetTimeMin = 60 * 5 + 15;
                 }
 
                 break;
@@ -192,40 +198,40 @@ public class SettingsFragment extends Fragment {
                 setTargetTemp = 143.5f;
 
                 if (setThickness <= 0.2) {
-                    setTargetTime = 25;
+                    setTargetTimeMin = 25;
                 }
                 else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTime = 30;
+                    setTargetTimeMin = 30;
                 }
                 else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTime = 45;
+                    setTargetTimeMin = 45;
                 }
                 else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTime = 55;
+                    setTargetTimeMin = 55;
                 }
                 else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTime = 60 * 30;
+                    setTargetTimeMin = 60 * 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTime = 60 * 30;
+                    setTargetTimeMin = 60 * 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTime = 60 * 45;
+                    setTargetTimeMin = 60 * 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTime = 60 * 2 + 31;
+                    setTargetTimeMin = 60 * 2 + 31;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTime = 60 * 2 + 45;
+                    setTargetTimeMin = 60 * 2 + 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTime = 60 * 3;
+                    setTargetTimeMin = 60 * 3;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTime = 60 * 3 + 15;
+                    setTargetTimeMin = 60 * 3 + 15;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTime = 60 * 3 + 45;
+                    setTargetTimeMin = 60 * 3 + 45;
                 }
 
                 break;
@@ -234,40 +240,40 @@ public class SettingsFragment extends Fragment {
                 setTargetTemp = 143.5f;
 
                 if (setThickness <= 0.2) {
-                    setTargetTime = 25;
+                    setTargetTimeMin = 25;
                 }
                 else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTime = 30;
+                    setTargetTimeMin = 30;
                 }
                 else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTime = 45;
+                    setTargetTimeMin = 45;
                 }
                 else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTime = 55;
+                    setTargetTimeMin = 55;
                 }
                 else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTime = 60 * 30;
+                    setTargetTimeMin = 60 * 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTime = 60 * 30;
+                    setTargetTimeMin = 60 * 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTime = 60 * 45;
+                    setTargetTimeMin = 60 * 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTime = 60 * 2 + 31;
+                    setTargetTimeMin = 60 * 2 + 31;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTime = 60 * 2 + 45;
+                    setTargetTimeMin = 60 * 2 + 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTime = 60 * 3;
+                    setTargetTimeMin = 60 * 3;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTime = 60 * 3 + 15;
+                    setTargetTimeMin = 60 * 3 + 15;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTime = 60 * 3 + 45;
+                    setTargetTimeMin = 60 * 3 + 45;
                 }
                 break;
 
@@ -275,40 +281,40 @@ public class SettingsFragment extends Fragment {
                 setTargetTemp = 143.5f;
 
                 if (setThickness <= 0.2) {
-                    setTargetTime = 25;
+                    setTargetTimeMin = 25;
                 }
                 else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTime = 30;
+                    setTargetTimeMin = 30;
                 }
                 else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTime = 45;
+                    setTargetTimeMin = 45;
                 }
                 else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTime = 55;
+                    setTargetTimeMin = 55;
                 }
                 else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTime = 60 * 30;
+                    setTargetTimeMin = 60 * 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTime = 60 * 30;
+                    setTargetTimeMin = 60 * 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTime = 60 * 45;
+                    setTargetTimeMin = 60 * 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTime = 60 * 2 + 31;
+                    setTargetTimeMin = 60 * 2 + 31;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTime = 60 * 2 + 45;
+                    setTargetTimeMin = 60 * 2 + 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTime = 60 * 3;
+                    setTargetTimeMin = 60 * 3;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTime = 60 * 3 + 15;
+                    setTargetTimeMin = 60 * 3 + 15;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTime = 60 * 3 + 45;
+                    setTargetTimeMin = 60 * 3 + 45;
                 }
                 break;
 
@@ -316,105 +322,53 @@ public class SettingsFragment extends Fragment {
                 setTargetTemp = 143.5f;
 
                 if (setThickness <= 0.2) {
-                    setTargetTime = 25;
+                    setTargetTimeMin = 25;
                 }
                 else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTime = 30;
+                    setTargetTimeMin = 30;
                 }
                 else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTime = 45;
+                    setTargetTimeMin = 45;
                 }
                 else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTime = 55;
+                    setTargetTimeMin = 55;
                 }
                 else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTime = 60 * 30;
+                    setTargetTimeMin = 60 * 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTime = 60 * 30;
+                    setTargetTimeMin = 60 * 30;
                 }
                 else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTime = 60 * 45;
+                    setTargetTimeMin = 60 * 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTime = 60 * 2 + 31;
+                    setTargetTimeMin = 60 * 2 + 31;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTime = 60 * 2 + 45;
+                    setTargetTimeMin = 60 * 2 + 45;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTime = 60 * 3;
+                    setTargetTimeMin = 60 * 3;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTime = 60 * 3 + 15;
+                    setTargetTimeMin = 60 * 3 + 15;
                 }
                 else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTime = 60 * 3 + 45;
+                    setTargetTimeMin = 60 * 3 + 45;
                 }
                 break;
 
         }
 
-        textSetTemp.setText(setTargetTemp + "℉");
-        textSetTime.setText(setTargetTime / 60 + "H : " + setTargetTime % 60 + "M");
+        textSetTemp.setText(Html.fromHtml(setTargetTemp + "<small>℉</small>"));
 
+        String hour = (setTargetTimeMin / 60) + "";
+        String minutes = String.format("%02d", setTargetTimeMin % 60);
 
-        //            @0.2:@[@1,@00],
-//            @0.4:@[@1,@15],
-//            @0.6:@[@1,@30],
-//            @0.8:@[@1,@45],
-//            @1.2:@[@2,@00],
-//            @1.4:@[@2,@15],
-//            @1.6:@[@2,@30],
-//            @2.0:@[@3,@07],
-//            @2.15:@[@3,@45],
-//            @2.35:@[@4,@15],
-//            @2.5:@[@4,@45],
-//            @2.75:@[@5,@15]
+        textSetTimeMin.setText(Html.fromHtml(hour + "<small>H : </small>" + minutes + "<small>M</small>"));
 
-
-//        @143.5: @{
-//            @0.2:@[@0,@25],
-//            @0.4:@[@0,@30],
-//            @0.6:@[@0,@45],
-//            @0.8:@[@0,@55],
-//            @1.2:@[@1,@30],
-//            @1.4:@[@1,@30],
-//            @1.6:@[@1,@45],
-//            @2.0:@[@2,@31],
-//            @2.15:@[@2,@45],
-//            @2.35:@[@3,@00],
-//            @2.5:@[@3,@15],
-//            @2.75:@[@3,@45]
-//        },
-//        @151.0: @{
-//            @0.2:@[@0,@13],
-//            @0.4:@[@0,@25],
-//            @0.6:@[@0,@35],
-//            @0.8:@[@0,@45],
-//            @1.2:@[@1,@15],
-//            @1.4:@[@1,@15],
-//            @1.6:@[@1,@30],
-//            @2.0:@[@2,@28],
-//            @2.15:@[@2,@15],
-//            @2.35:@[@2,@30],
-//            @2.5:@[@2,@45],
-//            @2.75:@[@3,@15]
-//        },
-//        @160: @{
-//            @0.2:@[@0,@13],
-//            @0.4:@[@0,@25],
-//            @0.6:@[@0,@35],
-//            @0.8:@[@0,@45],
-//            @1.2:@[@1,@15],
-//            @1.4:@[@1,@15],
-//            @1.6:@[@1,@30],
-//            @2.0:@[@2,@28],
-//            @2.15:@[@2,@15],
-//            @2.35:@[@2,@30],
-//            @2.5:@[@2,@45],
-//            @2.75:@[@3,@15]
-//        },
+        textSetTimeMax.setText(Html.fromHtml("00<small>M</small>"));
     }
 
 
