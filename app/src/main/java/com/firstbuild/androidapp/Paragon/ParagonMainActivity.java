@@ -359,7 +359,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             case ParagonValues.CHARACTERISTIC_OTA_VERSION:
                 Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_VERSION :" + String.format("%02x%02x%02x%02x%02x%02x", value[0], value[1], value[2], value[3], value[4], value[5]));
-                if (OtaManager.getInstance().compareVersion(value[0], value[1], (short) value[2])) {
+                if (OtaManager.getInstance().compareVersion(value[2], value[3], (short) value[4])) {
                     if(dialogWaiting.isShowing()){
                         dialogWaiting.dismiss();
                     }

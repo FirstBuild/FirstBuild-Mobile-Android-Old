@@ -33,7 +33,7 @@ public class OtaManager {
     private int versionMinor = 0;
     private int versionBuild = 0;
     private int currentStep;
-    private byte[] wholeChunk = null;
+    private byte[] imageChunk = null;
     private int transferCount = 0;
     private int transferOffset = 0;
 
@@ -57,7 +57,6 @@ public class OtaManager {
      * Read image file from asset and get majoro version and minor version.
      */
     public void readImageFile(Context context) {
-        //TODO:
         // Read image file file form asset and get current version.
         this.context = context;
         AssetManager assetManager = context.getAssets();
@@ -80,6 +79,7 @@ public class OtaManager {
         versionMajor = versionChunk[0];
         versionMinor = versionChunk[1];
         versionBuild = (short) versionChunk[2];
+
 
         Log.d(TAG, "readImageFile version is :" + versionMajor + ", " + versionMinor);
     }
@@ -105,7 +105,7 @@ public class OtaManager {
                 this.versionBuild != versionBuild) {
 
             isNeedUpdate = true;
-            ByteBuffer valueBuffer = ByteBuffer.allocate(3);
+            ByteBuffer valueBuffer = ByteBuffer.allocate(1);
 
             valueBuffer.put((byte) 1);
             BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
@@ -128,7 +128,6 @@ public class OtaManager {
         AssetManager assetManager = context.getAssets();
 
         InputStream inputStream;
-        int bufferSize = 0;
         int imageSize = 0;
 
         try {
@@ -144,35 +143,47 @@ public class OtaManager {
             // 160byte of the image file.
             if (padSize > 0) {
                 padSize = SIZE_CHUNK - padSize;
-                bufferSize = imageSize + padSize;
             }
             else {
                 //do nothing.
             }
-            transferCount = bufferSize / SIZE_CHUNK;
-            transferOffset = 0;
-
 
             // Allocate image buffer.
-            wholeChunk = new byte[bufferSize];
+
+            byte[] dataChunk = new byte[imageSize - SIZE_CHECKSUM + padSize];
+            byte[] checksumChunk = new byte[SIZE_CHECKSUM];
+
+            imageChunk = new byte[dataChunk.length + checksumChunk.length];
 
             // Read data chunk except last 160 byte of checksum chunk.
-            inputStream.read(wholeChunk, 0, imageSize - SIZE_CHECKSUM);
-
-            // Skip (pad) the padding byte and then read the checksum chunk again.
-            inputStream.read(wholeChunk, bufferSize - SIZE_CHECKSUM, SIZE_CHECKSUM);
+            inputStream.read(dataChunk, 0, imageSize - SIZE_CHECKSUM);
+            inputStream.read(checksumChunk, 0, SIZE_CHECKSUM);
             inputStream.close();
+
+            System.arraycopy(dataChunk, 0, imageChunk, 0, dataChunk.length);
+            System.arraycopy(checksumChunk, 0, imageChunk, imageChunk.length-checksumChunk.length, checksumChunk.length);
+
+            transferCount = (int)(imageChunk.length / (float)SIZE_CHUNK);
+            transferOffset = 0;
+
         }
         catch (Exception e) {
             Log.d(TAG, "readImageFile :" + e);
         }
 
-        ByteBuffer valueBuffer = ByteBuffer.allocate(3);
+        if(transferCount > 0) {
+            ByteBuffer valueBuffer = ByteBuffer.allocate(3);
 
-        valueBuffer.put((byte) 2);
-        valueBuffer.putShort((short) imageSize);
-        BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
-        Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send:" + valueBuffer.toString());
+            valueBuffer.put((byte) 2);
+            valueBuffer.put(1, (byte) (imageSize & 0xff));
+            valueBuffer.put(2, (byte) ((imageSize >> 8) & 0xff));
+            BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
+            Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send OTA_STEP_SEND_IMAGE_DATA:" + valueBuffer.toString());
+        }
+        else{
+            Log.d(TAG, "OTA image file read failed");
+            ((ParagonMainActivity) context).failedOta();
+        }
 
     }
 
@@ -182,13 +193,15 @@ public class OtaManager {
      */
     private void transferData() {
 
+        Log.d(TAG, "transferData : transferOffset :"+transferOffset + ", transferCount :"+transferCount);
+
         if (transferOffset < transferCount) {
             currentStep = OTA_STEP_SEND_IMAGE_DATA;
-            ByteBuffer valueBuffer = ByteBuffer.allocate(20);
+            ByteBuffer valueBuffer = ByteBuffer.allocate(SIZE_CHUNK);
 
-            valueBuffer.put(wholeChunk, transferOffset * SIZE_CHUNK, SIZE_CHUNK);
+            valueBuffer.put(imageChunk, transferOffset * SIZE_CHUNK, SIZE_CHUNK);
             BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_DATA, valueBuffer.array());
-            Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_DATA Send:" + transferOffset + ", " + valueBuffer.toString());
+            Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_DATA Send OTA_STEP_SEND_IMAGE_DATA:" + transferOffset + ", " + valueBuffer.toString());
 
             transferOffset++;
         }
@@ -199,7 +212,7 @@ public class OtaManager {
 
             valueBuffer.put((byte) 3);
             BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
-            Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send:" + valueBuffer.toString());
+            Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send OTA_STEP_SEND_IMAGE_DONE:" + valueBuffer.toString());
             for (byte b : valueBuffer.array()) {
                 Log.d(TAG, String.format("%02x ", b));
             }
