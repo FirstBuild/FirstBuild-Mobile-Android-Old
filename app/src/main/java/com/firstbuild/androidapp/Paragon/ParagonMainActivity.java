@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
@@ -52,13 +54,13 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     static final int REQUEST_TAKE_PHOTO = 1;
     static final byte INITIAL_VALUE = 0x0f;
+    private String REQUEST_METHOD_READ = "READ";
+    private String REQUEST_METHOD_NOTIFICATION = "NOTIFICATION";
 
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
-    //    private float targetTemp;
     private float currentTemp;
-    //    private int targetTime = ParagonValues.MAX_COOK_TIME;
     private byte batteryLevel;
     private byte burnerStatus = INITIAL_VALUE;
     private byte cookMode = INITIAL_VALUE;
@@ -66,8 +68,6 @@ public class ParagonMainActivity extends ActionBarActivity {
     Toolbar toolbar;
 
     private Queue requestQueue = new LinkedList();
-    private String REQUEST_METHOD_READ = "READ";
-    private String REQUEST_METHOD_NOTIFICATION = "NOTIFICATION";
     private boolean isCheckingCurrentStatus = false;
 
     private BleListener bleListener = new BleListener() {
@@ -118,6 +118,10 @@ public class ParagonMainActivity extends ActionBarActivity {
             }
             else {
                 Log.d(TAG, "Stop scanning BLE devices");
+
+                if (dialogWaiting.isShowing()) {
+                    dialogWaiting.dismiss();
+                }
             }
         }
 
@@ -137,19 +141,20 @@ public class ParagonMainActivity extends ActionBarActivity {
             BleManager.getInstance().displayGattServices(address);
 
             // Get Initial values.
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_OTA_COMMAND, true);
 
 
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
-//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
-//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+//
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
 
         }
 
@@ -169,6 +174,25 @@ public class ParagonMainActivity extends ActionBarActivity {
             super.onCharacteristicWrite(address, uuid, value);
 
             Log.d(TAG, "[onCharacteristicWrite] address: " + address + ", uuid: " + uuid);
+
+            if(uuid.toUpperCase().equals(ParagonValues.CHARACTERISTIC_OTA_DATA)){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialogOtaProcessing.setMaxProgress(OtaManager.getInstance().getTransferCount());
+                                dialogOtaProcessing.setProgress(OtaManager.getInstance().getTransferOffset());
+                            }
+                        });
+                    }
+                }).start();
+
+
+                OtaManager.getInstance().responseWriteData();
+            }
+
         }
 
         @Override
@@ -197,6 +221,13 @@ public class ParagonMainActivity extends ActionBarActivity {
     private ImageView toolbarImage;
     private String currentPhotoPath;
     private MaterialDialog dialogWaiting;
+    private MaterialDialog dialogOtaProcessing;
+    private MaterialDialog dialogOtaAsk;
+
+
+    public MaterialDialog getDialogOtaProcessing() {
+        return dialogOtaProcessing;
+    }
 
     private void nextCharacteristicRead() {
 
@@ -218,28 +249,6 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         }
     }
-
-//    public int getTargetTime() {
-//        return RecipeManager.getInstance().getCurrentStage().getTime();
-//
-////        return targetTime;
-//    }
-
-//    public void setTargetTime(int targetTime, int setTargetTimeMax) {
-//        RecipeManager.getInstance().getCurrentStage().setTime(targetTime);
-//        RecipeManager.getInstance().getCurrentStage().setMaxTime(targetTime);
-////        this.targetTime = targetTime;
-//    }
-
-//    public float getTargetTemp() {
-//        return RecipeManager.getInstance().getCurrentStage().getTemp();
-////        return targetTemp;
-//    }
-
-//    public void setTargetTemp(float targetTemp) {
-//        RecipeManager.getInstance().getCurrentStage().setTemp((int)targetTemp);
-////        this.targetTemp = targetTemp;
-//    }
 
     public float getCurrentTemp() {
         return currentTemp;
@@ -281,12 +290,6 @@ public class ParagonMainActivity extends ActionBarActivity {
                 }).start();
                 break;
 
-//            case ParagonValues.CHARACTERISTIC_TARGET_TEMPERATURE:
-//                targetTemp = (float) byteBuffer.getShort() / 100.0f;
-//
-//                Log.d(TAG, "CHARACTERISTIC_TARGET_TEMPERATURE :" + targetTemp);
-//                break;
-
             case ParagonValues.CHARACTERISTIC_BATTERY_LEVEL:
                 batteryLevel = byteBuffer.get();
 
@@ -315,10 +318,6 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
 
-//            case ParagonValues.CHARACTERISTIC_COOK_TIME:
-//                Log.d(TAG, "CHARACTERISTIC_COOK_TIME :" + byteBuffer.getShort());
-//                break;
-
             case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
                 Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :");
 
@@ -333,35 +332,6 @@ public class ParagonMainActivity extends ActionBarActivity {
             case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
                 Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" + String.format("%02x", value[0]));
 
-//                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" +
-//                        String.format("%02x", value[0]) + ", " +
-//                        String.format("%02x", value[1]) + ", " +
-//                        String.format("%02x", value[2]) + ", " +
-//                        String.format("%02x", value[3]) + ", " +
-//                        String.format("%02x", value[4]));
-//
-//                boolean isSousVide = false;
-//                boolean isPreheat = false;
-//
-//                //There are 5 burner statuses and and 5 bytes. Each byte is a status
-//                //the statuses are:
-//                //
-//                //Bit 7: 0 - Off, 1 - On
-//                //Bit 6: Normal / Sous Vide
-//                //Bit 5: 0 - Cook, 1 - Preheat
-//                //Bits 4-0: Burner PwrLevel
-//
-//                for (int i = 0; i < MAX_BURNER; i++) {
-//                    if (getBit(value[i], 6)) {
-//                        isSousVide = true;
-//                        isPreheat = getBit(value[i], 5);
-//
-//                        break;
-//                    }
-//                }
-//
-//                onBurnerStatus(isSousVide, isPreheat);
-//                onBurnerStatus(false, false);
                 burnerStatus = value[0];
                 checkInitialStatus();
 
@@ -387,7 +357,73 @@ public class ParagonMainActivity extends ActionBarActivity {
                 checkInitialStatus();
                 break;
 
+
+            case ParagonValues.CHARACTERISTIC_OTA_VERSION:
+                Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_VERSION :" + String.format("%02x%02x%02x%02x%02x%02x", value[0], value[1], value[2], value[3], value[4], value[5]));
+                if (OtaManager.getInstance().compareVersion(value[2], value[3], (short) value[4])) {
+                    if(dialogWaiting.isShowing()){
+                        dialogWaiting.dismiss();
+                    }
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialogOtaAsk.show();
+
+                                }
+                            });
+                        }
+                    }).start();
+
+                }
+                else {
+                    Log.d(TAG, "No need to update");
+
+                    requestInitialValues();
+
+                }
+                break;
+
+            case ParagonValues.CHARACTERISTIC_OTA_COMMAND:
+                Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND :" + String.format("%02x", value[0]));
+                OtaManager.getInstance().getResponse(value[0]);
+                break;
+
         }
+    }
+
+    private void requestInitialValues() {
+        //TODO: do normal process. need to check.
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
+    }
+
+    private void showOtaDialog() {
+        dialogOtaProcessing = new MaterialDialog.Builder(this)
+                .title(R.string.popup_ota_title)
+                .content(R.string.popup_ota_content)
+                .contentGravity(GravityEnum.CENTER)
+                .progress(false, 100, true)
+                .cancelable(false)
+                .showListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+
+                    }
+                }).build();
+
+        dialogOtaProcessing.show();
     }
 
 
@@ -415,11 +451,18 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
 
+    /**
+     *
+     * @param value
+     */
     private void onCookConfiguration(byte[] value) {
         RecipeInfo newRecipe = new RecipeInfo(value);
 
-        RecipeManager.getInstance().setCurrentRecipe(newRecipe);
-        RecipeManager.getInstance().setCurrentStage(0);
+        if (newRecipe.numStage() > 0) {
+            RecipeManager.getInstance().setCurrentRecipe(newRecipe);
+            RecipeManager.getInstance().setCurrentStage(0);
+
+        }
     }
 
 
@@ -636,6 +679,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         }
 
+        OtaManager.getInstance().readImageFile(ParagonMainActivity.this);
+
         // Initialize ble manager
         BleManager.getInstance().initBleManager(this);
 
@@ -645,18 +690,44 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         isCheckingCurrentStatus = false;
 
-
-        //TODO: remove this code after test.
-//        nextStep(ParagonSteps.STEP_COOKING_MODE);
-
         dialogWaiting = new MaterialDialog.Builder(ParagonMainActivity.this)
                 .title("Please wait")
                 .content("Communicating with Paragon...")
                 .progress(true, 0)
                 .cancelable(false).build();
 
+
+        dialogOtaAsk = new MaterialDialog.Builder(ParagonMainActivity.this)
+                .title("Update Available")
+                .content("Are you want to update Pararagon now?")
+                .positiveText("Yes")
+                .negativeText("No")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        OtaManager.getInstance().startProcess();
+                        showOtaDialog();
+                    }
+
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialogWaiting.show();
+                        requestInitialValues();
+                    }
+                })
+                .cancelable(false).build();
+
+    }
+
+    private void startSearchParagon() {
+
         dialogWaiting.show();
 
+        BleManager.getInstance().startScan();
     }
 
     @Override
@@ -748,7 +819,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
         else {
             Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
-            BleManager.getInstance().startScan();
+            startSearchParagon();
         }
 
     }
@@ -794,10 +865,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                 BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
                 BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
 
-                if(RecipeManager.getInstance().getCurrentRecipe().numStage() == 1){
+                if (RecipeManager.getInstance().getCurrentRecipe().numStage() == 1) {
                     fragment = new SousvideStatusFragment();
                 }
-                else{
+                else {
                     fragment = new MultiStageStatusFragment();
                 }
                 break;
@@ -871,6 +942,29 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         }
 
+
+    }
+
+    /**
+     * Call when OTA completed successfully.
+     */
+    public void succeedOta() {
+        if(dialogOtaProcessing.isShowing()){
+            dialogOtaProcessing.dismiss();
+        }
+        else{
+            // do nothing.
+        }
+
+        // Scan again.
+        BleManager.getInstance().disconnect();
+        finish();
+    }
+
+    /**
+     * CAll when OTA get failed.
+     */
+    public void failedOta() {
 
     }
 

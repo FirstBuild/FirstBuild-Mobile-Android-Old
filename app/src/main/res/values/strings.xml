@@ -120,6 +120,8 @@
     <string name="fragment_soudvide_status_explanation_placefood">Place food to continue</string>
     <string name="fragment_soudvide_status_explanation_donekeep">Keeping the temperature until press Stop button</string>
     <string name="my_recipes_add_recipe">Add Recipe</string>
+    <string name="popup_ota_title">Update Paragon</string>
+    <string name="popup_ota_content">Please wait...</string>
 
     <!-- Add appliance -->
     <string name="searching_your_paragon">Searching for your Paragon\nThis might take a few minutes</string>
