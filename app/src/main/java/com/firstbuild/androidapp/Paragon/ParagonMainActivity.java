@@ -683,18 +683,19 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         isCheckingCurrentStatus = false;
 
-
-        //TODO: remove this code after test.
-//        nextStep(ParagonSteps.STEP_COOKING_MODE);
-
         dialogWaiting = new MaterialDialog.Builder(ParagonMainActivity.this)
                 .title("Please wait")
                 .content("Communicating with Paragon...")
                 .progress(true, 0)
                 .cancelable(false).build();
 
+    }
+
+    private void startSearchParagon() {
+
         dialogWaiting.show();
 
+        BleManager.getInstance().startScan();
     }
 
     @Override
@@ -786,7 +787,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
         else {
             Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
-            BleManager.getInstance().startScan();
+            startSearchParagon();
         }
 
     }
@@ -912,6 +913,9 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * Call when OTA completed successfully.
+     */
     public void succeedOta() {
         if(dialogOta.isShowing()){
             dialogOta.dismiss();
@@ -920,8 +924,14 @@ public class ParagonMainActivity extends ActionBarActivity {
             // do nothing.
         }
 
+        // Scan again.
+        BleManager.getInstance().startScan();
+
     }
 
+    /**
+     * CAll when OTA get failed.
+     */
     public void failedOta() {
 
     }

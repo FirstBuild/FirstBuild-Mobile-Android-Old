@@ -213,9 +213,8 @@ public class OtaManager {
             valueBuffer.put((byte) 3);
             BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
             Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send OTA_STEP_SEND_IMAGE_DONE:" + valueBuffer.toString());
-            for (byte b : valueBuffer.array()) {
-                Log.d(TAG, String.format("%02x ", b));
-            }
+
+            ((ParagonMainActivity)context).succeedOta();
         }
 
     }
