@@ -96,8 +96,6 @@ public class OtaManager {
         Log.d(TAG, "compareVersion : Paragon version :" + versionMajor + "." + versionMinor + "." + versionBuild);
         Log.d(TAG, "compareVersion : Image version   :" + this.versionMajor + "." + this.versionMinor + "." + this.versionBuild);
 
-        currentStep = OTA_STEP_COMPARE_VERSION;
-
         boolean isNeedUpdate;
 
         if (this.versionMajor != versionMajor ||
@@ -105,11 +103,6 @@ public class OtaManager {
                 this.versionBuild != versionBuild) {
 
             isNeedUpdate = true;
-            ByteBuffer valueBuffer = ByteBuffer.allocate(1);
-
-            valueBuffer.put((byte) 1);
-            BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
-            Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send:" + valueBuffer.toString());
         }
         else {
             isNeedUpdate = false;
@@ -117,6 +110,18 @@ public class OtaManager {
 
         return isNeedUpdate;
     }
+
+
+    public void startProcess(){
+        currentStep = OTA_STEP_COMPARE_VERSION;
+
+        ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+
+        valueBuffer.put((byte) 1);
+        BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
+        Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send:" + valueBuffer.toString());
+    }
+
 
     /**
      * Prepare to update. Show the popup, modify image file with pad if need.
@@ -213,8 +218,6 @@ public class OtaManager {
             valueBuffer.put((byte) 3);
             BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
             Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send OTA_STEP_SEND_IMAGE_DONE:" + valueBuffer.toString());
-
-            ((ParagonMainActivity)context).succeedOta();
         }
 
     }

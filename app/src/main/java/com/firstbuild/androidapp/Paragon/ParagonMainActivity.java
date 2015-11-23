@@ -30,7 +30,6 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
 import com.firstbuild.androidapp.ParagonValues;
@@ -182,8 +181,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                dialogOta.setMaxProgress(OtaManager.getInstance().getTransferCount());
-                                dialogOta.setProgress(OtaManager.getInstance().getTransferOffset());
+                                dialogOtaProcessing.setMaxProgress(OtaManager.getInstance().getTransferCount());
+                                dialogOtaProcessing.setProgress(OtaManager.getInstance().getTransferOffset());
                             }
                         });
                     }
@@ -221,11 +220,12 @@ public class ParagonMainActivity extends ActionBarActivity {
     private ImageView toolbarImage;
     private String currentPhotoPath;
     private MaterialDialog dialogWaiting;
-    private MaterialDialog dialogOta;
+    private MaterialDialog dialogOtaProcessing;
+    private MaterialDialog dialogOtaAsk;
 
 
-    public MaterialDialog getDialogOta() {
-        return dialogOta;
+    public MaterialDialog getDialogOtaProcessing() {
+        return dialogOtaProcessing;
     }
 
     private void nextCharacteristicRead() {
@@ -370,7 +370,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    showOtaDialog();
+                                    dialogOtaAsk.show();
+
                                 }
                             });
                         }
@@ -379,17 +380,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                 }
                 else {
                     Log.d(TAG, "No need to update");
-                    //TODO: do normal process. need to check.
-                    BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-                    BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-                    BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
-                    BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
-                    BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
-                    BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
 
-                    BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
-                    BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
-                    BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
+                    requestInitialValues();
 
                 }
                 break;
@@ -402,8 +394,22 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
     }
 
+    private void requestInitialValues() {
+        //TODO: do normal process. need to check.
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
+    }
+
     private void showOtaDialog() {
-        dialogOta = new MaterialDialog.Builder(this)
+        dialogOtaProcessing = new MaterialDialog.Builder(this)
                 .title(R.string.popup_ota_title)
                 .content(R.string.popup_ota_content)
                 .contentGravity(GravityEnum.CENTER)
@@ -416,7 +422,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                     }
                 }).build();
 
-        dialogOta.show();
+        dialogOtaProcessing.show();
     }
 
 
@@ -689,6 +695,31 @@ public class ParagonMainActivity extends ActionBarActivity {
                 .progress(true, 0)
                 .cancelable(false).build();
 
+
+        dialogOtaAsk = new MaterialDialog.Builder(ParagonMainActivity.this)
+                .title("Update Available")
+                .content("Are you want to update Pararagon now?")
+                .positiveText("Yes")
+                .negativeText("No")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        OtaManager.getInstance().startProcess();
+                        showOtaDialog();
+                    }
+
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialogWaiting.show();
+                        requestInitialValues();
+                    }
+                })
+                .cancelable(false).build();
+
     }
 
     private void startSearchParagon() {
@@ -917,16 +948,16 @@ public class ParagonMainActivity extends ActionBarActivity {
      * Call when OTA completed successfully.
      */
     public void succeedOta() {
-        if(dialogOta.isShowing()){
-            dialogOta.dismiss();
+        if(dialogOtaProcessing.isShowing()){
+            dialogOtaProcessing.dismiss();
         }
         else{
             // do nothing.
         }
 
         // Scan again.
-        BleManager.getInstance().startScan();
-
+        BleManager.getInstance().disconnect();
+        finish();
     }
 
     /**
