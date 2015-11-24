@@ -119,9 +119,6 @@ public class ParagonMainActivity extends ActionBarActivity {
             else {
                 Log.d(TAG, "Stop scanning BLE devices");
 
-                if (dialogWaiting.isShowing()) {
-                    dialogWaiting.dismiss();
-                }
             }
         }
 
@@ -143,7 +140,6 @@ public class ParagonMainActivity extends ActionBarActivity {
             // Get Initial values.
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_OTA_COMMAND, true);
-
 
 //            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
 //            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
@@ -659,6 +655,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "BLE is not supported - Stop activity!");
 
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            BleManager.getInstance().removeListener(bleListener);
             finish();
         }
         else {
@@ -671,6 +668,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                 Log.d(TAG, "Bluetooth is not supported - Stop activity!");
 
                 Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
+                BleManager.getInstance().removeListener(bleListener);
                 finish();
             }
             else {
@@ -739,6 +737,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             fm.popBackStack();
         }
         else {
+            BleManager.getInstance().removeListener(bleListener);
             finish();
         }
     }
@@ -774,6 +773,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             return true;
         }
         else if (id == R.id.action_my_product) {
+            BleManager.getInstance().removeListener(bleListener);
             finish();
             return true;
         }
@@ -958,6 +958,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         // Scan again.
         BleManager.getInstance().disconnect();
+        BleManager.getInstance().removeListener(bleListener);
         finish();
     }
 
