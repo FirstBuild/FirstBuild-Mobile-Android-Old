@@ -1,6 +1,7 @@
 package com.firstbuild.androidapp.addProduct;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -33,10 +34,17 @@ public class AddProductSearchParagonFragment extends Fragment {
     private ImageView spinningImage;
     private RotateAnimation spinningAnimation;
     private String deviceAddress = null;
+    private AddProductActivity attached = null;
 
     public AddProductSearchParagonFragment() {
         // Required empty public constructor
         Log.d(TAG, "AddProductSearchParagonFragment IN");
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        attached = (AddProductActivity) activity;
     }
 
     @Override
@@ -167,6 +175,11 @@ public class AddProductSearchParagonFragment extends Fragment {
                         // Connect to device
                         BleManager.getInstance().connect(deviceAddress);
                     }
+                    else if(bondState == device.BOND_BONDED){
+                        Log.d(TAG, "device bonded: " + bondState);
+
+
+                    }
                     else{
                         Log.d(TAG, "device bonded or bonding state: " + bondState);
 
@@ -210,7 +223,9 @@ public class AddProductSearchParagonFragment extends Fragment {
             BleManager.getInstance().displayGattServices(address);
 
             // Request data to check connectivity
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+
+            attached.setNewProductAddress(deviceAddress);
 
             // Transit to success UI
             getFragmentManager().
@@ -226,10 +241,13 @@ public class AddProductSearchParagonFragment extends Fragment {
 
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
 
-            if(deviceAddress != null & deviceAddress.equals(address) &&
-            ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION.toLowerCase().equals(uuid)){
-                Log.d(TAG, "[Found!!!] address: " + address + ", uuid: " + uuid);
-            }
+//            if(deviceAddress != null & deviceAddress.equals(address) &&
+//            ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION.toLowerCase().equals(uuid)){
+//                Log.d(TAG, "[Found!!!] address: " + address + ", uuid: " + uuid);
+//
+//
+//                ProductManager.getInstance().addProduct(deviceAddress);
+//            }
         }
     };
 

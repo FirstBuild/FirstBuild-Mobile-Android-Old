@@ -66,18 +66,16 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (currentProduct.type == ProductInfo.PRODUCT_TYPE_CILLHUB) {
             holderDashboard.imageLogo.setImageResource(R.drawable.ic_paragon_logo);
             holderDashboard.imageMark.setImageResource(R.drawable.ic_paragon_mark);
-            holderDashboard.textNickname.setText("My Paragon2");
         }
         else if (currentProduct.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
             holderDashboard.imageLogo.setImageResource(R.drawable.ic_paragon_logo);
             holderDashboard.imageMark.setImageResource(R.drawable.ic_paragon_mark);
 
-            String nickName = BleManager.getInstance().getDeviceName();
-            holderDashboard.textNickname.setText(nickName);
         }
         else {
         }
 
+        holderDashboard.textNickname.setText(listProductInfo.get(position).nickname);
     }
 
     @Override

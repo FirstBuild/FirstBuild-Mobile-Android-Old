@@ -836,6 +836,8 @@ public class BleManager {
         }
     }
 
+
+
     class OperationTimerTask extends TimerTask {
         public void run() {
             Log.d(TAG, "Operation Timer Fired!");
