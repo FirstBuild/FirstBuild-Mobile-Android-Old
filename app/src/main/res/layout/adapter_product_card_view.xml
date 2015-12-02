@@ -2,10 +2,11 @@
 <RelativeLayout
     android:id="@+id/rootItem"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ge="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:background="@drawable/btn_ripple_bg">
+    android:layout_height="wrap_content"
+    tools:context="com.firstbuild.androidapp.dashboard.DashboardActivity"
+    android:background="@drawable/btn_ripple_bg"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
         android:id="@+id/image_mark"
@@ -17,10 +18,10 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="72dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="vertical">
 
         <ImageView
@@ -31,24 +32,85 @@
             android:scaleType="fitStart"
             android:src="@drawable/ic_paragon_logo"/>
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <TextView
             android:id="@+id/item_nickname"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-light"
             android:text="My name"
             android:textColor="@color/colorSecondaryText"
-            android:textSize="19sp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="19sp"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:visibility="visible"
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_gravity="right"/>
+
+    <LinearLayout
+        android:id="@+id/layout_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_cooking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Cooking"
+            android:visibility="visible"
+            android:textColor="@color/colorParagonAccent"
+            android:textSize="19sp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_battery"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="end|center_vertical"
+                android:text="90%"
+                android:textColor="@color/colorParagonPrimary"
+                android:textSize="19sp"/>
+
+            <ImageView
+                android:id="@+id/image_battery"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="right"
+                android:scaleType="fitEnd"
+                android:src="@drawable/ic_battery_100"/>
+
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="#D1D3D4"/>
+    <!--<ImageView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="#D1D3D4"/>-->
 
 </RelativeLayout>
 

@@ -22,37 +22,17 @@
             android:layout_height="match_parent"
             android:paddingTop="@dimen/nav_drawer_header_height">
 
-            <!--<LinearLayout-->
-                <!--android:id="@+id/layoutMyProducts"-->
+
+            <!--<android.support.v7.widget.RecyclerView-->
+                <!--android:id="@+id/listProduct"-->
                 <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical">-->
+                <!--android:layout_height="match_parent"/>-->
 
-                <!--<com.firstbuild.viewUtil.StyledTextView-->
-                    <!--android:id="@+id/textMyProducts"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="60dp"-->
-                    <!--android:gravity="center_vertical"-->
-                    <!--android:layout_marginLeft="16dp"-->
-                    <!--android:layout_marginStart="16dp"-->
-                    <!--android:text="MY PRODUCTS"-->
-                    <!--android:textColor="@color/colorAccent"-->
-                    <!--android:textSize="19sp"-->
-                    <!--ge:typeface="fonts/PTSansNarrowRegular"/>-->
-
-
-                <!--<ImageView-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="1dp"-->
-                    <!--android:background="#6e6a6b" />-->
-
-            <!--</LinearLayout>-->
-
-
-            <android.support.v7.widget.RecyclerView
+            <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
                 android:id="@+id/listProduct"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+
 
             <com.getbase.floatingactionbutton.AddFloatingActionButton
                 android:id="@+id/btnAddProduct"

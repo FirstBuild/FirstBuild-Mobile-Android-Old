@@ -48,6 +48,13 @@ public class AddProductSearchParagonFragment extends Fragment {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        attached = null;
+        BleManager.getInstance().removeListener(bleListener);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -173,7 +180,19 @@ public class AddProductSearchParagonFragment extends Fragment {
                     if(bondState == device.BOND_NONE) {
                         Log.d(TAG, "device not bonded: " + bondState);
                         // Connect to device
-                        BleManager.getInstance().connect(deviceAddress);
+//                        BleManager.getInstance().connect(deviceAddress);
+                        BleManager.getInstance().pairDevice(device);
+
+                        attached.setNewProductAddress(deviceAddress);
+
+                        // Transit to success UI
+                        getFragmentManager().
+                                beginTransaction().
+                                replace(R.id.content_frame, new AddProductFoundParagonFragment()).
+                                addToBackStack(null).
+                                commit();
+
+
                     }
                     else if(bondState == device.BOND_BONDED){
                         Log.d(TAG, "device bonded: " + bondState);
@@ -220,19 +239,19 @@ public class AddProductSearchParagonFragment extends Fragment {
 
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
 
-            BleManager.getInstance().displayGattServices(address);
-
-            // Request data to check connectivity
+//            BleManager.getInstance().displayGattServices(address);
+//
+//            // Request data to check connectivity
 //            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-
-            attached.setNewProductAddress(deviceAddress);
-
-            // Transit to success UI
-            getFragmentManager().
-                    beginTransaction().
-                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
-                    addToBackStack(null).
-                    commit();
+//
+//            attached.setNewProductAddress(deviceAddress);
+//
+//            // Transit to success UI
+//            getFragmentManager().
+//                    beginTransaction().
+//                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
+//                    addToBackStack(null).
+//                    commit();
         }
 
         @Override
@@ -246,7 +265,7 @@ public class AddProductSearchParagonFragment extends Fragment {
 //                Log.d(TAG, "[Found!!!] address: " + address + ", uuid: " + uuid);
 //
 //
-//                ProductManager.getInstance().addProduct(deviceAddress);
+//                ProductManager.getInstance().add(deviceAddress);
 //            }
         }
     };

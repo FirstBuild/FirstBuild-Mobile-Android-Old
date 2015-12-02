@@ -20,6 +20,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -836,7 +837,53 @@ public class BleManager {
         }
     }
 
+    public void pairDevice(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("createBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+
+    public boolean unpair(final String address) {
+        boolean result = false;
+
+        if (address != null) {
+
+            // Retrieves paired device list
+            Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
+            if (pairedDevice != null && pairedDevice.size() > 0) {
+
+                // Iterate all the device in the list
+                for (BluetoothDevice bluetoothDevice : pairedDevice) {
+                    Log.d(TAG, bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
+
+                    if (bluetoothDevice.getAddress().equals(address)) {
+
+                        // Device found
+                        unpairDevice(bluetoothDevice);
+                        result = true;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+
+    public void unpairDevice(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("removeBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     class OperationTimerTask extends TimerTask {
         public void run() {

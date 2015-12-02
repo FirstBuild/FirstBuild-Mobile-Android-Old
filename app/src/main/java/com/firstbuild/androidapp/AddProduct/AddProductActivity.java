@@ -1,6 +1,5 @@
 package com.firstbuild.androidapp.addProduct;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -142,7 +141,7 @@ public class AddProductActivity extends ActionBarActivity {
 
     public void addNewProductToList() {
         if(newProduct != null){
-            ProductManager.getInstance().addProduct(newProduct);
+            ProductManager.getInstance().add(newProduct);
         }
     }
 
