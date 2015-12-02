@@ -92,8 +92,8 @@ public class DashboardActivity extends ActionBarActivity {
 
             BleManager.getInstance().displayGattServices(address);
 
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
         }
 
         @Override

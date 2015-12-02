@@ -89,32 +89,32 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "onScanDevices IN");
 
             Log.d(TAG, "bluetoothDevices size: " + bluetoothDevices.size());
-            for (Map.Entry<String, BluetoothDevice> entry : bluetoothDevices.entrySet()) {
-
-                // Retrieves address and name
-                BluetoothDevice device = entry.getValue();
-                String address = device.getAddress();
-                String name = device.getName();
-
-                Log.d(TAG, "------------------------------------");
-                Log.d(TAG, "Device address: " + address);
-                Log.d(TAG, "Device name: " + name);
-
-                if (ParagonValues.TARGET_DEVICE_NAME.equals(name)) {
-                    Log.d(TAG, "device found: " + device.getName());
-
-                    dialogWaiting.setContent("Communicating...");
-
-                    // Connect to device
-                    BleManager.getInstance().connect(address);
-
-                    // Stop ble device scanning
-                    BleManager.getInstance().stopScan();
-
-                    nextStep(ParagonSteps.STEP_CHECK_CURRENT_STATUS);
-                    break;
-                }
-            }
+//            for (Map.Entry<String, BluetoothDevice> entry : bluetoothDevices.entrySet()) {
+//
+//                // Retrieves address and name
+//                BluetoothDevice device = entry.getValue();
+//                String address = device.getAddress();
+//                String name = device.getName();
+//
+//                Log.d(TAG, "------------------------------------");
+//                Log.d(TAG, "Device address: " + address);
+//                Log.d(TAG, "Device name: " + name);
+//
+//                if (ParagonValues.TARGET_DEVICE_NAME.equals(name)) {
+//                    Log.d(TAG, "device found: " + device.getName());
+//
+//                    dialogWaiting.setContent("Communicating...");
+//
+//                    // Connect to device
+//                    BleManager.getInstance().connect(address);
+//
+//                    // Stop ble device scanning
+//                    BleManager.getInstance().stopScan();
+//
+//                    nextStep(ParagonSteps.STEP_CHECK_CURRENT_STATUS);
+//                    break;
+//                }
+//            }
             Log.d(TAG, "====================================");
         }
 
@@ -148,9 +148,9 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             BleManager.getInstance().displayGattServices(address);
 
-            // Get Initial values.
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_OTA_COMMAND, true);
+//            // Get Initial values.
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
+//            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_OTA_COMMAND, true);
         }
 
         @Override
@@ -379,6 +379,12 @@ public class ParagonMainActivity extends ActionBarActivity {
                 OtaManager.getInstance().getResponse(value[0]);
                 break;
 
+
+            case ParagonValues.CHARACTERISTIC_ERROR_STATE:
+                Log.d(TAG, "ParagonValues.CHARACTERISTIC_ERROR_STATE :" + String.format("%02x", value[0]));
+                break;
+
+
         }
     }
 
@@ -448,12 +454,11 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     private void onCookState(final byte state) {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
-        if (fragment instanceof GetReadyFragment) {
-            nextStep(ParagonSteps.STEP_COOK_STATUS);
+        if(state == ParagonValues.COOK_STATE_OFF){
+            nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
         }
-        else {
+        else{
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -468,10 +473,12 @@ public class ParagonMainActivity extends ActionBarActivity {
                             else if (fragment instanceof MultiStageStatusFragment) {
                                 ((MultiStageStatusFragment) fragment).updateCookStatus(state);
                             }
+                            else if (fragment instanceof GetReadyFragment) {
+                                nextStep(ParagonSteps.STEP_COOK_STATUS);
+                            }
                             else {
                                 // do nothing.
                             }
-
 
                         }
                     });
@@ -525,6 +532,8 @@ public class ParagonMainActivity extends ActionBarActivity {
             case STEP_COOKING_MODE:
                 BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, false);
                 BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, false);
+
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
                 fragment = new SelectModeFragment();
                 break;
@@ -697,7 +706,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         OtaManager.getInstance().readImageFile(ParagonMainActivity.this);
 
         // Initialize ble manager
-        BleManager.getInstance().initBleManager(this);
+//        BleManager.getInstance().initBleManager(this);
 
         // Add ble event listener
         BleManager.getInstance().addListener(bleListener);
@@ -760,8 +769,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
-                            BleManager.getInstance().disconnect();
-                            startSearchParagon();
+//                            BleManager.getInstance().disconnect();
+                            startCommunicateParagon();
                         }
 
                         @Override
@@ -807,6 +816,10 @@ public class ParagonMainActivity extends ActionBarActivity {
         BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
         BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
         BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
+
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ERROR_STATE, true);
+
     }
 
     @Override
@@ -989,8 +1002,24 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
         else {
             Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
-            startSearchParagon();
+            startCommunicateParagon();
         }
+
+    }
+
+
+    private void startCommunicateParagon() {
+
+        handlerCheckingConnection.postDelayed(runnable, INTERVAL_CHECKING_PARAGON_CONNECTION);
+
+        // Get Initial values.
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_OTA_COMMAND, true);
+
+        nextStep(ParagonSteps.STEP_CHECK_CURRENT_STATUS);
+
+        dialogWaiting.setContent("Communicating...");
+        dialogWaiting.show();
 
     }
 
@@ -1001,7 +1030,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         dialogWaiting.setContent("Searching Paragon...");
         dialogWaiting.show();
 
-        BleManager.getInstance().startScan();
+//        BleManager.getInstance().startScan();
     }
 
     /**
