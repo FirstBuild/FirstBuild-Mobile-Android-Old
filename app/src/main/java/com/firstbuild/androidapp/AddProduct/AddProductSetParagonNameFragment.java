@@ -1,6 +1,7 @@
 package com.firstbuild.androidapp.addProduct;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,10 +23,17 @@ import com.firstbuild.commonframework.bleManager.BleManager;
 public class AddProductSetParagonNameFragment extends Fragment {
     private String TAG = AddProductActivity.class.getSimpleName();
     private EditText paragonNameEditText;
+    private AddProductActivity attached = null;
 
     public AddProductSetParagonNameFragment() {
         // Required empty public constructor
         Log.d(TAG, "AddProductSearchParagonFragment IN");
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        attached = (AddProductActivity) activity;
     }
 
     @Override
@@ -56,11 +64,14 @@ public class AddProductSetParagonNameFragment extends Fragment {
                 // Get name from edit text
                 String paragonName = paragonNameEditText.getText().toString();
 
-                // Save device name here
-                if (paragonName != null && paragonName != "") {
-                    Log.d(TAG, "Paragon Nickname: " + paragonName);
-                    BleManager.getInstance().setDeviceName(paragonName);
+                if(paragonName.isEmpty()){
+                    paragonName = "My Paragon";
                 }
+
+                // Save device name here
+                Log.d(TAG, "Paragon Nickname: " + paragonName);
+                attached.setNewProductNickname(paragonName);
+                attached.addNewProductToList();
 
                 // Go to dash board
                 Intent intent = new Intent(getActivity(), DashboardActivity.class);

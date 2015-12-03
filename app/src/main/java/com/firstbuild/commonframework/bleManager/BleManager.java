@@ -20,6 +20,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -452,7 +453,8 @@ public class BleManager {
                                 printGattValue(values);
 
                                 characteristic.setValue(values);
-                                bluetoothGatt.writeCharacteristic(characteristic);
+                                boolean result = bluetoothGatt.writeCharacteristic(characteristic);
+                                Log.d(TAG, "result of writeCharacteristic is "+result);
                                 break;
                             } else {
                                 // Do nothing
@@ -502,7 +504,8 @@ public class BleManager {
                                 bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
                                 BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(CLIENT_CONFIGURATION_UUID));
                                 descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                                bluetoothGatt.writeDescriptor(descriptor);
+                                boolean result = bluetoothGatt.writeDescriptor(descriptor);
+                                Log.d(TAG, "result of writeDescriptor is "+result);
                                 break;
                             } else {
                                 // Do nothing
@@ -833,6 +836,54 @@ public class BleManager {
         if (operationTimer != null) {
             operationTimer.cancel();
             operationTimer = null;
+        }
+    }
+
+    public void pairDevice(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("createBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public boolean unpair(final String address) {
+        boolean result = false;
+
+        if (address != null) {
+
+            // Retrieves paired device list
+            Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
+            if (pairedDevice != null && pairedDevice.size() > 0) {
+
+                // Iterate all the device in the list
+                for (BluetoothDevice bluetoothDevice : pairedDevice) {
+                    Log.d(TAG, bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
+
+                    if (bluetoothDevice.getAddress().equals(address)) {
+
+                        // Device found
+                        unpairDevice(bluetoothDevice);
+                        result = true;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+
+    public void unpairDevice(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("removeBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

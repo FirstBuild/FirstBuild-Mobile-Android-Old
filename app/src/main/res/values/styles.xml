@@ -12,6 +12,14 @@
         <item name="colorPrimaryDark">@color/colorParagonPrimaryDark</item>
         <item name="colorAccent">@color/colorParagonAccent</item>
         <item name="colorControlHighlight">@color/colorParagonHighlight</item>
+
+        <!-- Active thumb color & Active track color(30% transparency) -->
+        <item name="colorControlActivated">@color/colorParagonAccent</item>
+        <!-- Inactive thumb color -->
+        <item name="colorSwitchThumbNormal">@color/colorParagonDisabled</item>
+        <!-- Inactive track color(30% transparency) -->
+        <item name="android:colorForeground">@color/colorSecondaryText</item>
+
     </style>
 
     <style name="drawer_menu_text">

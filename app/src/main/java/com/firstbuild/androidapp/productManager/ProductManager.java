@@ -1,60 +1,134 @@
 package com.firstbuild.androidapp.productManager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.firstbuild.androidapp.FirstBuildApplication;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class ProductManager {
-
+    public static final String PREFS_NAME = "FIRSTBUILD_APP";
+    public static final String FAVORITES = "Favorite";
+    private static ProductManager ourInstance = new ProductManager();
+    private String TAG = ProductManager.class.getSimpleName();
     private ArrayList<ProductInfo> products = new ArrayList<ProductInfo>();
 
-    private static ProductManager ourInstance = new ProductManager();
+    private ProductManager() {
+    }
 
     public static ProductManager getInstance() {
         return ourInstance;
     }
 
-    private ProductManager() {
-        // read from file.
-        read();
-    }
-
-    private void read() {
-
-        //TODO: currently added for test. It should come from internal storage.
-        products.add(new ProductInfo(1, "1111", "MyParagon"));
-//        products.add(new ProductInfo(0, "2222", "MyChillHub"));
-
-    }
-
-    /**
-     * Store product information into intenal storage.
-     */
-    private void save(){
-
-    }
-
     /**
      * Get the number of product.
+     *
      * @return Number of product.
      */
-    public int getSize(){
+    public int getSize() {
         return products.size();
     }
 
-    public ProductInfo getProduct(int index){
+    public ProductInfo getProduct(int index) {
         return products.get(index);
     }
 
     /**
-     * Once add a product app store its information into internal storage.
-     * @param productInfo
+     * Add Paragon to the list
+     *
+     * @param deviceAddress Address.
      */
-    public void addProduct(ProductInfo productInfo){
-        products.add(productInfo);
-
-        save();
+    public void add(String deviceAddress) {
+        //TODO: Check if the nick name is duplicated;
+        add(new ProductInfo(ProductInfo.PRODUCT_TYPE_PARAGON, "Paragon", deviceAddress));
     }
 
-    public void deleteProduct(ProductInfo productInfo){
+    /**
+     * Once add a product app store its information into internal storage.
+     *
+     * @param productInfo
+     */
+    public void add(ProductInfo productInfo) {
+        products.add(productInfo);
+
+        write();
+    }
+
+    /**
+     * Save the list of Paragon to SharedPreference.
+     */
+    public void write() {
+        SharedPreferences settings;
+        SharedPreferences.Editor editor;
+
+        settings = FirstBuildApplication.getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        editor = settings.edit();
+
+        JSONArray arrayProduct = new JSONArray();
+
+        for (ProductInfo productInfo : products) {
+            arrayProduct.put(productInfo.toJson());
+        }
+
+        String jsonString = arrayProduct.toString();
+
+        editor.putString(FAVORITES, jsonString);
+        editor.commit();
+    }
+
+    /**
+     * Remove product in the list.
+     *
+     * @param index index of the list.
+     */
+    public void remove(int index) {
+        products.remove(index);
+
+        write();
+    }
+
+    /**
+     * Load registerd Paragon from SharedPreference.
+     *
+     * @throws JSONException
+     */
+    public void read() {
+
+        SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
+                PREFS_NAME, Context.MODE_PRIVATE);
+
+        if (settings.contains(FAVORITES)) {
+            String jsonString = settings.getString(FAVORITES, null);
+
+            try {
+
+                JSONArray arrayProductObject = null;
+                arrayProductObject = new JSONArray(jsonString);
+                for (int i = 0; i < arrayProductObject.length(); i++) {
+                    JSONObject productObject = arrayProductObject.getJSONObject(i);
+
+                    ProductInfo productInfo = new ProductInfo(productObject);
+
+                    products.add(productInfo);
+                }
+
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            //do nothing
+        }
+
+
+        Log.d(TAG, "read DONE");
 
     }
 

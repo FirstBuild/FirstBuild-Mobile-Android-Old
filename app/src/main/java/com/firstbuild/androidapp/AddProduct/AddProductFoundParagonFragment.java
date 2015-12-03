@@ -52,7 +52,7 @@ public class AddProductFoundParagonFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        handler.postDelayed(runnable, 1000);
+//        handler.postDelayed(runnable, 1000);
     }
 
     @Override

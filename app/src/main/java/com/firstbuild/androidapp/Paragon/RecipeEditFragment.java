@@ -46,6 +46,7 @@ public class RecipeEditFragment extends Fragment {
     private ParagonMainActivity attached = null;
     private View layoutStages;
     private ImageView imageTitle;
+    private String imageFileName;
 
 
     public RecipeEditFragment() {
@@ -190,6 +191,7 @@ public class RecipeEditFragment extends Fragment {
                 recipe.setName(editName.getText().toString());
                 recipe.setIngredients(editIngredients.getText().toString());
                 recipe.setDirections(editDirections.getText().toString());
+                recipe.setImageFileName(imageFileName);
 
                 RecipeManager.getInstance().restoreCurrentRecipe();
                 attached.getFragmentManager().popBackStack();
@@ -219,7 +221,9 @@ public class RecipeEditFragment extends Fragment {
 
     public void setRecipeImage(Bitmap imageBitmap, String currentPhotoPath) {
         imageTitle.setImageBitmap(imageBitmap);
-        RecipeManager.getInstance().getCurrentRecipe().setImageFileName(currentPhotoPath);
+
+        imageFileName = currentPhotoPath;
+
     }
 
 

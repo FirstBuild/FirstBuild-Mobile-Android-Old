@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.firstbuild.androidapp.dashboard.DashboardActivity;
+import com.firstbuild.androidapp.productManager.ProductManager;
 
 
 public class SplashActivity extends Activity {
@@ -33,6 +34,8 @@ public class SplashActivity extends Activity {
         };
 
         handlerDelay.postDelayed(runnable, 2000);
+
+        ProductManager.getInstance().read();
     }
 
     @Override

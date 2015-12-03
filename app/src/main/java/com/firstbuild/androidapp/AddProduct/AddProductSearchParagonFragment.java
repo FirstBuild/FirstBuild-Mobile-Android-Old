@@ -1,6 +1,7 @@
 package com.firstbuild.androidapp.addProduct;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -33,10 +34,24 @@ public class AddProductSearchParagonFragment extends Fragment {
     private ImageView spinningImage;
     private RotateAnimation spinningAnimation;
     private String deviceAddress = null;
+    private AddProductActivity attached = null;
 
     public AddProductSearchParagonFragment() {
         // Required empty public constructor
         Log.d(TAG, "AddProductSearchParagonFragment IN");
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        attached = (AddProductActivity) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        attached = null;
+        BleManager.getInstance().removeListener(bleListener);
     }
 
     @Override
@@ -165,7 +180,24 @@ public class AddProductSearchParagonFragment extends Fragment {
                     if(bondState == device.BOND_NONE) {
                         Log.d(TAG, "device not bonded: " + bondState);
                         // Connect to device
-                        BleManager.getInstance().connect(deviceAddress);
+//                        BleManager.getInstance().connect(deviceAddress);
+                        BleManager.getInstance().pairDevice(device);
+
+                        attached.setNewProductAddress(deviceAddress);
+
+                        // Transit to success UI
+                        getFragmentManager().
+                                beginTransaction().
+                                replace(R.id.content_frame, new AddProductFoundParagonFragment()).
+                                addToBackStack(null).
+                                commit();
+
+
+                    }
+                    else if(bondState == device.BOND_BONDED){
+                        Log.d(TAG, "device bonded: " + bondState);
+
+
                     }
                     else{
                         Log.d(TAG, "device bonded or bonding state: " + bondState);
@@ -207,17 +239,19 @@ public class AddProductSearchParagonFragment extends Fragment {
 
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
 
-            BleManager.getInstance().displayGattServices(address);
-
-            // Request data to check connectivity
-            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-
-            // Transit to success UI
-            getFragmentManager().
-                    beginTransaction().
-                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
-                    addToBackStack(null).
-                    commit();
+//            BleManager.getInstance().displayGattServices(address);
+//
+//            // Request data to check connectivity
+//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+//
+//            attached.setNewProductAddress(deviceAddress);
+//
+//            // Transit to success UI
+//            getFragmentManager().
+//                    beginTransaction().
+//                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
+//                    addToBackStack(null).
+//                    commit();
         }
 
         @Override
@@ -226,10 +260,13 @@ public class AddProductSearchParagonFragment extends Fragment {
 
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
 
-            if(deviceAddress != null & deviceAddress.equals(address) &&
-            ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION.toLowerCase().equals(uuid)){
-                Log.d(TAG, "[Found!!!] address: " + address + ", uuid: " + uuid);
-            }
+//            if(deviceAddress != null & deviceAddress.equals(address) &&
+//            ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION.toLowerCase().equals(uuid)){
+//                Log.d(TAG, "[Found!!!] address: " + address + ", uuid: " + uuid);
+//
+//
+//                ProductManager.getInstance().add(deviceAddress);
+//            }
         }
     };
 

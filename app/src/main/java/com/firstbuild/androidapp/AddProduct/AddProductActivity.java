@@ -1,6 +1,5 @@
 package com.firstbuild.androidapp.addProduct;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,9 +8,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 
 public class AddProductActivity extends ActionBarActivity {
     private String TAG = AddProductActivity.class.getSimpleName();
+    private ProductInfo newProduct = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +120,29 @@ public class AddProductActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setNewProductAddress(String deviceAddress) {
+        if(newProduct != null){
+            newProduct.address = deviceAddress;
+        }
+    }
+
+    public void createNewProduct(int productTypeParagon) {
+
+        newProduct = new ProductInfo(productTypeParagon, "", "");
+    }
+
+    public void setNewProductNickname(String nickName) {
+        if(newProduct != null){
+            newProduct.nickname = nickName;
+        }
+    }
+
+    public void addNewProductToList() {
+        if(newProduct != null){
+            ProductManager.getInstance().add(newProduct);
+        }
     }
 
 

@@ -123,7 +123,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
 
         switch(selectModeSteps){
             case STEP_COOKING_METHOD:
-                if(position == 2){
+                if(text.equals("Sous Vide")){
                     selectModeSteps = SelectModeSteps.STEP_MATERIAL;
 
                     SetTitle(text);
@@ -139,7 +139,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
                 break;
 
             case STEP_MATERIAL:
-                if(position == 0){
+                if(text.equals("Beef")){
                     selectModeSteps = SelectModeSteps.STEP_HOW_TO_COOK;
                     SetTitle(text);
 
@@ -154,7 +154,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
                 break;
 
             case STEP_HOW_TO_COOK:
-                if(position == 0){
+                if(text.equals("Roast")){
                     SetTitle("Settings");
                     attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
                 }

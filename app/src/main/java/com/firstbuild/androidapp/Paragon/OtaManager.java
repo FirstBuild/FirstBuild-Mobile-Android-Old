@@ -115,7 +115,7 @@ public class OtaManager {
     public void startProcess(){
         currentStep = OTA_STEP_COMPARE_VERSION;
 
-        ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+        ByteBuffer valueBuffer = ByteBuffer.allocate(3);
 
         valueBuffer.put((byte) 1);
         BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
@@ -213,7 +213,7 @@ public class OtaManager {
         else {
             currentStep = OTA_STEP_SEND_IMAGE_DONE;
 
-            ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+            ByteBuffer valueBuffer = ByteBuffer.allocate(3);
 
             valueBuffer.put((byte) 3);
             BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
