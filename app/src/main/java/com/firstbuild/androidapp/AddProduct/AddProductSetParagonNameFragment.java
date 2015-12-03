@@ -64,13 +64,14 @@ public class AddProductSetParagonNameFragment extends Fragment {
                 // Get name from edit text
                 String paragonName = paragonNameEditText.getText().toString();
 
-                // Save device name here
-                if (paragonName != null && paragonName != "") {
-                    Log.d(TAG, "Paragon Nickname: " + paragonName);
-
-                    attached.setNewProductNickname(paragonName);
-                    attached.addNewProductToList();
+                if(paragonName.isEmpty()){
+                    paragonName = "My Paragon";
                 }
+
+                // Save device name here
+                Log.d(TAG, "Paragon Nickname: " + paragonName);
+                attached.setNewProductNickname(paragonName);
+                attached.addNewProductToList();
 
                 // Go to dash board
                 Intent intent = new Intent(getActivity(), DashboardActivity.class);
