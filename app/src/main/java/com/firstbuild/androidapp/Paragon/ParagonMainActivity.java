@@ -196,7 +196,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             onReceivedData(uuid, value);
 
-            nextCharacteristicRead();
+//            nextCharacteristicRead();
         }
 
         @Override
@@ -351,6 +351,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                     if (dialogWaiting.isShowing()) {
                         dialogWaiting.dismiss();
                     }
+
 
                     new Thread(new Runnable() {
                         @Override
@@ -664,6 +665,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d(TAG, "onCreate IN");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paragon_main);
 
@@ -753,6 +756,20 @@ public class ParagonMainActivity extends ActionBarActivity {
                 checkParagonConnectionStatus();
             }
         };
+
+        // Check bluetooth adapter. If the adapter is disabled, enable it
+        boolean result = BleManager.getInstance().isBluetoothEnabled();
+
+
+        if (!result) {
+            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
+        }
+        else {
+            Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
+            startCommunicateParagon();
+        }
 
 
     }
@@ -965,6 +982,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.RGB_565;
+            options.inSampleSize = 4;
             Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath, options);
             Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
@@ -990,37 +1008,29 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume");
         super.onResume();
 
-        // Check bluetooth adapter. If the adapter is disabled, enable it
-        boolean result = BleManager.getInstance().isBluetoothEnabled();
-
-        if (!result) {
-            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
-        }
-        else {
-            Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
-            startCommunicateParagon();
-        }
 
     }
 
 
     private void startCommunicateParagon() {
+        Log.d(TAG, "startCommunicateParagon IN");
 
         handlerCheckingConnection.postDelayed(runnable, INTERVAL_CHECKING_PARAGON_CONNECTION);
 
         // Get Initial values.
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
         BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_OTA_COMMAND, true);
+
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
 
         nextStep(ParagonSteps.STEP_CHECK_CURRENT_STATUS);
 
         dialogWaiting.setContent("Communicating...");
         dialogWaiting.show();
 
+        Log.d(TAG, "startCommunicateParagon OUT");
     }
 
     private void startSearchParagon() {
@@ -1041,6 +1051,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     public void loadImageFromFile(String imageFileName) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inSampleSize = 4;
         Bitmap imageBitmap;
         try {
             imageBitmap = BitmapFactory.decodeFile(imageFileName, options);

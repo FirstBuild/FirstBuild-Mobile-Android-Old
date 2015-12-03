@@ -133,6 +133,11 @@ public class DashboardActivity extends ActionBarActivity {
 
 
     @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -211,7 +216,8 @@ public class DashboardActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(DashboardActivity.this, AddProductActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(DashboardActivity.this).toBundle());
+//                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(DashboardActivity.this).toBundle());
+                startActivity(intent);
             }
         });
 
@@ -260,6 +266,8 @@ public class DashboardActivity extends ActionBarActivity {
 
     @Override
     protected void onResume() {
+
+        Log.d(TAG, "onResume");
         super.onResume();
 
 //        BleManager.getInstance().disconnect();
@@ -402,6 +410,11 @@ public class DashboardActivity extends ActionBarActivity {
 
     public void itemClicked(int position) {
         ProductInfo productInfo = adapterDashboard.getItem(position);
+
+        if(productInfo.batteryLevel == ProductInfo.NO_BATTERY_INFO &&
+                productInfo.cookMode.isEmpty()){
+            return;
+        }
 
         if (productInfo.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
             Intent intent = new Intent(DashboardActivity.this, ParagonMainActivity.class);

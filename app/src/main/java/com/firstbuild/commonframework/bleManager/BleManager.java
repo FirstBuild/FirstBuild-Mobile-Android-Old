@@ -453,7 +453,8 @@ public class BleManager {
                                 printGattValue(values);
 
                                 characteristic.setValue(values);
-                                bluetoothGatt.writeCharacteristic(characteristic);
+                                boolean result = bluetoothGatt.writeCharacteristic(characteristic);
+                                Log.d(TAG, "result of writeCharacteristic is "+result);
                                 break;
                             } else {
                                 // Do nothing
@@ -503,7 +504,8 @@ public class BleManager {
                                 bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
                                 BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(CLIENT_CONFIGURATION_UUID));
                                 descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                                bluetoothGatt.writeDescriptor(descriptor);
+                                boolean result = bluetoothGatt.writeDescriptor(descriptor);
+                                Log.d(TAG, "result of writeDescriptor is "+result);
                                 break;
                             } else {
                                 // Do nothing

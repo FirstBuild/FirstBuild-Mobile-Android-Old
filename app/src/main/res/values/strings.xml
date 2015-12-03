@@ -72,22 +72,22 @@
     <string name="drawer_close">close</string>
 
     <string-array name="paragon_modes">
-        <item>Boil</item>
-        <item>Chocolate</item>
+        <!--<item>Boil</item>-->
+        <!--<item>Chocolate</item>-->
         <item>Sous Vide</item>
-        <item>Candy</item>
-        <item>Deep Fry</item>
-        <item>Warming</item>
+        <!--<item>Candy</item>-->
+        <!--<item>Deep Fry</item>-->
+        <!--<item>Warming</item>-->
     </string-array>
 
     <string-array name="paragon_modes_sousvide">
         <item>Beef</item>
-        <item>Chicken</item>
-        <item>Pork</item>
-        <item>Seafood</item>
-        <item>Turkey</item>
-        <item>Veal</item>
-        <item>Vegetables</item>
+        <!--<item>Chicken</item>-->
+        <!--<item>Pork</item>-->
+        <!--<item>Seafood</item>-->
+        <!--<item>Turkey</item>-->
+        <!--<item>Veal</item>-->
+        <!--<item>Vegetables</item>-->
     </string-array>
 
     <string-array name="kind_of_recipe">
@@ -97,7 +97,7 @@
 
 
     <string-array name="paragon_modes_beef">
-        <item>Steak</item>
+        <!--<item>Steak</item>-->
         <item>Roast</item>
     </string-array>
     <string name="title_activity_settings">Settings</string>
