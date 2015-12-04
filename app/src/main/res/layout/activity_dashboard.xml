@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.firstbuild.androidapp.dashboard.DashboardActivity"
-    xmlns:ge="http://schemas.android.com/apk/res-auto">
+    >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,10 +23,13 @@
             android:paddingTop="@dimen/nav_drawer_header_height">
 
 
-            <!--<android.support.v7.widget.RecyclerView-->
-                <!--android:id="@+id/listProduct"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"/>-->
+            <ImageView
+                android:id="@+id/img_no_product"
+                android:layout_width="wrap_content"
+                android:layout_height="238dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/img_robot"/>
 
             <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
                 android:id="@+id/listProduct"

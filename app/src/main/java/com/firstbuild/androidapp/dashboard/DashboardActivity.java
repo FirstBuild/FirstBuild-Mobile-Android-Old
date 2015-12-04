@@ -53,6 +53,7 @@ public class DashboardActivity extends ActionBarActivity {
     private ProductListAdapter adapterDashboard;
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
+    private View layoutNoProduct;
 
 
     private BleListener bleListener = new BleListener() {
@@ -153,6 +154,14 @@ public class DashboardActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
         listViewProduct = (SwipeMenuListView) findViewById(R.id.listProduct);
+        layoutNoProduct = findViewById(R.id.img_no_product);
+
+        layoutNoProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         adapterDashboard = new ProductListAdapter();
         listViewProduct.setAdapter(adapterDashboard);
@@ -191,8 +200,7 @@ public class DashboardActivity extends ActionBarActivity {
                         if(BleManager.getInstance().unpair(product.address) == true){
                             ProductManager.getInstance().remove(0);
 
-                            adapterDashboard.notifyDataSetChanged();
-                            listViewProduct.invalidateViews();
+                            updateListView();
                         }
 
                         break;
@@ -296,16 +304,23 @@ public class DashboardActivity extends ActionBarActivity {
 
         connectProducts();
 
+
+
     }
 
     private void updateListView() {
 
-//        ArrayList<ProductInfo> productsOrg = ProductManager.getInstance().getProducts();
-//        ArrayList<ProductInfo> productsNew = new ArrayList<ProductInfo>(ProductManager.getInstance().getSize());
-//
-//        for (ProductInfo product : productsOrg) {
-//            productsNew.add(new ProductInfo(product));
-//        }
+        adapterDashboard.notifyDataSetChanged();
+        listViewProduct.invalidateViews();
+
+
+        if(adapterDashboard.getCount() == 0){
+            layoutNoProduct.setVisibility(View.VISIBLE);
+        }
+        else{
+            layoutNoProduct.setVisibility(View.GONE);
+        }
+
 
     }
 
