@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -159,7 +160,7 @@ public class DashboardActivity extends ActionBarActivity {
         layoutNoProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.urlFistBuild))));
             }
         });
 
@@ -316,11 +317,12 @@ public class DashboardActivity extends ActionBarActivity {
 
         if(adapterDashboard.getCount() == 0){
             layoutNoProduct.setVisibility(View.VISIBLE);
+            listViewProduct.setVisibility(View.GONE);
         }
         else{
             layoutNoProduct.setVisibility(View.GONE);
+            listViewProduct.setVisibility(View.VISIBLE);
         }
-
 
     }
 
