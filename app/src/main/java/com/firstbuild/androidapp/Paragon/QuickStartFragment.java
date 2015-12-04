@@ -124,33 +124,33 @@ public class QuickStartFragment extends Fragment {
 
         pickerMinHour.setMinValue(0);
         pickerMinHour.setMaxValue(12);
-        pickerMinHour.setWrapSelectorWheel(true);
+        pickerMinHour.setWrapSelectorWheel(false);
         pickerMinHour.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         pickerMinHour.setValue(0);
 
         pickerMinMin.setMinValue(0);
         pickerMinMin.setMaxValue(59);
-        pickerMinMin.setWrapSelectorWheel(true);
+        pickerMinMin.setWrapSelectorWheel(false);
         pickerMinMin.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         pickerMinMin.setValue(30);
 
         pickerMaxHour.setMinValue(0);
         pickerMaxHour.setMaxValue(12);
-        pickerMaxHour.setWrapSelectorWheel(true);
+        pickerMaxHour.setWrapSelectorWheel(false);
         pickerMaxHour.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         pickerMaxHour.setValue(0);
 
         pickerMaxMin.setMinValue(0);
         pickerMaxMin.setMaxValue(59);
-        pickerMaxMin.setWrapSelectorWheel(true);
+        pickerMaxMin.setWrapSelectorWheel(false);
         pickerMaxMin.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         pickerMaxMin.setValue(0);
 
-        pickerTemp.setMinValue(50);
-        pickerTemp.setMaxValue(200);
-        pickerTemp.setWrapSelectorWheel(true);
+        pickerTemp.setMinValue(ParagonValues.QUICK_MIN_TEMP);
+        pickerTemp.setMaxValue(ParagonValues.QUICK_MAX_TEMP);
+        pickerTemp.setWrapSelectorWheel(false);
         pickerTemp.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        pickerTemp.setValue(100);
+        pickerTemp.setValue(ParagonValues.QUICK_MIN_TEMP);
 
 
         pickerMinHour.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
@@ -199,22 +199,6 @@ public class QuickStartFragment extends Fragment {
                 RecipeManager.getInstance().getCurrentStage().setSpeed(10);
                 RecipeManager.getInstance().sendCurrentStages();
 
-//                int setTargetTimeMin = pickerMinHour.getValue() * 60 + pickerMinMin.getValue();
-//                int setTargetTimeMax = pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue();
-//                float setTargetTemp = (float)pickerTemp.getValue();
-
-//                attached.setTargetTime(setTargetTimeMin, setTargetTimeMax);
-//                attached.setTargetTemp(setTargetTemp);
-
-//                ByteBuffer valueBuffer = ByteBuffer.allocate(40);
-//
-//                // Not support multi stage for SousVide.
-//                valueBuffer.put(8 , (byte) 10);
-//                valueBuffer.putShort(1, (short)(setTargetTimeMin));
-//                valueBuffer.putShort(3, (short)(setTargetTimeMax));
-//                valueBuffer.putShort(5, (short) ((setTargetTemp) * 100));
-//
-//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
             }
         });

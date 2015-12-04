@@ -61,5 +61,6 @@ public class ParagonValues {
     public static final byte CURRENT_COOK_MODE_GENTLE = 0x03;
     public static final byte CURRENT_COOK_MODE_MULTISTEP = 0x04;
 
-
+    public static final int QUICK_MIN_TEMP = 80;
+    public static final int QUICK_MAX_TEMP = 375;
 }
