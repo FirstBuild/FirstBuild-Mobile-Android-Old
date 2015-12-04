@@ -309,7 +309,7 @@ public class SousvideStatusFragment extends Fragment {
 
         if (cookState == COOK_STATE.STATE_PREHEAT) {
             float currentTemp = attached.getCurrentTemp();
-            textTempCurrent.setText((int)currentTemp + "℉");
+            textTempCurrent.setText(Math.round(currentTemp) + "℉");
 
             float ratioTemp = currentTemp / (float)stageInfo.getTemp();
 

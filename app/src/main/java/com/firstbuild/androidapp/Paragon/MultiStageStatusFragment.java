@@ -339,7 +339,7 @@ public class MultiStageStatusFragment extends Fragment {
 
         if (cookState == MULTI_STAGE_COOK_STATE.STATE_HEAT_COOL) {
 
-            int currentTemp = (int)attached.getCurrentTemp();
+            int currentTemp = Math.round(attached.getCurrentTemp());
             int targetTep = stageInfo.getTemp();
 
             if(currentTemp < targetTep){
@@ -349,7 +349,7 @@ public class MultiStageStatusFragment extends Fragment {
                 textStatusName.setText("COOLING");
             }
 
-            textTempCurrent.setText((int)currentTemp + "℉");
+            textTempCurrent.setText(currentTemp + "℉");
 
             float ratioTemp = currentTemp / (float)stageInfo.getTemp();
 
