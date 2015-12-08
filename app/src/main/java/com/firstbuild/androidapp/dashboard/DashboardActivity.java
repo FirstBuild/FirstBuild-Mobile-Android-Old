@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.addProduct.AddProductActivity;
@@ -443,8 +444,12 @@ public class DashboardActivity extends ActionBarActivity {
     public void itemClicked(int position) {
         ProductInfo productInfo = adapterDashboard.getItem(position);
 
-        if(productInfo.batteryLevel == ProductInfo.NO_BATTERY_INFO &&
-                productInfo.cookMode.isEmpty()){
+        if(productInfo.isProbeConnect == false){
+            new MaterialDialog.Builder(DashboardActivity.this)
+                    .title("Probe is not connected")
+                    .content("Please check the probe connection. Not able to cook without Paragon probe.")
+                    .positiveText("Ok")
+                    .cancelable(true).show();
             return;
         }
 
