@@ -1,6 +1,5 @@
 package com.firstbuild.androidapp.dashboard;
 
-import android.app.ActivityOptions;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
@@ -19,11 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +29,6 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.addProduct.AddProductActivity;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.androidapp.viewUtil.SwipeMenu;
@@ -197,18 +193,38 @@ public class DashboardActivity extends ActionBarActivity {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
 
-                switch (index) {
-                    case 0:
-                        // delete
-                        Log.d(TAG, "onMenuItemClick 0");
-                        ProductInfo product = ProductManager.getInstance().getProduct(0);
+                if (index == 0) {
+                    // delete
+                    Log.d(TAG, "onMenuItemClick 0");
 
-                        BleManager.getInstance().unpair(product.address);
-                        ProductManager.getInstance().remove(0);
 
-                        updateListView();
+                    new MaterialDialog.Builder(DashboardActivity.this)
+                            .title("Delete product")
+                            .content("Are you sure?")
+                            .positiveText("Yes")
+                            .negativeText("no")
+                            .cancelable(false)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    ProductInfo product = ProductManager.getInstance().getProduct(0);
 
-                        break;
+                                    BleManager.getInstance().unpair(product.address);
+                                    ProductManager.getInstance().remove(0);
+
+                                    updateListView();
+                                }
+
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                }
+
+                                @Override
+                                public void onNeutral(MaterialDialog dialog) {
+                                }
+                            })
+                            .show();
+
                 }
                 return false;
             }
