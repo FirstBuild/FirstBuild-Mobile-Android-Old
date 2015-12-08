@@ -94,8 +94,12 @@ public class DashboardActivity extends ActionBarActivity {
 
             BleManager.getInstance().displayGattServices(address);
 
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
+
         }
 
         @Override
@@ -198,11 +202,10 @@ public class DashboardActivity extends ActionBarActivity {
                         Log.d(TAG, "onMenuItemClick 0");
                         ProductInfo product = ProductManager.getInstance().getProduct(0);
 
-                        if(BleManager.getInstance().unpair(product.address) == true){
-                            ProductManager.getInstance().remove(0);
+                        BleManager.getInstance().unpair(product.address);
+                        ProductManager.getInstance().remove(0);
 
-                            updateListView();
-                        }
+                        updateListView();
 
                         break;
                 }
@@ -379,6 +382,18 @@ public class DashboardActivity extends ActionBarActivity {
                     product.cookMode = "";
                 }
                 break;
+
+
+            case ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE:
+                Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
+
+                if(byteBuffer.get() == ParagonValues.PROBE_CONNECT){
+                    product.isProbeConnect = true;
+                }
+                else {
+                    product.isProbeConnect = false;
+                }
+                break;
         }
 
         new Thread(new Runnable() {
@@ -496,21 +511,32 @@ public class DashboardActivity extends ActionBarActivity {
             String batteryLevel = currentProduct.batteryLevel + "%";
             holderDashboard.textBattery.setText(batteryLevel + "");
 
-            if (currentProduct.batteryLevel > 75) {
-                holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_100);
+
+            if(currentProduct.isProbeConnect == false){
+                holderDashboard.textProbe.setVisibility(View.VISIBLE);
+                holderDashboard.layoutBatteryLevel.setVisibility(View.GONE);
             }
-            else if (currentProduct.batteryLevel > 25) {
-                holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_50);
-            }
-            else if (currentProduct.batteryLevel > 15) {
-                holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_25);
-            }
-            else {
-                holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_15);
+            else{
+
+                holderDashboard.textProbe.setVisibility(View.GONE);
+                holderDashboard.layoutBatteryLevel.setVisibility(View.VISIBLE);
+
+                if (currentProduct.batteryLevel > 75) {
+                    holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_100);
+                }
+                else if (currentProduct.batteryLevel > 25) {
+                    holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_50);
+                }
+                else if (currentProduct.batteryLevel > 15) {
+                    holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_25);
+                }
+                else {
+                    holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_15);
+                }
+
             }
 
-            if(currentProduct.batteryLevel == ProductInfo.NO_BATTERY_INFO &&
-                    currentProduct.cookMode.isEmpty()){
+            if(currentProduct.batteryLevel == ProductInfo.NO_BATTERY_INFO){
                 holderDashboard.progressBar.setVisibility(View.VISIBLE);
                 holderDashboard.layoutStatus.setVisibility(View.GONE);
             }
@@ -529,9 +555,11 @@ public class DashboardActivity extends ActionBarActivity {
             private TextView textNickname;
             private TextView textCooking;
             private TextView textBattery;
+            private TextView textProbe;
             private ImageView imageBattery;
             private View progressBar;
             private View layoutStatus;
+            private View layoutBatteryLevel;
 
             public ViewHolder(View view) {
                 imageMark = (ImageView) view.findViewById(R.id.image_mark);
@@ -542,6 +570,8 @@ public class DashboardActivity extends ActionBarActivity {
                 imageBattery = (ImageView) view.findViewById(R.id.image_battery);
                 progressBar = view.findViewById(R.id.progressBar);
                 layoutStatus = view.findViewById(R.id.layout_status);
+                textProbe = (TextView) view.findViewById(R.id.text_probe_connect);
+                layoutBatteryLevel = view.findViewById(R.id.layout_battery_level);
 
                 view.setTag(this);
             }

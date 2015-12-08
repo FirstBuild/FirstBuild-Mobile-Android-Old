@@ -63,4 +63,7 @@ public class ParagonValues {
 
     public static final int QUICK_MIN_TEMP = 80;
     public static final int QUICK_MAX_TEMP = 375;
+
+    public static final byte PROBE_CONNECT = 0x01;
+    public static final byte PROBE_NOT_CONNECT = 0x02;
 }

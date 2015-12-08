@@ -62,7 +62,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
         android:gravity="end"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="vertical">
 
         <TextView
@@ -75,7 +75,18 @@
             android:textColor="@color/colorParagonAccent"
             android:textSize="19sp"/>
 
+        <TextView
+            android:id="@+id/text_probe_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Check Probe"
+            android:visibility="visible"
+            android:textColor="@color/colorParagonAccent"
+            android:textSize="19sp"/>
+
         <LinearLayout
+            android:id="@+id/layout_battery_level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
