@@ -18,21 +18,13 @@ public class ProductManager {
     private static ProductManager ourInstance = new ProductManager();
     private String TAG = ProductManager.class.getSimpleName();
     private ArrayList<ProductInfo> products = new ArrayList<ProductInfo>();
+    private int selectedIndex = -1;
 
     private ProductManager() {
     }
 
     public static ProductManager getInstance() {
         return ourInstance;
-    }
-
-    /**
-     * Get the number of product.
-     *
-     * @return Number of product.
-     */
-    public int getSize() {
-        return products.size();
     }
 
     public ProductInfo getProduct(int index) {
@@ -130,6 +122,29 @@ public class ProductManager {
 
         Log.d(TAG, "read DONE");
 
+    }
+
+    public ProductInfo getCurrent() {
+        ProductInfo productInfo = null;
+
+        if (0 <= selectedIndex && selectedIndex < getSize()) {
+            productInfo = products.get(selectedIndex);
+        }
+
+        return productInfo;
+    }
+
+    /**
+     * Get the number of product.
+     *
+     * @return Number of product.
+     */
+    public int getSize() {
+        return products.size();
+    }
+
+    public void setCurrent(int index) {
+        selectedIndex = index;
     }
 
     public ArrayList<ProductInfo> getProducts() {

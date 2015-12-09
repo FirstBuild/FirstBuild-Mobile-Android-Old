@@ -470,6 +470,9 @@ public class DashboardActivity extends ActionBarActivity {
         }
 
         if (productInfo.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
+
+            ProductManager.getInstance().setCurrent(position);
+
             Intent intent = new Intent(DashboardActivity.this, ParagonMainActivity.class);
             startActivity(intent);
         }
