@@ -299,21 +299,6 @@ public class DashboardActivity extends ActionBarActivity {
         Log.d(TAG, "onResume");
         super.onResume();
 
-//        BleManager.getInstance().disconnect();
-
-        // Check bluetooth adapter. If the adapter is disabled, enable it
-//        boolean result = BleManager.getInstance().isBluetoothEnabled();
-//
-//        if (!result) {
-//            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
-//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
-//        }
-//        else {
-//            Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
-//            BleManager.getInstance().startScan();
-//        }
-
 
         // Initialize ble manager
         BleManager.getInstance().initBleManager(this);

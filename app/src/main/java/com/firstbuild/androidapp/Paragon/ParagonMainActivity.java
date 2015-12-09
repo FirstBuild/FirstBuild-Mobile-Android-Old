@@ -32,11 +32,11 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.dashboard.DashboardActivity;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
+import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Queue;
 
 public class ParagonMainActivity extends ActionBarActivity {
-    public static final int INTERVAL_CHECKING_PARAGON_CONNECTION = 20000;
+    public static final int INTERVAL_CHECKING_PARAGON_CONNECTION = 30000;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final byte INITIAL_VALUE = 0x0f;
     Toolbar toolbar;
@@ -120,7 +120,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                         public void run() {
                             if (status == BluetoothProfile.STATE_CONNECTED) {
 
-                                if(disconnectDialog.isShowing()){
+                                if (disconnectDialog.isShowing()) {
                                     disconnectDialog.dismiss();
 
                                     new MaterialDialog.Builder(ParagonMainActivity.this)
@@ -128,7 +128,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                                             .positiveText("Ok")
                                             .cancelable(true).show();
                                 }
-                                else{
+                                else {
 
                                 }
                             }
@@ -136,7 +136,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                                 disconnectDialog.show();
                                 BleManager.getInstance().connect(address);
                             }
-                            else{
+                            else {
                                 // do nothing
                             }
 
@@ -1040,11 +1040,25 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        super.onPause();
+
+        if (disconnectDialog.isShowing()) {
+            Log.d(TAG, "Stop reconnect");
+            BleManager.getInstance().disconnect();
+        }
+    }
+
+    @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
 
-
+        if (disconnectDialog.isShowing()) {
+            Log.d(TAG, "Try to reconnect again");
+            BleManager.getInstance().connect(ProductManager.getInstance().getCurrent().address);
+        }
     }
 
 

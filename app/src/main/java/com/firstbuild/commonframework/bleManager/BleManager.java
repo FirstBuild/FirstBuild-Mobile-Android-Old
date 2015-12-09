@@ -173,17 +173,6 @@ public class BleManager {
             return false;
         }
 
-//        // Previously connected device.  Try to reconnect.
-//        if (address != null && address.equals(address) && bluetoothGatt != null) {
-//            Log.d(TAG, "Trying to use an existing BluetoothGatt for connection.");
-//            if (bluetoothGatt.connect()) {
-//                connectionState = BleValues.STATE_CONNECTING;
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
-
         final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
 
         if (bleDevice == null) {
