@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.dashboard.DashboardActivity;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
@@ -47,7 +49,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 public class ParagonMainActivity extends ActionBarActivity {
@@ -80,42 +81,13 @@ public class ParagonMainActivity extends ActionBarActivity {
     private MaterialDialog dialogWaiting;
     private MaterialDialog dialogOtaProcessing;
     private MaterialDialog dialogOtaAsk;
-
+    private MaterialDialog disconnectDialog = null;
     private BleListener bleListener = new BleListener() {
         @Override
         public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
             super.onScanDevices(bluetoothDevices);
 
             Log.d(TAG, "onScanDevices IN");
-
-            Log.d(TAG, "bluetoothDevices size: " + bluetoothDevices.size());
-//            for (Map.Entry<String, BluetoothDevice> entry : bluetoothDevices.entrySet()) {
-//
-//                // Retrieves address and name
-//                BluetoothDevice device = entry.getValue();
-//                String address = device.getAddress();
-//                String name = device.getName();
-//
-//                Log.d(TAG, "------------------------------------");
-//                Log.d(TAG, "Device address: " + address);
-//                Log.d(TAG, "Device name: " + name);
-//
-//                if (ParagonValues.TARGET_DEVICE_NAME.equals(name)) {
-//                    Log.d(TAG, "device found: " + device.getName());
-//
-//                    dialogWaiting.setContent("Communicating...");
-//
-//                    // Connect to device
-//                    BleManager.getInstance().connect(address);
-//
-//                    // Stop ble device scanning
-//                    BleManager.getInstance().stopScan();
-//
-//                    nextStep(ParagonSteps.STEP_CHECK_CURRENT_STATUS);
-//                    break;
-//                }
-//            }
-            Log.d(TAG, "====================================");
         }
 
         @Override
@@ -138,6 +110,42 @@ public class ParagonMainActivity extends ActionBarActivity {
             super.onConnectionStateChanged(address, status);
 
             Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
+
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (status == BluetoothProfile.STATE_CONNECTED) {
+
+                                if(disconnectDialog.isShowing()){
+                                    disconnectDialog.dismiss();
+
+                                    new MaterialDialog.Builder(ParagonMainActivity.this)
+                                            .content("Bluetooth Reconnected")
+                                            .positiveText("Ok")
+                                            .cancelable(true).show();
+                                }
+                                else{
+
+                                }
+                            }
+                            else if (status == BluetoothProfile.STATE_DISCONNECTED) {
+                                disconnectDialog.show();
+                                BleManager.getInstance().connect(address);
+                            }
+                            else{
+                                // do nothing
+                            }
+
+                        }
+                    });
+                }
+            }).start();
+
+
         }
 
         @Override
@@ -456,10 +464,10 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     private void onCookState(final byte state) {
 
-        if(state == ParagonValues.COOK_STATE_OFF){
+        if (state == ParagonValues.COOK_STATE_OFF) {
             nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
         }
-        else{
+        else {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -771,11 +779,33 @@ public class ParagonMainActivity extends ActionBarActivity {
             startCommunicateParagon();
         }
 
+        disconnectDialog = new MaterialDialog.Builder(ParagonMainActivity.this)
+                .title("Bluetooth Disconnected")
+                .content("Phone is out of range. Trying reconnect...")
+                .progress(true, 0)
+                .cancelable(false)
+                .negativeText("Cancel")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        BleManager.getInstance().removeListener(bleListener);
+                        finish();
+                    }
+
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                    }
+                })
+                .build();
 
     }
 
     private void checkParagonConnectionStatus() {
-        if(dialogWaiting.isShowing()){
+        if (dialogWaiting.isShowing()) {
             dialogWaiting.dismiss();
 
             new MaterialDialog.Builder(ParagonMainActivity.this)
@@ -829,7 +859,10 @@ public class ParagonMainActivity extends ActionBarActivity {
         BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
         BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
         BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_ERROR_STATE);
 
+
+        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ERROR_STATE, true);
         BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
         BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
         BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);

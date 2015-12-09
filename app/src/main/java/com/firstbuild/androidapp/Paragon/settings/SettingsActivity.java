@@ -92,6 +92,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if(productInfo != null){
                     productInfo.nickname = newValue;
+                    ProductManager.getInstance().write();
                 }
                 else{
                     Log.d(TAG, "productInfo is Null");
