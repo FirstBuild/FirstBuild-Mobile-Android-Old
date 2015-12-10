@@ -92,11 +92,12 @@ public class DashboardActivity extends ActionBarActivity {
             BleManager.getInstance().displayGattServices(address);
 
             BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
-            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_MODE, true);
+            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, false);
+
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
             BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
-
         }
 
         @Override

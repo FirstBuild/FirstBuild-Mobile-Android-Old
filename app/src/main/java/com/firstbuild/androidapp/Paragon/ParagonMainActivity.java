@@ -72,7 +72,6 @@ public class ParagonMainActivity extends ActionBarActivity {
     private Handler handlerCheckingConnection;
     // Thread for update UI.
     private Runnable runnable;
-    private int MAX_BURNER = 5;
     // Navigation drawer.
     private NavigationDrawerFragment drawerFragment;
     private TextView toolbarText;
@@ -171,28 +170,53 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
 
         @Override
-        public void onCharacteristicWrite(String address, String uuid, byte[] value) {
+        public void onCharacteristicWrite(String address, String uuid, final byte[] value) {
             super.onCharacteristicWrite(address, uuid, value);
 
-            Log.d(TAG, "[onCharacteristicWrite] address: " + address + ", uuid: " + uuid);
+            final int ret = (int) value[0];
 
-            if (uuid.toUpperCase().equals(ParagonValues.CHARACTERISTIC_OTA_DATA)) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dialogOtaProcessing.setMaxProgress(OtaManager.getInstance().getTransferCount());
-                                dialogOtaProcessing.setProgress(OtaManager.getInstance().getTransferOffset());
-                            }
-                        });
-                    }
-                }).start();
+            Log.d(TAG, "[onCharacteristicWrite] uuid: " + uuid + ", value: " + String.format("%02x", value[0]));
+
+            switch (uuid.toUpperCase()) {
+                case ParagonValues.CHARACTERISTIC_OTA_DATA:
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialogOtaProcessing.setMaxProgress(OtaManager.getInstance().getTransferCount());
+                                    dialogOtaProcessing.setProgress(OtaManager.getInstance().getTransferOffset());
+                                }
+                            });
+                        }
+                    }).start();
 
 
-                OtaManager.getInstance().responseWriteData();
+                    OtaManager.getInstance().responseWriteData();
+                    break;
+
+                case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+//
+//                                    if (fragment instanceof GetReadyFragment) {
+//                                        ((GetReadyFragment) fragment).responseSendStage(ret);
+//                                    }
+//
+//                                }
+//                            });
+//                        }
+//                    }).start();
+                    break;
+
             }
+
 
         }
 
@@ -214,6 +238,10 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
+
+    public byte getCookMode() {
+        return cookMode;
+    }
 
     public MaterialDialog getDialogOtaProcessing() {
         return dialogOtaProcessing;
@@ -329,14 +357,12 @@ public class ParagonMainActivity extends ActionBarActivity {
 
                 burnerStatus = value[0];
                 checkInitialStatus();
-
                 break;
 
 
             case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE:
                 Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STATE :" + String.format("%02x", value[0]));
                 onCookState(value[0]);
-
                 break;
 
 
@@ -350,6 +376,27 @@ public class ParagonMainActivity extends ActionBarActivity {
                 Log.d(TAG, "CHARACTERISTIC_COOK_MODE :" + String.format("%02x", value[0]));
                 cookMode = value[0];
                 checkInitialStatus();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+                                if (fragment instanceof GetReadyFragment) {
+                                    ((GetReadyFragment) fragment).onCookModeChanged(cookMode);
+                                }
+                                else {
+                                    //do nothing
+                                }
+
+                            }
+                        });
+                    }
+                }).start();
+
                 break;
 
 

@@ -55,7 +55,7 @@ public class ParagonValues {
     public static final byte BURNER_STATE_STOP = 0x00;
     public static final byte BURNER_STATE_START = 0x01;
 
-    public static final byte CURRENT_COOK_MODE_NONE = 0x00;
+    public static final byte CURRENT_COOK_MODE_OFF = 0x00;
     public static final byte CURRENT_COOK_MODE_DIRECT = 0x01;
     public static final byte CURRENT_COOK_MODE_RAPID = 0x02;
     public static final byte CURRENT_COOK_MODE_GENTLE = 0x03;
