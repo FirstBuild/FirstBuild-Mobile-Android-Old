@@ -54,6 +54,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_select_mode, container, false);
 
+        view.findViewById(R.id.btn_my_recipes).setVisibility(View.GONE);
         view.findViewById(R.id.btn_my_recipes).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
