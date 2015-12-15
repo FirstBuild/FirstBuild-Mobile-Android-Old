@@ -443,7 +443,16 @@ public class BleManager {
 
                                 characteristic.setValue(values);
                                 boolean result = bluetoothGatt.writeCharacteristic(characteristic);
-                                Log.d(TAG, "result of writeCharacteristic is "+result);
+                                Log.d(TAG, "result of writeCharacteristic is " + result);
+
+                                if(result == false){
+                                    Log.d(TAG, "write failed!!!!! Call writeCharacteristic again");
+                                    writeCharateristics(characteristicsUuid, values);
+                                }
+                                else{
+                                    // do nothing.
+                                }
+
                                 break;
                             } else {
                                 // Do nothing
@@ -508,6 +517,7 @@ public class BleManager {
         doOperation();
         return result;
     }
+
 
     public boolean writeDescriptor(final String characteristicsUuid) {
 

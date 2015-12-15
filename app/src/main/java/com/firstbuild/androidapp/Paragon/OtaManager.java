@@ -65,7 +65,9 @@ public class OtaManager {
         byte[] versionChunk = new byte[4];
 
         try {
-            inputStream = assetManager.open("image/paragon_master.ota");
+
+            String[] fileNames =assetManager.list("image");
+            inputStream = assetManager.open("image/"+fileNames[0]);
 
             // Image file contained its version number in for four byte from 5th data.
             inputStream.skip(4);
@@ -98,10 +100,9 @@ public class OtaManager {
 
         boolean isNeedUpdate;
 
-        if (this.versionMajor != versionMajor ||
-                this.versionMinor != versionMinor ||
-                this.versionBuild != versionBuild) {
-
+        if (this.versionMajor > versionMajor ||
+            this.versionMinor > versionMinor ||
+            this.versionBuild > versionBuild) {
             isNeedUpdate = true;
         }
         else {
@@ -137,7 +138,8 @@ public class OtaManager {
 
         try {
             // Open image file
-            inputStream = assetManager.open("image/paragon_master.ota");
+            String[] fileNames = assetManager.list("image");
+            inputStream = assetManager.open("image/"+fileNames[0]);
 
             // get file image file size and get the size to be padded.
             imageSize = inputStream.available();
