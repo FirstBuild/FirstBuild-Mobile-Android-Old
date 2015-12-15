@@ -504,6 +504,15 @@ public class BleManager {
                                 descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                                 boolean result = bluetoothGatt.writeDescriptor(descriptor);
                                 Log.d(TAG, "result of writeDescriptor is "+result);
+
+                                if(result == false){
+                                    Log.d(TAG, "write failed!!!!! Call setCharacteristicNotification again");
+                                    setCharacteristicNotification(characteristicsUuid, enabled);
+                                }
+                                else{
+                                    // do nothing.
+                                }
+
                                 break;
                             } else {
                                 // Do nothing
