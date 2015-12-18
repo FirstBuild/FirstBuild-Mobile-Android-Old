@@ -1,6 +1,7 @@
 package com.firstbuild.androidapp.paragon;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
@@ -10,12 +11,9 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.firstbuild.androidapp.ParagonValues;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.commonframework.bleManager.BleManager;
-
-import java.nio.ByteBuffer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,17 +34,23 @@ public class SettingsFragment extends Fragment {
     private float    setThickness;
     private int      setDoneness;
     private float setTargetTemp = 0.0f;
-    private int setTargetTimeMin = 0;
-    private int setTargetTimeMax = 0;
+    private float setTargetTimeHour = 0;
+    private float setTargetTimeMax = 0;
 
     private TextView textSetTimeMin;
     private TextView textSetTimeMax;
     private TextView textSetTemp;
+    private ParagonMainActivity attached = null;
 
     public SettingsFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        attached = (ParagonMainActivity)activity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,7 +95,7 @@ public class SettingsFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 String selectedValue = getResources().getStringArray(R.array.string_doneness)[progress];
 
-                setThickness = progress;
+                setDoneness = progress;
                 textDoneness.setText(selectedValue);
 
                 calculateTimeTemp();
@@ -112,8 +116,8 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RecipeManager.getInstance().getCurrentStage().setTime(setTargetTimeMin);
-                RecipeManager.getInstance().getCurrentStage().setMaxTime(setTargetTimeMax);
+                RecipeManager.getInstance().getCurrentStage().setTime((int)(setTargetTimeHour *60));
+                RecipeManager.getInstance().getCurrentStage().setMaxTime((int)(setTargetTimeMax*60));
                 RecipeManager.getInstance().getCurrentStage().setTemp((int) setTargetTemp);
                 RecipeManager.getInstance().sendCurrentStages();
 
@@ -145,230 +149,110 @@ public class SettingsFragment extends Fragment {
 
     }
 
+    /**
+     * This table for Round
+     Top Round
+     Bottom Round
+     Blade (Flat Iron)
+     Cubed Flank Skirt Tip
+     */
     private void calculateTimeTemp() {
-        ParagonMainActivity activity = (ParagonMainActivity) getActivity();
-
 
         switch (setDoneness) {
             case DONENESS_R:
-                setTargetTemp = 134.5f;
-
-                if (setThickness <= 0.2) {
-                    setTargetTimeMin = 60;
-                }
-                else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTimeMin = 60 + 15;
-                }
-                else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTimeMin = 60 + 30;
-
-                }
-                else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTimeMin = 60 + 45;
-
-                }
-                else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTimeMin = 60 * 2;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTimeMin = 60 * 2 + 15;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTimeMin = 60 * 2 + 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTimeMin = 60 * 3 + 7;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTimeMin = 60 * 3 + 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTimeMin = 60 * 4 + 15;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTimeMin = 60 * 4 + 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTimeMin = 60 * 5 + 15;
-                }
-
+                setTargetTemp = 0;
+                setTargetTimeHour = 0;
+                setTargetTimeMax = 0;
                 break;
 
             case DONENESS_MR:
-                setTargetTemp = 143.5f;
-
-                if (setThickness <= 0.2) {
-                    setTargetTimeMin = 25;
-                }
-                else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTimeMin = 30;
-                }
-                else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTimeMin = 45;
-                }
-                else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTimeMin = 55;
-                }
-                else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTimeMin = 60 * 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTimeMin = 60 * 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTimeMin = 60 * 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTimeMin = 60 * 2 + 31;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTimeMin = 60 * 2 + 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTimeMin = 60 * 3;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTimeMin = 60 * 3 + 15;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTimeMin = 60 * 3 + 45;
-                }
-
+                setTargetTemp = 0;
+                setTargetTimeHour = 0;
+                setTargetTimeMax = 0;
                 break;
 
             case DONENESS_M:
-                setTargetTemp = 143.5f;
+                setTargetTemp = 140;
 
-                if (setThickness <= 0.2) {
-                    setTargetTimeMin = 25;
+                if (setThickness <= 0.75) {
+                    setTargetTimeHour = 6;
+                    setTargetTimeMax = 12;
                 }
-                else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTimeMin = 30;
+                else if (0.75 < setThickness && setThickness <= 1.25) {
+                    setTargetTimeHour = 8;
+                    setTargetTimeMax = 24;
                 }
-                else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTimeMin = 45;
-                }
-                else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTimeMin = 55;
-                }
-                else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTimeMin = 60 * 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTimeMin = 60 * 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTimeMin = 60 * 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTimeMin = 60 * 2 + 31;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTimeMin = 60 * 2 + 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTimeMin = 60 * 3;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTimeMin = 60 * 3 + 15;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTimeMin = 60 * 3 + 45;
+                else  { //if (1.25 < setThickness && setThickness <= 2)
+                    setTargetTimeHour = 12;
+                    setTargetTimeMax = 30;
                 }
                 break;
 
             case DONENESS_MW:
-                setTargetTemp = 143.5f;
+                setTargetTemp = 150;
 
-                if (setThickness <= 0.2) {
-                    setTargetTimeMin = 25;
+                if (setThickness <= 0.75) {
+                    setTargetTimeHour = 6;
+                    setTargetTimeMax = 12;
                 }
-                else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTimeMin = 30;
+                else if (0.75 < setThickness && setThickness <= 1.25) {
+                    setTargetTimeHour = 8;
+                    setTargetTimeMax = 24;
                 }
-                else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTimeMin = 45;
-                }
-                else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTimeMin = 55;
-                }
-                else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTimeMin = 60 * 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTimeMin = 60 * 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTimeMin = 60 * 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTimeMin = 60 * 2 + 31;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTimeMin = 60 * 2 + 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTimeMin = 60 * 3;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTimeMin = 60 * 3 + 15;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTimeMin = 60 * 3 + 45;
+                else  { //if (1.25 < setThickness && setThickness <= 2)
+                    setTargetTimeHour = 12;
+                    setTargetTimeMax = 30;
                 }
                 break;
 
             case DONENESS_W:
-                setTargetTemp = 143.5f;
+                setTargetTemp = 160;
 
-                if (setThickness <= 0.2) {
-                    setTargetTimeMin = 25;
+                if (setThickness <= 0.75) {
+                    setTargetTimeHour = 4;
+                    setTargetTimeMax = 6;
                 }
-                else if (0.2 < setThickness && setThickness <= 0.4) {
-                    setTargetTimeMin = 30;
+                else if (0.75 < setThickness && setThickness <= 1.25) {
+                    setTargetTimeHour = 6;
+                    setTargetTimeMax = 10;
                 }
-                else if (0.4 < setThickness && setThickness <= 0.6) {
-                    setTargetTimeMin = 45;
-                }
-                else if (0.6 < setThickness && setThickness <= 0.8) {
-                    setTargetTimeMin = 55;
-                }
-                else if (0.8 < setThickness && setThickness <= 1.2) {
-                    setTargetTimeMin = 60 * 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.4) {
-                    setTargetTimeMin = 60 * 30;
-                }
-                else if (1.2 < setThickness && setThickness <= 1.6) {
-                    setTargetTimeMin = 60 * 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.0) {
-                    setTargetTimeMin = 60 * 2 + 31;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.15) {
-                    setTargetTimeMin = 60 * 2 + 45;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.35) {
-                    setTargetTimeMin = 60 * 3;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.5) {
-                    setTargetTimeMin = 60 * 3 + 15;
-                }
-                else if (1.2 < setThickness && setThickness <= 2.75) {
-                    setTargetTimeMin = 60 * 3 + 45;
+                else  { //if (1.25 < setThickness && setThickness <= 2)
+                    setTargetTimeHour = 8;
+                    setTargetTimeMax = 12;
                 }
                 break;
 
         }
 
-        textSetTemp.setText(Html.fromHtml(setTargetTemp + "<small>℉</small>"));
 
-        String hour = (setTargetTimeMin / 60) + "";
-        String minutes = String.format("%02d", setTargetTimeMin % 60);
+        if(setTargetTemp == 0 && setTargetTimeMax == 0 && setTargetTimeHour == 0){
 
-        textSetTimeMin.setText(Html.fromHtml(hour + "<small>H : </small>" + minutes + "<small>M</small>"));
+            textSetTemp.setText("--");
+            textSetTimeMin.setText(Html.fromHtml("--" + "<small>H : </small>" + "--" + "<small>M</small>"));
+            textSetTimeMax.setText(Html.fromHtml("--" + "<small>H : </small>" + "--" + "<small>M</small>"));
 
-        textSetTimeMax.setText(Html.fromHtml("00<small>M</small>"));
+            new MaterialDialog.Builder(attached)
+                    .content("Not recommended setting")
+                    .positiveText("Ok")
+                    .cancelable(true).show();
+        }
+        else{
+            textSetTemp.setText(Html.fromHtml(setTargetTemp + "<small>℉</small>"));
+
+            int timeH = (int) Math.floor(setTargetTimeHour);
+            int timeM = (int)((setTargetTimeHour - timeH)*60);
+
+            String hour = timeH + "";
+            String minutes = String.format("%02d", timeM);
+            textSetTimeMin.setText(Html.fromHtml(hour + "<small>H : </small>" + minutes + "<small>M</small>"));
+
+            timeH = (int) Math.floor(setTargetTimeMax);
+            timeM = (int)((setTargetTimeMax - timeH)*60);
+
+            hour = timeH + "";
+            minutes = String.format("%02d", timeM);
+            textSetTimeMax.setText(Html.fromHtml(hour + "<small>H : </small>" + minutes + "<small>M</small>"));
+        }
     }
 
 
