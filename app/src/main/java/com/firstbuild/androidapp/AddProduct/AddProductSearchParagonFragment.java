@@ -129,11 +129,11 @@ public class AddProductSearchParagonFragment extends Fragment {
 
         spinningAnimation.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationStart(Animation animation) {
-                Log.d(TAG, "onAnimationStart IN");
+//                Log.d(TAG, "onAnimationStart IN");
             }
 
             public void onAnimationEnd(Animation animation) {
-                Log.d(TAG, "onAnimationEnd IN");
+//                Log.d(TAG, "onAnimationEnd IN");
 
                 BleManager.getInstance().stopScan();
 
@@ -142,7 +142,7 @@ public class AddProductSearchParagonFragment extends Fragment {
             }
 
             public void onAnimationRepeat(Animation animation) {
-                Log.d(TAG, "onAnimationRepeat IN");
+//                Log.d(TAG, "onAnimationRepeat IN");
             }
         });
 
@@ -174,9 +174,6 @@ public class AddProductSearchParagonFragment extends Fragment {
                 if (ParagonValues.TARGET_DEVICE_NAME.equals(name)){
                     Log.d(TAG, "device found: " + device.getName());
 
-                    // Stop ble device scanning
-                    BleManager.getInstance().stopScan();
-
                     if(bondState == device.BOND_NONE) {
                         Log.d(TAG, "device not bonded: " + bondState);
                         // Connect to device
@@ -192,6 +189,10 @@ public class AddProductSearchParagonFragment extends Fragment {
                                 addToBackStack(null).
                                 commit();
 
+                        // Stop ble device scanning
+                        BleManager.getInstance().stopScan();
+
+                        break;
 
                     }
                     else if(bondState == device.BOND_BONDED){
@@ -206,8 +207,6 @@ public class AddProductSearchParagonFragment extends Fragment {
                         // This part must be replace with proper warning page
                         goToErrorScreen();
                     }
-
-                    break;
                 }
             }
             Log.d(TAG, "====================================");

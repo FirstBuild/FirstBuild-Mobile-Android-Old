@@ -150,4 +150,15 @@ public class ProductManager {
     public ArrayList<ProductInfo> getProducts() {
         return products;
     }
+
+    public ProductInfo getProductByAddress(String address) {
+
+        for (ProductInfo productInfo : products) {
+            if(productInfo.address.equals(address)){
+                return productInfo;
+            }
+        }
+
+        return null;
+    }
 }

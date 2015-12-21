@@ -683,7 +683,7 @@ public class BleManager {
                 bleDevice.setBluetoothServices(bleGattServices);
 
                 // Show all the supported services and characteristics on the user interface.
-                displayGattServices(address);
+//                displayGattServices(address);
 
                 // Stop Scan
                 stopScan();

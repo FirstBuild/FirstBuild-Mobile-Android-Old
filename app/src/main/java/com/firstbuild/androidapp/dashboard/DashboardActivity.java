@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -52,6 +53,14 @@ public class DashboardActivity extends ActionBarActivity {
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private View layoutNoProduct;
+
+    // update production info in the list.
+    private Handler handlerUpdateProduct;
+    // Thread for update UI.
+    private Runnable runnable;
+
+    // Interval for updating connection product.
+    private int INTERVAL_PRODUCT_UPDATE = 3000;
 
 
     private BleListener bleListener = new BleListener() {
@@ -117,7 +126,7 @@ public class DashboardActivity extends ActionBarActivity {
 
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
 
-            onReceivedData(uuid, value);
+            onReceivedData(address, uuid, value);
         }
 
         @Override
@@ -134,7 +143,7 @@ public class DashboardActivity extends ActionBarActivity {
 
             Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid);
 
-            onReceivedData(uuid, value);
+            onReceivedData(address, uuid, value);
 
         }
 
@@ -145,10 +154,81 @@ public class DashboardActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
-
+    private int currentConnectIndex = 0;
 
     @Override
     public void onBackPressed() {
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handlerUpdateProduct.removeCallbacksAndMessages(null);
+
+        BleManager.getInstance().removeListener(bleListener);
+    }
+
+    @Override
+    protected void onResume() {
+
+        Log.d(TAG, "onResume");
+        super.onResume();
+
+
+        // Initialize ble manager
+        BleManager.getInstance().initBleManager(this);
+
+        // Add ble event listener
+        BleManager.getInstance().addListener(bleListener);
+
+        updateListView();
+
+        connectProducts();
+    }
+
+
+    private void connectProduct() {
+
+
+        int productsSize = ProductManager.getInstance().getSize();
+
+//        BleManager.getInstance().disconnect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
+
+        if(currentConnectIndex >= productsSize){
+            currentConnectIndex = 0;
+        }
+        else{
+            //do nothing.
+        }
+
+        Log.d(TAG, "connectProudct index :"+currentConnectIndex);
+
+        BleManager.getInstance().connect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
+        currentConnectIndex++;
+    }
+
+
+    private void connectProducts() {
+        int productSize = ProductManager.getInstance().getSize();
+
+        if (productSize > 0) {
+            ProductInfo product = ProductManager.getInstance().getProduct(0);
+            boolean result = BleManager.getInstance().isBluetoothEnabled();
+
+            if (!result) {
+                Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
+            }
+            else {
+                Log.d(TAG, "Bluetooth adapter is already enabled. Start connecting with " + product.address);
+
+                handlerUpdateProduct.postDelayed(runnable, 0);
+            }
+
+        }
+
 
     }
 
@@ -203,7 +283,7 @@ public class DashboardActivity extends ActionBarActivity {
         // step 2. listener item click event
         listViewProduct.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+            public boolean onMenuItemClick(final int position, SwipeMenu menu, int index) {
 
                 if (index == 0) {
                     // delete
@@ -219,10 +299,10 @@ public class DashboardActivity extends ActionBarActivity {
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
-                                    ProductInfo product = ProductManager.getInstance().getProduct(0);
+                                    ProductInfo product = ProductManager.getInstance().getProduct(position);
 
                                     BleManager.getInstance().unpair(product.address);
-                                    ProductManager.getInstance().remove(0);
+                                    ProductManager.getInstance().remove(position);
 
                                     updateListView();
                                 }
@@ -291,39 +371,22 @@ public class DashboardActivity extends ActionBarActivity {
 
         }
 
+
+        handlerUpdateProduct = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                connectProduct();          // Update UI base on new ERDs every second.
+                handlerUpdateProduct.postDelayed(runnable, INTERVAL_PRODUCT_UPDATE);
+            }
+        };
+
+
     }
 
     private int dp2px(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        BleManager.getInstance().removeListener(bleListener);
-    }
-
-    @Override
-    protected void onResume() {
-
-        Log.d(TAG, "onResume");
-        super.onResume();
-
-
-        // Initialize ble manager
-        BleManager.getInstance().initBleManager(this);
-
-        // Add ble event listener
-        BleManager.getInstance().addListener(bleListener);
-
-        updateListView();
-
-        connectProducts();
-
-
-
     }
 
     private void updateListView() {
@@ -332,40 +395,43 @@ public class DashboardActivity extends ActionBarActivity {
         listViewProduct.invalidateViews();
 
 
-        if(adapterDashboard.getCount() == 0){
+        if (adapterDashboard.getCount() == 0) {
             layoutNoProduct.setVisibility(View.VISIBLE);
             listViewProduct.setVisibility(View.GONE);
         }
-        else{
+        else {
             layoutNoProduct.setVisibility(View.GONE);
             listViewProduct.setVisibility(View.VISIBLE);
         }
 
     }
 
-    private void connectProducts() {
+    public void itemClicked(int position) {
+        ProductInfo productInfo = adapterDashboard.getItem(position);
 
-        if (ProductManager.getInstance().getSize() > 0) {
-            ProductInfo product = ProductManager.getInstance().getProduct(0);
-            boolean result = BleManager.getInstance().isBluetoothEnabled();
-
-            if (!result) {
-                Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
-            }
-            else {
-                Log.d(TAG, "Bluetooth adapter is already enabled. Start connecting with " + product.address);
-                BleManager.getInstance().connect(product.address);
-            }
-
+        if (productInfo.isProbeConnect == false) {
+            new MaterialDialog.Builder(DashboardActivity.this)
+                    .title("Probe is not connected")
+                    .content("Please check the probe connection. Not able to cook without Paragon probe.")
+                    .positiveText("Ok")
+                    .cancelable(true).show();
+            return;
         }
 
+        if (productInfo.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
+
+            ProductManager.getInstance().setCurrent(position);
+
+            Intent intent = new Intent(DashboardActivity.this, ParagonMainActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Log.d(TAG, "itemClicked but error :" + productInfo.type);
+        }
 
     }
 
-
-    private void onReceivedData(String uuid, byte[] value) {
+    private void onReceivedData(String address, String uuid, byte[] value) {
 
         Log.d(TAG, "onReceivedData :" + uuid);
 
@@ -375,7 +441,13 @@ public class DashboardActivity extends ActionBarActivity {
         }
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(value);
-        ProductInfo product = ProductManager.getInstance().getProduct(0);
+//        ProductInfo product = ProductManager.getInstance().getProduct(0);
+        ProductInfo product = ProductManager.getInstance().getProductByAddress(address);
+
+        if (product == null) {
+            Log.d(TAG, "Not found product by Address [" + address);
+            return;
+        }
 
 
         switch (uuid.toUpperCase()) {
@@ -401,7 +473,7 @@ public class DashboardActivity extends ActionBarActivity {
             case ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE:
                 Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
 
-                if(byteBuffer.get() == ParagonValues.PROBE_CONNECT){
+                if (byteBuffer.get() == ParagonValues.PROBE_CONNECT) {
                     product.isProbeConnect = true;
                 }
                 else {
@@ -426,7 +498,6 @@ public class DashboardActivity extends ActionBarActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -449,36 +520,9 @@ public class DashboardActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     private void addDeviceList(BluetoothDevice device) {
 
     }
-
-    public void itemClicked(int position) {
-        ProductInfo productInfo = adapterDashboard.getItem(position);
-
-        if(productInfo.isProbeConnect == false){
-            new MaterialDialog.Builder(DashboardActivity.this)
-                    .title("Probe is not connected")
-                    .content("Please check the probe connection. Not able to cook without Paragon probe.")
-                    .positiveText("Ok")
-                    .cancelable(true).show();
-            return;
-        }
-
-        if (productInfo.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
-
-            ProductManager.getInstance().setCurrent(position);
-
-            Intent intent = new Intent(DashboardActivity.this, ParagonMainActivity.class);
-            startActivity(intent);
-        }
-        else {
-            Log.d(TAG, "itemClicked but error :" + productInfo.type);
-        }
-
-    }
-
 
     public class ProductListAdapter extends BaseAdapter {
 
@@ -533,11 +577,11 @@ public class DashboardActivity extends ActionBarActivity {
             holderDashboard.textBattery.setText(batteryLevel + "");
 
 
-            if(currentProduct.isProbeConnect == false){
+            if (currentProduct.isProbeConnect == false) {
                 holderDashboard.textProbe.setVisibility(View.VISIBLE);
                 holderDashboard.layoutBatteryLevel.setVisibility(View.GONE);
             }
-            else{
+            else {
 
                 holderDashboard.textProbe.setVisibility(View.GONE);
                 holderDashboard.layoutBatteryLevel.setVisibility(View.VISIBLE);
@@ -557,11 +601,11 @@ public class DashboardActivity extends ActionBarActivity {
 
             }
 
-            if(currentProduct.batteryLevel == ProductInfo.NO_BATTERY_INFO){
+            if (currentProduct.batteryLevel == ProductInfo.NO_BATTERY_INFO) {
                 holderDashboard.progressBar.setVisibility(View.VISIBLE);
                 holderDashboard.layoutStatus.setVisibility(View.GONE);
             }
-            else{
+            else {
                 holderDashboard.progressBar.setVisibility(View.GONE);
                 holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
             }
