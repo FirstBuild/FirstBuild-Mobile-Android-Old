@@ -60,7 +60,9 @@ public class DashboardActivity extends ActionBarActivity {
     private Runnable runnable;
 
     // Interval for updating connection product.
-    private int INTERVAL_PRODUCT_UPDATE = 3000;
+    private int INTERVAL_PRODUCT_UPDATE = 1000;
+    private static final int INTERVAL_MAX_PRODUCT_UPDATE = 5;      // Max switching time to the switching to next product.
+    private int countChecking = 0;
 
 
     private BleListener bleListener = new BleListener() {
@@ -97,8 +99,6 @@ public class DashboardActivity extends ActionBarActivity {
             super.onServicesDiscovered(address, bleGattServices);
 
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
-
-//            BleManager.getInstance().displayGattServices(address);
 
             new Thread(new Runnable() {
                 @Override
@@ -188,24 +188,35 @@ public class DashboardActivity extends ActionBarActivity {
     }
 
 
+    /**
+     * Swtich conect to next product in the product list.
+     */
     private void connectProduct() {
 
+        // Check every single second if BLE connected and get services.
+        if(countChecking <= 0){
+            countChecking = INTERVAL_MAX_PRODUCT_UPDATE;
 
-        int productsSize = ProductManager.getInstance().getSize();
+            int productsSize = ProductManager.getInstance().getSize();
 
 //        BleManager.getInstance().disconnect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
 
-        if(currentConnectIndex >= productsSize){
-            currentConnectIndex = 0;
+            if(currentConnectIndex >= productsSize){
+                currentConnectIndex = 0;
+            }
+            else{
+                //do nothing.
+            }
+
+            Log.d(TAG, "connectProudct index :"+currentConnectIndex);
+
+            BleManager.getInstance().connect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
+            currentConnectIndex++;
         }
         else{
-            //do nothing.
+            countChecking--;
         }
 
-        Log.d(TAG, "connectProudct index :"+currentConnectIndex);
-
-        BleManager.getInstance().connect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
-        currentConnectIndex++;
     }
 
 

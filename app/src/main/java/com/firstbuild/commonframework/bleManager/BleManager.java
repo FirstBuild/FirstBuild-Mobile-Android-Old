@@ -808,7 +808,7 @@ public class BleManager {
      * Send requests to BLE device, if there are runnable objects in the linked list
      */
     private void doOperation() {
-        Log.d(TAG, "doOperation Runnable - size: " + operations.size());
+//        Log.d(TAG, "doOperation Runnable - size: " + operations.size());
 
         if (!isDoOperation) {
 
@@ -824,7 +824,7 @@ public class BleManager {
                 // Do nothing
             }
         } else {
-            Log.d(TAG, "Operation is undergoing: " + isDoOperation);
+//            Log.d(TAG, "Operation is undergoing: " + isDoOperation);
         }
     }
 

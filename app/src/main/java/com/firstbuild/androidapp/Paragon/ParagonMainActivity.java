@@ -32,6 +32,9 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeFoodsInfo;
+import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
+import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
@@ -41,10 +44,16 @@ import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -55,6 +64,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     public static final int INTERVAL_CHECKING_PARAGON_CONNECTION = 30000;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final byte INITIAL_VALUE = 0x0f;
+    private final float MAX_THICKNESS = 50.0f;
     Toolbar toolbar;
     private String TAG = ParagonMainActivity.class.getSimpleName();
     private String REQUEST_METHOD_READ = "READ";
@@ -238,6 +248,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
+    private BuiltInRecipeFoodsInfo builtInRecipes = null;
 
     public byte getCookMode() {
         return cookMode;
@@ -586,6 +597,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                 return;
 
             case STEP_COOKING_MODE:
+                loadRecipesFromAsset();
+
                 BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, false);
                 BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, false);
 
@@ -1162,6 +1175,136 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Read built-in receipes from asset file.
+     */
+    public void loadRecipesFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getAssets().open("recipes/builtin.JSON");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            builtInRecipes = new BuiltInRecipeFoodsInfo("root");
+            buildRecipeLinks(builtInRecipes, new JSONObject(json));
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Built recipe links
+     *
+     * @param parent     parent of BuiltInRecipeInfo.
+     * @param rootObject JSON object.
+     */
+    public void buildRecipeLinks(BuiltInRecipeInfo parent, JSONObject rootObject) {
+
+        try {
+            JSONArray arrayJson = rootObject.getJSONArray("recipes");
+
+            if (arrayJson != null) {
+                ArrayList<BuiltInRecipeFoodsInfo> foods = new ArrayList<BuiltInRecipeFoodsInfo>();
+
+                for (int j = 0; j < arrayJson.length(); j++) {
+                    JSONObject childObj = arrayJson.getJSONObject(j);
+                    String name = childObj.getString("name");
+
+                    if (childObj.has("recipes") == false) {
+                        int id = childObj.getInt("id");
+                        JSONArray arrayDoneness = childObj.getJSONArray("doneness");
+                        JSONArray arrayThickness = childObj.getJSONArray("thickness");
+                        JSONArray arrayTemp = childObj.getJSONArray("temp");
+                        JSONArray arrayTimeMin = childObj.getJSONArray("time min");
+                        JSONArray arrayTimeMax = childObj.getJSONArray("time max");
+
+                        BuiltInRecipeSettingsInfo settingsInfo = new BuiltInRecipeSettingsInfo(name);
+                        settingsInfo.id = id;
+
+                        for (int i = 0; i < arrayDoneness.length(); i++) {
+                            settingsInfo.doneness.add(arrayDoneness.getString(i));
+                        }
+
+                        for (int i = 0; i < arrayThickness.length(); i++) {
+                            String thickness = arrayThickness.getString(i);
+                            float thickMin = 0.0f;
+                            float thickMax = 0.0f;
+
+                            Log.d(TAG, "thickness "+thickness);
+
+                            if(thickness.equals("-")){
+                                thickMin = 0.0f;
+                                thickMax = MAX_THICKNESS;
+                            }
+                            else if (thickness.contains("<")) {
+                                String[] thickValues = thickness.split("<");
+
+                                if (thickValues[0].isEmpty()) {
+                                    thickMin = 0.0f;
+                                }
+                                else {
+                                    thickMin = Float.parseFloat(thickValues[0]);
+                                }
+
+                                if (thickValues[1].isEmpty()) {
+                                    thickMax = MAX_THICKNESS;
+                                }
+                                else {
+                                    thickMax = Float.parseFloat(thickValues[1]);
+                                }
+
+                            }
+                            else if (thickness.contains("-")) {
+                                String[] thickValues = thickness.split("-");
+
+                                thickMin = Float.parseFloat(thickValues[0]);
+                                thickMax = Float.parseFloat(thickValues[1]);
+                            }
+
+                            Log.d(TAG, "thicknessvalue "+thickMin + "-" + thickMax);
+                            settingsInfo.minThickness.add(thickMin);
+                            settingsInfo.maxThickness.add(thickMax);
+                        }
+
+                        for (int i = 0; i < arrayTemp.length(); i++) {
+                            int temp = arrayTemp.getInt(i);
+                            float timeMin = (float) arrayTimeMin.getDouble(i);
+                            float timeMax = (float) arrayTimeMax.getDouble(i);
+
+                            settingsInfo.addRecipeSetting(temp, timeMin, timeMax);
+                        }
+
+                        ((BuiltInRecipeFoodsInfo) parent).child.add(settingsInfo);
+                    }
+                    else {
+                        BuiltInRecipeFoodsInfo foodsInfo = new BuiltInRecipeFoodsInfo(name);
+                        ((BuiltInRecipeFoodsInfo) parent).child.add(foodsInfo);
+                        foods.add(foodsInfo);
+
+                        buildRecipeLinks(foodsInfo, childObj);
+                    }
+                }
+            }
+            else {
+                //do nothing.
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public enum ParagonSteps {
         STEP_NONE,
@@ -1181,6 +1324,5 @@ public class ParagonMainActivity extends ActionBarActivity {
         STEP_ADD_RECIPE_SOUSVIDE,
         STEP_ADD_SOUSVIDE_SETTING
     }
-
 
 }

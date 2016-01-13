@@ -1,0 +1,352 @@
+{
+  "recipes": [
+	{
+	  "name": "poultry",
+	  "recipes": [
+		{
+		  "name": "chicken",
+		  "recipes": [
+			{
+			  "name": "breasts (boneless)",
+			  "id": 200,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				"<1.0",
+				"1.0-1.5",
+				"1.5-2.0"
+			  ],
+			  "temp": [
+				140,
+				140,
+				140,
+				150,
+				150,
+				150,
+				165,
+				165,
+				165
+			  ],
+			  "time min": [
+				1.5,
+				2.5,
+				3,
+				1,
+				1.75,
+				2.75,
+				0.75,
+				1,
+				1.5
+			  ],
+			  "time max": [
+				2.5,
+				3.5,
+				4,
+				2,
+				2.75,
+				3.75,
+				2,
+				2.5,
+				4
+			  ]
+			},
+			{
+			  "name": "breasts (bone-in)",
+			  "id": 201,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				"1.5<2.0"
+			  ],
+			  "temp": [
+				140,
+				150,
+				165
+			  ],
+			  "time min": [
+				3.5,
+				3.25,
+				2
+			  ],
+			  "time max": [
+				5,
+				5,
+				5
+			  ]
+			},
+			{
+			  "name": "legs & thighs (bone-in)",
+			  "id": 202,
+			  "doneness": [
+				"well, slower",
+				"well, faster"
+			  ],
+			  "thickness": [
+				"-"
+			  ],
+			  "temp": [
+				165,
+				175
+			  ],
+			  "time min": [
+				6,
+				4
+			  ],
+			  "time max": [
+				12,
+				6
+			  ],
+			  "notes": [
+				"less time may be required for boneless cuts",
+				"less time may be required for boneless cuts"
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "turkey",
+		  "recipes": [
+			{
+			  "name": "breasts (boneless)",
+			  "id": 203,
+			  "doneness": [
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				"1.0-2.0"
+			  ],
+			  "temp": [
+				150,
+				165
+			  ],
+			  "time min": [
+				3,
+				2.5
+			  ],
+			  "time max": [
+				6,
+				6
+			  ]
+			},
+			{
+			  "name": "breasts (bone-in)",
+			  "id": 204,
+			  "doneness": [
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				"1.5<2.0"
+			  ],
+			  "temp": [
+				149,
+				165
+			  ],
+			  "time min": [
+				4,
+				3
+			  ],
+			  "time max": [
+				8,
+				6
+			  ]
+			},
+			{
+			  "name": "legs & thighs (bone-in)",
+			  "id": 205,
+			  "doneness": [
+				"well"
+			  ],
+			  "thickness": [
+				"-"
+			  ],
+			  "temp": [
+				175
+			  ],
+			  "time min": [
+				8
+			  ],
+			  "time max": [
+				10
+			  ],
+			  "notes": [
+				"less time may be required for boneless cuts"
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "duck",
+		  "recipes": [
+			{
+			  "name": "breasts",
+			  "id": 206,
+			  "doneness": [
+				"medium-rare",
+				"medium"
+			  ],
+			  "thickness": [
+				"<1.0"
+			  ],
+			  "temp": [
+				135,
+				140
+			  ],
+			  "time min": [
+				3,
+				1.5
+			  ],
+			  "time max": [
+				4,
+				3.5
+			  ]
+			},
+			{
+			  "name": "legs",
+			  "id": 207,
+			  "doneness": [
+				"well"
+			  ],
+			  "thickness": [
+				"-"
+			  ],
+			  "temp": [
+				175
+			  ],
+			  "time min": [
+				8
+			  ],
+			  "time max": [
+				12
+			  ]
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "name": "pork",
+	  "recipes": [
+		{
+		  "name": "Pork Chops (loin and sirloin)",
+		  "id": 300,
+		  "doneness": [
+			"medium",
+			"medium well",
+			"well"
+		  ],
+		  "thickness": [
+			"<1",
+			"1-1.5",
+			"1.5-2"
+		  ],
+		  "temp": [
+			140,
+			140,
+			140,
+			150,
+			150,
+			150,
+			160,
+			160,
+			160
+		  ],
+		  "time min": [
+			0.5,
+			1,
+			1.5,
+			0.5,
+			1,
+			1.5,
+			0.5,
+			1,
+			1.5
+		  ],
+		  "time max": [
+			1.5,
+			2.5,
+			3,
+			1.5,
+			2.5,
+			3,
+			1.5,
+			2.5,
+			3
+		  ]
+		},
+		{
+		  "name": "Pork Tenderloin",
+		  "id": 303,
+		  "doneness": [
+			"medium"
+		  ],
+		  "thickness": [
+			"<3"
+		  ],
+		  "temp": [
+			140
+		  ],
+		  "time min": [
+			2
+		  ],
+		  "time max": [
+			4
+		  ]
+		},
+		{
+		  "name": "Pork Shoulder (whole) (includes Picnic shoulder and 'Boston Butt')",
+		  "id": 304,
+		  "doneness": [
+			"medium",
+			"well"
+		  ],
+		  "thickness": [
+			"<4"
+		  ],
+		  "temp": [
+			140,
+			160
+		  ],
+		  "time min": [
+			24,
+			24
+		  ],
+		  "time max": [
+			36,
+			30
+		  ]
+		},
+		{
+		  "name": "Ribs",
+		  "id": 305,
+		  "doneness": [
+			"back",
+			"spare"
+		  ],
+		  "thickness": [
+			"-"
+		  ],
+		  "temp": [
+			165,
+			165
+		  ],
+		  "time min": [
+			8,
+			12
+		  ],
+		  "time max": [
+			12,
+			24
+		  ]
+		}
+	  ]
+	}
+  ]
+}

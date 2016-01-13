@@ -73,14 +73,20 @@ public class OtaManager {
             inputStream.skip(4);
             inputStream.read(versionChunk);
             inputStream.close();
+
+            versionMajor = versionChunk[0];
+            versionMinor = versionChunk[1];
+            versionBuild = (short) versionChunk[2];
+
         }
         catch (Exception e) {
-            Log.d(TAG, "readImageFile :" + e);
+            Log.d(TAG, "Not found image file, Skip OTA");
+
+            versionMajor = 0;
+            versionMinor = 0;
+            versionBuild = 0;
         }
 
-        versionMajor = versionChunk[0];
-        versionMinor = versionChunk[1];
-        versionBuild = (short) versionChunk[2];
 
 
         Log.d(TAG, "readImageFile version is :" + versionMajor + ", " + versionMinor);
