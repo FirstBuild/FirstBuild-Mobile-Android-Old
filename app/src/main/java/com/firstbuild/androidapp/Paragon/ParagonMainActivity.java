@@ -248,7 +248,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
-    private BuiltInRecipeFoodsInfo builtInRecipes = null;
+    public BuiltInRecipeFoodsInfo builtInRecipes = null;
 
     public byte getCookMode() {
         return cookMode;

@@ -12,8 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeFoodsInfo;
+import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.helper.SelectModeAdapter;
+
+import java.util.ArrayList;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
@@ -29,6 +33,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     private SelectModeSteps selectModeSteps;
     private View layoutButtons;
     private ParagonMainActivity attached;
+    private BuiltInRecipeFoodsInfo builtRecipes = null;
 
     private enum SelectModeSteps {
         STEP_COOKING_METHOD,
@@ -90,9 +95,11 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         listMode.setAdapter(selectModeAdapter);
         listMode.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        builtRecipes = attached.builtInRecipes;
+
         selectModeSteps = SelectModeSteps.STEP_COOKING_METHOD;
         removeAllList();
-        fillList(R.array.paragon_modes);
+        fillList();
 
         ((ParagonMainActivity)getActivity()).setTitle("Paragon");
 
@@ -109,12 +116,13 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     }
 
 
-    private void fillList(int resourceId){
-        String[] arryString = getResources().getStringArray(resourceId);
+    private void fillList(){
+        ArrayList<BuiltInRecipeInfo> recipeFoods = builtRecipes.child;
 
-        for (int i = 0; i < arryString.length; i++) {
-            selectModeAdapter.addItem(arryString[i]);
+        for(BuiltInRecipeInfo recipeInfo : recipeFoods){
+            selectModeAdapter.addItem(recipeInfo.name);
         }
+
     }
 
 
@@ -122,49 +130,54 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     public void itemClicked(View view, int position, String text) {
         Log.d(TAG, "itemclicked "+position);
 
-        switch(selectModeSteps){
-            case STEP_COOKING_METHOD:
-                if(text.equals("Sous Vide")){
-                    selectModeSteps = SelectModeSteps.STEP_MATERIAL;
+        builtRecipes = (BuiltInRecipeFoodsInfo) builtRecipes.child.get(position);
+        removeAllList();
+        fillList();
 
-                    SetTitle(text);
-
-                    removeAllList();
-                    fillList(R.array.paragon_modes_sousvide);
-                    layoutButtons.setVisibility(View.GONE);
-                }
-                else{
-                    //do nothing
-                }
-
-                break;
-
-            case STEP_MATERIAL:
-                if(text.equals("Beef")){
-                    selectModeSteps = SelectModeSteps.STEP_HOW_TO_COOK;
-                    SetTitle(text);
-
-                    removeAllList();
-                    fillList(R.array.paragon_modes_beef);
-                    layoutButtons.setVisibility(View.GONE);
-                }
-                else{
-                    //do nothing
-                }
-
-                break;
-
-            case STEP_HOW_TO_COOK:
-                if(text.equals("Roast")){
-                    SetTitle("Settings");
-                    attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
-                }
-                else{
-                    //do nothing
-                }
-
-                break;
-        }
+//
+//        switch(selectModeSteps){
+//            case STEP_COOKING_METHOD:
+//                if(text.equals("Sous Vide")){
+//                    selectModeSteps = SelectModeSteps.STEP_MATERIAL;
+//
+//                    SetTitle(text);
+//
+//                    removeAllList();
+//                    fillList(R.array.paragon_modes_sousvide);
+//                    layoutButtons.setVisibility(View.GONE);
+//                }
+//                else{
+//                    //do nothing
+//                }
+//
+//                break;
+//
+//            case STEP_MATERIAL:
+//                if(text.equals("Beef")){
+//                    selectModeSteps = SelectModeSteps.STEP_HOW_TO_COOK;
+//                    SetTitle(text);
+//
+//                    removeAllList();
+//                    fillList(R.array.paragon_modes_beef);
+//                    layoutButtons.setVisibility(View.GONE);
+//                }
+//                else{
+//                    //do nothing
+//                }
+//
+//                break;
+//
+//            case STEP_HOW_TO_COOK:
+//                if(text.equals("Roast")){
+//                    SetTitle("Settings");
+//                    attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
+//                }
+//                else{
+//                    //do nothing
+//                }
+//
+//                break;
+//        }
 
     }
 
