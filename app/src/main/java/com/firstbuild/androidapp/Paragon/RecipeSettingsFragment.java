@@ -141,12 +141,7 @@ public class RecipeSettingsFragment extends Fragment {
         view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RecipeManager.getInstance().getCurrentStage().setTime((int) (setTargetTimeMin * 60));
-                RecipeManager.getInstance().getCurrentStage().setMaxTime((int) (setTargetTimeMax * 60));
-                RecipeManager.getInstance().getCurrentStage().setTemp((int) setTargetTemp);
-                RecipeManager.getInstance().sendCurrentStages();
-
-                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
+                attached.checkGoodToGo();
             }
         });
 
@@ -243,4 +238,16 @@ public class RecipeSettingsFragment extends Fragment {
     }
 
 
+    /**
+     * Go to next step. this is came from checkGoodToGo of ParagonMainActivity.
+     */
+    public void goodToGo() {
+        RecipeManager.getInstance().getCurrentStage().setTime((int) (setTargetTimeMin * 60));
+        RecipeManager.getInstance().getCurrentStage().setMaxTime((int) (setTargetTimeMax * 60));
+        RecipeManager.getInstance().getCurrentStage().setTemp((int) setTargetTemp);
+        RecipeManager.getInstance().sendCurrentStages();
+
+        ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
+
+    }
 }

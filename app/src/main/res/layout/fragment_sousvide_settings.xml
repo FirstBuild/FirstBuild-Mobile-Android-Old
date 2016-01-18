@@ -258,6 +258,7 @@
             android:layout_weight="1"
             android:background="@color/colorParagonHighlight"
             android:gravity="center"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <ImageView
@@ -282,6 +283,7 @@
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
+            android:visibility="gone"
             android:background="@android:color/white"/>
 
         <LinearLayout

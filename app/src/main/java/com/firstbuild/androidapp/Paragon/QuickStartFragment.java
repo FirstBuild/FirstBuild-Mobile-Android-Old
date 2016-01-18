@@ -192,18 +192,22 @@ public class QuickStartFragment extends Fragment {
         view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
-                RecipeManager.getInstance().getCurrentStage().setTime(pickerMinHour.getValue() * 60 + pickerMinMin.getValue());
-                RecipeManager.getInstance().getCurrentStage().setMaxTime(pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue());
-                RecipeManager.getInstance().getCurrentStage().setTemp(pickerTemp.getValue());
-                RecipeManager.getInstance().getCurrentStage().setSpeed(10);
-                RecipeManager.getInstance().sendCurrentStages();
-
-                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
+                attached.checkGoodToGo();
             }
         });
 
         return view;
+    }
+
+    public void goodToGo() {
+
+        RecipeManager.getInstance().getCurrentStage().setTime(pickerMinHour.getValue() * 60 + pickerMinMin.getValue());
+        RecipeManager.getInstance().getCurrentStage().setMaxTime(pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue());
+        RecipeManager.getInstance().getCurrentStage().setTemp(pickerTemp.getValue());
+        RecipeManager.getInstance().getCurrentStage().setSpeed(10);
+        RecipeManager.getInstance().sendCurrentStages();
+
+        attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
     }
 
     private void makeTempText(int temp) {

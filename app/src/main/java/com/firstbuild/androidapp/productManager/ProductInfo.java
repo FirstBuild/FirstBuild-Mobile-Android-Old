@@ -15,7 +15,8 @@ public class ProductInfo {
     public String nickname = "";
 
     //properties for UI.
-    public boolean isProbeConnect = false;
+    public boolean isProductConnected = false;
+    public boolean isProbeConnected = false;
     public int batteryLevel = NO_BATTERY_INFO;
     public String cookMode = "";
 
@@ -26,7 +27,8 @@ public class ProductInfo {
         this.type = type;
         this.batteryLevel = -1;
         this.cookMode = "";
-        this.isProbeConnect = false;
+        this.isProbeConnected = false;
+        this.isProductConnected = false;
     }
 
     public ProductInfo(ProductInfo product) {
@@ -35,7 +37,8 @@ public class ProductInfo {
         this.nickname = product.nickname;
         this.batteryLevel = -1;
         this.cookMode = "";
-        this.isProbeConnect = false;
+        this.isProbeConnected = false;
+        this.isProductConnected = false;
     }
 
     public ProductInfo(JSONObject jsonObject) {

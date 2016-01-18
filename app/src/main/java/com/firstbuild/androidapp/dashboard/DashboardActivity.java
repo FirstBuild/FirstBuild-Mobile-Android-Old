@@ -423,14 +423,14 @@ public class DashboardActivity extends ActionBarActivity {
         ProductInfo productInfo = adapterDashboard.getItem(position);
 
 
-        if (productInfo.isProbeConnect == false) {
-            new MaterialDialog.Builder(DashboardActivity.this)
-                    .title("Probe is not connected")
-                    .content("Please check the probe connection. Not able to cook without Paragon probe.")
-                    .positiveText("Ok")
-                    .cancelable(true).show();
-            return;
-        }
+//        if (productInfo.isProbeConnected == false) {
+//            new MaterialDialog.Builder(DashboardActivity.this)
+//                    .title("Probe is not connected")
+//                    .content("Please check the probe connection. Not able to cook without Paragon probe.")
+//                    .positiveText("Ok")
+//                    .cancelable(true).show();
+//            return;
+//        }
 
         if (productInfo.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
 
@@ -463,6 +463,7 @@ public class DashboardActivity extends ActionBarActivity {
             return;
         }
 
+        product.isProductConnected = true;
 
         switch (uuid.toUpperCase()) {
 
@@ -488,10 +489,10 @@ public class DashboardActivity extends ActionBarActivity {
                 Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
 
                 if (byteBuffer.get() == ParagonValues.PROBE_CONNECT) {
-                    product.isProbeConnect = true;
+                    product.isProbeConnected = true;
                 }
                 else {
-                    product.isProbeConnect = false;
+                    product.isProbeConnected = false;
                 }
                 break;
         }
@@ -579,26 +580,18 @@ public class DashboardActivity extends ActionBarActivity {
 
             holderDashboard.textNickname.setText(currentProduct.nickname);
 
-            if (currentProduct.cookMode.isEmpty()) {
-                holderDashboard.textCooking.setVisibility(View.GONE);
+            if(currentProduct.isProductConnected){
+                holderDashboard.progressBar.setVisibility(View.GONE);
+                holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
             }
-            else {
-                holderDashboard.textCooking.setVisibility(View.VISIBLE);
-                holderDashboard.textCooking.setText(currentProduct.cookMode);
+            else{
+                holderDashboard.progressBar.setVisibility(View.VISIBLE);
+                holderDashboard.layoutStatus.setVisibility(View.GONE);
             }
 
-            String batteryLevel = currentProduct.batteryLevel + "%";
-            holderDashboard.textBattery.setText(batteryLevel + "");
 
-
-            if (currentProduct.isProbeConnect == false) {
-                holderDashboard.textProbe.setVisibility(View.VISIBLE);
-                holderDashboard.layoutBatteryLevel.setVisibility(View.GONE);
-            }
-            else {
-
-                holderDashboard.textProbe.setVisibility(View.GONE);
-                holderDashboard.layoutBatteryLevel.setVisibility(View.VISIBLE);
+            if (currentProduct.isProbeConnected ||
+                    currentProduct.batteryLevel != ProductInfo.NO_BATTERY_INFO) {
 
                 if (currentProduct.batteryLevel > 75) {
                     holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_100);
@@ -613,15 +606,12 @@ public class DashboardActivity extends ActionBarActivity {
                     holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_15);
                 }
 
+                String batteryLevel = currentProduct.batteryLevel + "%";
+                holderDashboard.textBattery.setText(batteryLevel + "");
             }
-
-            if (currentProduct.batteryLevel == ProductInfo.NO_BATTERY_INFO) {
-                holderDashboard.progressBar.setVisibility(View.VISIBLE);
-                holderDashboard.layoutStatus.setVisibility(View.GONE);
-            }
-            else {
-                holderDashboard.progressBar.setVisibility(View.GONE);
-                holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
+            else{
+                holderDashboard.textBattery.setText("probe\noffline");
+                holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_15);
             }
 
             return convertView;
@@ -632,9 +622,9 @@ public class DashboardActivity extends ActionBarActivity {
             private ImageView imageMark;
             private ImageView imageLogo;
             private TextView textNickname;
-            private TextView textCooking;
+//            private TextView textCooking;
             private TextView textBattery;
-            private TextView textProbe;
+//            private TextView textProbe;
             private ImageView imageBattery;
             private View progressBar;
             private View layoutStatus;
@@ -644,12 +634,12 @@ public class DashboardActivity extends ActionBarActivity {
                 imageMark = (ImageView) view.findViewById(R.id.image_mark);
                 imageLogo = (ImageView) view.findViewById(R.id.image_logo);
                 textNickname = (TextView) view.findViewById(R.id.item_nickname);
-                textCooking = (TextView) view.findViewById(R.id.text_cooking);
+//                textCooking = (TextView) view.findViewById(R.id.text_cooking);
                 textBattery = (TextView) view.findViewById(R.id.text_battery);
                 imageBattery = (ImageView) view.findViewById(R.id.image_battery);
                 progressBar = view.findViewById(R.id.progressBar);
                 layoutStatus = view.findViewById(R.id.layout_status);
-                textProbe = (TextView) view.findViewById(R.id.text_probe_connect);
+//                textProbe = (TextView) view.findViewById(R.id.text_probe_connect);
                 layoutBatteryLevel = view.findViewById(R.id.layout_battery_level);
 
                 view.setTag(this);

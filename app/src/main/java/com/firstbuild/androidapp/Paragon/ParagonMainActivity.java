@@ -75,15 +75,23 @@ public class ParagonMainActivity extends ActionBarActivity {
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
     private float currentTemp;
+
     private byte batteryLevel;
     private byte burnerStatus = INITIAL_VALUE;
     private byte cookMode = INITIAL_VALUE;
+    private byte probeConnection = ParagonValues.PROBE_NOT_CONNECT;
+
     private Queue requestQueue = new LinkedList();
     private boolean isCheckingCurrentStatus = false;
     // Thread handler for checking the connection with Paragon Master.
     private Handler handlerCheckingConnection;
     // Thread for update UI.
     private Runnable runnable;
+
+    private Handler handlerCheckingGoodToGo = null;
+    // Thread for update UI.
+    private Runnable runnableGoodToGo;
+
     // Navigation drawer.
     private NavigationDrawerFragment drawerFragment;
     private TextView toolbarText;
@@ -93,6 +101,8 @@ public class ParagonMainActivity extends ActionBarActivity {
     private MaterialDialog dialogOtaProcessing;
     private MaterialDialog dialogOtaAsk;
     private MaterialDialog disconnectDialog = null;
+    private MaterialDialog dialogGoodToGo;
+
     private BleListener bleListener = new BleListener() {
         @Override
         public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
@@ -250,6 +260,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
+    private final int INTERVAL_GOODTOGO = 500;
 
     public byte getCookMode() {
         return cookMode;
@@ -450,6 +461,12 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             case ParagonValues.CHARACTERISTIC_ERROR_STATE:
                 Log.d(TAG, "ParagonValues.CHARACTERISTIC_ERROR_STATE :" + String.format("%02x", value[0]));
+                break;
+
+            case ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE:
+                Log.d(TAG, "ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
+
+                probeConnection = byteBuffer.get();
                 break;
 
 
@@ -792,6 +809,28 @@ public class ParagonMainActivity extends ActionBarActivity {
                 .progress(true, 0)
                 .cancelable(false).build();
 
+        dialogGoodToGo = new MaterialDialog.Builder(ParagonMainActivity.this)
+                .title("")
+                .content("")
+                .progress(false, 100)
+                .negativeText("Cancel")
+                .cancelable(false)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        handlerCheckingGoodToGo.removeCallbacks(runnableGoodToGo);
+                    }
+
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                    }
+                })
+                .build();
+
 
         dialogOtaAsk = new MaterialDialog.Builder(ParagonMainActivity.this)
                 .title("Update Available")
@@ -825,6 +864,16 @@ public class ParagonMainActivity extends ActionBarActivity {
                 checkParagonConnectionStatus();
             }
         };
+
+
+        handlerCheckingGoodToGo = new Handler();
+        runnableGoodToGo = new Runnable() {
+            @Override
+            public void run() {
+                checkGoodToGoLoop();
+            }
+        };
+
 
         // Check bluetooth adapter. If the adapter is disabled, enable it
         boolean result = BleManager.getInstance().isBluetoothEnabled();
@@ -1085,7 +1134,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
     }
 
-    public void finishParagonMain(){
+    public void finishParagonMain() {
         BleManager.getInstance().removeListener(bleListener);
         finish();
     }
@@ -1096,8 +1145,8 @@ public class ParagonMainActivity extends ActionBarActivity {
         FragmentManager fm = getFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.frame_content);
 
-        if(fragment instanceof SelectModeFragment){
-            ((SelectModeFragment)fragment).onBackPressed();
+        if (fragment instanceof SelectModeFragment) {
+            ((SelectModeFragment) fragment).onBackPressed();
         }
 //        else if(fragment instanceof RecipeSettingsFragment) {
 //            ((RecipeSettingsFragment)fragment).onBackPressed();
@@ -1250,14 +1299,14 @@ public class ParagonMainActivity extends ActionBarActivity {
                     }
 
 
-                    if(childObj.has("thickness")){
+                    if (childObj.has("thickness")) {
                         JSONArray arrayThickness = childObj.getJSONArray("thickness");
 
                         for (int i = 0; i < arrayThickness.length(); i++) {
                             settingsInfo.thickness.add((float) arrayThickness.getDouble(i));
                         }
                     }
-                    else{
+                    else {
                         // do nothing.
                     }
 
@@ -1280,6 +1329,79 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
         catch (JSONException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    public void checkGoodToGo() {
+        Log.d(TAG, "checkGoodToGo");
+        dialogGoodToGo.setProgress(0);
+
+        checkGoodToGoLoop();
+    }
+
+    private void checkGoodToGoLoop(){
+
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
+        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+
+        boolean retValue = false;
+
+
+        if(burnerStatus == ParagonValues.BURNER_STATE_START ){
+            dialogGoodToGo.setTitle("Press Stop on Paragon");
+            dialogGoodToGo.setContent("The Paragon is currently cooking. Please press Stop on the Paragon.");
+
+            retValue = false;
+        }
+        else if(probeConnection != ParagonValues.PROBE_CONNECT ){
+            dialogGoodToGo.setTitle("Connect Probe");
+            dialogGoodToGo.setContent("Probe is not connected. Please connect the temperature probe by holding the button on the side of the probe FOR 3 SECONDS.");
+
+            retValue = false;
+        }
+        else if(cookMode != ParagonValues.CURRENT_COOK_MODE_RAPID ){
+            dialogGoodToGo.setTitle("Select Rapid Precise");
+            dialogGoodToGo.setContent("Please press Rapid Precise on the cooktop.");
+
+            retValue = false;
+        }
+        else{
+
+            retValue = true;
+        }
+
+
+        int progress = dialogGoodToGo.getCurrentProgress();
+
+        if(progress >= dialogGoodToGo.getMaxProgress() || retValue){
+            if(dialogGoodToGo.isShowing()){
+                dialogGoodToGo.dismiss();
+            }
+
+            handlerCheckingGoodToGo.removeCallbacks(runnableGoodToGo);
+
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+            if (fragment instanceof QuickStartFragment) {
+                ((QuickStartFragment) fragment).goodToGo();
+            }
+            else if (fragment instanceof RecipeSettingsFragment) {
+                ((RecipeSettingsFragment) fragment).goodToGo();
+            }
+            else{
+
+            }
+        }
+        else {
+            progress++;
+            dialogGoodToGo.setProgress(progress);
+            if(!dialogGoodToGo.isShowing()){
+                dialogGoodToGo.show();
+            }
+
+            handlerCheckingGoodToGo.postDelayed(runnableGoodToGo, INTERVAL_GOODTOGO);
         }
 
     }
