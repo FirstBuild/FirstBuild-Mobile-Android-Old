@@ -157,6 +157,7 @@
             android:background="@color/colorParagonAccent"/>
 
         <RelativeLayout
+            android:id="@+id/layout_thickness"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="@dimen/activity_horizontal_margin"
@@ -193,6 +194,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/layout_doneness"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="@dimen/activity_horizontal_margin"

@@ -494,6 +494,8 @@ public class DashboardActivity extends ActionBarActivity {
                 else {
                     product.isProbeConnected = false;
                 }
+                Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE : isProbeConnected"+product.isProbeConnected);
+
                 break;
         }
 
@@ -558,6 +560,8 @@ public class DashboardActivity extends ActionBarActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            Log.d(TAG, "getView--------------");
+
             if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.adapter_product_card_view, null);
                 new ViewHolder(convertView);
@@ -590,8 +594,7 @@ public class DashboardActivity extends ActionBarActivity {
             }
 
 
-            if (currentProduct.isProbeConnected ||
-                    currentProduct.batteryLevel != ProductInfo.NO_BATTERY_INFO) {
+            if (currentProduct.isProbeConnected ) {
 
                 if (currentProduct.batteryLevel > 75) {
                     holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_100);

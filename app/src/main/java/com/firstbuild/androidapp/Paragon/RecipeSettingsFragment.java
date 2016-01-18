@@ -69,14 +69,13 @@ public class RecipeSettingsFragment extends Fragment {
 
 
         if (attached.selectedBuiltInRecipe.thickness.isEmpty()) {
-            seekBarThickness.setVisibility(View.GONE);
+            view.findViewById(R.id.layout_thickness).setVisibility(View.GONE);
         }
         else {
             int numThickness = attached.selectedBuiltInRecipe.thickness.size();
             float minThickness = attached.selectedBuiltInRecipe.thickness.get(0);
             float maxThickness = attached.selectedBuiltInRecipe.thickness.get(numThickness - 1);
 
-            seekBarThickness.setVisibility(View.VISIBLE);
             seekBarThickness.setMax((int) ((maxThickness - minThickness) / INTERVAL_THICKNESS));
         }
 
@@ -103,17 +102,16 @@ public class RecipeSettingsFragment extends Fragment {
 
             }
         });
-        seekBarThickness.setProgress(1);
+        seekBarThickness.setProgress(0);
 
         textDoneness = (TextView) view.findViewById(R.id.text_doneness);
         seekBarDoneness = (SeekBar) view.findViewById(R.id.seekbar_doneness);
         int numDoneness = attached.selectedBuiltInRecipe.doneness.size();
 
         if (numDoneness < 2) {
-            seekBarDoneness.setVisibility(View.GONE);
+            view.findViewById(R.id.layout_doneness).setVisibility(View.GONE);
         }
         else {
-            seekBarDoneness.setVisibility(View.VISIBLE);
             seekBarDoneness.setMax(attached.selectedBuiltInRecipe.doneness.size() - 1);
         }
 
@@ -137,7 +135,7 @@ public class RecipeSettingsFragment extends Fragment {
 
             }
         });
-        seekBarDoneness.setProgress(1);
+        seekBarDoneness.setProgress(0);
 
         view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
