@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.firstbuild.androidapp.FirstBuildApplication;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
@@ -65,6 +67,8 @@ public class ParagonMainActivity extends ActionBarActivity {
     static final byte INITIAL_VALUE = 0x0f;
     private final float MIN_THICKNESS = 0.25f;
     private final float MAX_THICKNESS = 4.0f;
+    private final int INTERVAL_GOODTOGO = 500;
+    private final String PREF_KEY_FOOD_WARNING = "FoodWarning";
     public BuiltInRecipeInfo builtInRecipes = null;
     public BuiltInRecipeSettingsInfo selectedBuiltInRecipe = null;
     Toolbar toolbar;
@@ -75,23 +79,19 @@ public class ParagonMainActivity extends ActionBarActivity {
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
     private float currentTemp;
-
     private byte batteryLevel;
     private byte burnerStatus = INITIAL_VALUE;
     private byte cookMode = INITIAL_VALUE;
     private byte probeConnection = ParagonValues.PROBE_NOT_CONNECT;
-
     private Queue requestQueue = new LinkedList();
     private boolean isCheckingCurrentStatus = false;
     // Thread handler for checking the connection with Paragon Master.
     private Handler handlerCheckingConnection;
     // Thread for update UI.
     private Runnable runnable;
-
     private Handler handlerCheckingGoodToGo = null;
     // Thread for update UI.
     private Runnable runnableGoodToGo;
-
     // Navigation drawer.
     private NavigationDrawerFragment drawerFragment;
     private TextView toolbarText;
@@ -102,7 +102,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     private MaterialDialog dialogOtaAsk;
     private MaterialDialog disconnectDialog = null;
     private MaterialDialog dialogGoodToGo;
-
+    private MaterialDialog dialogFoodWarning;
     private BleListener bleListener = new BleListener() {
         @Override
         public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
@@ -260,7 +260,6 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
-    private final int INTERVAL_GOODTOGO = 500;
 
     public byte getCookMode() {
         return cookMode;
@@ -1044,6 +1043,11 @@ public class ParagonMainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void finishParagonMain() {
+        BleManager.getInstance().removeListener(bleListener);
+        finish();
+    }
+
     /**
      * Call when OTA completed successfully.
      */
@@ -1132,11 +1136,6 @@ public class ParagonMainActivity extends ActionBarActivity {
                 ((RecipeEditFragment) fragment).setRecipeImage(imageBitmap, currentPhotoPath);
             }
         }
-    }
-
-    public void finishParagonMain() {
-        BleManager.getInstance().removeListener(bleListener);
-        finish();
     }
 
     @Override
@@ -1335,12 +1334,13 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     public void checkGoodToGo() {
         Log.d(TAG, "checkGoodToGo");
-        dialogGoodToGo.setProgress(0);
 
+        dialogGoodToGo.setProgress(0);
         checkGoodToGoLoop();
+
     }
 
-    private void checkGoodToGoLoop(){
+    private void checkGoodToGoLoop() {
 
         BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
         BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
@@ -1349,25 +1349,25 @@ public class ParagonMainActivity extends ActionBarActivity {
         boolean retValue = false;
 
 
-        if(burnerStatus == ParagonValues.BURNER_STATE_START ){
+        if (burnerStatus == ParagonValues.BURNER_STATE_START) {
             dialogGoodToGo.setTitle("Press Stop on Paragon");
             dialogGoodToGo.setContent("The Paragon is currently cooking. Please press Stop on the Paragon.");
 
             retValue = false;
         }
-        else if(probeConnection != ParagonValues.PROBE_CONNECT ){
+        else if (probeConnection != ParagonValues.PROBE_CONNECT) {
             dialogGoodToGo.setTitle("Connect Probe");
             dialogGoodToGo.setContent("Probe is not connected. Please connect the temperature probe by holding the button on the side of the probe FOR 3 SECONDS.");
 
             retValue = false;
         }
-        else if(cookMode != ParagonValues.CURRENT_COOK_MODE_RAPID ){
+        else if (cookMode != ParagonValues.CURRENT_COOK_MODE_RAPID) {
             dialogGoodToGo.setTitle("Select Rapid Precise");
             dialogGoodToGo.setContent("Please press Rapid Precise on the cooktop.");
 
             retValue = false;
         }
-        else{
+        else {
 
             retValue = true;
         }
@@ -1375,8 +1375,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         int progress = dialogGoodToGo.getCurrentProgress();
 
-        if(progress >= dialogGoodToGo.getMaxProgress() || retValue){
-            if(dialogGoodToGo.isShowing()){
+        if (progress >= dialogGoodToGo.getMaxProgress() || retValue) {
+            if (dialogGoodToGo.isShowing()) {
                 dialogGoodToGo.dismiss();
             }
 
@@ -1390,20 +1390,39 @@ public class ParagonMainActivity extends ActionBarActivity {
             else if (fragment instanceof RecipeSettingsFragment) {
                 ((RecipeSettingsFragment) fragment).goodToGo();
             }
-            else{
+            else {
 
             }
         }
         else {
             progress++;
             dialogGoodToGo.setProgress(progress);
-            if(!dialogGoodToGo.isShowing()){
+            if (!dialogGoodToGo.isShowing()) {
                 dialogGoodToGo.show();
             }
 
             handlerCheckingGoodToGo.postDelayed(runnableGoodToGo, INTERVAL_GOODTOGO);
         }
 
+    }
+
+
+    public boolean isShowFoodWarning() {
+        SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
+                ProductManager.PREFS_NAME, Context.MODE_PRIVATE);
+
+        boolean isShowFoodWarning = settings.getBoolean(PREF_KEY_FOOD_WARNING, false);
+
+        return isShowFoodWarning;
+    }
+
+    public void saveShowFoodWarning() {
+        SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
+                ProductManager.PREFS_NAME, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(PREF_KEY_FOOD_WARNING, true);
+        editor.commit();
     }
 
 

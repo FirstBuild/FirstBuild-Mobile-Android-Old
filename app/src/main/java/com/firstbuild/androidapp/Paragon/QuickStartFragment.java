@@ -2,20 +2,18 @@ package com.firstbuild.androidapp.paragon;
 
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.commonframework.bleManager.BleManager;
-
-import java.nio.ByteBuffer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -189,10 +187,42 @@ public class QuickStartFragment extends Fragment {
         });
 
 
-        view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener(){
+        view.findViewById(R.id.btn_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attached.checkGoodToGo();
+
+                if(pickerTemp.getValue() <= ParagonValues.WARNING_TEMPERATURE &&
+                        !attached.isShowFoodWarning()){
+
+                    new MaterialDialog.Builder(getActivity())
+                            .title("Reminder")
+                            .content("Cooking below 140℉ increases your risks of foodborne illness")
+                            .positiveText("Ok")
+                            .neutralColor(R.color.colorParagonSecondaryText)
+                            .neutralText("Don't show again")
+                            .cancelable(false)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    attached.checkGoodToGo();
+                                }
+
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    attached.checkGoodToGo();
+                                }
+
+                                @Override
+                                public void onNeutral(MaterialDialog dialog) {
+                                    attached.saveShowFoodWarning();
+                                    attached.checkGoodToGo();
+                                }
+                            })
+                            .show();
+                }
+                else{
+                    attached.checkGoodToGo();
+                }
             }
         });
 

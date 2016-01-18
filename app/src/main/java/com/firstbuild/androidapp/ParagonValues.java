@@ -66,4 +66,6 @@ public class ParagonValues {
 
     public static final byte PROBE_CONNECT = 0x01;
     public static final byte PROBE_NOT_CONNECT = 0x02;
+
+    public static final int WARNING_TEMPERATURE = 140;
 }
