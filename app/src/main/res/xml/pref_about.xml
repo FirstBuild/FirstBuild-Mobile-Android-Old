@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="pref_learn_more"
+        android:selectable="true"
+        android:title=""
+        android:summary="The Paragon induction cooktop monitors food and water temperature directly, offering precise control of food temperature. \nPrecision cooking with Paragon is easier and produces restaurant quality, repeatable results.\n\nLearn more..."/>
 
     <Preference
         android:key="pref_serial_number"

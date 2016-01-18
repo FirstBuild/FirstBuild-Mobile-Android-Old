@@ -1,6 +1,8 @@
 package com.firstbuild.androidapp.paragon.settings;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -157,6 +159,23 @@ public class SettingsActivity extends AppCompatActivity {
                     return false;
                 }
             });
+
+
+
+            Preference learnMore = findPreference("pref_learn_more");
+
+            learnMore.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Log.d(TAG, "onPreferenceClick pref_learn_more");
+
+                    String url = getResources().getString(R.string.url_manual);
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+
+                    return false;
+                }
+            });
+
 
         }
 

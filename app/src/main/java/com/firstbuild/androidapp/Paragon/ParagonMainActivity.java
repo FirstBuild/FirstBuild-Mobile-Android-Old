@@ -1025,7 +1025,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 
             emailIntent.setType("plain/text");
-            emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"master@firstbuild.com"});
+            emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"paragon@firstbuild.com"});
             emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Feedback Paragon] ");
             emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Text");
 
