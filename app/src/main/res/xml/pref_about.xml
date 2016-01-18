@@ -11,7 +11,7 @@
         android:key="pref_serial_number"
         android:selectable="false"
         android:title="Version"
-        android:summary="0.1.6"/>
+        android:summary="0.1.7"/>
 
     <Preference
         android:key="pref_term_service"
