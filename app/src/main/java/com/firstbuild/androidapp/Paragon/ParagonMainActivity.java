@@ -32,7 +32,6 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeFoodsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
@@ -64,7 +63,10 @@ public class ParagonMainActivity extends ActionBarActivity {
     public static final int INTERVAL_CHECKING_PARAGON_CONNECTION = 30000;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final byte INITIAL_VALUE = 0x0f;
-    private final float MAX_THICKNESS = 50.0f;
+    private final float MIN_THICKNESS = 0.25f;
+    private final float MAX_THICKNESS = 4.0f;
+    public BuiltInRecipeInfo builtInRecipes = null;
+    public BuiltInRecipeSettingsInfo selectedBuiltInRecipe = null;
     Toolbar toolbar;
     private String TAG = ParagonMainActivity.class.getSimpleName();
     private String REQUEST_METHOD_READ = "READ";
@@ -248,7 +250,6 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
-    public BuiltInRecipeFoodsInfo builtInRecipes = null;
 
     public byte getCookMode() {
         return cookMode;
@@ -608,7 +609,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
             case STEP_SOUSVIDE_SETTINGS:
-                fragment = new SettingsFragment();
+                fragment = new RecipeSettingsFragment();
                 break;
 
             case STEP_SOUSVIDE_GETREADY:
@@ -827,7 +828,6 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         // Check bluetooth adapter. If the adapter is disabled, enable it
         boolean result = BleManager.getInstance().isBluetoothEnabled();
-
 
         if (!result) {
             Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
@@ -1085,17 +1085,29 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
     }
 
+    public void finishParagonMain(){
+        BleManager.getInstance().removeListener(bleListener);
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
 
         FragmentManager fm = getFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.frame_content);
 
-        if (fm.getBackStackEntryCount() > 1) {
+        if(fragment instanceof SelectModeFragment){
+            ((SelectModeFragment)fragment).onBackPressed();
+        }
+//        else if(fragment instanceof RecipeSettingsFragment) {
+//            ((RecipeSettingsFragment)fragment).onBackPressed();
+//
+//        }
+        else if (fm.getBackStackEntryCount() > 1) {
             fm.popBackStack();
         }
         else {
-            BleManager.getInstance().removeListener(bleListener);
-            finish();
+            finishParagonMain();
         }
     }
 
@@ -1193,7 +1205,9 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
 
         try {
-            builtInRecipes = new BuiltInRecipeFoodsInfo("root");
+            builtInRecipes = new BuiltInRecipeInfo("root");
+            builtInRecipes.child = new ArrayList<>();
+
             buildRecipeLinks(builtInRecipes, new JSONObject(json));
         }
         catch (JSONException e) {
@@ -1213,90 +1227,55 @@ public class ParagonMainActivity extends ActionBarActivity {
         try {
             JSONArray arrayJson = rootObject.getJSONArray("recipes");
 
-            if (arrayJson != null) {
-                ArrayList<BuiltInRecipeFoodsInfo> foods = new ArrayList<BuiltInRecipeFoodsInfo>();
+            for (int j = 0; j < arrayJson.length(); j++) {
+                JSONObject childObj = arrayJson.getJSONObject(j);
+                String name = childObj.getString("name");
 
-                for (int j = 0; j < arrayJson.length(); j++) {
-                    JSONObject childObj = arrayJson.getJSONObject(j);
-                    String name = childObj.getString("name");
+                if (childObj.has("recipes")) {
+                    BuiltInRecipeInfo foodsInfo = new BuiltInRecipeInfo(name);
+                    foodsInfo.child = new ArrayList<>();
+                    parent.child.add(foodsInfo);
+                    foodsInfo.parent = parent;
 
-                    if (childObj.has("recipes") == false) {
-                        int id = childObj.getInt("id");
-                        JSONArray arrayDoneness = childObj.getJSONArray("doneness");
+                    buildRecipeLinks(foodsInfo, childObj);
+                }
+                else {
+                    BuiltInRecipeSettingsInfo settingsInfo = new BuiltInRecipeSettingsInfo(name);
+                    settingsInfo.id = childObj.getInt("id");
+                    settingsInfo.parent = parent;
+
+                    JSONArray arrayDoneness = childObj.getJSONArray("doneness");
+                    for (int i = 0; i < arrayDoneness.length(); i++) {
+                        settingsInfo.doneness.add(arrayDoneness.getString(i));
+                    }
+
+
+                    if(childObj.has("thickness")){
                         JSONArray arrayThickness = childObj.getJSONArray("thickness");
-                        JSONArray arrayTemp = childObj.getJSONArray("temp");
-                        JSONArray arrayTimeMin = childObj.getJSONArray("time min");
-                        JSONArray arrayTimeMax = childObj.getJSONArray("time max");
-
-                        BuiltInRecipeSettingsInfo settingsInfo = new BuiltInRecipeSettingsInfo(name);
-                        settingsInfo.id = id;
-
-                        for (int i = 0; i < arrayDoneness.length(); i++) {
-                            settingsInfo.doneness.add(arrayDoneness.getString(i));
-                        }
 
                         for (int i = 0; i < arrayThickness.length(); i++) {
-                            String thickness = arrayThickness.getString(i);
-                            float thickMin = 0.0f;
-                            float thickMax = 0.0f;
-
-                            Log.d(TAG, "thickness "+thickness);
-
-                            if(thickness.equals("-")){
-                                thickMin = 0.0f;
-                                thickMax = MAX_THICKNESS;
-                            }
-                            else if (thickness.contains("<")) {
-                                String[] thickValues = thickness.split("<");
-
-                                if (thickValues[0].isEmpty()) {
-                                    thickMin = 0.0f;
-                                }
-                                else {
-                                    thickMin = Float.parseFloat(thickValues[0]);
-                                }
-
-                                if (thickValues[1].isEmpty()) {
-                                    thickMax = MAX_THICKNESS;
-                                }
-                                else {
-                                    thickMax = Float.parseFloat(thickValues[1]);
-                                }
-
-                            }
-                            else if (thickness.contains("-")) {
-                                String[] thickValues = thickness.split("-");
-
-                                thickMin = Float.parseFloat(thickValues[0]);
-                                thickMax = Float.parseFloat(thickValues[1]);
-                            }
-
-                            Log.d(TAG, "thicknessvalue "+thickMin + "-" + thickMax);
-                            settingsInfo.minThickness.add(thickMin);
-                            settingsInfo.maxThickness.add(thickMax);
+                            settingsInfo.thickness.add((float) arrayThickness.getDouble(i));
                         }
-
-                        for (int i = 0; i < arrayTemp.length(); i++) {
-                            int temp = arrayTemp.getInt(i);
-                            float timeMin = (float) arrayTimeMin.getDouble(i);
-                            float timeMax = (float) arrayTimeMax.getDouble(i);
-
-                            settingsInfo.addRecipeSetting(temp, timeMin, timeMax);
-                        }
-
-                        ((BuiltInRecipeFoodsInfo) parent).child.add(settingsInfo);
                     }
-                    else {
-                        BuiltInRecipeFoodsInfo foodsInfo = new BuiltInRecipeFoodsInfo(name);
-                        ((BuiltInRecipeFoodsInfo) parent).child.add(foodsInfo);
-                        foods.add(foodsInfo);
-
-                        buildRecipeLinks(foodsInfo, childObj);
+                    else{
+                        // do nothing.
                     }
+
+                    JSONArray arrayTemp = childObj.getJSONArray("temp");
+                    JSONArray arrayTimeMin = childObj.getJSONArray("time min");
+                    JSONArray arrayTimeMax = childObj.getJSONArray("time max");
+
+
+                    for (int i = 0; i < arrayTemp.length(); i++) {
+                        int temp = arrayTemp.getInt(i);
+                        float timeMin = (float) arrayTimeMin.getDouble(i);
+                        float timeMax = (float) arrayTimeMax.getDouble(i);
+
+                        settingsInfo.addRecipeSetting(temp, timeMin, timeMax);
+                    }
+
+                    parent.child.add(settingsInfo);
                 }
-            }
-            else {
-                //do nothing.
             }
         }
         catch (JSONException e) {

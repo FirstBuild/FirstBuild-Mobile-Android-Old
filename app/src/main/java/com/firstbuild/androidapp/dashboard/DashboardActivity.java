@@ -61,7 +61,7 @@ public class DashboardActivity extends ActionBarActivity {
 
     // Interval for updating connection product.
     private int INTERVAL_PRODUCT_UPDATE = 1000;
-    private static final int INTERVAL_MAX_PRODUCT_UPDATE = 5;      // Max switching time to the switching to next product.
+    private static final int INTERVAL_MAX_PRODUCT_UPDATE = 50;      // Max switching time to the switching to next product.
     private int countChecking = 0;
 
 
@@ -418,7 +418,10 @@ public class DashboardActivity extends ActionBarActivity {
     }
 
     public void itemClicked(int position) {
+
+        ProductManager.getInstance().setCurrent(position);
         ProductInfo productInfo = adapterDashboard.getItem(position);
+
 
         if (productInfo.isProbeConnect == false) {
             new MaterialDialog.Builder(DashboardActivity.this)

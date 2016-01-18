@@ -11,5 +11,13 @@ public class BuiltInRecipeInfo {
 
     public String name;
     public int type;
+
+    public ArrayList<BuiltInRecipeInfo> child = null;
+    public BuiltInRecipeInfo parent = null;
+
+    public BuiltInRecipeInfo(String name) {
+        this.name = name;
+        this.type = TYPE_FOOD;
+    }
 }
 

@@ -3,6 +3,7 @@ package com.firstbuild.androidapp.paragon;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeFoodsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
+import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.helper.SelectModeAdapter;
 
@@ -24,7 +25,7 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SelectModeFragment extends Fragment  implements SelectModeAdapter.ClickListener {
+public class SelectModeFragment extends Fragment implements SelectModeAdapter.ClickListener {
 
 
     private String TAG = SelectModeFragment.class.getSimpleName();
@@ -33,14 +34,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     private SelectModeSteps selectModeSteps;
     private View layoutButtons;
     private ParagonMainActivity attached;
-    private BuiltInRecipeFoodsInfo builtRecipes = null;
-
-    private enum SelectModeSteps {
-        STEP_COOKING_METHOD,
-        STEP_MATERIAL,
-        STEP_HOW_TO_COOK,
-    }
-
+    private BuiltInRecipeInfo builtInRecipes = null;
 
     public SelectModeFragment() {
         // Required empty public constructor
@@ -50,7 +44,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        attached = (ParagonMainActivity)getActivity();
+        attached = (ParagonMainActivity) getActivity();
     }
 
     @Override
@@ -95,19 +89,18 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         listMode.setAdapter(selectModeAdapter);
         listMode.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        builtRecipes = attached.builtInRecipes;
+        builtInRecipes = attached.builtInRecipes;
 
         selectModeSteps = SelectModeSteps.STEP_COOKING_METHOD;
         removeAllList();
         fillList();
 
-        ((ParagonMainActivity)getActivity()).setTitle("Paragon");
+        ((ParagonMainActivity) getActivity()).setTitle("Paragon");
 
         return view;
     }
 
-
-    private void removeAllList(){
+    private void removeAllList() {
         int size = selectModeAdapter.getItemCount();
 
         for (int i = 0; i < size; i++) {
@@ -115,24 +108,31 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         }
     }
 
+    private void fillList() {
+        ArrayList<BuiltInRecipeInfo> recipeFoods = builtInRecipes.child;
 
-    private void fillList(){
-        ArrayList<BuiltInRecipeInfo> recipeFoods = builtRecipes.child;
-
-        for(BuiltInRecipeInfo recipeInfo : recipeFoods){
+        for (BuiltInRecipeInfo recipeInfo : recipeFoods) {
             selectModeAdapter.addItem(recipeInfo.name);
         }
 
     }
 
-
     @Override
     public void itemClicked(View view, int position, String text) {
-        Log.d(TAG, "itemclicked "+position);
+        Log.d(TAG, "itemclicked " + position);
 
-        builtRecipes = (BuiltInRecipeFoodsInfo) builtRecipes.child.get(position);
-        removeAllList();
-        fillList();
+        builtInRecipes = builtInRecipes.child.get(position);
+
+        if(builtInRecipes.type == BuiltInRecipeInfo.TYPE_FOOD){
+            removeAllList();
+            fillList();
+        }
+        else{
+            attached.selectedBuiltInRecipe = (BuiltInRecipeSettingsInfo)builtInRecipes;
+            SetTitle("Settings");
+
+            attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
+        }
 
 //
 //        switch(selectModeSteps){
@@ -183,9 +183,28 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
 
     /**
      * Set title text on header.
+     *
      * @param text string to be title.
      */
     private void SetTitle(String text) {
-        ((ParagonMainActivity)getActivity()).setTitle(text);
+        ((ParagonMainActivity) getActivity()).setTitle(text);
+    }
+
+    public void onBackPressed() {
+        if(builtInRecipes.parent != null){
+            builtInRecipes = builtInRecipes.parent;
+            removeAllList();
+            fillList();
+        }
+        else{
+            attached.finishParagonMain();
+        }
+
+    }
+
+    private enum SelectModeSteps {
+        STEP_COOKING_METHOD,
+        STEP_MATERIAL,
+        STEP_HOW_TO_COOK,
     }
 }

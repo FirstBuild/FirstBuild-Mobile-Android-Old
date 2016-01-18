@@ -15,9 +15,10 @@
 				"well"
 			  ],
 			  "thickness": [
-				"<1.0",
-				"1.0-1.5",
-				"1.5-2.0"
+				0.25,
+				1.0,
+				1.5,
+				2.0
 			  ],
 			  "temp": [
 				140,
@@ -62,7 +63,8 @@
 				"well"
 			  ],
 			  "thickness": [
-				"1.5<2.0"
+				1.5,
+				2.0
 			  ],
 			  "temp": [
 				140,
@@ -86,9 +88,6 @@
 			  "doneness": [
 				"well, slower",
 				"well, faster"
-			  ],
-			  "thickness": [
-				"-"
 			  ],
 			  "temp": [
 				165,
@@ -120,7 +119,8 @@
 				"well"
 			  ],
 			  "thickness": [
-				"1.0-2.0"
+				1.0,
+				2.0
 			  ],
 			  "temp": [
 				150,
@@ -143,7 +143,8 @@
 				"well"
 			  ],
 			  "thickness": [
-				"1.5<2.0"
+				1.5,
+				2.0
 			  ],
 			  "temp": [
 				149,
@@ -163,9 +164,6 @@
 			  "id": 205,
 			  "doneness": [
 				"well"
-			  ],
-			  "thickness": [
-				"-"
 			  ],
 			  "temp": [
 				175
@@ -193,7 +191,8 @@
 				"medium"
 			  ],
 			  "thickness": [
-				"<1.0"
+				0.25,
+				1.0
 			  ],
 			  "temp": [
 				135,
@@ -213,9 +212,6 @@
 			  "id": 207,
 			  "doneness": [
 				"well"
-			  ],
-			  "thickness": [
-				"-"
 			  ],
 			  "temp": [
 				175
@@ -243,9 +239,10 @@
 			"well"
 		  ],
 		  "thickness": [
-			"<1",
-			"1-1.5",
-			"1.5-2"
+			0.25,
+			1.0,
+			1.5,
+			2.0
 		  ],
 		  "temp": [
 			140,
@@ -288,7 +285,8 @@
 			"medium"
 		  ],
 		  "thickness": [
-			"<3"
+			0.25,
+			3.0
 		  ],
 		  "temp": [
 			140
@@ -301,14 +299,15 @@
 		  ]
 		},
 		{
-		  "name": "Pork Shoulder (whole) (includes Picnic shoulder and 'Boston Butt')",
+		  "name": "Pork Shoulder (whole)",
 		  "id": 304,
 		  "doneness": [
 			"medium",
 			"well"
 		  ],
 		  "thickness": [
-			"<4"
+			0.25,
+			4.0
 		  ],
 		  "temp": [
 			140,
@@ -329,9 +328,6 @@
 		  "doneness": [
 			"back",
 			"spare"
-		  ],
-		  "thickness": [
-			"-"
 		  ],
 		  "temp": [
 			165,
