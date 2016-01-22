@@ -833,7 +833,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         dialogOtaAsk = new MaterialDialog.Builder(ParagonMainActivity.this)
                 .title("Update Available")
-                .content("Are you want to update Pararagon now?")
+                .content("Are you sure you want to update Paragon now?")
                 .positiveText("Yes")
                 .negativeText("No")
                 .callback(new MaterialDialog.ButtonCallback() {
@@ -883,7 +883,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
         }
         else {
-            Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
+            Log.d(TAG, "Bluetooth adapter is already enabled. Start connect");
             startCommunicateParagon();
         }
 
@@ -1044,6 +1044,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     public void finishParagonMain() {
+        BleManager.getInstance().disconnect();
         BleManager.getInstance().removeListener(bleListener);
         finish();
     }
@@ -1178,6 +1179,9 @@ public class ParagonMainActivity extends ActionBarActivity {
         if (disconnectDialog.isShowing()) {
             Log.d(TAG, "Try to reconnect again");
             BleManager.getInstance().connect(ProductManager.getInstance().getCurrent().address);
+        }
+        else{
+            Log.d(TAG, "disconnectDialog is not Showing");
         }
     }
 

@@ -44,7 +44,8 @@
             android:name=".paragon.ParagonMainActivity"
             android:label="@string/title_activity_paragon_main"
             android:windowSoftInputMode="adjustUnspecified|adjustPan"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:parentActivityName="com.firstbuild.androidapp.dashboard.DashboardActivity">
         </activity>
         <activity
             android:name=".addProduct.AddProductActivity"

@@ -18,6 +18,8 @@ import android.widget.ImageView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
@@ -198,6 +200,22 @@ public class AddProductSearchParagonFragment extends Fragment {
                     else if(bondState == device.BOND_BONDED){
                         Log.d(TAG, "device bonded: " + bondState);
 
+                        ProductInfo product = ProductManager.getInstance().getProductByAddress(deviceAddress);
+
+                        if(product == null){
+                            // case for Paragon Master already paired but not in dashboard.
+                            attached.setNewProductAddress(deviceAddress);
+
+                            // Transit to success UI
+                            getFragmentManager().
+                                    beginTransaction().
+                                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
+                                    addToBackStack(null).
+                                    commit();
+
+                            // Stop ble device scanning
+                            BleManager.getInstance().stopScan();
+                        }
 
                     }
                     else{
