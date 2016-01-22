@@ -1,5 +1,7 @@
 package com.firstbuild.androidapp.productManager;
 
+import com.firstbuild.commonframework.bleManager.BleDevice;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +21,8 @@ public class ProductInfo {
     public boolean isProbeConnected = false;
     public int batteryLevel = NO_BATTERY_INFO;
     public String cookMode = "";
+
+    public BleDevice bleDevice = null;
 
 
     public ProductInfo(int type, String address, String nickname) {

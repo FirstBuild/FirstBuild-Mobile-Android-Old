@@ -28,7 +28,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.addProduct.AddProductActivity;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
@@ -36,6 +35,7 @@ import com.firstbuild.androidapp.viewUtil.SwipeMenu;
 import com.firstbuild.androidapp.viewUtil.SwipeMenuCreator;
 import com.firstbuild.androidapp.viewUtil.SwipeMenuItem;
 import com.firstbuild.androidapp.viewUtil.SwipeMenuListView;
+import com.firstbuild.commonframework.bleManager.BleDevice;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
@@ -46,22 +46,19 @@ import java.util.List;
 
 public class DashboardActivity extends ActionBarActivity {
 
+    private static final int INTERVAL_MAX_PRODUCT_UPDATE = 50;      // Max switching time to the switching to next product.
     private String TAG = DashboardActivity.class.getSimpleName();
     private SwipeMenuListView listViewProduct;
-
     private ProductListAdapter adapterDashboard;
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private View layoutNoProduct;
-
     // update production info in the list.
     private Handler handlerUpdateProduct;
     // Thread for update UI.
     private Runnable runnable;
-
     // Interval for updating connection product.
     private int INTERVAL_PRODUCT_UPDATE = 1000;
-    private static final int INTERVAL_MAX_PRODUCT_UPDATE = 50;      // Max switching time to the switching to next product.
     private int countChecking = 0;
 
 
@@ -100,23 +97,23 @@ public class DashboardActivity extends ActionBarActivity {
 
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_MODE, true);
-                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, false);
-                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
-
-                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
-                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
-                        }
-                    });
-                }
-            }).start();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_MODE, true);
+//                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, false);
+//                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
+//
+//                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+//                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+//                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
+//                        }
+//                    });
+//                }
+//            }).start();
 
         }
 
@@ -176,49 +173,29 @@ public class DashboardActivity extends ActionBarActivity {
         super.onResume();
 
 
-        // Initialize ble manager
-        BleManager.getInstance().initBleManager(this);
+//        connectProducts();
 
-        // Add ble event listener
-        BleManager.getInstance().addListener(bleListener);
+        int size = ProductManager.getInstance().getSize();
 
-        updateListView();
+        for (int i = 0; i < size; i++) {
+            ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
 
-        connectProducts();
-    }
-
-
-    /**
-     * Swtich conect to next product in the product list.
-     */
-    private void connectProduct() {
-
-        // Check every single second if BLE connected and get services.
-        if(countChecking <= 0){
-            countChecking = INTERVAL_MAX_PRODUCT_UPDATE;
-
-            int productsSize = ProductManager.getInstance().getSize();
-
-//        BleManager.getInstance().disconnect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
-
-            if(currentConnectIndex >= productsSize){
-                currentConnectIndex = 0;
+            if (productInfo.bleDevice == null) {
+                Log.d(TAG, "device is null");
             }
-            else{
-                //do nothing.
+            else {
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_COOK_MODE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, false);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
+
+                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
             }
 
-            Log.d(TAG, "connectProudct index :"+currentConnectIndex);
-
-            BleManager.getInstance().connect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
-            currentConnectIndex++;
-        }
-        else{
-            countChecking--;
         }
 
     }
-
 
     private void connectProducts() {
         int productSize = ProductManager.getInstance().getSize();
@@ -346,10 +323,18 @@ public class DashboardActivity extends ActionBarActivity {
         findViewById(R.id.btnAddProduct).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashboardActivity.this, AddProductActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(DashboardActivity.this).toBundle());
-                startActivity(intent);
+
+                ProductInfo productInfo = ProductManager.getInstance().getProduct(1);
+
+
+                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
+
+
+//                    Intent intent = new Intent(DashboardActivity.this, AddProductActivity.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                startActivity(intent);
             }
         });
 
@@ -392,7 +377,28 @@ public class DashboardActivity extends ActionBarActivity {
             }
         };
 
+        // Initialize ble manager
+        BleManager.getInstance().initBleManager(this);
 
+        // Add ble event listener
+        BleManager.getInstance().addListener(bleListener);
+
+        updateListView();
+
+
+        int size = ProductManager.getInstance().getSize();
+
+        for (int i = 0; i < size; i++) {
+            ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
+
+            BleDevice bleDevice = BleManager.getInstance().connect(productInfo.address);
+            if (bleDevice == null) {
+                Log.d(TAG, "got null from BleManager.getInstance().connect");
+            }
+            else {
+                productInfo.bleDevice = bleDevice;
+            }
+        }
     }
 
     private int dp2px(int dp) {
@@ -441,6 +447,37 @@ public class DashboardActivity extends ActionBarActivity {
         }
         else {
             Log.d(TAG, "itemClicked but error :" + productInfo.type);
+        }
+
+    }
+
+    /**
+     * Swtich conect to next product in the product list.
+     */
+    private void connectProduct() {
+
+        // Check every single second if BLE connected and get services.
+        if (countChecking <= 0) {
+            countChecking = INTERVAL_MAX_PRODUCT_UPDATE;
+
+            int productsSize = ProductManager.getInstance().getSize();
+
+//        BleManager.getInstance().disconnect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
+
+            if (currentConnectIndex >= productsSize) {
+                currentConnectIndex = 0;
+            }
+            else {
+                //do nothing.
+            }
+
+            Log.d(TAG, "connectProudct index :" + currentConnectIndex);
+
+            BleManager.getInstance().connect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
+            currentConnectIndex++;
+        }
+        else {
+            countChecking--;
         }
 
     }
@@ -494,7 +531,6 @@ public class DashboardActivity extends ActionBarActivity {
                 else {
                     product.isProbeConnected = false;
                 }
-                Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE : isProbeConnected"+product.isProbeConnected);
 
                 break;
         }
@@ -584,17 +620,17 @@ public class DashboardActivity extends ActionBarActivity {
 
             holderDashboard.textNickname.setText(currentProduct.nickname);
 
-            if(currentProduct.isProductConnected){
+            if (currentProduct.isProductConnected) {
                 holderDashboard.progressBar.setVisibility(View.GONE);
                 holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
             }
-            else{
+            else {
                 holderDashboard.progressBar.setVisibility(View.VISIBLE);
                 holderDashboard.layoutStatus.setVisibility(View.GONE);
             }
 
 
-            if (currentProduct.isProbeConnected ) {
+            if (currentProduct.isProbeConnected) {
 
                 if (currentProduct.batteryLevel > 75) {
                     holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_100);
@@ -612,7 +648,7 @@ public class DashboardActivity extends ActionBarActivity {
                 String batteryLevel = currentProduct.batteryLevel + "%";
                 holderDashboard.textBattery.setText(batteryLevel + "");
             }
-            else{
+            else {
                 holderDashboard.textBattery.setText("probe\noffline");
                 holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_15);
             }
@@ -625,9 +661,9 @@ public class DashboardActivity extends ActionBarActivity {
             private ImageView imageMark;
             private ImageView imageLogo;
             private TextView textNickname;
-//            private TextView textCooking;
+            //            private TextView textCooking;
             private TextView textBattery;
-//            private TextView textProbe;
+            //            private TextView textProbe;
             private ImageView imageBattery;
             private View progressBar;
             private View layoutStatus;

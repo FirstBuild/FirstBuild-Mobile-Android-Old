@@ -17,6 +17,7 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
@@ -34,16 +35,16 @@ public class BleManager {
 
     private final String TAG = getClass().getSimpleName();
 
-    private final String CLIENT_CONFIGURATION_UUID = "00002902-0000-1000-8000-00805f9b34fb";
+    public final static String CLIENT_CONFIGURATION_UUID = "00002902-0000-1000-8000-00805f9b34fb";
     private final int OPERATION_TIME_OUT = 5000;      // 5 sec.
 
     // Set enable bluetooth feature
-    private int connectionState = BleValues.STATE_DISCONNECTED;
+//    private int connectionState = BleValues.STATE_DISCONNECTED;
 
     private HashMap<String, BluetoothDevice> scannedDevices = new HashMap<String, BluetoothDevice>();
 
     // Blue tooth Gatt handler
-    private BluetoothGatt bluetoothGatt;
+//    private BluetoothGatt bluetoothGatt;
 
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
@@ -58,17 +59,24 @@ public class BleManager {
     private Context context = null;
     private HashMap<String, BleListener> callbacks = null;
 
+    private HashMap<String, BluetoothGatt> connectedGatts = new HashMap<>();
+
     private boolean isDoOperation = false;
 
-    private static Timer operationTimer = null;
-    private OperationTimerTask operationTimerTask = null;
+//    private static Timer operationTimer = null;
+//    private OperationTimerTask operationTimerTask = null;
+
+    private LinkedList<BleOperation> operations = new LinkedList<>();
 
     // BleDevice Object variable
-    private BleDevice bleDevice = new BleDevice();
+//    private BleDevice bleDevice = new BleDevice();
 
-    LinkedList<Runnable> operations = new LinkedList<Runnable>();
+//    LinkedList<Runnable> operations = new LinkedList<Runnable>();
+
+    private AsyncTask<Void, Void, Void> currentOperationTimeout;
 
     public static BleManager instance = new BleManager();
+    private BleOperation currentOperation = null;
 
     public static BleManager getInstance() {
         return instance;
@@ -162,48 +170,58 @@ public class BleManager {
     /**
      * Connect to a ble device
      *
-     * @param address ble device's address
      * @return connection success or failed
      */
-    public boolean connect(final String address) {
+    public BleDevice connect(final String address) {
         Log.d(TAG, "connect IN");
 
-        if (bluetoothAdapter == null || address == null) {
+        if (bluetoothAdapter == null ) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
-            return false;
+            return null;
         }
 
-        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
+        BleDevice bleDevice = new BleDevice();
 
-        if (bleDevice == null) {
-            Log.w(TAG, "Device not found.  Unable to connect.");
-            return false;
-        }
+//        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(device.getAddress());
+        bleDevice.bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
+
+//        if (bleDevice == null) {
+//            Log.w(TAG, "Device not found.  Unable to connect.");
+//            return false;
+//        }
 
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
-        bluetoothGatt = bluetoothDevice.connectGatt(context, false, bluetoothGattCallback);
+//        device.bluetoothGatt = device.bluetoothDevice.connectGatt(context, false, bluetoothGattCallback);
+
+//        if(device.bleDevice == null){
+//            device.bleDevice = new BleDevice();
+//            device.bleDevice.setAddress(device.getAddress());
+//        }
 
         Log.d(TAG, "Trying to create a new connection.");
-        bleDevice.setAddress(address);
+//        bleDevice.setAddress(address);
 
-        connectionState = BleValues.STATE_CONNECTING;
-        return true;
+//        connectionState = BleValues.STATE_CONNECTING;
+//        device.connectionState = BleValues.STATE_CONNECTING;
+
+//        return true;
+        return bleDevice;
     }
 
-    /**
-     * Disconnect from a ble device
-     */
-    public void disconnect() {
-        Log.d(TAG, "disconnect IN");
-
-        // Disconnect bluetooth connection
-        if (bluetoothGatt != null) {
-            bluetoothGatt.disconnect();
-        } else {
-            // Do nothing
-        }
-    }
+//    /**
+//     * Disconnect from a ble device
+//     */
+//    public void disconnect(BleDevice device) {
+//        Log.d(TAG, "disconnect IN");
+//
+//        // Disconnect bluetooth connection
+//        if (device.bluetoothGatt != null) {
+//            device.bluetoothGatt.disconnect();
+//        } else {
+//            // Do nothing
+//        }
+//    }
 
     /**
      * Check bluetooth feature in the phone is enabled
@@ -219,13 +237,13 @@ public class BleManager {
     /**
      * Check device is already bonded one.
      *
-     * @param address BLE device's address.
      * @return true or false
      */
-    private boolean isDevicePaired(final String address) {
+//    private boolean isDevicePaired(final String address) {
+    private boolean isDevicePaired(BleDevice device) {
         boolean result = false;
 
-        if (address != null) {
+        if (device != null) {
 
             // Retrieves paired device list
             Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
@@ -235,10 +253,10 @@ public class BleManager {
                 for (BluetoothDevice bluetoothDevice : pairedDevice) {
                     Log.d(TAG, bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
 
-                    if (bluetoothDevice.getAddress().equals(address)) {
+                    if (bluetoothDevice.getAddress().equals(device.getAddress())) {
 
                         // Device found
-                        bleDevice.setAddress(bluetoothDevice.getAddress());
+//                        bleDevice.setAddress(bluetoothDevice.getAddress());
                         result = true;
                     }
                 }
@@ -328,12 +346,12 @@ public class BleManager {
     /**
      * Print GATT services and characteristics
      *
-     * @param address
      */
-    public void displayGattServices(String address) {
+    //public void displayGattServices(String address) {
+    public void displayGattServices(BluetoothGatt gatt) {
         Log.d(TAG, "displayGattServices IN");
 
-        List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
+        List<BluetoothGattService> bleGattServices = gatt.getServices();
 
         if (bleGattServices != null) {
 
@@ -365,221 +383,327 @@ public class BleManager {
         }
     }
 
-    /**
-     * Read a characteristic value from the gatt server
-     *
-     * @param characteristicsUuid bluetooth Characteristic UUID
-     */
-    public boolean readCharacteristics(final String characteristicsUuid) {
-        Log.d(TAG, "readCharacteristics IN");
+//    /**
+//     * Read a characteristic value from the gatt server
+//     *
+//     * @param characteristicsUuid bluetooth Characteristic UUID
+//     */
+//    public boolean readCharacteristics(final String characteristicsUuid) {
+//        Log.d(TAG, "readCharacteristics IN");
+//
+//        boolean result = false;
+//
+//        if (bluetoothAdapter == null) {
+//            //Check BluetoothGatt is available
+//            Log.w(TAG, "BluetoothAdapter not initialized");
+//            result = false;
+//        } else {
+//            operations.add(new Runnable() {
+//
+//                public void run() {
+//                    // Read a value from the characteristic
+//                    List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
+//
+//                    // Iterate services and characteristic
+//                    for (BluetoothGattService service : bleGattServices) {
+//                        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+//
+//                            if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
+//                                Log.d(TAG, "Found Characteristic for reading: " + characteristic.getUuid().toString());
+//                                bluetoothGatt.readCharacteristic(characteristic);
+//                                break;
+//                            } else {
+//                                // Do nothing
+//                            }
+//                        }
+//                    }
+//                }
+//            });
+//
+//            result = true;
+//        }
+//
+////        doOperation();
+//        return result;
+//    }
 
-        boolean result = false;
 
-        if (bluetoothAdapter == null || bluetoothGatt == null) {
-            //Check BluetoothGatt is available
-            Log.w(TAG, "BluetoothAdapter not initialized");
-            result = false;
-        } else {
-            operations.add(new Runnable() {
 
-                public void run() {
-                    // Read a value from the characteristic
-                    List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
+    public void readCharacteristics(BleDevice device, String characteristicsUuid) {
+        operations.add(new BleOperationReadCharacteristics(device, characteristicsUuid));
 
-                    // Iterate services and characteristic
-                    for (BluetoothGattService service : bleGattServices) {
-                        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+        drive();
+    }
 
-                            if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
-                                Log.d(TAG, "Found Characteristic for reading: " + characteristic.getUuid().toString());
-                                bluetoothGatt.readCharacteristic(characteristic);
-                                break;
-                            } else {
-                                // Do nothing
-                            }
-                        }
-                    }
-                }
-            });
+    public void writeCharateristics(BleDevice device, String characteristicsUuid, byte[] values) {
+        operations.add(new BleOperationWriteCharateristics(device, characteristicsUuid, values));
 
-            result = true;
+        drive();
+    }
+
+    public void setCharacteristicNotification(BleDevice device, String characteristicsUuid, boolean isEnabled) {
+        operations.add(new BleOperationSetNotification(device, characteristicsUuid, isEnabled));
+
+        drive();
+    }
+
+    public void disconnect(BleDevice device){
+        operations.add(new BleOperationDisconnect(device));
+
+        drive();
+    }
+
+
+    public void cancelCurrentOperation() {
+        Log.d(TAG, "Cancelling current operation. Queue size before: " + operations.size());
+        currentOperation = null;
+        drive();
+    }
+
+    private void drive(){
+        if(currentOperation != null) {
+            Log.d(TAG, "tried to drive, but currentOperation was not null, " + currentOperation);
+            return;
+        }
+        if( operations.size() == 0) {
+            Log.d(TAG, "Queue empty, drive loop stopped.");
+            currentOperation = null;
+            return;
         }
 
-        doOperation();
-        return result;
-    }
+        final BleOperation operation = operations.poll();
+        Log.d(TAG, "Driving Gatt queue, size will now become: " + operations.size());
+        setCurrentOperation(operation);
 
-    /**
-     * Write a value to a given characteristic in the gatt server.
-     *
-     * @param characteristicsUuid Characteristic to act on.
-     * @param values              value to be written.
-     */
-    public boolean writeCharateristics(final String characteristicsUuid, final byte[] values) {
-        Log.d(TAG, "writeCharateristics IN");
-
-        boolean result = false;
-
-        if (bluetoothAdapter == null || bluetoothGatt == null) {
-            // Check BluetoothGatt is available
-            Log.w(TAG, "BluetoothAdapter not initialized");
-            result = false;
-        } else {
-
-            operations.add(new Runnable() {
-
-                public void run() {
-                    // Read a value from the characteristic
-                    List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
-
-                    // Iterate services and characteristic
-                    for (BluetoothGattService service : bleGattServices) {
-                        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-
-                            if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
-                                Log.d(TAG, "Found Characteristic for writing: " + characteristic.getUuid().toString());
-
-                                printGattValue(values);
-
-                                characteristic.setValue(values);
-                                boolean result = bluetoothGatt.writeCharacteristic(characteristic);
-                                Log.d(TAG, "result of writeCharacteristic is " + result);
-
-                                if(result == false){
-                                    Log.d(TAG, "write failed!!!!! Call writeCharacteristic again");
-                                    writeCharateristics(characteristicsUuid, values);
-                                }
-                                else{
-                                    // do nothing.
-                                }
-
-                                break;
-                            } else {
-                                // Do nothing
-                            }
-                        }
-                    }
-                }
-            });
-            result = true;
+        if(currentOperationTimeout != null) {
+            currentOperationTimeout.cancel(true);
         }
 
-        doOperation();
-        return result;
+        currentOperationTimeout = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected synchronized Void doInBackground(Void... voids) {
+                try {
+                    Log.d(TAG, "Starting to do a background timeout");
+                    wait(operation.getTimoutTime());
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "was interrupted out of the timeout");
+                }
+
+                if(isCancelled()) {
+                    Log.d(TAG, "The timeout was cancelled, so we do nothing.");
+                    return null;
+                }
+
+                Log.d(TAG, "Timeout ran to completion, time to Abort!!!!!!!!!!!!!");
+                cancelCurrentOperation();
+                return null;
+            }
+
+            @Override
+            protected synchronized void onCancelled() {
+                super.onCancelled();
+                notify();
+            }
+        }.execute();
+
+        final BleDevice device = operation.getDevice();
+
+        if(connectedGatts.containsKey(device.getAddress())) {
+            execute(connectedGatts.get(device.getAddress()), operation);
+        }
+        else {
+            device.bluetoothDevice.connectGatt(context, true, bluetoothGattCallback);
+        }
     }
 
-    /**
-     * Enables or disables notification on a give characteristic.
-     *
-     * @param characteristicsUuid Characteristic to act on.
-     * @param enabled             If true, enable notification.  False otherwise.
-     */
-    public boolean setCharacteristicNotification(final String characteristicsUuid,
-                                                 final boolean enabled) {
-        Log.d(TAG, "setCharacteristicNotification IN");
-
-        boolean result = false;
-
-        if (bluetoothAdapter == null || bluetoothGatt == null) {
-            // Check BluetoothGatt is available
-            Log.w(TAG, "BluetoothAdapter not initialized");
-            result = false;
-        } else {
-            operations.add(new Runnable() {
-
-                public void run() {
-                    // Read a value from the characteristic
-                    List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
-
-                    // Iterate services and characteristic
-                    for (BluetoothGattService service : bleGattServices) {
-                        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-
-                            if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
-                                Log.d(TAG, "Found Characteristic for notification: " + characteristic.getUuid().toString());
-
-                                // Set notification
-                                bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
-                                BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(CLIENT_CONFIGURATION_UUID));
-                                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                                boolean result = bluetoothGatt.writeDescriptor(descriptor);
-                                Log.d(TAG, "result of writeDescriptor is "+result);
-
-                                if(result == false){
-                                    Log.d(TAG, "write failed!!!!! Call setCharacteristicNotification again");
-                                    setCharacteristicNotification(characteristicsUuid, enabled);
-                                }
-                                else{
-                                    // do nothing.
-                                }
-
-                                break;
-                            } else {
-                                // Do nothing
-                            }
-                        }
-                    }
-                }
-            });
+    private void execute(BluetoothGatt bluetoothGatt, BleOperation operation) {
+        if(operation != currentOperation) {
+            return;
         }
 
-        doOperation();
-        return result;
-    }
+        operation.execute(bluetoothGatt);
 
-
-    public boolean writeDescriptor(final String characteristicsUuid) {
-
-        Log.d(TAG, "writeDescriptor IN");
-
-        boolean result = false;
-
-        if (bluetoothAdapter == null || bluetoothGatt == null) {
-            // Check BluetoothGatt is available
-            Log.w(TAG, "BluetoothAdapter not initialized");
-            result = false;
-        } else {
-
-            operations.add(new Runnable() {
-
-                public void run() {
-
-                    // Read a value from the characteristic
-                    List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
-
-                    // Iterate services and characteristic
-                    for (BluetoothGattService service : bleGattServices) {
-                        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-
-                            if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
-                                Log.d(TAG, "Found  characteristic for write descriptor: " + characteristic.getUuid().toString());
-
-                                BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(CLIENT_CONFIGURATION_UUID));
-                                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                                bluetoothGatt.writeDescriptor(descriptor);
-                                break;
-                            }
-                        }
-                    }
-                }
-            });
-
-            result = true;
+        if(!operation.hasCallback()) {
+            setCurrentOperation(null);
+            drive();
         }
-
-        doOperation();
-        return result;
     }
 
-
-    /**
-     * Returns a BleDevice's instance
-     *
-     * @return BleDevice's instance
-     */
-    public BleDevice bleDevice() {
-        return bleDevice;
+    private void setCurrentOperation(BleOperation operation) {
+        this.currentOperation = operation;
     }
+
+//    /**
+//     * Write a value to a given characteristic in the gatt server.
+//     *
+//     * @param characteristicsUuid Characteristic to act on.
+//     * @param values              value to be written.
+//     */
+//    public boolean writeCharateristics(final String characteristicsUuid, final byte[] values) {
+//        Log.d(TAG, "writeCharateristics IN");
+//
+//        boolean result = false;
+//
+//        if (bluetoothAdapter == null || bluetoothGatt == null) {
+//            // Check BluetoothGatt is available
+//            Log.w(TAG, "BluetoothAdapter not initialized");
+//            result = false;
+//        } else {
+//
+//            operations.add(new Runnable() {
+//
+//                public void run() {
+//                    // Read a value from the characteristic
+//                    List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
+//
+//                    // Iterate services and characteristic
+//                    for (BluetoothGattService service : bleGattServices) {
+//                        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+//
+//                            if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
+//                                Log.d(TAG, "Found Characteristic for writing: " + characteristic.getUuid().toString());
+//
+//                                printGattValue(values);
+//
+//                                characteristic.setValue(values);
+//                                boolean result = bluetoothGatt.writeCharacteristic(characteristic);
+//                                Log.d(TAG, "result of writeCharacteristic is " + result);
+//
+//                                if(result == false){
+//                                    Log.d(TAG, "write failed!!!!! Call writeCharacteristic again");
+//                                    writeCharateristics(characteristicsUuid, values);
+//                                }
+//                                else{
+//                                    // do nothing.
+//                                }
+//
+//                                break;
+//                            } else {
+//                                // Do nothing
+//                            }
+//                        }
+//                    }
+//                }
+//            });
+//            result = true;
+//        }
+//
+//        doOperation();
+//        return result;
+//    }
+
+//    /**
+//     * Enables or disables notification on a give characteristic.
+//     *
+//     * @param characteristicsUuid Characteristic to act on.
+//     * @param enabled             If true, enable notification.  False otherwise.
+//     */
+//    public boolean setCharacteristicNotification(final String characteristicsUuid,
+//                                                 final boolean enabled) {
+//        Log.d(TAG, "setCharacteristicNotification IN");
+//
+//        boolean result = false;
+//
+//        if (bluetoothAdapter == null || bluetoothGatt == null) {
+//            // Check BluetoothGatt is available
+//            Log.w(TAG, "BluetoothAdapter not initialized");
+//            result = false;
+//        } else {
+//            operations.add(new Runnable() {
+//
+//                public void run() {
+//                    // Read a value from the characteristic
+//                    List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
+//
+//                    // Iterate services and characteristic
+//                    for (BluetoothGattService service : bleGattServices) {
+//                        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+//
+//                            if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
+//                                Log.d(TAG, "Found Characteristic for notification: " + characteristic.getUuid().toString());
+//
+//                                // Set notification
+//                                bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+//                                BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(CLIENT_CONFIGURATION_UUID));
+//                                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+//                                boolean result = bluetoothGatt.writeDescriptor(descriptor);
+//                                Log.d(TAG, "result of writeDescriptor is "+result);
+//
+//                                if(result == false){
+//                                    Log.d(TAG, "write failed!!!!! Call setCharacteristicNotification again");
+//                                    setCharacteristicNotification(characteristicsUuid, enabled);
+//                                }
+//                                else{
+//                                    // do nothing.
+//                                }
+//
+//                                break;
+//                            } else {
+//                                // Do nothing
+//                            }
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//
+//        doOperation();
+//        return result;
+//    }
+
+
+//    public boolean writeDescriptor(final String characteristicsUuid) {
+//
+//        Log.d(TAG, "writeDescriptor IN");
+//
+//        boolean result = false;
+//
+//        if (bluetoothAdapter == null || bluetoothGatt == null) {
+//            // Check BluetoothGatt is available
+//            Log.w(TAG, "BluetoothAdapter not initialized");
+//            result = false;
+//        } else {
+//
+//            operations.add(new Runnable() {
+//
+//                public void run() {
+//
+//                    // Read a value from the characteristic
+//                    List<BluetoothGattService> bleGattServices = bleDevice.getBluetoothService();
+//
+//                    // Iterate services and characteristic
+//                    for (BluetoothGattService service : bleGattServices) {
+//                        for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+//
+//                            if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
+//                                Log.d(TAG, "Found  characteristic for write descriptor: " + characteristic.getUuid().toString());
+//
+//                                BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(CLIENT_CONFIGURATION_UUID));
+//                                descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+//                                bluetoothGatt.writeDescriptor(descriptor);
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//            });
+//
+//            result = true;
+//        }
+//
+//        doOperation();
+//        return result;
+//    }
+
+//
+//    /**
+//     * Returns a BleDevice's instance
+//     *
+//     * @return BleDevice's instance
+//     */
+//    public BleDevice bleDevice() {
+//        return bleDevice;
+//    }
 
     public void printGattValue(byte[] values) {
         StringBuilder hexValue = new StringBuilder();
@@ -651,47 +775,70 @@ public class BleManager {
 
             String address = gatt.getDevice().getAddress();
 
+            if(status == 133){
+                Log.d(TAG, "onConnectionStateChange " + status);
+                gatt.close();
+                connectedGatts.remove(address);
+
+                return;
+            }
+
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(TAG, "Connected to GATT server.");
 
-                connectionState = BleValues.STATE_CONNECTED;
+                connectedGatts.put(address, gatt);
+                gatt.discoverServices();
+
+
+//                connectionState = BleValues.STATE_CONNECTED;
 
                 // Set address
-                bleDevice.setAddress(address);
+//                bleDevice.setAddress(address);
 
-                sendUpdate("onConnectionStateChanged", new Object[]{address, connectionState});
+                sendUpdate("onConnectionStateChanged", new Object[]{address, newState});
 
                 // Attempts to discover services after successful connection.
-                Log.i(TAG, "Attempting to start service discovery: " + bluetoothGatt.discoverServices());
+                Log.i(TAG, "Attempting to start service discovery: ");
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Disconnected from GATT server.");
 
-                connectionState = BleValues.STATE_DISCONNECTED;
+//                connectionState = BleValues.STATE_DISCONNECTED;
 
-                sendUpdate("onConnectionStateChanged", new Object[]{address, connectionState});
+                connectedGatts.remove(address);
+                setCurrentOperation(null);
+                gatt.close();
+                drive();
+
+                sendUpdate("onConnectionStateChanged", new Object[]{address, newState});
             }
+
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             Log.d(TAG, "onServicesDiscovered");
 
-            String address = gatt.getDevice().getAddress();
+//            String address = gatt.getDevice().getAddress();
 
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                List<BluetoothGattService> bleGattServices = gatt.getServices();
-                bleDevice.setBluetoothServices(bleGattServices);
+            displayGattServices(gatt);
 
-                // Show all the supported services and characteristics on the user interface.
-//                displayGattServices(address);
+            execute(gatt, currentOperation);
 
-                // Stop Scan
-                stopScan();
-
-                sendUpdate("onServicesDiscovered", new Object[]{address, bleGattServices});
-            } else {
-                Log.w(TAG, "onServicesDiscovered received: " + status);
-            }
+//            if (status == BluetoothGatt.GATT_SUCCESS) {
+//                List<BluetoothGattService> bleGattServices = gatt.getServices();
+//                bleDevice.setBluetoothServices(bleGattServices);
+//
+//                // Show all the supported services and characteristics on the user interface.
+////                displayGattServices(address);
+//
+//                // Stop Scan
+//                stopScan();
+//
+//                sendUpdate("onServicesDiscovered", new Object[]{address, bleGattServices});
+//            } else {
+//                Log.w(TAG, "onServicesDiscovered received: " + status);
+//            }
         }
 
         @Override
@@ -715,12 +862,14 @@ public class BleManager {
             sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value});
 
             // Clear flag
-            if (isDoOperation) {
-                isDoOperation = false;
-                cancelOperationTimer();
-            }
+//            if (isDoOperation) {
+//                isDoOperation = false;
+//                cancelOperationTimer();
+//            }
 
-            doOperation();
+//            doOperation();
+            setCurrentOperation(null);
+            drive();
         }
 
         @Override
@@ -743,12 +892,15 @@ public class BleManager {
             sendUpdate("onCharacteristicWrite", new Object[]{address, uuid, value});
 
             // Clear flag
-            if (isDoOperation) {
-                isDoOperation = false;
-                cancelOperationTimer();
-            }
+//            if (isDoOperation) {
+//                isDoOperation = false;
+//                cancelOperationTimer();
+//            }
+//
+//            doOperation();
+            setCurrentOperation(null);
+            drive();
 
-            doOperation();
         }
 
         @Override
@@ -769,12 +921,13 @@ public class BleManager {
             sendUpdate("onCharacteristicChanged", new Object[]{address, uuid, value});
 
             // Clear flag
-            if (isDoOperation) {
-                isDoOperation = false;
-                cancelOperationTimer();
-            }
+//            if (isDoOperation) {
+//                isDoOperation = false;
+//                cancelOperationTimer();
+//            }
+//
+//            doOperation();
 
-            doOperation();
         }
 
 
@@ -795,57 +948,60 @@ public class BleManager {
             sendUpdate("onDescriptorWrite", new Object[]{address, uuid, value});
 
             // Clear flag
-            if (isDoOperation) {
-                isDoOperation = false;
-                cancelOperationTimer();
-            }
+//            if (isDoOperation) {
+//                isDoOperation = false;
+//                cancelOperationTimer();
+//            }
+//
+//            doOperation();
+            setCurrentOperation(null);
+            drive();
 
-            doOperation();
         }
     };
 
     /**
      * Send requests to BLE device, if there are runnable objects in the linked list
      */
-    private void doOperation() {
-//        Log.d(TAG, "doOperation Runnable - size: " + operations.size());
+//    private void doOperation() {
+////        Log.d(TAG, "doOperation Runnable - size: " + operations.size());
+//
+//        if (!isDoOperation) {
+//
+//            Runnable runnable = operations.poll();
+//            if (runnable != null) {
+//                Log.d(TAG, "Execute a runnable object's hash code: " + runnable.hashCode());
+//
+//                startOperationTimer();
+//
+//                isDoOperation = true;
+//                runnable.run();
+//            } else {
+//                // Do nothing
+//            }
+//        } else {
+////            Log.d(TAG, "Operation is undergoing: " + isDoOperation);
+//        }
+//    }
 
-        if (!isDoOperation) {
+//    private void startOperationTimer() {
+//        Log.d(TAG, "startOperationTimer IN");
+//
+//        // Launching timeout timer
+//        if (operationTimer == null) {
+//            operationTimer = new Timer();
+//            operationTimerTask = new OperationTimerTask();
+//            operationTimer.schedule(operationTimerTask, OPERATION_TIME_OUT);
+//        }
+//    }
 
-            Runnable runnable = operations.poll();
-            if (runnable != null) {
-                Log.d(TAG, "Execute a runnable object's hash code: " + runnable.hashCode());
-
-                startOperationTimer();
-
-                isDoOperation = true;
-                runnable.run();
-            } else {
-                // Do nothing
-            }
-        } else {
-//            Log.d(TAG, "Operation is undergoing: " + isDoOperation);
-        }
-    }
-
-    private void startOperationTimer() {
-        Log.d(TAG, "startOperationTimer IN");
-
-        // Launching timeout timer
-        if (operationTimer == null) {
-            operationTimer = new Timer();
-            operationTimerTask = new OperationTimerTask();
-            operationTimer.schedule(operationTimerTask, OPERATION_TIME_OUT);
-        }
-    }
-
-    private void cancelOperationTimer() {
-        Log.d(TAG, "cancelOperationTimer IN");
-        if (operationTimer != null) {
-            operationTimer.cancel();
-            operationTimer = null;
-        }
-    }
+//    private void cancelOperationTimer() {
+//        Log.d(TAG, "cancelOperationTimer IN");
+//        if (operationTimer != null) {
+//            operationTimer.cancel();
+//            operationTimer = null;
+//        }
+//    }
 
     public void pairDevice(BluetoothDevice device) {
         try {
@@ -895,13 +1051,13 @@ public class BleManager {
         }
     }
 
-    class OperationTimerTask extends TimerTask {
-        public void run() {
-            Log.d(TAG, "Operation Timer Fired!");
-            isDoOperation = false;
-            doOperation();
-        }
-    }
+//    class OperationTimerTask extends TimerTask {
+//        public void run() {
+//            Log.d(TAG, "Operation Timer Fired!");
+//            isDoOperation = false;
+//            doOperation();
+//        }
+//    }
 }
 
 
