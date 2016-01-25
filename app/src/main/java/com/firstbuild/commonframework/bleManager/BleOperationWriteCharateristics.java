@@ -1,5 +1,6 @@
 package com.firstbuild.commonframework.bleManager;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -15,7 +16,7 @@ public class BleOperationWriteCharateristics extends BleOperation {
     private String characteristicsUuid;
     private byte[] values;
 
-    public BleOperationWriteCharateristics(BleDevice device, String characteristicsUuid, byte[] values) {
+    public BleOperationWriteCharateristics(BluetoothDevice device, String characteristicsUuid, byte[] values) {
         super(device);
         this.characteristicsUuid = characteristicsUuid;
         this.values = values.clone();
@@ -23,7 +24,7 @@ public class BleOperationWriteCharateristics extends BleOperation {
 
     @Override
     public boolean hasCallback() {
-        return false;
+        return true;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.firstbuild.commonframework.bleManager;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 
 /**
@@ -7,13 +8,13 @@ import android.bluetooth.BluetoothGatt;
  */
 public abstract class BleOperation {
     private static final int DEFAULT_TIMEOUT_IN_MILLIS = 10000;
-    private BleDevice device;
+    private BluetoothDevice device;
 
-    public BleOperation(BleDevice device) {
+    public BleOperation(BluetoothDevice device) {
         this.device = device;
     }
 
-    public BleDevice getDevice() {
+    public BluetoothDevice getDevice() {
         return device;
     }
 

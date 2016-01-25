@@ -1,5 +1,7 @@
 package com.firstbuild.androidapp.productManager;
 
+import android.bluetooth.BluetoothDevice;
+
 import com.firstbuild.commonframework.bleManager.BleDevice;
 
 import org.json.JSONException;
@@ -22,7 +24,7 @@ public class ProductInfo {
     public int batteryLevel = NO_BATTERY_INFO;
     public String cookMode = "";
 
-    public BleDevice bleDevice = null;
+    public BluetoothDevice bluetoothDevice = null;
 
 
     public ProductInfo(int type, String address, String nickname) {

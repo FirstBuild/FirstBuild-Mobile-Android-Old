@@ -28,6 +28,10 @@ public class ProductManager {
     }
 
     public ProductInfo getProduct(int index) {
+        if(index >= products.size()){
+            return null;
+        }
+
         return products.get(index);
     }
 

@@ -151,7 +151,7 @@ public class BleManager {
      *
      * @return connection success or failed
      */
-    public BleDevice connect(final String address) {
+    public BluetoothDevice connect(final String address) {
         Log.d(TAG, "connect IN");
 
         if (bluetoothAdapter == null ) {
@@ -159,27 +159,12 @@ public class BleManager {
             return null;
         }
 
-        BleDevice bleDevice = new BleDevice();
-
-        bleDevice.bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
+//        BleDevice bleDevice = new BleDevice();
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
 
         Log.d(TAG, "Trying to create a new connection.");
-        return bleDevice;
+        return device;
     }
-
-//    /**
-//     * Disconnect from a ble device
-//     */
-//    public void disconnect(BleDevice device) {
-//        Log.d(TAG, "disconnect IN");
-//
-//        // Disconnect bluetooth connection
-//        if (device.bluetoothGatt != null) {
-//            device.bluetoothGatt.disconnect();
-//        } else {
-//            // Do nothing
-//        }
-//    }
 
     /**
      * Check bluetooth feature in the phone is enabled
@@ -305,7 +290,6 @@ public class BleManager {
      * Print GATT services and characteristics
      *
      */
-    //public void displayGattServices(String address) {
     public void displayGattServices(BluetoothGatt gatt) {
         Log.d(TAG, "displayGattServices IN");
 
@@ -342,37 +326,70 @@ public class BleManager {
     }
 
 
-    public void readCharacteristics(BleDevice device, String characteristicsUuid) {
+    /**
+     * Add ReadChracteristics operation to the queue.
+     * @param device BluetoothDevice object.
+     * @param characteristicsUuid UUID to read.
+     */
+    public void readCharacteristics(BluetoothDevice device, String characteristicsUuid) {
+        Log.d(TAG, "operations.add readCharacteristics");
         operations.add(new BleOperationReadCharacteristics(device, characteristicsUuid));
 
         doOperation();
     }
 
-    public void writeCharateristics(BleDevice device, String characteristicsUuid, byte[] values) {
+    /**
+     * Add WriteChracteristics operation to the queue.
+     * @param device BluetoothDevice object.
+     * @param characteristicsUuid UUID to write.
+     * @param values actual value to write.
+     */
+    public void writeCharateristics(BluetoothDevice device, String characteristicsUuid, byte[] values) {
+        Log.d(TAG, "operations.add writeCharateristics");
         operations.add(new BleOperationWriteCharateristics(device, characteristicsUuid, values));
 
         doOperation();
     }
 
-    public void setCharacteristicNotification(BleDevice device, String characteristicsUuid, boolean isEnabled) {
+    /**
+     * Add Notification operation to the queue.
+     * @param device BluetoothDevice object.
+     * @param characteristicsUuid UUID for notification.
+     * @param isEnabled enable/disable of notification.
+     */
+    public void setCharacteristicNotification(BluetoothDevice device, String characteristicsUuid, boolean isEnabled) {
+        Log.d(TAG, "operations.add setCharacteristicNotification");
         operations.add(new BleOperationSetNotification(device, characteristicsUuid, isEnabled));
 
         doOperation();
     }
 
-    public void disconnect(BleDevice device){
+
+    /**
+     * Add Disconnect operation to the queue.
+     * @param device BluetoothDevice object.
+     */
+    public void disconnect(BluetoothDevice device){
+        Log.d(TAG, "operations.add disconnect");
         operations.add(new BleOperationDisconnect(device));
 
         doOperation();
     }
 
 
+    /**
+     * Cancel current operation due to expired timer.
+     */
     public void cancelCurrentOperation() {
-        Log.d(TAG, "Cancelling current operation. Queue size before: " + operations.size());
+        Log.d(TAG, "Cancelling current operation "+ currentOperation +", address: " + currentOperation.getDevice().getAddress());
         currentOperation = null;
         doOperation();
     }
 
+
+    /**
+     * Pick the next operation from the queue and execute.
+     */
     private void doOperation(){
         if(currentOperation != null) {
             Log.d(TAG, "tried to doOperation, but currentOperation was not null, " + currentOperation);
@@ -385,10 +402,11 @@ public class BleManager {
         }
 
         final BleOperation operation = operations.poll();
-        Log.d(TAG, "Driving Gatt queue, size will now become: " + operations.size());
+        Log.d(TAG, "Driving Gatt queue, size will now : " + operations.size());
         setCurrentOperation(operation);
 
         if(currentOperationTimeout != null) {
+            Log.d(TAG, "Good to cancel timer and go to next operation since we got call back before the time out");
             currentOperationTimeout.cancel(true);
         }
 
@@ -419,21 +437,29 @@ public class BleManager {
             }
         }.execute();
 
-        final BleDevice device = operation.getDevice();
+        final BluetoothDevice device = operation.getDevice();
 
         if(connectedGatts.containsKey(device.getAddress())) {
             executeOperation(connectedGatts.get(device.getAddress()), operation);
         }
         else {
-            device.bluetoothDevice.connectGatt(context, true, bluetoothGattCallback);
+            device.connectGatt(context, true, bluetoothGattCallback);
         }
     }
 
+    /**
+     * Execute given operation.
+     * @param bluetoothGatt BluetoothDevice object.
+     * @param operation BleOperation object.
+     */
     private void executeOperation(BluetoothGatt bluetoothGatt, BleOperation operation) {
+        Log.d(TAG, "executeOperation IN");
         if(operation != currentOperation) {
+            Log.d(TAG, "current operation is not null");
             return;
         }
 
+        Log.d(TAG, "execute operation");
         operation.execute(bluetoothGatt);
 
         if(!operation.hasCallback()) {
@@ -442,6 +468,10 @@ public class BleManager {
         }
     }
 
+    /**
+     * Put given operation into currentOperation
+     * @param operation BleOperation object.
+     */
     private void setCurrentOperation(BleOperation operation) {
         this.currentOperation = operation;
     }
@@ -528,13 +558,13 @@ public class BleManager {
             }
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.i(TAG, "Connected to GATT server.");
+                Log.i(TAG, "Connected to GATT server. "+address);
 
                 connectedGatts.put(address, gatt);
                 gatt.discoverServices();
             }
             else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.i(TAG, "Disconnected from GATT server.");
+                Log.i(TAG, "Disconnected from GATT server."+address);
 
                 connectedGatts.remove(address);
                 setCurrentOperation(null);
@@ -549,10 +579,9 @@ public class BleManager {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
-            Log.d(TAG, "onServicesDiscovered");
-
             String address = gatt.getDevice().getAddress();
 
+            Log.d(TAG, "onServicesDiscovered "+address);
             displayGattServices(gatt);
 
             executeOperation(gatt, currentOperation);
@@ -560,7 +589,6 @@ public class BleManager {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 List<BluetoothGattService> bleGattServices = gatt.getServices();
 
-                stopScan();
                 sendUpdate("onServicesDiscovered", new Object[]{address, bleGattServices});
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
@@ -586,10 +614,10 @@ public class BleManager {
                 printGattValue(value);
             }
 
+            sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value});
+
             setCurrentOperation(null);
             doOperation();
-
-            sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value});
         }
 
         @Override

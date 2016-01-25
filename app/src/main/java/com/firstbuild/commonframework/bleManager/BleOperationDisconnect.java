@@ -1,5 +1,6 @@
 package com.firstbuild.commonframework.bleManager;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 
 /**
@@ -7,7 +8,7 @@ import android.bluetooth.BluetoothGatt;
  */
 public class BleOperationDisconnect extends BleOperation {
 
-    public BleOperationDisconnect(BleDevice device) {
+    public BleOperationDisconnect(BluetoothDevice device) {
         super(device);
     }
 

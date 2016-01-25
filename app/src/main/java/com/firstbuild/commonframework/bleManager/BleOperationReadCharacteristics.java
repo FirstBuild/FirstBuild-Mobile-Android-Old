@@ -1,5 +1,6 @@
 package com.firstbuild.commonframework.bleManager;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -14,7 +15,7 @@ public class BleOperationReadCharacteristics extends BleOperation {
     private String TAG = BleOperationReadCharacteristics.class.getSimpleName();
     private String characteristicsUuid;
 
-    public BleOperationReadCharacteristics(BleDevice device, String characteristicsUuid) {
+    public BleOperationReadCharacteristics(BluetoothDevice device, String characteristicsUuid) {
         super(device);
         this.characteristicsUuid = characteristicsUuid;
     }

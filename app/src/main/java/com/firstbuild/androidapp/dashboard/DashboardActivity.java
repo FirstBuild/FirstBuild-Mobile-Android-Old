@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.addProduct.AddProductActivity;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
@@ -180,17 +181,17 @@ public class DashboardActivity extends ActionBarActivity {
         for (int i = 0; i < size; i++) {
             ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
 
-            if (productInfo.bleDevice == null) {
+            if (productInfo.bluetoothDevice== null) {
                 Log.d(TAG, "device is null");
             }
             else {
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_COOK_MODE, true);
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, false);
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
 
-                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
-                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
             }
 
         }
@@ -324,17 +325,18 @@ public class DashboardActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                ProductInfo productInfo = ProductManager.getInstance().getProduct(1);
+                // for debug.
+//                ProductInfo productInfo = ProductManager.getInstance().getProduct(1);
+//
+//
+//                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+//                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+//                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
 
 
-                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
-                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
-
-
-//                    Intent intent = new Intent(DashboardActivity.this, AddProductActivity.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//                startActivity(intent);
+                Intent intent = new Intent(DashboardActivity.this, AddProductActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
             }
         });
 
@@ -391,13 +393,7 @@ public class DashboardActivity extends ActionBarActivity {
         for (int i = 0; i < size; i++) {
             ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
 
-            BleDevice bleDevice = BleManager.getInstance().connect(productInfo.address);
-            if (bleDevice == null) {
-                Log.d(TAG, "got null from BleManager.getInstance().connect");
-            }
-            else {
-                productInfo.bleDevice = bleDevice;
-            }
+            productInfo.bluetoothDevice = BleManager.getInstance().connect(productInfo.address);
         }
     }
 

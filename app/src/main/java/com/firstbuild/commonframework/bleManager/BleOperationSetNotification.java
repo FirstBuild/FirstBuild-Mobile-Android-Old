@@ -1,5 +1,6 @@
 package com.firstbuild.commonframework.bleManager;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
@@ -17,7 +18,7 @@ public class BleOperationSetNotification extends BleOperation {
     private String characteristicsUuid;
     private boolean isEnabled;
 
-    public BleOperationSetNotification(BleDevice device, String characteristicsUuid, boolean isEnabled) {
+    public BleOperationSetNotification(BluetoothDevice device, String characteristicsUuid, boolean isEnabled) {
         super(device);
         this.characteristicsUuid = characteristicsUuid;
         this.isEnabled = isEnabled;
@@ -25,7 +26,7 @@ public class BleOperationSetNotification extends BleOperation {
 
     @Override
     public boolean hasCallback() {
-        return false;
+        return true;
     }
 
     @Override
