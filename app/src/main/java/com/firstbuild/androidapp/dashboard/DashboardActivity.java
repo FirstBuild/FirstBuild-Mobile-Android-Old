@@ -36,7 +36,6 @@ import com.firstbuild.androidapp.viewUtil.SwipeMenu;
 import com.firstbuild.androidapp.viewUtil.SwipeMenuCreator;
 import com.firstbuild.androidapp.viewUtil.SwipeMenuItem;
 import com.firstbuild.androidapp.viewUtil.SwipeMenuListView;
-import com.firstbuild.commonframework.bleManager.BleDevice;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.commonframework.bleManager.BleValues;
@@ -173,15 +172,28 @@ public class DashboardActivity extends ActionBarActivity {
         Log.d(TAG, "onResume");
         super.onResume();
 
+        // Initialize ble manager
+        BleManager.getInstance().initBleManager(this);
 
-//        connectProducts();
+        // Add ble event listener
+        BleManager.getInstance().addListener(bleListener);
+
+        updateListView();
+
 
         int size = ProductManager.getInstance().getSize();
 
         for (int i = 0; i < size; i++) {
             ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
 
-            if (productInfo.bluetoothDevice== null) {
+            productInfo.bluetoothDevice = BleManager.getInstance().connect(productInfo.address);
+        }
+
+
+        for (int i = 0; i < size; i++) {
+            ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
+
+            if (productInfo.bluetoothDevice == null) {
                 Log.d(TAG, "device is null");
             }
             else {
@@ -194,6 +206,23 @@ public class DashboardActivity extends ActionBarActivity {
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
             }
 
+        }
+
+    }
+
+    private void updateListView() {
+
+        adapterDashboard.notifyDataSetChanged();
+        listViewProduct.invalidateViews();
+
+
+        if (adapterDashboard.getCount() == 0) {
+            layoutNoProduct.setVisibility(View.VISIBLE);
+            listViewProduct.setVisibility(View.GONE);
+        }
+        else {
+            layoutNoProduct.setVisibility(View.GONE);
+            listViewProduct.setVisibility(View.VISIBLE);
         }
 
     }
@@ -245,6 +274,7 @@ public class DashboardActivity extends ActionBarActivity {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.urlFistBuild))));
             }
         });
+
 
         adapterDashboard = new ProductListAdapter();
         listViewProduct.setAdapter(adapterDashboard);
@@ -325,15 +355,6 @@ public class DashboardActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                // for debug.
-//                ProductInfo productInfo = ProductManager.getInstance().getProduct(1);
-//
-//
-//                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
-//                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-//                BleManager.getInstance().readCharacteristics(productInfo.bleDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
-
-
                 Intent intent = new Intent(DashboardActivity.this, AddProductActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
@@ -379,44 +400,11 @@ public class DashboardActivity extends ActionBarActivity {
             }
         };
 
-        // Initialize ble manager
-        BleManager.getInstance().initBleManager(this);
-
-        // Add ble event listener
-        BleManager.getInstance().addListener(bleListener);
-
-        updateListView();
-
-
-        int size = ProductManager.getInstance().getSize();
-
-        for (int i = 0; i < size; i++) {
-            ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
-
-            productInfo.bluetoothDevice = BleManager.getInstance().connect(productInfo.address);
-        }
     }
 
     private int dp2px(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
-    }
-
-    private void updateListView() {
-
-        adapterDashboard.notifyDataSetChanged();
-        listViewProduct.invalidateViews();
-
-
-        if (adapterDashboard.getCount() == 0) {
-            layoutNoProduct.setVisibility(View.VISIBLE);
-            listViewProduct.setVisibility(View.GONE);
-        }
-        else {
-            layoutNoProduct.setVisibility(View.GONE);
-            listViewProduct.setVisibility(View.VISIBLE);
-        }
-
     }
 
     public void itemClicked(int position) {
@@ -592,7 +580,6 @@ public class DashboardActivity extends ActionBarActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d(TAG, "getView--------------");
 
             if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.adapter_product_card_view, null);

@@ -6,7 +6,10 @@ import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -180,10 +183,8 @@ public class AddProductSearchParagonFragment extends Fragment {
 
                     if(bondState == device.BOND_NONE) {
                         Log.d(TAG, "device not bonded: " + bondState);
-                        // Connect to device
+                        // Pair to device
                         BleManager.getInstance().pairDevice(device);
-
-                        isFound = true;
                     }
                     else if(bondState == device.BOND_BONDED || bondState == device.BOND_BONDING){
                         Log.d(TAG, "device bonded: " + bondState);

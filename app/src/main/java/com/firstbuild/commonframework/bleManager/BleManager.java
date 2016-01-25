@@ -72,12 +72,14 @@ public class BleManager {
      */
     public void initBleManager(Context context) {
         Log.d(TAG, "initBleManager IN");
+        if(this.context == null){
+            this.context = context;
+            bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 
-        this.context = context;
-        bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+            // Get bluetooth adaptor
+            bluetoothAdapter = bluetoothManager.getAdapter();
 
-        // Get bluetooth adaptor
-        bluetoothAdapter = bluetoothManager.getAdapter();
+        }
     }
 
     /**
@@ -118,11 +120,13 @@ public class BleManager {
      * @param args     corresponding arguments
      */
     public void sendUpdate(String listener, Object... args) {
+        Log.d(TAG, "sendUpdate IN");
 
         // Clone hashmap to avoid java.util.ConcurrentModificationException
         HashMap<String, BleListener> callbackClone = (HashMap) callbacks.clone();
         for (Map.Entry<String, BleListener> entry : callbackClone.entrySet()) {
             BleListener callback = entry.getValue();
+            Log.d(TAG, "sendUpdate LOOP");
 
             if (callback != null && listener.equals("onScanStateChanged")) {
                 callback.onScanStateChanged((int) args[0]);
@@ -144,6 +148,8 @@ public class BleManager {
                 // Do nothing
             }
         }
+
+        Log.d(TAG, "sendUpdate OUT");
     }
 
     /**
@@ -381,7 +387,8 @@ public class BleManager {
      * Cancel current operation due to expired timer.
      */
     public void cancelCurrentOperation() {
-        Log.d(TAG, "Cancelling current operation "+ currentOperation +", address: " + currentOperation.getDevice().getAddress());
+//        Log.d(TAG, "Cancelling current operation "+ currentOperation +", address: " + currentOperation.getDevice().getAddress());
+        Log.d(TAG, "Cancelling current operation ");
         currentOperation = null;
         doOperation();
     }
@@ -402,12 +409,18 @@ public class BleManager {
         }
 
         final BleOperation operation = operations.poll();
+        final BluetoothDevice device = operation.getDevice();
+
         Log.d(TAG, "Driving Gatt queue, size will now : " + operations.size());
         setCurrentOperation(operation);
 
         if(currentOperationTimeout != null) {
             Log.d(TAG, "Good to cancel timer and go to next operation since we got call back before the time out");
             currentOperationTimeout.cancel(true);
+        }
+
+        if(!connectedGatts.containsKey(device.getAddress())) {
+            operation.setTimeoutTime(BleOperation.CONNECT_TIMEOUT_IN_MILLIS);
         }
 
         currentOperationTimeout = new AsyncTask<Void, Void, Void>() {
@@ -437,12 +450,13 @@ public class BleManager {
             }
         }.execute();
 
-        final BluetoothDevice device = operation.getDevice();
 
         if(connectedGatts.containsKey(device.getAddress())) {
+            Log.d(TAG, "found address in connectedGatts");
             executeOperation(connectedGatts.get(device.getAddress()), operation);
         }
         else {
+            Log.d(TAG, "not found address in connectedGatts");
             device.connectGatt(context, true, bluetoothGattCallback);
         }
     }
@@ -551,7 +565,9 @@ public class BleManager {
             if(status == 133){
                 Log.d(TAG, "onConnectionStateChange " + status + ", this device might be off!!!");
                 gatt.close();
-                connectedGatts.remove(address);
+                if(connectedGatts.containsKey(address)) {
+                    connectedGatts.remove(address);
+                }
 
                 sendUpdate("onConnectionStateChanged", new Object[]{address, BluetoothProfile.STATE_DISCONNECTED});
                 return;
@@ -566,14 +582,21 @@ public class BleManager {
             else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Disconnected from GATT server."+address);
 
-                connectedGatts.remove(address);
+
+                if(connectedGatts.containsKey(address)) {
+
+
+                    connectedGatts.remove(address);
+                }
+
+                // 끊어졌다고 해서 curretnOperation을 null 해도 괜찮은가?....No
                 setCurrentOperation(null);
                 gatt.close();
 
                 doOperation();
             }
 
-            sendUpdate("onConnectionStateChanged", new Object[]{address, newState});
+//            sendUpdate("onConnectionStateChanged", new Object[]{address, newState});
         }
 
         @Override
@@ -692,6 +715,9 @@ public class BleManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+
     }
 
 
