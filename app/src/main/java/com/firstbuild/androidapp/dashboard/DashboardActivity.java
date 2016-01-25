@@ -412,16 +412,6 @@ public class DashboardActivity extends ActionBarActivity {
         ProductManager.getInstance().setCurrent(position);
         ProductInfo productInfo = adapterDashboard.getItem(position);
 
-
-//        if (productInfo.isProbeConnected == false) {
-//            new MaterialDialog.Builder(DashboardActivity.this)
-//                    .title("Probe is not connected")
-//                    .content("Please check the probe connection. Not able to cook without Paragon probe.")
-//                    .positiveText("Ok")
-//                    .cancelable(true).show();
-//            return;
-//        }
-
         if (productInfo.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
 
             ProductManager.getInstance().setCurrent(position);

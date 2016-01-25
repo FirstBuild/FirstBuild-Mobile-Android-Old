@@ -191,7 +191,7 @@ public class QuickStartFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if(pickerTemp.getValue() <= ParagonValues.WARNING_TEMPERATURE &&
+                if(pickerTemp.getValue() < ParagonValues.WARNING_TEMPERATURE &&
                         !attached.isShowFoodWarning()){
 
                     new MaterialDialog.Builder(getActivity())

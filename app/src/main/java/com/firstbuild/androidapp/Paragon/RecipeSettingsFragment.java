@@ -141,7 +141,7 @@ public class RecipeSettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if(setTargetTemp <= ParagonValues.WARNING_TEMPERATURE &&
+                if(setTargetTemp < ParagonValues.WARNING_TEMPERATURE &&
                         !attached.isShowFoodWarning()){
 
                     new MaterialDialog.Builder(getActivity())
