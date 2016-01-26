@@ -53,27 +53,28 @@ public class SelectModeFragment extends Fragment implements SelectModeAdapter.Cl
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_select_mode, container, false);
 
-        view.findViewById(R.id.btn_my_recipes).setVisibility(View.GONE);
-        view.findViewById(R.id.btn_my_recipes).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onclick my recipes");
-                RecipeManager.getInstance().ReadFromFile();
-                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_MY_RECIPES);
+        //TODO: block recipeManaber until multi-stage enabled.
+//        view.findViewById(R.id.btn_my_recipes).setVisibility(View.GONE);
+//        view.findViewById(R.id.btn_my_recipes).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "onclick my recipes");
+//                RecipeManager.getInstance().ReadFromFile();
+//                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_MY_RECIPES);
+//
+//            }
+//        });
 
-            }
-        });
-
-        view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onclick Quick Start");
-
-                RecipeManager.getInstance().createRecipeSousVide();
-                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_QUICK_START);
-
-            }
-        });
+//        view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "onclick Quick Start");
+//
+//                RecipeManager.getInstance().createRecipeSousVide();
+//                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_QUICK_START);
+//
+//            }
+//        });
 
         layoutButtons = view.findViewById(R.id.layout_buttons);
 

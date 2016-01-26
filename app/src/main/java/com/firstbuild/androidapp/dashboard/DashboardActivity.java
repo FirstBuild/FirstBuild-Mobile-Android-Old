@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,6 +31,7 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.addProduct.AddProductActivity;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.androidapp.viewUtil.SwipeMenu;
@@ -89,6 +91,26 @@ public class DashboardActivity extends ActionBarActivity {
             super.onConnectionStateChanged(address, status);
 
             Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
+
+            ProductInfo productInfo = ProductManager.getInstance().getProductByAddress(address);
+
+            if (productInfo != null && status == BluetoothProfile.STATE_DISCONNECTED) {
+                productInfo.disconnected();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapterDashboard.notifyDataSetChanged();
+                                listViewProduct.invalidateViews();
+                            }
+                        });
+                    }
+                }).start();
+
+            }
         }
 
         @Override
@@ -97,24 +119,31 @@ public class DashboardActivity extends ActionBarActivity {
 
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
 
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_COOK_MODE, true);
-//                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, false);
-//                            BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
-//
-//                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
-//                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-//                            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
-//                        }
-//                    });
-//                }
-//            }).start();
+            ProductInfo productInfo = ProductManager.getInstance().getProductByAddress(address);
 
+            if (productInfo != null) {
+                productInfo.connected();
+
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapterDashboard.notifyDataSetChanged();
+                                listViewProduct.invalidateViews();
+                            }
+                        });
+                    }
+                }).start();
+            }
         }
 
         @Override
@@ -178,36 +207,36 @@ public class DashboardActivity extends ActionBarActivity {
         // Add ble event listener
         BleManager.getInstance().addListener(bleListener);
 
-        updateListView();
+        requestUpdateProducts();
 
+    }
+
+
+    private void requestUpdateProducts() {
 
         int size = ProductManager.getInstance().getSize();
 
         for (int i = 0; i < size; i++) {
             ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
-
             productInfo.bluetoothDevice = BleManager.getInstance().connect(productInfo.address);
         }
 
-
         for (int i = 0; i < size; i++) {
             ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
-
-            if (productInfo.bluetoothDevice == null) {
-                Log.d(TAG, "device is null");
-            }
-            else {
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE, true);
+            if (productInfo.bluetoothDevice != null) {
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
-
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
             }
-
         }
 
+
+        updateListView();
     }
 
     private void updateListView() {
@@ -474,39 +503,44 @@ public class DashboardActivity extends ActionBarActivity {
             return;
         }
 
-        product.isProductConnected = true;
+        product.connected();
 
         switch (uuid.toUpperCase()) {
 
             case ParagonValues.CHARACTERISTIC_BATTERY_LEVEL:
+                product.setErdBatteryLevel(byteBuffer.get());
                 Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL :" + String.format("%02x", value[0]));
+                break;
 
-                product.batteryLevel = (int) byteBuffer.get();
+
+            case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
+                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" + String.format("%02x", value[0]));
+                product.setErdBurnerStatus(byteBuffer.get());
+                break;
+
+            case ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE:
+                Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
+                product.setErdProbeConnectionStatue(byteBuffer.get());
                 break;
 
             case ParagonValues.CHARACTERISTIC_COOK_MODE:
                 Log.d(TAG, "CHARACTERISTIC_COOK_MODE :" + String.format("%02x", value[0]));
-
-                if (byteBuffer.get() == ParagonValues.CURRENT_COOK_MODE_MULTISTEP) {
-                    product.cookMode = "Cooking";
-                }
-                else {
-                    product.cookMode = "";
-                }
+                product.setErdCurrentCookMode(byteBuffer.get());
                 break;
 
+            case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
+                Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :");
 
-            case ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE:
-                Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
-
-                if (byteBuffer.get() == ParagonValues.PROBE_CONNECT) {
-                    product.isProbeConnected = true;
+                String data = "";
+                for (int i = 0; i < 39; i++) {
+                    data += String.format("%02x", value[i]);
                 }
-                else {
-                    product.isProbeConnected = false;
-                }
+                Log.d(TAG, "CONFIGURATION Data :" + data);
 
+                RecipeInfo newRecipe = new RecipeInfo(value);
+                product.setErdRecipeConfig(newRecipe);
                 break;
+
         }
 
         new Thread(new Runnable() {
@@ -570,6 +604,7 @@ public class DashboardActivity extends ActionBarActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            Log.d(TAG, "update View");
 
             if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.adapter_product_card_view, null);
@@ -593,7 +628,7 @@ public class DashboardActivity extends ActionBarActivity {
 
             holderDashboard.textNickname.setText(currentProduct.nickname);
 
-            if (currentProduct.isProductConnected) {
+            if (currentProduct.isConnected()) {
                 holderDashboard.progressBar.setVisibility(View.GONE);
                 holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
             }
@@ -603,28 +638,40 @@ public class DashboardActivity extends ActionBarActivity {
             }
 
 
-            if (currentProduct.isProbeConnected) {
+            if (currentProduct.isProbeConnected()) {
 
-                if (currentProduct.batteryLevel > 75) {
+                holderDashboard.imageBattery.setVisibility(View.VISIBLE);
+
+                int level = currentProduct.getErdBatteryLevel();
+
+                if (level > 75) {
                     holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_100);
                 }
-                else if (currentProduct.batteryLevel > 25) {
+                else if (level > 25) {
                     holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_50);
                 }
-                else if (currentProduct.batteryLevel > 15) {
+                else if (level > 15) {
                     holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_25);
                 }
                 else {
                     holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_15);
                 }
 
-                String batteryLevel = currentProduct.batteryLevel + "%";
+                String batteryLevel = level + "%";
                 holderDashboard.textBattery.setText(batteryLevel + "");
             }
             else {
                 holderDashboard.textBattery.setText("probe\noffline");
-                holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_15);
+                holderDashboard.imageBattery.setVisibility(View.GONE);
             }
+
+            if (currentProduct.getErdBurnerStatus() == ParagonValues.BURNER_STATE_START) {
+                holderDashboard.textCooking.setText("Cooking");
+            }
+            else {
+                holderDashboard.textCooking.setText("");
+            }
+
 
             return convertView;
         }
@@ -634,25 +681,21 @@ public class DashboardActivity extends ActionBarActivity {
             private ImageView imageMark;
             private ImageView imageLogo;
             private TextView textNickname;
-            //            private TextView textCooking;
+            private TextView textCooking;
             private TextView textBattery;
-            //            private TextView textProbe;
             private ImageView imageBattery;
             private View progressBar;
             private View layoutStatus;
-            private View layoutBatteryLevel;
 
             public ViewHolder(View view) {
                 imageMark = (ImageView) view.findViewById(R.id.image_mark);
                 imageLogo = (ImageView) view.findViewById(R.id.image_logo);
                 textNickname = (TextView) view.findViewById(R.id.item_nickname);
-//                textCooking = (TextView) view.findViewById(R.id.text_cooking);
+                textCooking = (TextView) view.findViewById(R.id.text_cooking);
                 textBattery = (TextView) view.findViewById(R.id.text_battery);
                 imageBattery = (ImageView) view.findViewById(R.id.image_battery);
-                progressBar = view.findViewById(R.id.progressBar);
+                progressBar = view.findViewById(R.id.layout_progressbar);
                 layoutStatus = view.findViewById(R.id.layout_status);
-//                textProbe = (TextView) view.findViewById(R.id.text_probe_connect);
-                layoutBatteryLevel = view.findViewById(R.id.layout_battery_level);
 
                 view.setTag(this);
             }

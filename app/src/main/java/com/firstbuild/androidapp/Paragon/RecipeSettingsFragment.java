@@ -16,7 +16,10 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -264,8 +267,7 @@ public class RecipeSettingsFragment extends Fragment {
      */
     private void initRecipeSetting() {
         // Now create a sousvide recipe and pointing the recipe as currentRecipe.
-        RecipeManager.getInstance().createRecipeSousVide();
-
+        ProductManager.getInstance().getCurrent().createRecipeConfigForSousVide();
 
     }
 
@@ -274,10 +276,16 @@ public class RecipeSettingsFragment extends Fragment {
      * Go to next step. this is came from checkGoodToGo of ParagonMainActivity.
      */
     public void goodToGo() {
-        RecipeManager.getInstance().getCurrentStage().setTime((int) (setTargetTimeMin * 60));
-        RecipeManager.getInstance().getCurrentStage().setMaxTime((int) (setTargetTimeMax * 60));
-        RecipeManager.getInstance().getCurrentStage().setTemp((int) setTargetTemp);
-        RecipeManager.getInstance().sendCurrentStages();
+
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+        RecipeInfo recipeConfig = product.getErdRecipeConfig();
+
+        recipeConfig.getStage(0).setTime((int) (setTargetTimeMin * 60));
+        recipeConfig.getStage(0).setMaxTime((int) (setTargetTimeMax * 60));
+        recipeConfig.getStage(0).setTemp((int) setTargetTemp);
+        recipeConfig.getStage(0).setSpeed(10);
+
+        product.sendRecipeConfig();
 
         ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
 

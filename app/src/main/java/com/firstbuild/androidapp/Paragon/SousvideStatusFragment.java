@@ -16,7 +16,8 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.commonframework.bleManager.BleManager;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
 import java.nio.ByteBuffer;
@@ -124,31 +125,6 @@ public class SousvideStatusFragment extends Fragment {
         });
 
 
-        //TODO: remove code below after debug.
-        view.findViewById(R.id.progress_dot_3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateCookStatus(ParagonValues.COOK_STATE_COOKING);
-            }
-        });
-
-        view.findViewById(R.id.progress_dot_4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateCookStatus(ParagonValues.COOK_STATE_DONE);
-            }
-        });
-
-
-//        layoutStatus.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((ParagonMainActivity) getActivity()).setTargetTime(10, 0);
-//                updateUiElapsedTime(countDown--);
-//            }
-//        });
-//        //TODO: remove code above.
-
         updateUiCurrentTemp();
 
         UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
@@ -160,10 +136,10 @@ public class SousvideStatusFragment extends Fragment {
     /**
      * Update cooking state, Off -> Heating -> Ready -> Cooking -> Done
      *
-     * @param state
      */
-    public void updateCookStatus(byte state) {
-        Log.d(TAG, "updateCookStatus IN " + state);
+    public void updateCookState() {
+        byte state = ProductManager.getInstance().getCurrent().getErdCookState();
+        Log.d(TAG, "updateCookState IN " + state);
 
         switch (state) {
             case ParagonValues.COOK_STATE_OFF:
@@ -200,7 +176,7 @@ public class SousvideStatusFragment extends Fragment {
     public void UpdateUiCookState(COOK_STATE state) {
         Log.d(TAG, "UpdateUiCookState " + state);
 
-        StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
+        StageInfo stageInfo = ProductManager.getInstance().getCurrent().getErdRecipeConfig().getStage(0);
 
         if (cookState != state) {
             cookState = state;
@@ -305,10 +281,10 @@ public class SousvideStatusFragment extends Fragment {
      * Update UI current temperature compare with set temperature.r
      */
     public void updateUiCurrentTemp() {
-        StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
+        StageInfo stageInfo = ProductManager.getInstance().getCurrent().getErdRecipeConfig().getStage(0);
 
         if (cookState == COOK_STATE.STATE_PREHEAT) {
-            float currentTemp = attached.getCurrentTemp();
+            float currentTemp = ProductManager.getInstance().getCurrent().getErdCurrentTemp();
             textTempCurrent.setText(Math.round(currentTemp) + "℉");
 
             float ratioTemp = currentTemp / (float)stageInfo.getTemp();
@@ -325,11 +301,14 @@ public class SousvideStatusFragment extends Fragment {
     /**
      * Update UI current elapsed time. Elapsed time is increase from 0 until selected cook time.
      *
-     * @param elapsedTime
      */
-    public void updateUiElapsedTime(int elapsedTime) {
+    public void updateUiElapsedTime() {
+
+        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+        int elapsedTime = productInfo.getErdElapsedTime();
+
         Log.d(TAG, "updateUiElapsedTime :" + elapsedTime);
-        StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
+        StageInfo stageInfo = ProductManager.getInstance().getCurrent().getErdRecipeConfig().getStage(0);
 
         if (cookState == COOK_STATE.STATE_COOKING) {
             float ratioTime = (float) elapsedTime / (float) stageInfo.getTime();
@@ -348,10 +327,11 @@ public class SousvideStatusFragment extends Fragment {
 
     /**
      * Update new stage get from BLE master.
-     * @param newStage integer value of stage 1 - 5.
      */
-    public void updateCookStage(int newStage) {
-        RecipeManager.getInstance().setCurrentStage(newStage-1);
+    public void updateCookStage() {
+        Log.d(TAG, "updateCookStage. Error sousvide is support only one stage.");
+//        int newStage = ProductManager.getInstance().getCurrent().getErdCookStage();
+//        RecipeManager.getInstance().setCurrentStage(newStage-1);
     }
 
 

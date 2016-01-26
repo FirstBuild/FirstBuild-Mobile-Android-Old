@@ -13,7 +13,7 @@ public class ParagonValues {
 
     //cooking specific characteristics
     public static final String CHARACTERISTIC_BURNER_STATUS             = "B98F1B81-F098-2CBA-7940-EB8C0FFD7BDC"; //read,notify
-    public static final String CHARACTERISTIC_REMAINING_TIME = "7FCE08B6-B7B2-168B-C44F-5E576045FD2E";
+    public static final String CHARACTERISTIC_ELAPSED_TIME = "7FCE08B6-B7B2-168B-C44F-5E576045FD2E";
     public static final String CHARACTERISTIC_CURRENT_TEMPERATURE       = "8F080B1C-7C3B-FBB9-584A-F0AFD57028F0";
 
     // NEW ADDED SERVICES.
@@ -63,6 +63,7 @@ public class ParagonValues {
 
     public static final int QUICK_MIN_TEMP = 80;
     public static final int QUICK_MAX_TEMP = 375;
+    public static final int QUICK_DEFAULT_TEMP = 140;
 
     public static final byte PROBE_CONNECT = 0x01;
     public static final byte PROBE_NOT_CONNECT = 0x02;

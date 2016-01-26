@@ -16,6 +16,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,7 +58,8 @@ public class GetReadyFragment extends Fragment {
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        RecipeManager.getInstance().sendCurrentStages();
+                        // TODO: Block RecipeManager until multi-stage activated.
+//                        RecipeManager.getInstance().sendCurrentStages();
                     }
 
                     @Override
@@ -70,20 +73,22 @@ public class GetReadyFragment extends Fragment {
                 })
                 .cancelable(false).build();
 
+        ProductInfo product = ProductManager.getInstance().getCurrent();
 
-        if (attached.getCookMode() != ParagonValues.CURRENT_COOK_MODE_RAPID &&
-                attached.getCookMode() != ParagonValues.CURRENT_COOK_MODE_GENTLE) {
-            dialogTryAgain.show();
-        }
-        else {
-            //do nothing.
-        }
+//        if (product.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_RAPID &&
+//                product.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_GENTLE) {
+//            dialogTryAgain.show();
+//        }
+//        else {
+//            //do nothing.
+//        }
 
 
         return view;
     }
 
-    public void onCookModeChanged(byte cookMode){
+    public void onCookModeChanged(){
+        byte cookMode = ProductManager.getInstance().getCurrent().getErdCurrentCookMode();
 
         if(cookMode == ParagonValues.CURRENT_COOK_MODE_RAPID ||
                 cookMode == ParagonValues.CURRENT_COOK_MODE_GENTLE){
