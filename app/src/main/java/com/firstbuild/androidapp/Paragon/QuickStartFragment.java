@@ -4,6 +4,7 @@ package com.firstbuild.androidapp.paragon;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,10 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +37,7 @@ public class QuickStartFragment extends Fragment {
     private NumberPicker pickerMaxMin;
     private NumberPicker pickerTemp;
     private ParagonMainActivity attached = null;
+    private String TAG = QuickStartFragment.class.getSimpleName();
 
     public QuickStartFragment() {
         // Required empty public constructor
@@ -148,7 +153,7 @@ public class QuickStartFragment extends Fragment {
         pickerTemp.setMaxValue(ParagonValues.QUICK_MAX_TEMP);
         pickerTemp.setWrapSelectorWheel(false);
         pickerTemp.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        pickerTemp.setValue(ParagonValues.QUICK_MIN_TEMP);
+        pickerTemp.setValue(ParagonValues.QUICK_DEFAULT_TEMP);
 
 
         pickerMinHour.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
@@ -179,7 +184,7 @@ public class QuickStartFragment extends Fragment {
             }
         });
 
-        pickerTemp.setOnValueChangedListener(new NumberPicker.OnValueChangeListener(){
+        pickerTemp.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 makeTempText(newVal);
@@ -191,8 +196,9 @@ public class QuickStartFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if(pickerTemp.getValue() <= ParagonValues.WARNING_TEMPERATURE &&
-                        !attached.isShowFoodWarning()){
+                Log.d(TAG, "pickerTemp :" + pickerTemp.getValue() + ", WARNING temp :" + ParagonValues.WARNING_TEMPERATURE);
+                if (pickerTemp.getValue() < ParagonValues.WARNING_TEMPERATURE &&
+                        !attached.isShowFoodWarning()) {
 
                     new MaterialDialog.Builder(getActivity())
                             .title("Reminder")
@@ -220,22 +226,30 @@ public class QuickStartFragment extends Fragment {
                             })
                             .show();
                 }
-                else{
+                else {
                     attached.checkGoodToGo();
                 }
             }
         });
+
+
+        String stringTemp = ParagonValues.QUICK_DEFAULT_TEMP + "℉";
+        textTemp.setText(stringTemp);
 
         return view;
     }
 
     public void goodToGo() {
 
-        RecipeManager.getInstance().getCurrentStage().setTime(pickerMinHour.getValue() * 60 + pickerMinMin.getValue());
-        RecipeManager.getInstance().getCurrentStage().setMaxTime(pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue());
-        RecipeManager.getInstance().getCurrentStage().setTemp(pickerTemp.getValue());
-        RecipeManager.getInstance().getCurrentStage().setSpeed(10);
-        RecipeManager.getInstance().sendCurrentStages();
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+        RecipeInfo recipeConfig = product.getErdRecipeConfig();
+
+        recipeConfig.getStage(0).setTime(pickerMinHour.getValue() * 60 + pickerMinMin.getValue());
+        recipeConfig.getStage(0).setMaxTime(pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue());
+        recipeConfig.getStage(0).setTemp(pickerTemp.getValue());
+        recipeConfig.getStage(0).setSpeed(10);
+
+        product.sendRecipeConfig();
 
         attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
     }

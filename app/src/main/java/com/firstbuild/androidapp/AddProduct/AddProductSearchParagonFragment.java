@@ -6,7 +6,10 @@ import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -175,13 +178,34 @@ public class AddProductSearchParagonFragment extends Fragment {
 
                 if (ParagonValues.TARGET_DEVICE_NAME.equals(name)){
                     Log.d(TAG, "device found: " + device.getName());
+                    boolean isFound = false;
+
 
                     if(bondState == device.BOND_NONE) {
                         Log.d(TAG, "device not bonded: " + bondState);
-                        // Connect to device
-//                        BleManager.getInstance().connect(deviceAddress);
+                        // Pair to device
                         BleManager.getInstance().pairDevice(device);
+                    }
+                    else if(bondState == device.BOND_BONDED || bondState == device.BOND_BONDING){
+                        Log.d(TAG, "device bonded: " + bondState);
 
+                        if(ProductManager.getInstance().getProductByAddress(deviceAddress) == null){
+                            isFound = true;
+                        }
+                    }
+                    else{
+                        Log.d(TAG, "device bonded or bonding state: " + bondState);
+
+                        // This part must be replace with proper warning page
+                        goToErrorScreen();
+                    }
+
+
+                    if(isFound){
+                        // Stop ble device scanning
+                        BleManager.getInstance().stopScan();
+
+                        // case for Paragon Master already paired but not in dashboard.
                         attached.setNewProductAddress(deviceAddress);
 
                         // Transit to success UI
@@ -191,39 +215,7 @@ public class AddProductSearchParagonFragment extends Fragment {
                                 addToBackStack(null).
                                 commit();
 
-                        // Stop ble device scanning
-                        BleManager.getInstance().stopScan();
-
                         break;
-
-                    }
-                    else if(bondState == device.BOND_BONDED){
-                        Log.d(TAG, "device bonded: " + bondState);
-
-                        ProductInfo product = ProductManager.getInstance().getProductByAddress(deviceAddress);
-
-                        if(product == null){
-                            // case for Paragon Master already paired but not in dashboard.
-                            attached.setNewProductAddress(deviceAddress);
-
-                            // Transit to success UI
-                            getFragmentManager().
-                                    beginTransaction().
-                                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
-                                    addToBackStack(null).
-                                    commit();
-
-                            // Stop ble device scanning
-                            BleManager.getInstance().stopScan();
-                        }
-
-                    }
-                    else{
-                        Log.d(TAG, "device bonded or bonding state: " + bondState);
-
-                        // Paragon already found - go to error screen
-                        // This part must be replace with proper warning page
-                        goToErrorScreen();
                     }
                 }
             }

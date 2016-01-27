@@ -1,8 +1,14 @@
 package com.firstbuild.androidapp.addProduct;
 
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -14,6 +20,7 @@ import com.firstbuild.androidapp.productManager.ProductManager;
 public class AddProductActivity extends ActionBarActivity {
     private String TAG = AddProductActivity.class.getSimpleName();
     private ProductInfo newProduct = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,12 @@ public class AddProductActivity extends ActionBarActivity {
                 replace(R.id.content_frame, new AddProductSelectFragment()).
                 addToBackStack(null).
                 commit();
+
+
+//        IntentFilter intent = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+//        registerReceiver(mPairReceiver, intent);
+//
+
 
 //        getWindow().getEnterTransition().addListener(new Transition.TransitionListener() {
 //            @Override

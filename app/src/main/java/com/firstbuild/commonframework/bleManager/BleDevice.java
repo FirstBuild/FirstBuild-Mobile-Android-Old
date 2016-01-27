@@ -7,6 +7,8 @@
 
 package com.firstbuild.commonframework.bleManager;
 
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
@@ -15,13 +17,22 @@ import java.util.List;
 
 public class BleDevice {
     // Keeping ble device's address
-    private String address = "";
+//    private String address = "";
 
     // Keeping ble device's nick name
     private String nickName = "";
 
     // Keeping bleGattServices
     private List<BluetoothGattService> bleGattServices = null;
+
+    // state for connection.
+    public int connectionState = BleValues.STATE_DISCONNECTED;
+
+//    // Blue tooth Gatt handler
+//    public BluetoothGatt bluetoothGatt;
+
+    // BleDevice Object variable
+    public BluetoothDevice bluetoothDevice = null;
 
     /**
      * Default constructor
@@ -83,18 +94,18 @@ public class BleDevice {
      * @return address
      */
     public String getAddress() {
-        return address;
+        return bluetoothDevice.getAddress();
     }
 
-    /**
-     * Set device's mac address
-     * @param address mac address
-     */
-    public void setAddress(String address) {
-        if(address != null) {
-            this.address = address;
-        }
-    }
+//    /**
+//     * Set device's mac address
+//     * @param address mac address
+//     */
+//    public void setAddress(String address) {
+//        if(address != null) {
+//            this.address = address;
+//        }
+//    }
 
     /**
      * Set bluetooth Gatt service
@@ -119,7 +130,7 @@ public class BleDevice {
      */
     public void resetAllData(){
         // Clear all the data
-        address = "";
+//        address = "";
         nickName = "";
         bleGattServices = null;
     }

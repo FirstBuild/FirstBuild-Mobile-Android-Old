@@ -40,6 +40,7 @@ import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
+import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.commonframework.bleManager.BleListener;
 import com.firstbuild.commonframework.bleManager.BleManager;
@@ -57,18 +58,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 public class ParagonMainActivity extends ActionBarActivity {
-    public static final int INTERVAL_CHECKING_PARAGON_CONNECTION = 30000;
+    public static final int INTERVAL_CHECKING_PARAGON_CONNECTION = 1000;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final byte INITIAL_VALUE = 0x0f;
     private final float MIN_THICKNESS = 0.25f;
     private final float MAX_THICKNESS = 4.0f;
     private final int INTERVAL_GOODTOGO = 500;
     private final String PREF_KEY_FOOD_WARNING = "FoodWarning";
+    private final int MAX_WAITING_INIT_TIME = 30;
     public BuiltInRecipeInfo builtInRecipes = null;
     public BuiltInRecipeSettingsInfo selectedBuiltInRecipe = null;
     Toolbar toolbar;
@@ -78,12 +78,12 @@ public class ParagonMainActivity extends ActionBarActivity {
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
-    private float currentTemp;
-    private byte batteryLevel;
-    private byte burnerStatus = INITIAL_VALUE;
-    private byte cookMode = INITIAL_VALUE;
-    private byte probeConnection = ParagonValues.PROBE_NOT_CONNECT;
-    private Queue requestQueue = new LinkedList();
+    //    private float currentTemp;
+//    private byte batteryLevel;
+//    private byte burnerStatus = INITIAL_VALUE;
+//    private byte cookMode = INITIAL_VALUE;
+//    private byte probeConnection = ParagonValues.PROBE_NOT_CONNECT;
+//    private Queue requestQueue = new LinkedList();
     private boolean isCheckingCurrentStatus = false;
     // Thread handler for checking the connection with Paragon Master.
     private Handler handlerCheckingConnection;
@@ -132,40 +132,42 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
 
+            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (status == BluetoothProfile.STATE_CONNECTED) {
+            if (address.equals(productInfo.address)) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (status == BluetoothProfile.STATE_CONNECTED) {
 
-                                if (disconnectDialog.isShowing()) {
-                                    disconnectDialog.dismiss();
+                                    if (disconnectDialog.isShowing()) {
+                                        disconnectDialog.dismiss();
 
-                                    new MaterialDialog.Builder(ParagonMainActivity.this)
-                                            .content("Bluetooth Reconnected")
-                                            .positiveText("Ok")
-                                            .cancelable(true).show();
+                                        new MaterialDialog.Builder(ParagonMainActivity.this)
+                                                .content("Bluetooth Reconnected")
+                                                .positiveText("Ok")
+                                                .cancelable(true).show();
+                                    }
+                                    else {
+
+                                    }
+                                }
+                                else if (status == BluetoothProfile.STATE_DISCONNECTED) {
+                                    disconnectDialog.show();
+                                    BleManager.getInstance().connect(address);
                                 }
                                 else {
-
+                                    // do nothing
                                 }
-                            }
-                            else if (status == BluetoothProfile.STATE_DISCONNECTED) {
-                                disconnectDialog.show();
-                                BleManager.getInstance().connect(address);
-                            }
-                            else {
-                                // do nothing
-                            }
 
-                        }
-                    });
-                }
-            }).start();
-
+                            }
+                        });
+                    }
+                }).start();
+            }
 
         }
 
@@ -175,7 +177,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
 
-            BleManager.getInstance().displayGattServices(address);
+            // TODO: blocked.
+//            BleManager.getInstance().displayGattServices(address);
 
 //            // Get Initial values.
 //            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
@@ -219,22 +222,6 @@ public class ParagonMainActivity extends ActionBarActivity {
                     break;
 
                 case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
-//
-//                                    if (fragment instanceof GetReadyFragment) {
-//                                        ((GetReadyFragment) fragment).responseSendStage(ret);
-//                                    }
-//
-//                                }
-//                            });
-//                        }
-//                    }).start();
                     break;
 
             }
@@ -260,39 +247,40 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
+    private int checkingCountDown;
 
-    public byte getCookMode() {
-        return cookMode;
-    }
+//    public byte getCookMode() {
+//        return cookMode;
+//    }
 
     public MaterialDialog getDialogOtaProcessing() {
         return dialogOtaProcessing;
     }
 
-    private void nextCharacteristicRead() {
+//    private void nextCharacteristicRead() {
+//
+//        String nextRequest = (String) requestQueue.poll();
+//
+//        if (nextRequest != null) {
+//            String method = nextRequest.split("/")[0];
+//            String characteristic = nextRequest.split("/")[1];
+//
+//            if (method.equals(REQUEST_METHOD_READ)) {
+//                BleManager.getInstance().readCharacteristics(characteristic);
+//            }
+//            else if (method.equals(REQUEST_METHOD_NOTIFICATION)) {
+//                BleManager.getInstance().setCharacteristicNotification(characteristic, true);
+//            }
+//            else {
+//
+//            }
+//
+//        }
+//    }
 
-        String nextRequest = (String) requestQueue.poll();
-
-        if (nextRequest != null) {
-            String method = nextRequest.split("/")[0];
-            String characteristic = nextRequest.split("/")[1];
-
-            if (method.equals(REQUEST_METHOD_READ)) {
-                BleManager.getInstance().readCharacteristics(characteristic);
-            }
-            else if (method.equals(REQUEST_METHOD_NOTIFICATION)) {
-                BleManager.getInstance().setCharacteristicNotification(characteristic, true);
-            }
-            else {
-
-            }
-
-        }
-    }
-
-    public float getCurrentTemp() {
-        return currentTemp;
-    }
+//    public float getCurrentTemp() {
+//        return currentTemp;
+//    }
 
     private void onReceivedData(String uuid, byte[] value) {
 
@@ -305,11 +293,16 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(value);
 
+        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+        if (productInfo == null) {
+            Log.d(TAG, "productInfo is null");
+            return;
+        }
 
         switch (uuid.toUpperCase()) {
             case ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE:
-                currentTemp = (byteBuffer.getShort() / 100.0f);
-                Log.d(TAG, "CHARACTERISTIC_CURRENT_TEMPERATURE :" + currentTemp);
+                Log.d(TAG, "CHARACTERISTIC_CURRENT_TEMPERATURE :" + String.format("%02x%02x", value[0], value[1]));
+                productInfo.setErdCurrentTemp(byteBuffer.getShort());
 
                 new Thread(new Runnable() {
                     @Override
@@ -336,68 +329,58 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
             case ParagonValues.CHARACTERISTIC_BATTERY_LEVEL:
-                batteryLevel = byteBuffer.get();
+                Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL :" + String.format("%02x", value[0]));
+                productInfo.setErdBatteryLevel(byteBuffer.get());
 
-                Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL :" + batteryLevel);
-
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-//                                ((TextView) toolbar.findViewById(R.id.text_battery_level)).setText(batteryLevel + "%");
-                            }
-                        });
-                    }
-                }).start();
                 break;
 
-            case ParagonValues.CHARACTERISTIC_REMAINING_TIME:
-                Log.d(TAG, "CHARACTERISTIC_REMAINING_TIME :" + byteBuffer.getShort());
+            case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
+                Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + String.format("%02x", value[0]));
                 String buffer = String.format("%02x%02x", value[0], value[1]);
-                int remainingTime = Integer.parseInt(buffer, 16);
-                onElapsedTime(remainingTime);
-
+                productInfo.setErdElapsedTime(Integer.parseInt(buffer, 16));
+                onElapsedTime();
                 break;
 
 
             case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
                 Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :");
 
+                String data = "";
                 for (int i = 0; i < 39; i++) {
-                    Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :" + String.format("%02x", value[i]));
+                    data += String.format("%02x", value[i]);
                 }
+                Log.d(TAG, "CONFIGURATION Data :" + data);
 
-                onCookConfiguration(value);
+                RecipeInfo newRecipe = new RecipeInfo(value);
+                productInfo.setErdRecipeConfig(newRecipe);
                 break;
 
 
             case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
                 Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" + String.format("%02x", value[0]));
-
-                burnerStatus = value[0];
-                checkInitialStatus();
+                productInfo.setErdBurnerStatus(byteBuffer.get());
+//                checkInitialStatus();
                 break;
 
 
             case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE:
                 Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STATE :" + String.format("%02x", value[0]));
-                onCookState(value[0]);
+                productInfo.setErdCookState(byteBuffer.get());
+                onCookState();
                 break;
 
 
             case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE:
                 Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STAGE :" + String.format("%02x", value[0]));
-                onCookStage(value[0]);
+                productInfo.setErdCookStage(byteBuffer.get());
+                onCookStage();
                 break;
 
 
             case ParagonValues.CHARACTERISTIC_COOK_MODE:
                 Log.d(TAG, "CHARACTERISTIC_COOK_MODE :" + String.format("%02x", value[0]));
-                cookMode = value[0];
-                checkInitialStatus();
+                productInfo.setErdCurrentCookMode(byteBuffer.get());
+//                checkInitialStatus();
 
                 new Thread(new Runnable() {
                     @Override
@@ -408,7 +391,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                                 Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
                                 if (fragment instanceof GetReadyFragment) {
-                                    ((GetReadyFragment) fragment).onCookModeChanged(cookMode);
+                                    ((GetReadyFragment) fragment).onCookModeChanged();
                                 }
                                 else {
                                     //do nothing
@@ -423,7 +406,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
 
             case ParagonValues.CHARACTERISTIC_OTA_VERSION:
-                Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_VERSION :" + String.format("%02x%02x%02x%02x%02x%02x", value[0], value[1], value[2], value[3], value[4], value[5]));
+                Log.d(TAG, "CHARACTERISTIC_OTA_VERSION :" + String.format("%02x%02x%02x%02x%02x%02x", value[0], value[1], value[2], value[3], value[4], value[5]));
                 if (OtaManager.getInstance().compareVersion(value[2], value[3], (short) value[4])) {
                     if (dialogWaiting.isShowing()) {
                         dialogWaiting.dismiss();
@@ -453,19 +436,18 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
             case ParagonValues.CHARACTERISTIC_OTA_COMMAND:
-                Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND :" + String.format("%02x", value[0]));
+                Log.d(TAG, "CHARACTERISTIC_OTA_COMMAND :" + String.format("%02x", value[0]));
                 OtaManager.getInstance().getResponse(value[0]);
                 break;
 
 
             case ParagonValues.CHARACTERISTIC_ERROR_STATE:
-                Log.d(TAG, "ParagonValues.CHARACTERISTIC_ERROR_STATE :" + String.format("%02x", value[0]));
+                Log.d(TAG, "CHARACTERISTIC_ERROR_STATE :" + String.format("%02x", value[0]));
                 break;
 
             case ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE:
-                Log.d(TAG, "ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
-
-                probeConnection = byteBuffer.get();
+                Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
+                productInfo.setErdProbeConnectionStatue(byteBuffer.get());
                 break;
 
 
@@ -473,13 +455,17 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     private void checkInitialStatus() {
+        Log.d(TAG, "checkInitialStatus");
         if (currentStep == ParagonSteps.STEP_CHECK_CURRENT_STATUS) {
-            if (burnerStatus != INITIAL_VALUE && cookMode != INITIAL_VALUE) {
+            ProductInfo product = ProductManager.getInstance().getCurrent();
+
+            if (product.getErdBurnerStatus() != INITIAL_VALUE &&
+                    product.getErdCurrentCookMode() != INITIAL_VALUE ) {
 
                 dialogWaiting.dismiss();
 
-                if (burnerStatus == ParagonValues.BURNER_STATE_START &&
-                        cookMode == ParagonValues.CURRENT_COOK_MODE_MULTISTEP) {
+                if (product.getErdBurnerStatus() == ParagonValues.BURNER_STATE_START &&
+                        product.getErdCurrentCookMode() == ParagonValues.CURRENT_COOK_MODE_RAPID) {
                     nextStep(ParagonSteps.STEP_COOK_STATUS);
                 }
                 else {
@@ -487,29 +473,31 @@ public class ParagonMainActivity extends ActionBarActivity {
                 }
             }
             else {
+                Log.d(TAG, "checkInitialStatus Error State 1------------!!");
                 // show timer icon and popup "connecting..."
             }
         }
         else {
+            Log.d(TAG, "checkInitialStatus Error State 2------------!!");
             // do nothing
         }
     }
 
-    /**
-     * @param value
-     */
-    private void onCookConfiguration(byte[] value) {
-        RecipeInfo newRecipe = new RecipeInfo(value);
+//    /**
+//     * @param value
+//     */
+//    private void onCookConfiguration(byte[] value) {
+//        RecipeInfo newRecipe = new RecipeInfo(value);
+//
+//        if (newRecipe.numStage() > 0) {
+//            RecipeManager.getInstance().setCurrentRecipe(newRecipe);
+//            RecipeManager.getInstance().setCurrentStage(0);
+//
+//        }
+//    }
 
-        if (newRecipe.numStage() > 0) {
-            RecipeManager.getInstance().setCurrentRecipe(newRecipe);
-            RecipeManager.getInstance().setCurrentStage(0);
-
-        }
-    }
-
-    private void onCookStage(byte stage) {
-        final int newStage = (int) stage;
+    private void onCookStage() {
+        final int newStage = (int) ProductManager.getInstance().getCurrent().getErdCookStage();
 
         new Thread(new Runnable() {
             @Override
@@ -520,10 +508,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                         Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
                         if (fragment instanceof MultiStageStatusFragment) {
-                            ((MultiStageStatusFragment) fragment).updateCookStage(newStage);
+                            ((MultiStageStatusFragment) fragment).updateCookStage();
                         }
                         else if (fragment instanceof SousvideStatusFragment) {
-                            ((SousvideStatusFragment) fragment).updateCookStage(newStage);
+                            ((SousvideStatusFragment) fragment).updateCookStage();
                         }
                         else {
                             //do nothing.
@@ -537,10 +525,11 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     }
 
-    private void onCookState(final byte state) {
+    private void onCookState() {
+        final byte state = ProductManager.getInstance().getCurrent().getErdCookState();
 
         if (state == ParagonValues.COOK_STATE_OFF) {
-            nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
+//            nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
         }
         else {
             new Thread(new Runnable() {
@@ -552,10 +541,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                             Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
                             if (fragment instanceof SousvideStatusFragment) {
-                                ((SousvideStatusFragment) fragment).updateCookStatus(state);
+                                ((SousvideStatusFragment) fragment).updateCookState();
                             }
                             else if (fragment instanceof MultiStageStatusFragment) {
-                                ((MultiStageStatusFragment) fragment).updateCookStatus(state);
+                                ((MultiStageStatusFragment) fragment).updateCookState();
                             }
                             else if (fragment instanceof GetReadyFragment) {
                                 nextStep(ParagonSteps.STEP_COOK_STATUS);
@@ -572,8 +561,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     }
 
-    private void onElapsedTime(int elapsedTime) {
-        final int elapsedTimeValue = elapsedTime;
+    private void onElapsedTime() {
+//        final int elapsedTimeValue = elapsedTime;
 
         new Thread(new Runnable() {
             @Override
@@ -584,10 +573,10 @@ public class ParagonMainActivity extends ActionBarActivity {
                         Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
                         if (fragment instanceof SousvideStatusFragment) {
-                            ((SousvideStatusFragment) fragment).updateUiElapsedTime(elapsedTimeValue);
+                            ((SousvideStatusFragment) fragment).updateUiElapsedTime();
                         }
                         else if (fragment instanceof MultiStageStatusFragment) {
-                            ((MultiStageStatusFragment) fragment).updateUiElapsedTime(elapsedTimeValue);
+                            ((MultiStageStatusFragment) fragment).updateUiElapsedTime();
                         }
                         else {
                             // do nothing.
@@ -605,6 +594,7 @@ public class ParagonMainActivity extends ActionBarActivity {
      */
     public void nextStep(ParagonSteps step) {
         Fragment fragment = null;
+        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
         currentStep = step;
 
@@ -616,8 +606,10 @@ public class ParagonMainActivity extends ActionBarActivity {
             case STEP_COOKING_MODE:
                 loadRecipesFromAsset();
 
-                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, false);
-                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, false);
+//                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
+//                        ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, false);
+//                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
+//                        ParagonValues.CHARACTERISTIC_ELAPSED_TIME, false);
 
                 getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
@@ -629,23 +621,33 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
             case STEP_SOUSVIDE_GETREADY:
-                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
-                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice,
+                        ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice,
+                        ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
 
-                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
-                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
+                        ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
+                        ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
 
                 fragment = new GetReadyFragment();
                 break;
 
             case STEP_COOK_STATUS:
-                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
-                BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice,
+                        ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice,
+                        ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
 
-                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
-                BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_REMAINING_TIME, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
+                        ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
+                        ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
 
-                if (RecipeManager.getInstance().getCurrentRecipe().numStage() == 1) {
+                RecipeInfo recipeInfo = productInfo.getErdRecipeConfig();
+
+                if (recipeInfo.numStage() == 1) {
                     fragment = new SousvideStatusFragment();
                 }
                 else {
@@ -671,15 +673,16 @@ public class ParagonMainActivity extends ActionBarActivity {
                 break;
 
             case STEP_EDIT_STAGE:
-                fragment = new StageEditFragment();
-                int index = RecipeManager.getInstance().getCurrentStageIndex();
-
-                if (index == RecipeManager.INVALID_INDEX) {
-                    setTitle("New Stage");
-                }
-                else {
-                    setTitle("Stage " + (index + 1));
-                }
+                //TODO: block this until multi-stage enabled.
+//                fragment = new StageEditFragment();
+//                int index = RecipeManager.getInstance().getCurrentStageIndex();
+//
+//                if (index == RecipeManager.INVALID_INDEX) {
+//                    setTitle("New Stage");
+//                }
+//                else {
+//                    setTitle("Stage " + (index + 1));
+//                }
                 break;
 
             case STEP_VIEW_RECIPE:
@@ -913,33 +916,70 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     private void checkParagonConnectionStatus() {
-        if (dialogWaiting.isShowing()) {
+        Log.d(TAG, "checkParagonConnectionStatus");
+
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+
+        Log.d(TAG, "checkParagonConnectionStatus buner :"+product.getErdBurnerStatus());
+        Log.d(TAG, "checkParagonConnectionStatus cookmode :"+product.getErdCurrentCookMode());
+
+        if (product.getErdBurnerStatus() != INITIAL_VALUE &&
+                product.getErdCurrentCookMode() != INITIAL_VALUE &&
+                product.getErdRecipeConfig() != null ) {
+
+            Log.d(TAG, "checkParagonConnectionStatus ..1");
+
             dialogWaiting.dismiss();
 
-            new MaterialDialog.Builder(ParagonMainActivity.this)
-                    .title("Not connected with Paragon")
-                    .content("Are you sure?")
-                    .positiveText("Try again")
-                    .negativeText("No")
-                    .callback(new MaterialDialog.ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-//                            BleManager.getInstance().disconnect();
-                            startCommunicateParagon();
-                        }
-
-                        @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            BleManager.getInstance().removeListener(bleListener);
-                            finish();
-                        }
-
-                        @Override
-                        public void onNeutral(MaterialDialog dialog) {
-                        }
-                    })
-                    .cancelable(false).show();
+            if (product.getErdBurnerStatus() == ParagonValues.BURNER_STATE_START &&
+                    product.getErdCurrentCookMode() == ParagonValues.CURRENT_COOK_MODE_RAPID) {
+                Log.d(TAG, "checkParagonConnectionStatus ..2");
+                nextStep(ParagonSteps.STEP_COOK_STATUS);
+            }
+            else {
+                Log.d(TAG, "checkParagonConnectionStatus ..3");
+                nextStep(ParagonSteps.STEP_COOKING_MODE);
+            }
         }
+        else {
+            Log.d(TAG, "checkParagonConnectionStatus ..4");
+            checkingCountDown--;
+
+            if (checkingCountDown == 0) {
+
+                if (dialogWaiting.isShowing()) {
+                    dialogWaiting.dismiss();
+
+                    new MaterialDialog.Builder(ParagonMainActivity.this)
+                            .title("Not connected with Paragon")
+                            .content("Are you sure?")
+                            .positiveText("Try again")
+                            .negativeText("No")
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    startCommunicateParagon();
+                                }
+
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    BleManager.getInstance().removeListener(bleListener);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onNeutral(MaterialDialog dialog) {
+                                }
+                            })
+                            .cancelable(false).show();
+                }
+            }
+            else {
+                handlerCheckingConnection.postDelayed(runnable, INTERVAL_CHECKING_PARAGON_CONNECTION);
+            }
+        }
+
+
     }
 
     private void showOtaDialog() {
@@ -960,24 +1000,17 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     private void requestInitialValues() {
-        //TODO: do normal process. need to check.
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_REMAINING_TIME);
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_ERROR_STATE);
+        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ERROR_STATE);
 
-        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ERROR_STATE, true);
-        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
-        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
-        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
-
-        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
-        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_ERROR_STATE, true);
-
+        BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ERROR_STATE, true);
+        BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
+        BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
     }
 
     @Override
@@ -1044,7 +1077,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     public void finishParagonMain() {
-        BleManager.getInstance().disconnect();
+//        BleManager.getInstance().disconnect();
         BleManager.getInstance().removeListener(bleListener);
         finish();
     }
@@ -1061,7 +1094,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
 
         // Scan again.
-        BleManager.getInstance().disconnect();
+//        BleManager.getInstance().disconnect();
         BleManager.getInstance().removeListener(bleListener);
         finish();
     }
@@ -1167,8 +1200,9 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         if (disconnectDialog.isShowing()) {
             Log.d(TAG, "Stop reconnect");
-            BleManager.getInstance().disconnect();
         }
+
+        handlerCheckingConnection.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -1180,7 +1214,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "Try to reconnect again");
             BleManager.getInstance().connect(ProductManager.getInstance().getCurrent().address);
         }
-        else{
+        else {
             Log.d(TAG, "disconnectDialog is not Showing");
         }
     }
@@ -1188,31 +1222,23 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     private void startCommunicateParagon() {
         Log.d(TAG, "startCommunicateParagon IN");
+        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
         handlerCheckingConnection.postDelayed(runnable, INTERVAL_CHECKING_PARAGON_CONNECTION);
 
         // Get Initial values.
-        BleManager.getInstance().setCharacteristicNotification(ParagonValues.CHARACTERISTIC_OTA_COMMAND, true);
-
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_OTA_VERSION);
+        BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_OTA_COMMAND, true);
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_OTA_VERSION);
 
         nextStep(ParagonSteps.STEP_CHECK_CURRENT_STATUS);
 
         dialogWaiting.setContent("Communicating...");
         dialogWaiting.show();
 
+        checkingCountDown = MAX_WAITING_INIT_TIME;
         Log.d(TAG, "startCommunicateParagon OUT");
     }
 
-    private void startSearchParagon() {
-
-        handlerCheckingConnection.postDelayed(runnable, INTERVAL_CHECKING_PARAGON_CONNECTION);
-
-        dialogWaiting.setContent("Searching Paragon...");
-        dialogWaiting.show();
-
-//        BleManager.getInstance().startScan();
-    }
 
     /**
      * Get recipe's title image from file.
@@ -1346,26 +1372,28 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     private void checkGoodToGoLoop() {
 
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_BURNER_STATUS);
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_MODE);
-        BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
+        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
 
         boolean retValue = false;
 
 
-        if (burnerStatus == ParagonValues.BURNER_STATE_START) {
+        if (productInfo.getErdBurnerStatus() == ParagonValues.BURNER_STATE_START) {
             dialogGoodToGo.setTitle("Press Stop on Paragon");
             dialogGoodToGo.setContent("The Paragon is currently cooking. Please press Stop on the Paragon.");
 
             retValue = false;
         }
-        else if (probeConnection != ParagonValues.PROBE_CONNECT) {
+        else if (productInfo.isProbeConnected() == false) {
             dialogGoodToGo.setTitle("Connect Probe");
             dialogGoodToGo.setContent("Probe is not connected. Please connect the temperature probe by holding the button on the side of the probe FOR 3 SECONDS.");
 
             retValue = false;
         }
-        else if (cookMode != ParagonValues.CURRENT_COOK_MODE_RAPID) {
+        else if (productInfo.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_RAPID) {
             dialogGoodToGo.setTitle("Select Rapid Precise");
             dialogGoodToGo.setContent("Please press Rapid Precise on the cooktop.");
 

@@ -17,6 +17,8 @@ import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
@@ -106,7 +108,7 @@ public class MultiStageStatusFragment extends Fragment {
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
 
                 valueBuffer.put((byte) 0x01);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
                 UpdateUiCookState(MULTI_STAGE_COOK_STATE.STATE_HOLDING_TEMP);
 
@@ -124,7 +126,7 @@ public class MultiStageStatusFragment extends Fragment {
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
 
                 valueBuffer.put((byte) nextStage);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, valueBuffer.array());
+//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, valueBuffer.array());
 
                 UpdateUiCookState(MULTI_STAGE_COOK_STATE.STATE_HEAT_COOL);
             }
@@ -150,10 +152,10 @@ public class MultiStageStatusFragment extends Fragment {
     /**
      * Update cooking state, Off -> Heating -> Ready -> Cooking -> Done
      *
-     * @param state
      */
-    public void updateCookStatus(byte state) {
-        Log.d(TAG, "updateCookStatus IN " + state);
+    public void updateCookState() {
+        byte state = ProductManager.getInstance().getCurrent().getErdCookState();
+        Log.d(TAG, "updateCookState IN " + state);
 
         switch (state) {
             case ParagonValues.COOK_STATE_OFF:
@@ -339,7 +341,7 @@ public class MultiStageStatusFragment extends Fragment {
 
         if (cookState == MULTI_STAGE_COOK_STATE.STATE_HEAT_COOL) {
 
-            int currentTemp = Math.round(attached.getCurrentTemp());
+            int currentTemp = Math.round(ProductManager.getInstance().getCurrent().getErdCurrentTemp());
             int targetTep = stageInfo.getTemp();
 
             if(currentTemp < targetTep){
@@ -365,9 +367,11 @@ public class MultiStageStatusFragment extends Fragment {
     /**
      * Update UI current elapsed time. Elapsed time is increase from 0 until selected cook time.
      *
-     * @param elapsedTime ingeter value of elapsed time.
      */
-    public void updateUiElapsedTime(int elapsedTime) {
+    public void updateUiElapsedTime() {
+        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+        int elapsedTime = productInfo.getErdElapsedTime();
+
         Log.d(TAG, "updateUiElapsedTime :" + elapsedTime);
         StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
 
@@ -388,9 +392,9 @@ public class MultiStageStatusFragment extends Fragment {
 
     /**
      * Udate new stage get from BLE master.
-     * @param newStage integer value of stage 1 - 5.
      */
-    public void updateCookStage(int newStage) {
+    public void updateCookStage() {
+        int newStage = ProductManager.getInstance().getCurrent().getErdCookStage();
         RecipeManager.getInstance().setCurrentStage(newStage-1);
 
         attached.setTitle("Stage "+newStage);

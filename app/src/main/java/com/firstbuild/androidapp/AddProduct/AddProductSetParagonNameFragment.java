@@ -75,6 +75,7 @@ public class AddProductSetParagonNameFragment extends Fragment {
 
                 // Go to dash board
                 Intent intent = new Intent(getActivity(), DashboardActivity.class);
+                intent.putExtra("previous_activity", AddProductActivity.class.getSimpleName());
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }

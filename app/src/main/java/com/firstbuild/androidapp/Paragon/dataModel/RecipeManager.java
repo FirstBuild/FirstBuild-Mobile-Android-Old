@@ -215,7 +215,7 @@ public class RecipeManager {
             Log.d(TAG, "RecipeManager.sendCurrentStages:" + String.format("0x%02x", valueBuffer.array()[i]));
         }
 
-        BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
+//        BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
 
     }
 }
