@@ -108,7 +108,7 @@ public class SousvideStatusFragment extends Fragment {
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
 
                 valueBuffer.put((byte) 0x01);
-//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
+//                BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
                 UpdateUiCookState(COOK_STATE.STATE_COOKING);
 
@@ -330,8 +330,6 @@ public class SousvideStatusFragment extends Fragment {
      */
     public void updateCookStage() {
         Log.d(TAG, "updateCookStage. Error sousvide is support only one stage.");
-//        int newStage = ProductManager.getInstance().getCurrent().getErdCookStage();
-//        RecipeManager.getInstance().setCurrentStage(newStage-1);
     }
 
 

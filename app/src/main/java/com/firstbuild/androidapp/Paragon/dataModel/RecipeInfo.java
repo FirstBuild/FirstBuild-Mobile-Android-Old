@@ -32,10 +32,10 @@ public class RecipeInfo {
     public RecipeInfo(byte[] value) {
         for (int i = 0; i < MAX_RECIPE; i++) {
             byte powerLevel = value[i*STAGE_CHUNK_SIZE];
-            short holdTime = (short)(value[i * STAGE_CHUNK_SIZE + 1]);
-            short maxHoldTime = (short)(value[i* STAGE_CHUNK_SIZE + 2]);
-            short targetTemp = (short)(value[i*STAGE_CHUNK_SIZE + 2]);
-            byte transitionType = value[i*STAGE_CHUNK_SIZE + 2];
+            short holdTime = (short)( (value[i * STAGE_CHUNK_SIZE + 1] & 0xff) << 8 | (value[i * STAGE_CHUNK_SIZE + 2] & 0xff) );
+            short maxHoldTime = (short) ((value[i * STAGE_CHUNK_SIZE + 3] & 0xff) << 8 | (value[i * STAGE_CHUNK_SIZE + 4] & 0xff));
+            short targetTemp = (short)( (value[i * STAGE_CHUNK_SIZE + 5] & 0xff) << 8 | (value[i * STAGE_CHUNK_SIZE + 6] & 0xff) );
+            byte transitionType = value[i*STAGE_CHUNK_SIZE + 7];
 
             if(powerLevel == 0){
                 break;
@@ -45,7 +45,7 @@ public class RecipeInfo {
                 newStage.setSpeed(powerLevel);
                 newStage.setTime(holdTime);
                 newStage.setMaxTime(maxHoldTime);
-                newStage.setTemp(targetTemp);
+                newStage.setTemp(targetTemp/100);
                 newStage.setAutoTransition(transitionType == 0x01);
 
                 addStage(newStage);

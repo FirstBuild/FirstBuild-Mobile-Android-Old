@@ -141,7 +141,6 @@ public class BleManager {
             return null;
         }
 
-//        BleDevice bleDevice = new BleDevice();
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
 
         Log.d(TAG, "Trying to create a new connection.");
@@ -164,7 +163,6 @@ public class BleManager {
      *
      * @return true or false
      */
-//    private boolean isDevicePaired(final String address) {
     private boolean isDevicePaired(BleDevice device) {
         boolean result = false;
 
@@ -374,8 +372,8 @@ public class BleManager {
      * @param characteristicsUuid UUID to write.
      * @param values              actual value to write.
      */
-    public void writeCharateristics(BluetoothDevice device, String characteristicsUuid, byte[] values) {
-        Log.d(TAG, "operations.add writeCharateristics");
+    public void writeCharacteristics(BluetoothDevice device, String characteristicsUuid, byte[] values) {
+        Log.d(TAG, "operations.add writeCharacteristics");
         operations.add(new BleOperationWriteCharateristics(device, characteristicsUuid, values));
 
         doOperation();
@@ -529,13 +527,11 @@ public class BleManager {
 
 
                         if (connectedGatts.containsKey(address)) {
-
-
                             connectedGatts.remove(address);
                         }
 
                         setCurrentOperation(null);
-//                gatt.close();
+                        gatt.close();
 
                         doOperation();
                     }
@@ -549,9 +545,7 @@ public class BleManager {
                     String address = gatt.getDevice().getAddress();
 
                     Log.d(TAG, "onServicesDiscovered " + address);
-//                    displayGattServices(gatt);
-
-                    executeOperation(gatt, operation);
+                    displayGattServices(gatt);
 
                     if (status == BluetoothGatt.GATT_SUCCESS) {
                         List<BluetoothGattService> bleGattServices = gatt.getServices();
@@ -561,6 +555,8 @@ public class BleManager {
                     else {
                         Log.w(TAG, "onServicesDiscovered received: " + status);
                     }
+
+                    executeOperation(gatt, operation);
                 }
 
                 @Override
@@ -723,165 +719,10 @@ public class BleManager {
         return result;
     }
 
-//
-//    /**
-//     * Implements callback methods for GATT events that the app cares about.
-//     * For example, connection change and services discovered.
-//     */
-//    private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
-//        @Override
-//        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-//            super.onConnectionStateChange(gatt, status, newState);
-//            Log.d(TAG, "onConnectionStateChange IN");
-//
-//            String address = gatt.getDevice().getAddress();
-//
-//            if(status == 133){
-//                Log.d(TAG, "onConnectionStateChange " + status + ", this device might be off!!!");
-////                gatt.close();
-//                if(connectedGatts.containsKey(address)) {
-//                    connectedGatts.remove(address);
-//                }
-//
-//                sendUpdate("onConnectionStateChanged", new Object[]{address, BluetoothProfile.STATE_DISCONNECTED});
-//                return;
-//            }
-//
-//            if (newState == BluetoothProfile.STATE_CONNECTED) {
-//                Log.i(TAG, "Connected to GATT server. "+address);
-//
-//                connectedGatts.put(address, gatt);
-//                gatt.discoverServices();
-//            }
-//            else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-//                Log.i(TAG, "Disconnected from GATT server." + address);
-//
-//
-//                if(connectedGatts.containsKey(address)) {
-//
-//
-//                    connectedGatts.remove(address);
-//                }
-//
-//                setCurrentOperation(null);
-////                gatt.close();
-//
-//                doOperation();
-//            }
-//
-//            sendUpdate("onConnectionStateChanged", new Object[]{address, newState});
-//        }
-//
-//        @Override
-//        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-//            super.onServicesDiscovered(gatt, status);
-//            String address = gatt.getDevice().getAddress();
-//
-//            Log.d(TAG, "onServicesDiscovered "+address);
-//            displayGattServices(gatt);
-//
-//            executeOperation(gatt, currentOperation);
-//
-//            if (status == BluetoothGatt.GATT_SUCCESS) {
-//                List<BluetoothGattService> bleGattServices = gatt.getServices();
-//
-//                sendUpdate("onServicesDiscovered", new Object[]{address, bleGattServices});
-//            } else {
-//                Log.w(TAG, "onServicesDiscovered received: " + status);
-//            }
-//        }
-//
-//        @Override
-//        public void onCharacteristicRead(BluetoothGatt gatt,
-//                                         BluetoothGattCharacteristic characteristic,
-//                                         int status) {
-//            super.onCharacteristicRead(gatt, characteristic, status);
-//            Log.d(TAG, "onCharacteristicRead IN");
-//
-//            // Retrieves address
-//            String address = gatt.getDevice().getAddress();
-//
-//            // Retrieves uuid and value
-//            String uuid = characteristic.getUuid().toString();
-//            Log.d(TAG, "Read Characteristic UUID: " + uuid);
-//
-//            byte[] value = characteristic.getValue();
-//            if(value != null) {
-//                printGattValue(value);
-//            }
-//
-//            sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value});
-//
-//            setCurrentOperation(null);
-//            doOperation();
-//        }
-//
-//        @Override
-//        public void onCharacteristicWrite(BluetoothGatt gatt,
-//                                          BluetoothGattCharacteristic characteristic,
-//                                          int status) {
-//            super.onCharacteristicWrite(gatt, characteristic, status);
-//            Log.d(TAG, "onCharacteristicWrite");
-//
-//            // Retrieves address
-//            String address = gatt.getDevice().getAddress();
-//
-//            // Retrieves uuid and value
-//            String uuid = characteristic.getUuid().toString();
-//            Log.d(TAG, "Write Characteristic UUID: " + uuid);
-//
-//            byte[] value = characteristic.getValue();
-//            printGattValue(value);
-//
-//            sendUpdate("onCharacteristicWrite", new Object[]{address, uuid, value});
-//
-//            setCurrentOperation(null);
-//            doOperation();
-//        }
-//
-//        @Override
-//        public void onCharacteristicChanged(BluetoothGatt gatt,
-//                                            BluetoothGattCharacteristic characteristic) {
-//            super.onCharacteristicChanged(gatt, characteristic);
-//            Log.d(TAG, "onCharacteristicChanged");
-//
-//            // Retrieves address
-//            String address = gatt.getDevice().getAddress();
-//
-//            // Retrieves uuid and value
-//            String uuid = characteristic.getUuid().toString();
-//            Log.d(TAG, "Characteristic UUID: " + uuid);
-//
-//            byte[] value = characteristic.getValue();
-//            printGattValue(value);
-//
-//            sendUpdate("onCharacteristicChanged", new Object[]{address, uuid, value});
-//        }
-//
-//
-//        @Override
-//        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-//            super.onDescriptorWrite(gatt, descriptor, status);
-//            Log.d(TAG, "onDescriptorWrite");
-//
-//            // Retrieves address
-//            String address = gatt.getDevice().getAddress();
-//
-//            // Retrieves uuid and value
-//            String uuid = descriptor.getUuid().toString();
-//            Log.d(TAG, "Characteristic UUID: " + uuid);
-//
-//            byte[] value = descriptor.getValue();
-//
-//            sendUpdate("onDescriptorWrite", new Object[]{address, uuid, value});
-//
-//            setCurrentOperation(null);
-//            doOperation();
-//        }
-//    };
-//
 
     public void pairDevice(BluetoothDevice device) {
+        Log.d(TAG, "pairDevice IN");
+
         try {
             Method method = device.getClass().getMethod("createBond", (Class[]) null);
             method.invoke(device, (Object[]) null);
@@ -890,6 +731,7 @@ public class BleManager {
             e.printStackTrace();
         }
 
+        Log.d(TAG, "pairDevice OUT");
 
     }
 

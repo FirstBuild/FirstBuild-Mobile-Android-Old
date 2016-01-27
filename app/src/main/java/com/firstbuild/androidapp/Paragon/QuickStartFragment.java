@@ -16,6 +16,7 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
+import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
 
@@ -80,8 +81,8 @@ public class QuickStartFragment extends Fragment {
             public void onClick(View v) {
                 String currentValue = (String) textTimeMin.getText();
 
-                String hourValue = currentValue.split("H:")[0];
-                String minValue = currentValue.split("H:")[1].split("M")[0];
+                String hourValue = currentValue.split(":")[0];
+                String minValue = currentValue.split(":")[1];
 
                 pickerMinHour.setValue(Integer.parseInt(hourValue));
                 pickerMinMin.setValue(Integer.parseInt(minValue));
@@ -97,11 +98,11 @@ public class QuickStartFragment extends Fragment {
             public void onClick(View v) {
                 String currentValue = (String) textTimeMax.getText();
 
-                String hourValue = currentValue.split("H:")[0];
-                String minValue = currentValue.split("H:")[1].split("M")[0];
+                String hourValue = currentValue.split(":")[0];
+                String minValue = currentValue.split(":")[1];
 
-                pickerMinHour.setValue(Integer.parseInt(hourValue));
-                pickerMinMin.setValue(Integer.parseInt(minValue));
+                pickerMaxHour.setValue(Integer.parseInt(hourValue));
+                pickerMaxMin.setValue(Integer.parseInt(minValue));
 
                 layoutPickerMin.setVisibility(View.GONE);
                 layoutPickerMax.setVisibility(View.VISIBLE);
@@ -241,14 +242,34 @@ public class QuickStartFragment extends Fragment {
 
     public void goodToGo() {
 
-        ProductInfo product = ProductManager.getInstance().getCurrent();
-        RecipeInfo recipeConfig = product.getErdRecipeConfig();
+        String stringTime = textTimeMin.getText().toString();
+        String hourValue = stringTime.split(":")[0];
+        String minValue = stringTime.split(":")[1];
+        int minHour = Integer.parseInt(hourValue);
+        int minMin = Integer.parseInt(minValue);
 
-        recipeConfig.getStage(0).setTime(pickerMinHour.getValue() * 60 + pickerMinMin.getValue());
-        recipeConfig.getStage(0).setMaxTime(pickerMaxHour.getValue() * 60 + pickerMaxMin.getValue());
-        recipeConfig.getStage(0).setTemp(pickerTemp.getValue());
+        stringTime = textTimeMax.getText().toString();
+        hourValue = stringTime.split(":")[0];
+        minValue = stringTime.split(":")[1];
+        int maxHour = Integer.parseInt(hourValue);
+        int maxMin = Integer.parseInt(minValue);
+
+
+        String tempValue = textTemp.getText().toString().split("℉")[0];
+        int temp = Integer.parseInt(tempValue);
+
+
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+
+        RecipeInfo recipeConfig = new RecipeInfo("", "", "", "");
+        recipeConfig.setType(RecipeInfo.TYPE_SOUSVIDE);
+        recipeConfig.addStage(new StageInfo());
+        recipeConfig.getStage(0).setTime(minHour * 60 + minMin);
+        recipeConfig.getStage(0).setMaxTime(maxHour * 60 + maxMin);
+        recipeConfig.getStage(0).setTemp(temp);
         recipeConfig.getStage(0).setSpeed(10);
 
+        product.setErdRecipeConfig(recipeConfig);
         product.sendRecipeConfig();
 
         attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
@@ -260,12 +281,12 @@ public class QuickStartFragment extends Fragment {
 
 
     private void makeTempMaxText(int hour, int min) {
-        textTimeMax.setText(hour + "H:" + min + "M");
+        textTimeMax.setText(hour + ":" + min);
     }
 
 
     private void makeTempMinText(int hour, int min) {
-        textTimeMin.setText(hour + "H:" + min + "M");
+        textTimeMin.setText(hour + ":" + min);
     }
 
 

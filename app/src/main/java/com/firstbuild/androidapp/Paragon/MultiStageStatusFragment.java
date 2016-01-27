@@ -108,7 +108,7 @@ public class MultiStageStatusFragment extends Fragment {
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
 
                 valueBuffer.put((byte) 0x01);
-//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
+//                BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
                 UpdateUiCookState(MULTI_STAGE_COOK_STATE.STATE_HOLDING_TEMP);
 
@@ -126,7 +126,7 @@ public class MultiStageStatusFragment extends Fragment {
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
 
                 valueBuffer.put((byte) nextStage);
-//                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, valueBuffer.array());
+//                BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, valueBuffer.array());
 
                 UpdateUiCookState(MULTI_STAGE_COOK_STATE.STATE_HEAT_COOL);
             }
