@@ -125,7 +125,7 @@ public class OtaManager {
         ByteBuffer valueBuffer = ByteBuffer.allocate(3);
 
         valueBuffer.put((byte) 1);
-//        BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
+//        BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
         Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send:" + valueBuffer.toString());
     }
 
@@ -190,7 +190,7 @@ public class OtaManager {
             valueBuffer.put((byte) 2);
             valueBuffer.put(1, (byte) (imageSize & 0xff));
             valueBuffer.put(2, (byte) ((imageSize >> 8) & 0xff));
-//            BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
+//            BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
             Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send OTA_STEP_SEND_IMAGE_DATA:" + valueBuffer.toString());
         }
         else{
@@ -213,7 +213,7 @@ public class OtaManager {
             ByteBuffer valueBuffer = ByteBuffer.allocate(SIZE_CHUNK);
 
             valueBuffer.put(imageChunk, transferOffset * SIZE_CHUNK, SIZE_CHUNK);
-//            BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_DATA, valueBuffer.array());
+//            BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_OTA_DATA, valueBuffer.array());
             Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_DATA Send OTA_STEP_SEND_IMAGE_DATA:" + transferOffset + ", " + valueBuffer.toString());
 
             transferOffset++;
@@ -224,7 +224,7 @@ public class OtaManager {
             ByteBuffer valueBuffer = ByteBuffer.allocate(3);
 
             valueBuffer.put((byte) 3);
-//            BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
+//            BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_OTA_COMMAND, valueBuffer.array());
             Log.d(TAG, "ParagonValues.CHARACTERISTIC_OTA_COMMAND Send OTA_STEP_SEND_IMAGE_DONE:" + valueBuffer.toString());
         }
 

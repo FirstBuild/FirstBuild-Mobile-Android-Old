@@ -17,6 +17,7 @@ import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.helper.SelectModeAdapter;
+import com.firstbuild.androidapp.productManager.ProductManager;
 
 import java.util.ArrayList;
 
@@ -65,16 +66,15 @@ public class SelectModeFragment extends Fragment implements SelectModeAdapter.Cl
 //            }
 //        });
 
-//        view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d(TAG, "onclick Quick Start");
-//
-//                RecipeManager.getInstance().createRecipeSousVide();
-//                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_QUICK_START);
-//
-//            }
-//        });
+        view.findViewById(R.id.btn_quick_start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onclick Quick Start");
+
+                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_QUICK_START);
+
+            }
+        });
 
         layoutButtons = view.findViewById(R.id.layout_buttons);
 

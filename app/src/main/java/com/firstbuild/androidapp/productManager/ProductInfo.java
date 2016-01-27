@@ -104,33 +104,33 @@ public class ProductInfo {
 
 
     public void connected() {
-        if (isConnected == false) {
-            isConnected = true;
+        if (this.isConnected == false) {
+            this.isConnected = true;
         }
     }
 
     public void disconnected() {
-        if (isConnected == true) {
-            isConnected = false;
-            erdProbeConnectionStatue = ParagonValues.PROBE_NOT_CONNECT;
-            erdBatteryLevel = NO_BATTERY_INFO;
-            erdCurrentTemp = 0.0f;
-            erdElapsedTime = 0;
-            erdRecipeConfig = null;
-            erdBurnerStatus = INITIAL_VALUE;
-            erdCookState = INITIAL_VALUE;
-            erdCookStage = INITIAL_VALUE;
-            erdCurrentCookMode = INITIAL_VALUE;
+        if (this.isConnected == true) {
+            this.isConnected = false;
+            this.erdProbeConnectionStatue = ParagonValues.PROBE_NOT_CONNECT;
+            this.erdBatteryLevel = NO_BATTERY_INFO;
+            this.erdCurrentTemp = 0.0f;
+            this.erdElapsedTime = 0;
+            this.erdRecipeConfig = null;
+            this.erdBurnerStatus = INITIAL_VALUE;
+            this.erdCookState = INITIAL_VALUE;
+            this.erdCookStage = INITIAL_VALUE;
+            this.erdCurrentCookMode = INITIAL_VALUE;
         }
     }
 
     public void sendRecipeConfig() {
         ByteBuffer valueBuffer = ByteBuffer.allocate(40);
 
-        int numStage = erdRecipeConfig.numStage();
+        int numStage = this.erdRecipeConfig.numStage();
 
         for (int i = 0; i < numStage; i++) {
-            StageInfo stage = erdRecipeConfig.getStage(i);
+            StageInfo stage = this.erdRecipeConfig.getStage(i);
 
             valueBuffer.put(8 * i, (byte) stage.getSpeed());
             valueBuffer.putShort(1 + 8 * i, (short) (stage.getTime()));
@@ -143,7 +143,7 @@ public class ProductInfo {
             Log.d(TAG, "RecipeManager.sendCurrentStages:" + String.format("0x%02x", valueBuffer.array()[i]));
         }
 
-        BleManager.getInstance().writeCharateristics(bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
+        BleManager.getInstance().writeCharacteristics(bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
     }
 
 

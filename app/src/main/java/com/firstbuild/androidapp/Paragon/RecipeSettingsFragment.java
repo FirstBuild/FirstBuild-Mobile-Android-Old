@@ -18,6 +18,7 @@ import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
+import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
 
@@ -267,7 +268,7 @@ public class RecipeSettingsFragment extends Fragment {
      */
     private void initRecipeSetting() {
         // Now create a sousvide recipe and pointing the recipe as currentRecipe.
-        ProductManager.getInstance().getCurrent().createRecipeConfigForSousVide();
+//        ProductManager.getInstance().getCurrent().createRecipeConfigForSousVide();
 
     }
 
@@ -278,13 +279,16 @@ public class RecipeSettingsFragment extends Fragment {
     public void goodToGo() {
 
         ProductInfo product = ProductManager.getInstance().getCurrent();
-        RecipeInfo recipeConfig = product.getErdRecipeConfig();
 
+        RecipeInfo recipeConfig = new RecipeInfo("", "", "", "");
+        recipeConfig.setType(RecipeInfo.TYPE_SOUSVIDE);
+        recipeConfig.addStage(new StageInfo());
         recipeConfig.getStage(0).setTime((int) (setTargetTimeMin * 60));
         recipeConfig.getStage(0).setMaxTime((int) (setTargetTimeMax * 60));
         recipeConfig.getStage(0).setTemp((int) setTargetTemp);
         recipeConfig.getStage(0).setSpeed(10);
 
+        product.setErdRecipeConfig(recipeConfig);
         product.sendRecipeConfig();
 
         ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);

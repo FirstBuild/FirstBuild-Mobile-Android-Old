@@ -7,9 +7,8 @@ import android.bluetooth.BluetoothGatt;
  * Created by Hollis on 1/22/16.
  */
 public abstract class BleOperation {
-    public static final int CONNECT_TIMEOUT_IN_MILLIS = 10000;
+    public static final int CONNECT_TIMEOUT_IN_MILLIS = 20000;
     public static final int DEFAULT_TIMEOUT_IN_MILLIS = 10000;
-//    public static final int DEFAULT_TIMEOUT_IN_MILLIS = 3000;
     private int timeoutTime;
     private BluetoothDevice device;
 

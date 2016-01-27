@@ -52,16 +52,10 @@ public class DashboardActivity extends ActionBarActivity {
     private String TAG = DashboardActivity.class.getSimpleName();
     private SwipeMenuListView listViewProduct;
     private ProductListAdapter adapterDashboard;
+
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private View layoutNoProduct;
-    // update production info in the list.
-    private Handler handlerUpdateProduct;
-    // Thread for update UI.
-    private Runnable runnable;
-    // Interval for updating connection product.
-    private int INTERVAL_PRODUCT_UPDATE = 1000;
-    private int countChecking = 0;
 
 
     private BleListener bleListener = new BleListener() {
@@ -190,7 +184,6 @@ public class DashboardActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        handlerUpdateProduct.removeCallbacksAndMessages(null);
 
         BleManager.getInstance().removeListener(bleListener);
     }
@@ -227,6 +220,8 @@ public class DashboardActivity extends ActionBarActivity {
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE, true);
+
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
@@ -256,28 +251,6 @@ public class DashboardActivity extends ActionBarActivity {
 
     }
 
-    private void connectProducts() {
-        int productSize = ProductManager.getInstance().getSize();
-
-        if (productSize > 0) {
-            ProductInfo product = ProductManager.getInstance().getProduct(0);
-            boolean result = BleManager.getInstance().isBluetoothEnabled();
-
-            if (!result) {
-                Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
-            }
-            else {
-                Log.d(TAG, "Bluetooth adapter is already enabled. Start connecting with " + product.address);
-
-                handlerUpdateProduct.postDelayed(runnable, 0);
-            }
-
-        }
-
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -349,7 +322,7 @@ public class DashboardActivity extends ActionBarActivity {
                                 public void onPositive(MaterialDialog dialog) {
                                     ProductInfo product = ProductManager.getInstance().getProduct(position);
 
-                                    BleManager.getInstance().unpair(product.address);
+                                    BleManager.getInstance().disconnect(product.bluetoothDevice);
                                     ProductManager.getInstance().remove(position);
 
                                     updateListView();
@@ -419,16 +392,6 @@ public class DashboardActivity extends ActionBarActivity {
 
         }
 
-
-        handlerUpdateProduct = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                connectProduct();          // Update UI base on new ERDs every second.
-                handlerUpdateProduct.postDelayed(runnable, INTERVAL_PRODUCT_UPDATE);
-            }
-        };
-
     }
 
     private int dp2px(int dp) {
@@ -454,36 +417,6 @@ public class DashboardActivity extends ActionBarActivity {
 
     }
 
-    /**
-     * Swtich conect to next product in the product list.
-     */
-    private void connectProduct() {
-
-        // Check every single second if BLE connected and get services.
-        if (countChecking <= 0) {
-            countChecking = INTERVAL_MAX_PRODUCT_UPDATE;
-
-            int productsSize = ProductManager.getInstance().getSize();
-
-//        BleManager.getInstance().disconnect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
-
-            if (currentConnectIndex >= productsSize) {
-                currentConnectIndex = 0;
-            }
-            else {
-                //do nothing.
-            }
-
-            Log.d(TAG, "connectProudct index :" + currentConnectIndex);
-
-            BleManager.getInstance().connect(ProductManager.getInstance().getProduct(currentConnectIndex).address);
-            currentConnectIndex++;
-        }
-        else {
-            countChecking--;
-        }
-
-    }
 
     private void onReceivedData(String address, String uuid, byte[] value) {
 
@@ -495,7 +428,6 @@ public class DashboardActivity extends ActionBarActivity {
         }
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(value);
-//        ProductInfo product = ProductManager.getInstance().getProduct(0);
         ProductInfo product = ProductManager.getInstance().getProductByAddress(address);
 
         if (product == null) {
@@ -581,9 +513,6 @@ public class DashboardActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addDeviceList(BluetoothDevice device) {
-
-    }
 
     public class ProductListAdapter extends BaseAdapter {
 

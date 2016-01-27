@@ -55,7 +55,7 @@
             android:background="@android:color/white"/>
 
         <LinearLayout
-            android:id="@+id/btn_custom"
+            android:id="@+id/btn_quick_start"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
