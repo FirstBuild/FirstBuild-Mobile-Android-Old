@@ -18,6 +18,7 @@ import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
 import java.nio.ByteBuffer;
@@ -106,9 +107,10 @@ public class SousvideStatusFragment extends Fragment {
             public void onClick(View view) {
 
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+                ProductInfo product = ProductManager.getInstance().getCurrent();
 
                 valueBuffer.put((byte) 0x01);
-//                BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
+                BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
                 UpdateUiCookState(COOK_STATE.STATE_COOKING);
 
@@ -126,8 +128,8 @@ public class SousvideStatusFragment extends Fragment {
 
 
         updateUiCurrentTemp();
-
         UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
+        updateCookState();
 
         return view;
     }
@@ -156,6 +158,7 @@ public class SousvideStatusFragment extends Fragment {
 
             case ParagonValues.COOK_STATE_COOKING:
                 UpdateUiCookState(COOK_STATE.STATE_COOKING);
+                updateUiElapsedTime();
                 break;
 
             case ParagonValues.COOK_STATE_DONE:
@@ -333,9 +336,10 @@ public class SousvideStatusFragment extends Fragment {
     }
 
 
-    private void updateReadyTime(int minute){
+    private void updateReadyTime(int elapsedMin){
+
         Calendar now = Calendar.getInstance();
-        now.add(Calendar.MINUTE, minute);
+        now.add(Calendar.MINUTE, elapsedMin);
         String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
         String ampm = "";
 

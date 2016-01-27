@@ -18,6 +18,7 @@ public class ProductInfo {
     public static final int PRODUCT_TYPE_CILLHUB = 0;
     public static final int PRODUCT_TYPE_PARAGON = 1;
     public static final int NO_BATTERY_INFO = -1;
+    public static final int NUM_MUST_INIT_DATA = 6;
 
     public static final byte INITIAL_VALUE = 0x0f;
     private static String TAG = ProductInfo.class.getSimpleName();
@@ -28,15 +29,74 @@ public class ProductInfo {
     public BluetoothDevice bluetoothDevice = null;
     //properties get from device.
     private boolean isConnected = false;
-    private byte erdProbeConnectionStatue;
+
+    // Initial data must get from dashboard.
     private int erdBatteryLevel = NO_BATTERY_INFO;
+    private byte erdBurnerStatus = INITIAL_VALUE;
+    private byte erdProbeConnectionStatue = INITIAL_VALUE;
+    private byte erdCurrentCookMode = INITIAL_VALUE;
+    private RecipeInfo erdRecipeConfig = null;
+    private byte erdCookState = INITIAL_VALUE;
+
     private float erdCurrentTemp;
     private int erdElapsedTime;
-    private RecipeInfo erdRecipeConfig = null;
-    private byte erdBurnerStatus = INITIAL_VALUE;
-    private byte erdCookState;
     private byte erdCookStage;
-    private byte erdCurrentCookMode = INITIAL_VALUE;
+    private byte erdPowerLevel = 0;
+
+    private boolean isAllMustDataReceived = false;
+
+
+    public boolean isAllMustDataReceived() {
+        return isAllMustDataReceived;
+    }
+
+    public void initMustData(){
+        erdBatteryLevel = NO_BATTERY_INFO;
+        erdBurnerStatus = INITIAL_VALUE;
+        erdProbeConnectionStatue = INITIAL_VALUE;
+        erdCurrentCookMode = INITIAL_VALUE;
+        erdRecipeConfig = null;
+        erdCookState = INITIAL_VALUE;
+
+        isAllMustDataReceived = false;
+    }
+
+    public int getMustDataStatus(){
+        int numGetData = 0;
+
+        if(erdBatteryLevel != NO_BATTERY_INFO){
+            numGetData++;
+        }
+
+        if(erdBurnerStatus != INITIAL_VALUE){
+            numGetData++;
+        }
+
+        if(erdProbeConnectionStatue != INITIAL_VALUE){
+            numGetData++;
+        }
+
+        if(erdCurrentCookMode != INITIAL_VALUE){
+            numGetData++;
+        }
+
+        if(erdRecipeConfig != null ){
+            numGetData++;
+        }
+
+        if(erdCookState != INITIAL_VALUE){
+            numGetData++;
+        }
+
+        if(numGetData == NUM_MUST_INIT_DATA){
+            isAllMustDataReceived = true;
+        }
+        else{
+            isAllMustDataReceived = false;
+        }
+
+        return numGetData;
+    }
 
 
     public ProductInfo(int type, String address, String nickname) {
@@ -234,5 +294,13 @@ public class ProductInfo {
 
     public boolean isProbeConnected() {
         return (this.erdProbeConnectionStatue == ParagonValues.PROBE_CONNECT);
+    }
+
+    public void setErdPowerLevel(byte erdPowerLevel) {
+        this.erdPowerLevel = erdPowerLevel;
+    }
+
+    public byte getErdPowerLevel() {
+        return erdPowerLevel;
     }
 }

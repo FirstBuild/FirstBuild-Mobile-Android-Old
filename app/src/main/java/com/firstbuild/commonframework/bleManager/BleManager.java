@@ -545,18 +545,17 @@ public class BleManager {
                     String address = gatt.getDevice().getAddress();
 
                     Log.d(TAG, "onServicesDiscovered " + address);
-                    displayGattServices(gatt);
 
                     if (status == BluetoothGatt.GATT_SUCCESS) {
+                        displayGattServices(gatt);
                         List<BluetoothGattService> bleGattServices = gatt.getServices();
 
                         sendUpdate("onServicesDiscovered", new Object[]{address, bleGattServices});
+                        executeOperation(gatt, operation);
                     }
                     else {
-                        Log.w(TAG, "onServicesDiscovered received: " + status);
+                        Log.d(TAG, "onServicesDiscovered NOT GATT_SUCCESS: " + status);
                     }
-
-                    executeOperation(gatt, operation);
                 }
 
                 @Override

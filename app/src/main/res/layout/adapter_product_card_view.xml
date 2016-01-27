@@ -44,38 +44,6 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/layout_progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/text_searching"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="end|top"
-            android:text="Searching..."
-            android:textColor="@color/colorParagonAccent"
-            android:textSize="15sp"/>
-
-        <ProgressBar
-            android:layout_below="@+id/text_searching"
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/layout_status"
@@ -101,9 +69,9 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="0.7"
             android:layout_alignParentBottom="true"
             android:layout_gravity="right|bottom"
+            android:layout_weight="0.7"
             android:orientation="horizontal">
 
             <TextView
@@ -121,12 +89,12 @@
                 android:id="@+id/image_battery"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
                 android:gravity="end|bottom"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
                 android:scaleType="fitEnd"
-                android:visibility="visible"
-                android:src="@drawable/ic_battery_100"/>
+                android:src="@drawable/ic_battery_100"
+                android:visibility="visible"/>
 
 
         </LinearLayout>
@@ -134,7 +102,37 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/layout_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#E0FFFFFF"
+        android:visibility="visible">
 
+
+        <TextView
+            android:id="@+id/text_searching"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="sans-serif-medium"
+            android:text="Searching..."
+            android:textColor="@color/colorParagonAccent"
+            android:textSize="19sp"/>
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_below="@+id/text_searching"
+            android:layout_centerVertical="true"
+            android:indeterminate="true"
+            android:indeterminateBehavior="repeat"/>
+
+    </RelativeLayout>
     <!--<ImageView-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="1dp"-->

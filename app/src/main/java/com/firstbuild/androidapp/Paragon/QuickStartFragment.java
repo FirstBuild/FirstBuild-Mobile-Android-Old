@@ -197,8 +197,12 @@ public class QuickStartFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Log.d(TAG, "pickerTemp :" + pickerTemp.getValue() + ", WARNING temp :" + ParagonValues.WARNING_TEMPERATURE);
-                if (pickerTemp.getValue() < ParagonValues.WARNING_TEMPERATURE &&
+                String tempValue = textTemp.getText().toString().split("℉")[0];
+                int temp = Integer.parseInt(tempValue);
+
+                Log.d(TAG, "selectedTemp :" + temp+ ", WARNING temp :" + ParagonValues.WARNING_TEMPERATURE);
+
+                if (temp < ParagonValues.WARNING_TEMPERATURE &&
                         !attached.isShowFoodWarning()) {
 
                     new MaterialDialog.Builder(getActivity())
