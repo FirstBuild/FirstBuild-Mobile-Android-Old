@@ -470,38 +470,32 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
     private void onCookState() {
-        final byte state = ProductManager.getInstance().getCurrent().getErdCookState();
 
-        if (state == ParagonValues.COOK_STATE_OFF) {
-            nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
-        }
-        else {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
-                            if (fragment instanceof SousvideStatusFragment) {
-                                ((SousvideStatusFragment) fragment).updateCookState();
-                            }
-                            else if (fragment instanceof MultiStageStatusFragment) {
-                                ((MultiStageStatusFragment) fragment).updateCookState();
-                            }
-                            else if (fragment instanceof GetReadyFragment) {
-                                nextStep(ParagonSteps.STEP_COOK_STATUS);
-                            }
-                            else {
-                                // do nothing.
-                            }
-
+                        if (fragment instanceof SousvideStatusFragment) {
+                            ((SousvideStatusFragment) fragment).updateCookState();
                         }
-                    });
-                }
-            }).start();
-        }
+                        else if (fragment instanceof MultiStageStatusFragment) {
+                            ((MultiStageStatusFragment) fragment).updateCookState();
+                        }
+                        else if (fragment instanceof GetReadyFragment) {
+                            nextStep(ParagonSteps.STEP_COOK_STATUS);
+                        }
+                        else {
+                            // do nothing.
+                        }
+
+                    }
+                });
+            }
+        }).start();
 
     }
 
