@@ -2,6 +2,7 @@ package com.firstbuild.androidapp.paragon.settings;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -12,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
@@ -78,6 +80,8 @@ public class SettingsActivity extends AppCompatActivity {
                 EditTextPreference editTextPref = (EditTextPreference) findPreference(KEY_PREF_NAME);
                 editTextPref.setSummary(productInfo.nickname);
             }
+
+
         }
 
         @Override
@@ -119,6 +123,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class PreferenceAbout extends PreferenceFragment {
         private String TAG = PreferenceSettings.class.getSimpleName();
+        public static final String KEY_PREF_VERSION = "pref_version_number";
+
 
         @Override
         public void onCreate(final Bundle savedInstanceState) {
@@ -175,6 +181,17 @@ public class SettingsActivity extends AppCompatActivity {
                     return false;
                 }
             });
+
+
+            String versionName = "";
+            try {
+                versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+            }
+            catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            Preference version = findPreference(KEY_PREF_VERSION);
+            version.setSummary(versionName);
 
 
         }

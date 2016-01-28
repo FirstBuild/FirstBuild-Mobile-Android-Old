@@ -8,10 +8,10 @@
         android:summary="The Paragon induction cooktop monitors food and water temperature directly, offering precise control of food temperature. \nPrecision cooking with Paragon is easier and produces restaurant quality, repeatable results.\n\nLearn more..."/>
 
     <Preference
-        android:key="pref_serial_number"
+        android:key="pref_version_number"
         android:selectable="false"
         android:title="Version"
-        android:summary="0.1.9"/>
+        android:summary="-.-.-"/>
 
     <Preference
         android:key="pref_term_service"
