@@ -169,6 +169,10 @@ public class gridCircleView extends View {
         postInvalidate();
     }
 
+    public void setColor(int color){
+        gridPaint.setColor(getResources().getColor(color));
+    }
+
 
 
 }

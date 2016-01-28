@@ -65,7 +65,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     static final byte INITIAL_VALUE = 0x0f;
     private final float MIN_THICKNESS = 0.25f;
     private final float MAX_THICKNESS = 4.0f;
-    private final int INTERVAL_GOODTOGO = 100;
+    private final int INTERVAL_GOODTOGO = 300;
     private final String PREF_KEY_FOOD_WARNING = "FoodWarning";
     private final int MAX_WAITING_INIT_TIME = 30;
     public BuiltInRecipeInfo builtInRecipes = null;
@@ -149,7 +149,13 @@ public class ParagonMainActivity extends ActionBarActivity {
                                 }
                                 else if (status == BluetoothProfile.STATE_DISCONNECTED) {
                                     disconnectDialog.show();
+                                    BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
                                     BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+                                    BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+                                    BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
+                                    BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+                                    BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+
                                 }
                                 else {
                                     // do nothing
@@ -575,18 +581,12 @@ public class ParagonMainActivity extends ActionBarActivity {
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice,
                         ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
 
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
-                        ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
-                        ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
 
                 byte cookMode = productInfo.getErdCurrentCookMode();
 
                 if(cookMode == ParagonValues.CURRENT_COOK_MODE_DIRECT){
                     BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice,
                             ParagonValues.CHARACTERISTIC_CURRENT_POWER_LEVEL);
-                    BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice,
-                            ParagonValues.CHARACTERISTIC_CURRENT_POWER_LEVEL, true);
 
                     fragment = new DirectStatusFragment();
                 }
