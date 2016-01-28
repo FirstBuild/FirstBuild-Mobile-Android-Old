@@ -570,6 +570,8 @@ public class DashboardActivity extends ActionBarActivity {
             }
 
             holderDashboard.textNickname.setText(currentProduct.nickname);
+            int numMustData = currentProduct.getMustDataStatus();
+            Log.d(TAG, "numMustData :"+numMustData);
 
             if (currentProduct.isConnected()){
 
@@ -578,9 +580,6 @@ public class DashboardActivity extends ActionBarActivity {
                     holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
                 }
                 else{
-                    int numMustData = currentProduct.getMustDataStatus();
-                    Log.d(TAG, "numMustData :"+numMustData);
-
                     holderDashboard.progressBar.setIndeterminate(false);
                     holderDashboard.progressBar.setMax(ProductInfo.NUM_MUST_INIT_DATA);
                     holderDashboard.progressBar.setProgress(numMustData);
