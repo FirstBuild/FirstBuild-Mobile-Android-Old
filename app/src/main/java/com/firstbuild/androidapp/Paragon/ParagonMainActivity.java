@@ -1126,10 +1126,10 @@ public class ParagonMainActivity extends ActionBarActivity {
         if (fragment instanceof SelectModeFragment) {
             ((SelectModeFragment) fragment).onBackPressed();
         }
-//        else if(fragment instanceof RecipeSettingsFragment) {
-//            ((RecipeSettingsFragment)fragment).onBackPressed();
-//
-//        }
+        else if(fragment instanceof SousvideStatusFragment) {
+            return;
+
+        }
         else if (fm.getBackStackEntryCount() > 1) {
             fm.popBackStack();
         }
