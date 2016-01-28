@@ -485,6 +485,9 @@ public class ParagonMainActivity extends ActionBarActivity {
                         else if (fragment instanceof MultiStageStatusFragment) {
                             ((MultiStageStatusFragment) fragment).updateCookState();
                         }
+                        else if (fragment instanceof DirectStatusFragment) {
+                            ((DirectStatusFragment) fragment).updateCookState();
+                        }
                         else if (fragment instanceof GetReadyFragment) {
                             nextStep(ParagonSteps.STEP_COOK_STATUS);
                         }

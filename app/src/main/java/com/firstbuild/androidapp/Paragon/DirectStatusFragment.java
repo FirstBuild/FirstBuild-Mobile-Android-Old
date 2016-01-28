@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.viewUtil.gridCircleView;
@@ -89,6 +90,18 @@ public class DirectStatusFragment extends Fragment {
 
 
         return view;
+    }
+
+    public void updateCookState() {
+        byte state = ProductManager.getInstance().getCurrent().getErdCookState();
+        Log.d(TAG, "updateCookState IN " + state);
+
+        if(state == ParagonValues.COOK_STATE_OFF) {
+            attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
+        }
+        else{
+            // do nothing.
+        }
     }
 
 
