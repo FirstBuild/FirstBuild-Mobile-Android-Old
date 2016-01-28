@@ -14,10 +14,10 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
 import java.nio.ByteBuffer;
@@ -71,6 +71,8 @@ public class SousvideStatusFragment extends Fragment {
 
         Log.d(TAG, "onCreateView IN");
 
+        ((ParagonMainActivity) getActivity()).setTitle("Action");
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_circle, container, false);
 
@@ -106,9 +108,10 @@ public class SousvideStatusFragment extends Fragment {
             public void onClick(View view) {
 
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+                ProductInfo product = ProductManager.getInstance().getCurrent();
 
                 valueBuffer.put((byte) 0x01);
-//                BleManager.getInstance().writeCharacteristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
+                BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
                 UpdateUiCookState(COOK_STATE.STATE_COOKING);
 
@@ -126,8 +129,8 @@ public class SousvideStatusFragment extends Fragment {
 
 
         updateUiCurrentTemp();
-
         UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
+        updateCookState();
 
         return view;
     }
@@ -156,6 +159,7 @@ public class SousvideStatusFragment extends Fragment {
 
             case ParagonValues.COOK_STATE_COOKING:
                 UpdateUiCookState(COOK_STATE.STATE_COOKING);
+                updateUiElapsedTime();
                 break;
 
             case ParagonValues.COOK_STATE_DONE:
@@ -176,14 +180,27 @@ public class SousvideStatusFragment extends Fragment {
     public void UpdateUiCookState(COOK_STATE state) {
         Log.d(TAG, "UpdateUiCookState " + state);
 
-        StageInfo stageInfo = ProductManager.getInstance().getCurrent().getErdRecipeConfig().getStage(0);
+        ProductInfo product  = ProductManager.getInstance().getCurrent();
+
+        BleManager.getInstance().readCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
+        StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
 
         if (cookState != state) {
             cookState = state;
 
             switch (cookState) {
                 case STATE_PREHEAT:
-                    textStatusName.setText("PREHEATING");
+
+                    if (stageInfo.getTemp() == (int)product.getErdCurrentTemp()) {
+
+                    }
+                    else if (stageInfo.getTemp() < (int)product.getErdCurrentTemp()) {
+                        textStatusName.setText("COOLING");
+                    }
+                    else {
+                        textStatusName.setText("PREHEATING");
+                    }
+
                     progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
                     progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
@@ -287,7 +304,21 @@ public class SousvideStatusFragment extends Fragment {
             float currentTemp = ProductManager.getInstance().getCurrent().getErdCurrentTemp();
             textTempCurrent.setText(Math.round(currentTemp) + "℉");
 
-            float ratioTemp = currentTemp / (float)stageInfo.getTemp();
+            float bigNumber;
+            float smallNumber;
+
+            if( currentTemp > (float)stageInfo.getTemp()){
+                bigNumber = currentTemp;
+                smallNumber = (float)stageInfo.getTemp();
+                circle.setColor(R.color.colorAccent);
+            }
+            else{
+                smallNumber = currentTemp;
+                bigNumber = (float)stageInfo.getTemp();
+                circle.setColor(R.color.colorParagonAccent);
+            }
+
+            float ratioTemp = smallNumber / bigNumber;
 
             ratioTemp = Math.min(ratioTemp, 1.0f);
             circle.setGridValue(ratioTemp);
@@ -333,11 +364,15 @@ public class SousvideStatusFragment extends Fragment {
     }
 
 
-    private void updateReadyTime(int minute){
+    private void updateReadyTime(int elapsedMin){
+
+
         Calendar now = Calendar.getInstance();
-        now.add(Calendar.MINUTE, minute);
+        now.add(Calendar.MINUTE, elapsedMin);
         String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
         String ampm = "";
+
+        Log.d(TAG, "updateReadyTime :" + timeText);
 
         if(now.get(Calendar.AM_PM) == Calendar.AM){
             ampm = "AM";

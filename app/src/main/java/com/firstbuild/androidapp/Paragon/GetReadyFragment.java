@@ -52,7 +52,7 @@ public class GetReadyFragment extends Fragment {
         ((ParagonMainActivity) getActivity()).setTitle("Get Ready");
 
         dialogTryAgain = new MaterialDialog.Builder(attached)
-                .content("Induction Cookware not detected\nPlease check your Cookware is turn on.")
+                .content("Induction Cookware is not detected.\nPlease verify Induction Cookware placement on your Paragon Cooktop.")
                 .positiveText(null)
                 .negativeText("Cancel")
                 .callback(new MaterialDialog.ButtonCallback() {

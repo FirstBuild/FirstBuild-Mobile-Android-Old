@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,6 +90,12 @@ public class DashboardActivity extends ActionBarActivity {
 
             if (productInfo != null && status == BluetoothProfile.STATE_DISCONNECTED) {
                 productInfo.disconnected();
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
 
                 new Thread(new Runnable() {
                     @Override
@@ -117,6 +123,7 @@ public class DashboardActivity extends ActionBarActivity {
 
             if (productInfo != null) {
                 productInfo.connected();
+                productInfo.initMustData();
 
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
@@ -217,16 +224,21 @@ public class DashboardActivity extends ActionBarActivity {
         for (int i = 0; i < size; i++) {
             ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
             if (productInfo.bluetoothDevice != null) {
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE, true);
-
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_POWER_LEVEL, true);
             }
         }
 
@@ -404,7 +416,7 @@ public class DashboardActivity extends ActionBarActivity {
         ProductManager.getInstance().setCurrent(position);
         ProductInfo productInfo = adapterDashboard.getItem(position);
 
-        if (productInfo.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
+        if (productInfo.isConnected() && productInfo.isAllMustDataReceived()) {
 
             ProductManager.getInstance().setCurrent(position);
 
@@ -471,6 +483,11 @@ public class DashboardActivity extends ActionBarActivity {
 
                 RecipeInfo newRecipe = new RecipeInfo(value);
                 product.setErdRecipeConfig(newRecipe);
+                break;
+
+            case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE:
+                Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STATE :" + String.format("%02x", value[0]));
+                product.setErdCookState(byteBuffer.get());
                 break;
 
         }
@@ -556,13 +573,27 @@ public class DashboardActivity extends ActionBarActivity {
             }
 
             holderDashboard.textNickname.setText(currentProduct.nickname);
+            int numMustData = currentProduct.getMustDataStatus();
+            Log.d(TAG, "numMustData :"+numMustData);
 
-            if (currentProduct.isConnected()) {
-                holderDashboard.progressBar.setVisibility(View.GONE);
-                holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
+            if (currentProduct.isConnected()){
+
+                if(currentProduct.isAllMustDataReceived()) {
+                    holderDashboard.layoutProgress.setVisibility(View.GONE);
+                    holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
+                }
+                else{
+                    holderDashboard.progressBar.setIndeterminate(false);
+                    holderDashboard.progressBar.setMax(ProductInfo.NUM_MUST_INIT_DATA);
+                    holderDashboard.progressBar.setProgress(numMustData);
+
+                    holderDashboard.layoutProgress.setVisibility(View.VISIBLE);
+                    holderDashboard.layoutStatus.setVisibility(View.GONE);
+                }
             }
             else {
-                holderDashboard.progressBar.setVisibility(View.VISIBLE);
+                holderDashboard.progressBar.setIndeterminate(true);
+                holderDashboard.layoutProgress.setVisibility(View.VISIBLE);
                 holderDashboard.layoutStatus.setVisibility(View.GONE);
             }
 
@@ -613,8 +644,9 @@ public class DashboardActivity extends ActionBarActivity {
             private TextView textCooking;
             private TextView textBattery;
             private ImageView imageBattery;
-            private View progressBar;
+            private View layoutProgress;
             private View layoutStatus;
+            private ProgressBar progressBar;
 
             public ViewHolder(View view) {
                 imageMark = (ImageView) view.findViewById(R.id.image_mark);
@@ -623,8 +655,9 @@ public class DashboardActivity extends ActionBarActivity {
                 textCooking = (TextView) view.findViewById(R.id.text_cooking);
                 textBattery = (TextView) view.findViewById(R.id.text_battery);
                 imageBattery = (ImageView) view.findViewById(R.id.image_battery);
-                progressBar = view.findViewById(R.id.layout_progressbar);
+                layoutProgress = view.findViewById(R.id.layout_progressbar);
                 layoutStatus = view.findViewById(R.id.layout_status);
+                progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
                 view.setTag(this);
             }

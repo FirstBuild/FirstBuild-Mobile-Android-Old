@@ -38,19 +38,17 @@ public class gridCircleView extends View {
     private Paint dashPaint = new Paint();
     private Paint gridBackPaint = new Paint();
 
-    private int progress = 0;
-    private boolean isSpinning = true;
-    private int spinSpeed = 3;
-    private int delayMillis = 0;
-    private int barLength = 180;
-    private boolean isFullCircle = false;
-    private int circleColor;
     private int NUM_GRID = 100;
 
     private float gridValue = 0;
     private float barValue = 0;
     private float dashValue = 0;
     private int viewWidth;
+
+
+    private float gridValueFinal = 0;
+    private float barValueFinal = 0;
+    private float dashValueFinal = 0;
 
 
     public gridCircleView(Context context) {
@@ -130,6 +128,11 @@ public class gridCircleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        gridValueFinal += (gridValue - gridValueFinal)*0.5;
+        barValueFinal += (barValue - barValueFinal)*0.5;
+        dashValueFinal += (dashValue - dashValueFinal)*0.5;
+
+
         // Draw background.
         canvas.drawArc(rectBack, 0.0f, 360.0f, false, circleBackPaint);
 
@@ -137,7 +140,7 @@ public class gridCircleView extends View {
         for (int i = 0; i < NUM_GRID; i++){
             float start = i * 360.f / NUM_GRID - 90;
 
-            if(i >= gridValue * NUM_GRID){
+            if(i >= gridValueFinal * NUM_GRID){
                 canvas.drawArc(rectGrid, start, LENGTH_GRID, false, gridBackPaint);
             }
             else{
@@ -146,12 +149,14 @@ public class gridCircleView extends View {
 
         }
         // Draw bar.
-        canvas.drawArc(rectBar, -90, 360.f * barValue, false, barPaint);
+        canvas.drawArc(rectBar, -90, 360.f * barValueFinal, false, barPaint);
 
         // Draw dash
-        canvas.drawArc(rectDash, -90, 360.f * dashValue, false, dashPaint);
+        canvas.drawArc(rectDash, -90, 360.f * dashValueFinal, false, dashPaint);
 
-        canvas.drawLine(viewWidth/2, 0, viewWidth/2, THICKNESS_BAR * 2, circleBackPaint );
+        canvas.drawLine(viewWidth / 2, 0, viewWidth / 2, THICKNESS_BAR * 2, circleBackPaint);
+
+        postInvalidateDelayed(0);
     }
 
     public void setGridValue(float gridValue) {
@@ -167,6 +172,10 @@ public class gridCircleView extends View {
     public void setDashValue(float dashValue) {
         this.dashValue = dashValue;
         postInvalidate();
+    }
+
+    public void setColor(int color){
+        gridPaint.setColor(getResources().getColor(color));
     }
 
 
