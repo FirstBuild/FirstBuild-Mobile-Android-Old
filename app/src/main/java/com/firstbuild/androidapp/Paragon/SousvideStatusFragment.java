@@ -71,7 +71,7 @@ public class SousvideStatusFragment extends Fragment {
 
         Log.d(TAG, "onCreateView IN");
 
-        ((ParagonMainActivity) getActivity()).setTitle("Action");
+        ((ParagonMainActivity) getActivity()).setTitle("Active");
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_circle, container, false);
