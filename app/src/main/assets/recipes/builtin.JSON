@@ -652,9 +652,9 @@
 		  "name": "whole in shell, large",
 		  "id": 400,
 		  "doneness": [
-			"pasteurized but still appears raw",
-			"slightly firm white, barely thickened yolk (will still have some watery white)",
-			"mostly firm white, creamy yolk (will still have some watery white)",
+			"pasteurized",
+			"slightly firm white",
+			"mostly firm white",
 			"firm white, firm yolk",
 			"firm white, runny yolk"
 		  ],
@@ -669,8 +669,8 @@
 		  ]
 		},
 		{
-		  "name": "whole in shell, large",
-		  "id": 400,
+		  "name": "scrambled",
+		  "id": 401,
 		  "doneness": [
 			"scrambled eggs"
 		  ],
