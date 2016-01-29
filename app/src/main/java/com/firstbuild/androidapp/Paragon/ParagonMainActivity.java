@@ -38,6 +38,9 @@ import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
+import com.firstbuild.androidapp.paragon.myRecipes.MyRecipesFragment;
+import com.firstbuild.androidapp.paragon.myRecipes.RecipeEditFragment;
+import com.firstbuild.androidapp.paragon.myRecipes.RecipeViewFragment;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
 import com.firstbuild.androidapp.productManager.ProductInfo;
@@ -1080,7 +1083,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     /**
      * Take picture and store in file.
      */
-    protected void dispatchTakePictureIntent() {
+    public void dispatchTakePictureIntent() {
         Log.d(TAG, "dispatchTakePictureIntent IN");
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

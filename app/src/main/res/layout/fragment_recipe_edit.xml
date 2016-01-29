@@ -7,7 +7,7 @@
     android:animateLayoutChanges="true"
     android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.paragon.RecipeEditFragment">
+    tools:context="com.firstbuild.androidapp.paragon.myRecipes.RecipeEditFragment">
 
     <!--<ScrollView-->
     <!--android:layout_width="match_parent"-->

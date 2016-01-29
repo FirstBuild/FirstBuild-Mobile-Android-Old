@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.paragon;
+package com.firstbuild.androidapp.paragon.myRecipes;
 
 
 import android.app.Activity;
@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.viewUtil.SwipeMenu;

@@ -158,36 +158,7 @@ public class BleManager {
         return bluetoothAdapter.isEnabled();
     }
 
-    /**
-     * Check device is already bonded one.
-     *
-     * @return true or false
-     */
-    private boolean isDevicePaired(BleDevice device) {
-        boolean result = false;
 
-        if (device != null) {
-
-            // Retrieves paired device list
-            Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
-            if (pairedDevice != null && pairedDevice.size() > 0) {
-
-                // Iterate all the device in the list
-                for (BluetoothDevice bluetoothDevice : pairedDevice) {
-                    Log.d(TAG, bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
-
-                    if (bluetoothDevice.getAddress().equals(device.getAddress())) {
-
-                        // Device found
-//                        bleDevice.setAddress(bluetoothDevice.getAddress());
-                        result = true;
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
 
 
     /**
