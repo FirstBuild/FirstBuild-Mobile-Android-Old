@@ -90,12 +90,11 @@ public class GetReadyFragment extends Fragment {
     public void onCookModeChanged(){
         byte cookMode = ProductManager.getInstance().getCurrent().getErdCurrentCookMode();
 
-        if(cookMode == ParagonValues.CURRENT_COOK_MODE_RAPID ||
-                cookMode == ParagonValues.CURRENT_COOK_MODE_GENTLE){
-            dialogTryAgain.setActionButton(DialogAction.POSITIVE, "Try again");
+        if(cookMode == ParagonValues.CURRENT_COOK_MODE_OFF ||
+                cookMode == ParagonValues.CURRENT_COOK_MODE_DIRECT){
+            attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
         }
         else{
-            dialogTryAgain.setActionButton(DialogAction.POSITIVE, null);
         }
     }
 

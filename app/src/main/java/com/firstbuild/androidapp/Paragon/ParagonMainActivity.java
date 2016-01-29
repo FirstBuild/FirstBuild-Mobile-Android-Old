@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,6 +97,11 @@ public class ParagonMainActivity extends ActionBarActivity {
     private MaterialDialog disconnectDialog = null;
     private MaterialDialog dialogGoodToGo;
     private MaterialDialog dialogFoodWarning;
+
+    ProgressBar dialogGoodToGoBar;
+    TextView    dialogGoodToGoContent;
+
+
     private BleListener bleListener = new BleListener() {
         @Override
         public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
@@ -771,8 +777,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         dialogGoodToGo = new MaterialDialog.Builder(ParagonMainActivity.this)
                 .title("")
-                .content("")
-                .progress(false, 100)
+                .customView(R.layout.include_countdown, true)
                 .negativeText("Cancel")
                 .cancelable(false)
                 .callback(new MaterialDialog.ButtonCallback() {
@@ -790,6 +795,11 @@ public class ParagonMainActivity extends ActionBarActivity {
                     }
                 })
                 .build();
+
+        View customView = dialogGoodToGo.getCustomView();
+        dialogGoodToGoBar = (ProgressBar) customView.findViewById(R.id.progressBar);
+        dialogGoodToGoContent = (TextView) customView.findViewById(R.id.content);
+
 
 
         dialogOtaAsk = new MaterialDialog.Builder(ParagonMainActivity.this)
@@ -1163,7 +1173,8 @@ public class ParagonMainActivity extends ActionBarActivity {
         if (fragment instanceof SelectModeFragment) {
             ((SelectModeFragment) fragment).onBackPressed();
         }
-        else if(fragment instanceof SousvideStatusFragment) {
+        else if(fragment instanceof SousvideStatusFragment ||
+                fragment instanceof GetReadyFragment ) {
             return;
 
         }
@@ -1193,13 +1204,6 @@ public class ParagonMainActivity extends ActionBarActivity {
         Log.d(TAG, "onResume");
         super.onResume();
 
-//        if (disconnectDialog.isShowing()) {
-//            Log.d(TAG, "Try to reconnect again");
-////            BleManager.getInstance().connect(ProductManager.getInstance().getCurrent().address);
-//        }
-//        else {
-//            Log.d(TAG, "disconnectDialog is not Showing");
-//        }
     }
 
 
@@ -1345,16 +1349,23 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * Initialize for check good to go for cooking.
+     */
     public void checkGoodToGo() {
         Log.d(TAG, "checkGoodToGo");
 
-        dialogGoodToGo.setProgress(0);
+        dialogGoodToGoBar.setProgress(100);
         checkGoodToGoLoop();
 
         writeDataState = WRITE_STATE_NONE;
 
     }
 
+    /**
+     * This loop used for checking state if good to go to cooking state.
+     * This call every INTERVAL_GOODTOGO time
+     */
     private void checkGoodToGoLoop() {
 
         ProductInfo productInfo = ProductManager.getInstance().getCurrent();
@@ -1365,20 +1376,20 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         if (productInfo.getErdBurnerStatus() == ParagonValues.BURNER_STATE_START) {
             dialogGoodToGo.setTitle("Press Stop on Paragon");
-            dialogGoodToGo.setContent("The Paragon is currently cooking. Please press Stop on the Paragon.");
+            dialogGoodToGoContent.setText("The Paragon is currently cooking. Please press Stop on the Paragon.");
 
             isReady = false;
         }
         else if (productInfo.isProbeConnected() == false) {
             dialogGoodToGo.setTitle("Connect Probe");
-            dialogGoodToGo.setContent("Probe is not connected. Please connect the temperature probe by holding the button on the side of the probe FOR 3 SECONDS.");
+            dialogGoodToGoContent.setText("Probe is not connected. Please connect the temperature probe by holding the button on the side of the probe FOR 3 SECONDS.");
 
             isReady = false;
         }
         else if (productInfo.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_RAPID &&
                 productInfo.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_MULTISTEP) {
             dialogGoodToGo.setTitle("Select Rapid Precise");
-            dialogGoodToGo.setContent("Please press Rapid Precise on the cooktop.");
+            dialogGoodToGoContent.setText("Please press Rapid Precise on the cooktop.");
 
             isReady = false;
         }
@@ -1388,7 +1399,10 @@ public class ParagonMainActivity extends ActionBarActivity {
 
 
         if(isReady){
+            // Every ERD is good to go. then now app send recipe configuration data.
             Log.d(TAG, "checkGoodToGoLoop isReady");
+            dialogGoodToGo.setTitle("Sending configuration...");
+            dialogGoodToGoContent.setText("");
 
             switch(writeDataState){
                 case WRITE_STATE_NONE:
@@ -1419,9 +1433,10 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
 
 
-        int progress = dialogGoodToGo.getCurrentProgress();
+        int progress = dialogGoodToGoBar.getProgress();
 
         if (isAllRight) {
+            // Everything is all right and good to go for cooking state.
             if (dialogGoodToGo.isShowing()) {
                 dialogGoodToGo.dismiss();
             }
@@ -1443,8 +1458,9 @@ public class ParagonMainActivity extends ActionBarActivity {
             return;
         }
 
-        if (progress >= dialogGoodToGo.getMaxProgress() ) {
-            // if timer has expiered then mismiss popup.
+        // decrease progress bar.
+        if (progress <= 0 ) {
+            // if timer has expiered then dismiss popup.
             if (dialogGoodToGo.isShowing()) {
                 dialogGoodToGo.dismiss();
             }
@@ -1454,8 +1470,8 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         }
         else {
-            progress++;
-            dialogGoodToGo.setProgress(progress);
+            progress--;
+            dialogGoodToGoBar.setProgress(progress);
             if (!dialogGoodToGo.isShowing()) {
                 dialogGoodToGo.show();
             }
@@ -1466,6 +1482,10 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
 
+    /**
+     * If the temperature lower then 140 F, show popup the warning of foodborne illness.
+     * @return if alresay dissmiss then false.
+     */
     public boolean isShowFoodWarning() {
         SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
                 ProductManager.PREFS_NAME, Context.MODE_PRIVATE);
@@ -1475,6 +1495,9 @@ public class ParagonMainActivity extends ActionBarActivity {
         return isShowFoodWarning;
     }
 
+    /**
+     * If press dismiss button on popup then save this in SharedPreference.
+     */
     public void saveShowFoodWarning() {
         SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
                 ProductManager.PREFS_NAME, Context.MODE_PRIVATE);
@@ -1485,6 +1508,9 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
 
+    /**
+     * All step for screen transition.
+     */
     public enum ParagonSteps {
         STEP_NONE,
         STEP_CHECK_CURRENT_STATUS,
