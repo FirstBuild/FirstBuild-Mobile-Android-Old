@@ -232,6 +232,7 @@ public class SousvideStatusFragment extends Fragment {
                     imgStatus.setImageResource(R.drawable.img_ready_to_cook);
 
                     circle.setGridValue(1.0f);
+                    circle.setColor(R.color.colorParagonAccent);
 
                     textExplanation.setVisibility(View.VISIBLE);
                     textExplanation.setText(R.string.fragment_soudvide_status_explanation_placefood);
@@ -256,6 +257,7 @@ public class SousvideStatusFragment extends Fragment {
                     textTempCurrent.setText("");
 
                     circle.setGridValue(1.0f);
+                    circle.setColor(R.color.colorParagonAccent);
 
                     textExplanation.setVisibility(View.GONE);
                     break;
@@ -277,6 +279,7 @@ public class SousvideStatusFragment extends Fragment {
                     textTempCurrent.setText("READY");
 
                     circle.setGridValue(1.0f);
+                    circle.setColor(R.color.colorParagonAccent);
 
                     textExplanation.setVisibility(View.VISIBLE);
                     textExplanation.setText(R.string.fragment_soudvide_status_explanation_donekeep);
@@ -324,7 +327,7 @@ public class SousvideStatusFragment extends Fragment {
             circle.setGridValue(ratioTemp);
         }
         else {
-            //do nothing.
+            circle.setColor(R.color.colorParagonAccent);
         }
     }
 
