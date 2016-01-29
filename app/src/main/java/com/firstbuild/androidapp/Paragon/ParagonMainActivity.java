@@ -61,7 +61,8 @@ import java.util.List;
 
 public class ParagonMainActivity extends ActionBarActivity {
     public static final int INTERVAL_CHECKING_PARAGON_CONNECTION = 1000;
-    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_TAKE_PHOTO = 123;
+    static final int REQUEST_ENABLE_BT = 1234;
     static final byte INITIAL_VALUE = 0x0f;
     private final float MIN_THICKNESS = 0.25f;
     private final float MAX_THICKNESS = 4.0f;
@@ -148,6 +149,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                                     }
                                 }
                                 else if (status == BluetoothProfile.STATE_DISCONNECTED) {
+                                    productInfo.disconnected();
                                     disconnectDialog.show();
                                     BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
                                     BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
@@ -833,34 +835,21 @@ public class ParagonMainActivity extends ActionBarActivity {
         };
 
 
-        // Check bluetooth adapter. If the adapter is disabled, enable it
-        boolean result = BleManager.getInstance().isBluetoothEnabled();
-
-        if (!result) {
-            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, BleValues.REQUEST_ENABLE_BT);
-        }
-        else {
-            Log.d(TAG, "Bluetooth adapter is already enabled. Start connect");
-            startCommunicateParagon();
-        }
-
         disconnectDialog = new MaterialDialog.Builder(ParagonMainActivity.this)
                 .title("Bluetooth Disconnected")
-                .content("Phone is out of range. Trying reconnect...")
+                .content("It will be reconnect when it's available again.\nIf press OK then go to My Products")
                 .progress(true, 0)
                 .cancelable(false)
-                .negativeText("Cancel")
+                .positiveText("Ok")
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
+                        BleManager.getInstance().removeListener(bleListener);
+                        finish();
                     }
 
                     @Override
                     public void onNegative(MaterialDialog dialog) {
-                        BleManager.getInstance().removeListener(bleListener);
-                        finish();
                     }
 
                     @Override
@@ -869,7 +858,23 @@ public class ParagonMainActivity extends ActionBarActivity {
                 })
                 .build();
 
+
+        // Check bluetooth adapter. If the adapter is disabled, enable it
+        boolean result = BleManager.getInstance().isBluetoothEnabled();
+
+        if (!result) {
+            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+        else {
+            Log.d(TAG, "Bluetooth adapter is already enabled. Start connect");
+            startCommunicateParagon();
+        }
+
+
     }
+
 
     private void checkParagonConnectionStatus() {
         Log.d(TAG, "checkParagonConnectionStatus");
@@ -877,7 +882,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         ProductInfo product = ProductManager.getInstance().getCurrent();
 
         Log.d(TAG, "checkParagonConnectionStatus buner :"+product.getErdBurnerStatus());
-        Log.d(TAG, "checkParagonConnectionStatus cookmode :"+product.getErdCurrentCookMode());
+        Log.d(TAG, "checkParagonConnectionStatus cookmode :" + product.getErdCurrentCookMode());
 
         if (product.getErdBurnerStatus() != INITIAL_VALUE &&
                 product.getErdCurrentCookMode() != INITIAL_VALUE &&
@@ -1114,19 +1119,40 @@ public class ParagonMainActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_TAKE_PHOTO) {
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.RGB_565;
-            options.inSampleSize = 4;
-            Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath, options);
-            Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+            if (resultCode == RESULT_OK) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.RGB_565;
+                options.inSampleSize = 4;
+                Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath, options);
+                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
 
-            if (fragment instanceof RecipeEditFragment) {
-                ((RecipeEditFragment) fragment).setRecipeImage(imageBitmap, currentPhotoPath);
+                if (fragment instanceof RecipeEditFragment) {
+                    ((RecipeEditFragment) fragment).setRecipeImage(imageBitmap, currentPhotoPath);
+                }
+
+            }
+
+        }
+        else if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == -1) {
+                // Success
+                Log.d(TAG, "Bluetooth adapter is enabled. Start scanning.");
+                startCommunicateParagon();
+            }
+            else if (resultCode == 0) {
+                Log.d(TAG, "Bluetooth adapter is still disabled");
+            }
+            else {
+                // Else
             }
         }
+        else {
+
+        }
     }
+
 
     @Override
     public void onBackPressed() {
@@ -1161,18 +1187,19 @@ public class ParagonMainActivity extends ActionBarActivity {
         handlerCheckingConnection.removeCallbacksAndMessages(null);
     }
 
+
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
 
-        if (disconnectDialog.isShowing()) {
-            Log.d(TAG, "Try to reconnect again");
-//            BleManager.getInstance().connect(ProductManager.getInstance().getCurrent().address);
-        }
-        else {
-            Log.d(TAG, "disconnectDialog is not Showing");
-        }
+//        if (disconnectDialog.isShowing()) {
+//            Log.d(TAG, "Try to reconnect again");
+////            BleManager.getInstance().connect(ProductManager.getInstance().getCurrent().address);
+//        }
+//        else {
+//            Log.d(TAG, "disconnectDialog is not Showing");
+//        }
     }
 
 

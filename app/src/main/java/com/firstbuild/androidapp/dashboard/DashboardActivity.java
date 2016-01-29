@@ -1,5 +1,6 @@
 package com.firstbuild.androidapp.dashboard;
 
+import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
@@ -8,6 +9,8 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +34,7 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.addProduct.AddProductActivity;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
+import com.firstbuild.androidapp.paragon.RecipeEditFragment;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
@@ -48,6 +52,7 @@ import java.util.List;
 
 public class DashboardActivity extends ActionBarActivity {
 
+    static final int REQUEST_ENABLE_BT = 1234;
     private static final int INTERVAL_MAX_PRODUCT_UPDATE = 50;      // Max switching time to the switching to next product.
     private String TAG = DashboardActivity.class.getSimpleName();
     private SwipeMenuListView listViewProduct;
@@ -110,6 +115,8 @@ public class DashboardActivity extends ActionBarActivity {
                     }
                 }).start();
 
+
+                checkBleTurnOff();
             }
         }
 
@@ -207,6 +214,8 @@ public class DashboardActivity extends ActionBarActivity {
         // Add ble event listener
         BleManager.getInstance().addListener(bleListener);
 
+        checkBleTurnOff();
+
         requestUpdateProducts();
 
     }
@@ -262,6 +271,27 @@ public class DashboardActivity extends ActionBarActivity {
         }
 
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == -1) {
+                // Success
+                Log.d(TAG, "Bluetooth adapter is enabled. Start scanning.");
+            }
+            else if (resultCode == 0) {
+                Log.d(TAG, "Bluetooth adapter is still disabled");
+            }
+            else {
+                // Else
+            }
+        }
+        else {
+
+        }
+    }
+
 
 
     @Override
@@ -404,6 +434,32 @@ public class DashboardActivity extends ActionBarActivity {
 
         }
 
+
+    }
+
+
+    private boolean checkBleTurnOff(){
+        // Check bluetooth adapter. If the adapter is disabled, enable it
+        boolean result = BleManager.getInstance().isBluetoothEnabled();
+
+        if (!result) {
+            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
+
+            int size = ProductManager.getInstance().getSize();
+
+            for (int i = 0; i < size; i++) {
+                ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
+                productInfo.disconnected();
+            }
+
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+        else {
+            Log.d(TAG, "Bluetooth adapter is already enabled. Start connect");
+        }
+
+        return result;
     }
 
     private int dp2px(int dp) {
