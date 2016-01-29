@@ -245,7 +245,26 @@ public class QuickStartFragment extends Fragment {
     }
 
     public void goodToGo() {
+        attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
 
+    }
+
+    private void makeTempText(int temp) {
+        textTemp.setText(temp + "℉");
+    }
+
+
+    private void makeTempMaxText(int hour, int min) {
+        textTimeMax.setText(hour + ":" + min);
+    }
+
+
+    private void makeTempMinText(int hour, int min) {
+        textTimeMin.setText(hour + ":" + min);
+    }
+
+
+    public void sendRecipeConfig() {
         String stringTime = textTimeMin.getText().toString();
         String hourValue = stringTime.split(":")[0];
         String minValue = stringTime.split(":")[1];
@@ -276,22 +295,6 @@ public class QuickStartFragment extends Fragment {
         product.setErdRecipeConfig(recipeConfig);
         product.sendRecipeConfig();
 
-        attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
+
     }
-
-    private void makeTempText(int temp) {
-        textTemp.setText(temp + "℉");
-    }
-
-
-    private void makeTempMaxText(int hour, int min) {
-        textTimeMax.setText(hour + ":" + min);
-    }
-
-
-    private void makeTempMinText(int hour, int min) {
-        textTimeMin.setText(hour + ":" + min);
-    }
-
-
 }

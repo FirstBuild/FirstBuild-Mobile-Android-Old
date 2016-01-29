@@ -278,6 +278,12 @@ public class RecipeSettingsFragment extends Fragment {
      */
     public void goodToGo() {
 
+        ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
+
+    }
+
+    public void sendRecipeConfig() {
+
         ProductInfo product = ProductManager.getInstance().getCurrent();
 
         RecipeInfo recipeConfig = new RecipeInfo("", "", "", "");
@@ -290,8 +296,6 @@ public class RecipeSettingsFragment extends Fragment {
 
         product.setErdRecipeConfig(recipeConfig);
         product.sendRecipeConfig();
-
-        ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_GETREADY);
 
     }
 }

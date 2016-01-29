@@ -193,30 +193,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             Log.d(TAG, "[onCharacteristicWrite] uuid: " + uuid + ", value: " + String.format("%02x", value[0]));
 
-            switch (uuid.toUpperCase()) {
-                case ParagonValues.CHARACTERISTIC_OTA_DATA:
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dialogOtaProcessing.setMaxProgress(OtaManager.getInstance().getTransferCount());
-                                    dialogOtaProcessing.setProgress(OtaManager.getInstance().getTransferOffset());
-                                }
-                            });
-                        }
-                    }).start();
-
-
-                    OtaManager.getInstance().responseWriteData();
-                    break;
-
-                case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
-                    break;
-
-            }
-
+            onWriteData(uuid, value);
 
         }
 
@@ -240,6 +217,10 @@ public class ParagonMainActivity extends ActionBarActivity {
     };
 
     private int checkingCountDown;
+    private static final int WRITE_STATE_NONE = 0;
+    private static final int WRITE_STATE_WRITING = 1;
+    private static final int WRITE_STATE_WRITE_DONE = 2;
+    private int writeDataState = WRITE_STATE_NONE;
 
 
     public MaterialDialog getDialogOtaProcessing() {
@@ -423,6 +404,36 @@ public class ParagonMainActivity extends ActionBarActivity {
 
         }
     }
+
+
+    private void onWriteData(String uuid, byte[] value) {
+
+        switch (uuid.toUpperCase()) {
+            case ParagonValues.CHARACTERISTIC_OTA_DATA:
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialogOtaProcessing.setMaxProgress(OtaManager.getInstance().getTransferCount());
+                                dialogOtaProcessing.setProgress(OtaManager.getInstance().getTransferOffset());
+                            }
+                        });
+                    }
+                }).start();
+
+                OtaManager.getInstance().responseWriteData();
+                break;
+
+            case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
+                break;
+
+        }
+
+        writeDataState = WRITE_STATE_WRITE_DONE;
+    }
+
 
     private void onPowerLevelChanged() {
         new Thread(new Runnable() {
@@ -1313,46 +1324,99 @@ public class ParagonMainActivity extends ActionBarActivity {
         dialogGoodToGo.setProgress(0);
         checkGoodToGoLoop();
 
+        writeDataState = WRITE_STATE_NONE;
+
     }
 
     private void checkGoodToGoLoop() {
 
         ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
-//        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
-//        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
-//        BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
-
-        boolean retValue = false;
+        boolean isReady = false;
+        boolean isAllRight = false;
 
 
         if (productInfo.getErdBurnerStatus() == ParagonValues.BURNER_STATE_START) {
             dialogGoodToGo.setTitle("Press Stop on Paragon");
             dialogGoodToGo.setContent("The Paragon is currently cooking. Please press Stop on the Paragon.");
 
-            retValue = false;
+            isReady = false;
         }
         else if (productInfo.isProbeConnected() == false) {
             dialogGoodToGo.setTitle("Connect Probe");
             dialogGoodToGo.setContent("Probe is not connected. Please connect the temperature probe by holding the button on the side of the probe FOR 3 SECONDS.");
 
-            retValue = false;
+            isReady = false;
         }
-        else if (productInfo.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_RAPID) {
+        else if (productInfo.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_RAPID &&
+                productInfo.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_MULTISTEP) {
             dialogGoodToGo.setTitle("Select Rapid Precise");
             dialogGoodToGo.setContent("Please press Rapid Precise on the cooktop.");
 
-            retValue = false;
+            isReady = false;
         }
         else {
+            isReady = true;
+        }
 
-            retValue = true;
+
+        if(isReady){
+            Log.d(TAG, "checkGoodToGoLoop isReady");
+
+            switch(writeDataState){
+                case WRITE_STATE_NONE:
+                    Log.d(TAG, "checkGoodToGoLoop isReady Write None");
+                    Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+                    if (fragment instanceof QuickStartFragment) {
+                        ((QuickStartFragment) fragment).sendRecipeConfig();
+                    }
+                    else if (fragment instanceof RecipeSettingsFragment) {
+                        ((RecipeSettingsFragment) fragment).sendRecipeConfig();
+                    }
+                    else {
+
+                    }
+                    writeDataState = WRITE_STATE_WRITING;
+                    break;
+
+                case WRITE_STATE_WRITING:
+                    Log.d(TAG, "checkGoodToGoLoop isReady Write Writing");
+                    break;
+
+                case WRITE_STATE_WRITE_DONE:
+                    Log.d(TAG, "checkGoodToGoLoop isReady Write Done");
+                    isAllRight = true;
+                    break;
+            }
         }
 
 
         int progress = dialogGoodToGo.getCurrentProgress();
 
-        if (progress >= dialogGoodToGo.getMaxProgress() || retValue) {
+        if (isAllRight) {
+            if (dialogGoodToGo.isShowing()) {
+                dialogGoodToGo.dismiss();
+            }
+
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+            if (fragment instanceof QuickStartFragment) {
+                ((QuickStartFragment) fragment).goodToGo();
+            }
+            else if (fragment instanceof RecipeSettingsFragment) {
+                ((RecipeSettingsFragment) fragment).goodToGo();
+            }
+            else {
+
+            }
+
+            // remove runnable handler.
+            handlerCheckingGoodToGo.removeCallbacks(runnableGoodToGo);
+            return;
+        }
+
+        if (progress >= dialogGoodToGo.getMaxProgress() ) {
             // if timer has expiered then mismiss popup.
             if (dialogGoodToGo.isShowing()) {
                 dialogGoodToGo.dismiss();
@@ -1360,20 +1424,6 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             // remove runnable handler.
             handlerCheckingGoodToGo.removeCallbacks(runnableGoodToGo);
-
-            if(retValue){
-                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
-
-                if (fragment instanceof QuickStartFragment) {
-                    ((QuickStartFragment) fragment).goodToGo();
-                }
-                else if (fragment instanceof RecipeSettingsFragment) {
-                    ((RecipeSettingsFragment) fragment).goodToGo();
-                }
-                else {
-
-                }
-            }
 
         }
         else {
