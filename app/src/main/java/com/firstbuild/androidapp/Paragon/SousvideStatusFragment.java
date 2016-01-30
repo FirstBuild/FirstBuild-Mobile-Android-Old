@@ -232,6 +232,8 @@ public class SousvideStatusFragment extends Fragment {
                     imgStatus.setImageResource(R.drawable.img_ready_to_cook);
 
                     circle.setGridValue(1.0f);
+                    circle.setBarValue(0.0f);
+                    circle.setDashValue(0.0f);
                     circle.setColor(R.color.colorParagonAccent);
 
                     textExplanation.setVisibility(View.VISIBLE);
@@ -257,6 +259,8 @@ public class SousvideStatusFragment extends Fragment {
                     textTempCurrent.setText("");
 
                     circle.setGridValue(1.0f);
+                    circle.setBarValue(0.0f);
+                    circle.setDashValue(0.0f);
                     circle.setColor(R.color.colorParagonAccent);
 
                     textExplanation.setVisibility(View.GONE);
@@ -279,10 +283,13 @@ public class SousvideStatusFragment extends Fragment {
                     textTempCurrent.setText("READY");
 
                     circle.setGridValue(1.0f);
+                    circle.setBarValue(1.0f);
                     circle.setColor(R.color.colorParagonAccent);
 
                     textExplanation.setVisibility(View.VISIBLE);
-                    textExplanation.setText(R.string.fragment_soudvide_status_explanation_donekeep);
+//                    textExplanation.setText(R.string.fragment_soudvide_status_explanation_donekeep);
+
+                    updateUiElapsedTime();
                     break;
 
                 default:
@@ -353,6 +360,15 @@ public class SousvideStatusFragment extends Fragment {
 
             updateReadyTime(elapsedTime);
         }
+        else if(cookState == COOK_STATE.STATE_DONE){
+            float ratioTime = (float) elapsedTime / (float) stageInfo.getTime();
+
+            ratioTime = Math.min(ratioTime, 1.0f);
+
+            circle.setDashValue(1.0f - ratioTime);
+
+            updateStayTime(elapsedTime);
+        }
         else {
             //do nothing
         }
@@ -368,8 +384,6 @@ public class SousvideStatusFragment extends Fragment {
 
 
     private void updateReadyTime(int elapsedMin){
-
-
         Calendar now = Calendar.getInstance();
         now.add(Calendar.MINUTE, elapsedMin);
         String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
@@ -384,7 +398,26 @@ public class SousvideStatusFragment extends Fragment {
             ampm = "PM";
         }
 
-        textTempCurrent.setText(Html.fromHtml(timeText + "<small>"+ampm+"</small>"));
+        textTempCurrent.setText(Html.fromHtml(timeText + "<small>" + ampm + "</small>"));
+    }
+
+    private void updateStayTime(int elapsedMin){
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.MINUTE, elapsedMin);
+        String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
+        String ampm = "";
+
+        Log.d(TAG, "updateStayTime :" + timeText);
+
+        if(now.get(Calendar.AM_PM) == Calendar.AM){
+            ampm = "AM";
+        }
+        else{
+            ampm = "PM";
+        }
+
+        String text = "Food can stay in until "+Html.fromHtml(timeText + "<small>"+ampm+"</small>");
+        textExplanation.setText(text);
     }
 
 
