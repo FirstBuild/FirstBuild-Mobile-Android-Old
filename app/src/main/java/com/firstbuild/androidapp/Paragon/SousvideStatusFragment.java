@@ -30,15 +30,6 @@ public class SousvideStatusFragment extends Fragment {
 
     private String TAG = "SousvideStatusFragment";
     private int countDown = 10;
-
-    public enum COOK_STATE {
-        STATE_NONE,
-        STATE_PREHEAT,
-        STATE_READY_TO_COOK,
-        STATE_COOKING,
-        STATE_DONE,
-    }
-
     private gridCircleView circle;
     private ImageView[] progressDots = new ImageView[4];
     private View layoutStatus;
@@ -51,7 +42,6 @@ public class SousvideStatusFragment extends Fragment {
     private View btnContinue;
     private View btnComplete;
     private COOK_STATE cookState = COOK_STATE.STATE_NONE;
-
     private ParagonMainActivity attached = null;
 
     public SousvideStatusFragment() {
@@ -62,7 +52,7 @@ public class SousvideStatusFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        attached = (ParagonMainActivity)getActivity();
+        attached = (ParagonMainActivity) getActivity();
     }
 
     @Override
@@ -135,10 +125,8 @@ public class SousvideStatusFragment extends Fragment {
         return view;
     }
 
-
     /**
      * Update cooking state, Off -> Heating -> Ready -> Cooking -> Done
-     *
      */
     public void updateCookState() {
         byte state = ProductManager.getInstance().getCurrent().getErdCookState();
@@ -173,14 +161,13 @@ public class SousvideStatusFragment extends Fragment {
 
     }
 
-
     /**
      * Update UI progress bar top of the screen and on circle view.
      */
     public void UpdateUiCookState(COOK_STATE state) {
         Log.d(TAG, "UpdateUiCookState " + state);
 
-        ProductInfo product  = ProductManager.getInstance().getCurrent();
+        ProductInfo product = ProductManager.getInstance().getCurrent();
 
 //        BleManager.getInstance().readCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
         StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
@@ -216,6 +203,7 @@ public class SousvideStatusFragment extends Fragment {
                     progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
 
                     layoutStatus.setVisibility(View.GONE);
+                    imgStatus.setImageResource(R.drawable.img_ready_to_cook);
                     imgStatus.setVisibility(View.VISIBLE);
                     btnContinue.setVisibility(View.VISIBLE);
                     btnComplete.setVisibility(View.GONE);
@@ -308,15 +296,15 @@ public class SousvideStatusFragment extends Fragment {
             float bigNumber;
             float smallNumber;
 
-            if( currentTemp > (float)stageInfo.getTemp()){
+            if (currentTemp > (float) stageInfo.getTemp()) {
                 bigNumber = currentTemp;
-                smallNumber = (float)stageInfo.getTemp();
+                smallNumber = (float) stageInfo.getTemp();
                 circle.setColor(R.color.colorAccent);
                 textStatusName.setText("COOLING");
             }
-            else{
+            else {
                 smallNumber = currentTemp;
-                bigNumber = (float)stageInfo.getTemp();
+                bigNumber = (float) stageInfo.getTemp();
                 circle.setColor(R.color.colorParagonAccent);
                 textStatusName.setText("PREHEATING");
             }
@@ -331,10 +319,8 @@ public class SousvideStatusFragment extends Fragment {
         }
     }
 
-
     /**
      * Update UI current elapsed time. Elapsed time is increase from 0 until selected cook time.
-     *
      */
     public void updateUiElapsedTime() {
 
@@ -355,22 +341,29 @@ public class SousvideStatusFragment extends Fragment {
             textTempCurrent.setText(text);
 
         }
-        else if(cookState == COOK_STATE.STATE_DONE){
+        else if (cookState == COOK_STATE.STATE_DONE) {
             float ratioTime = (float) elapsedTime / (float) stageInfo.getMaxTime();
 
             ratioTime = Math.min(ratioTime, 1.0f);
 
             circle.setDashValue(1.0f - ratioTime);
 
-            String text = "Food can stay in until " + updateReadyTime(elapsedTime);
-            textExplanation.setText(text);
+            if (elapsedTime == 0) {
+                layoutStatus.setVisibility(View.GONE);
+                imgStatus.setImageResource(R.drawable.img_cook_done);
+                imgStatus.setVisibility(View.VISIBLE);
 
+                textExplanation.setText("Take food out now");
+            }
+            else {
+                String text = "Food can stay in until " + updateReadyTime(elapsedTime);
+                textExplanation.setText(text);
+            }
         }
         else {
             //do nothing
         }
     }
-
 
     /**
      * Update new stage get from BLE master.
@@ -379,25 +372,33 @@ public class SousvideStatusFragment extends Fragment {
         Log.d(TAG, "updateCookStage. Error sousvide is support only one stage.");
     }
 
-
-    private String updateReadyTime(int elapsedMin){
+    private String updateReadyTime(int elapsedMin) {
         String stringTime = "";
         Calendar now = Calendar.getInstance();
         now.add(Calendar.MINUTE, elapsedMin);
-        String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
+        String timeText = String.format("%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
         String ampm = "";
 
         Log.d(TAG, "updateReadyTime :" + timeText);
 
-        if(now.get(Calendar.AM_PM) == Calendar.AM){
+        if (now.get(Calendar.AM_PM) == Calendar.AM) {
             ampm = "AM";
         }
-        else{
+        else {
             ampm = "PM";
         }
 
-        stringTime = Html.fromHtml(timeText + "<small>"+ampm+"</small>") +"";
+        stringTime = Html.fromHtml(timeText + "<small>" + ampm + "</small>") + "";
         return stringTime;
+    }
+
+
+    public enum COOK_STATE {
+        STATE_NONE,
+        STATE_PREHEAT,
+        STATE_READY_TO_COOK,
+        STATE_COOKING,
+        STATE_DONE,
     }
 
 }

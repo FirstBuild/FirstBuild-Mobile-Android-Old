@@ -293,8 +293,7 @@ public class ParagonMainActivity extends ActionBarActivity {
 
             case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
                 Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + String.format("%02x%02x", value[0], value[1]));
-                String buffer = String.format("%02x%02x", value[0], value[1]);
-                productInfo.setErdElapsedTime(Integer.parseInt(buffer, 16));
+                productInfo.setErdElapsedTime(byteBuffer.getShort());
                 onElapsedTime();
                 break;
 
@@ -336,27 +335,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             case ParagonValues.CHARACTERISTIC_COOK_MODE:
                 Log.d(TAG, "CHARACTERISTIC_COOK_MODE :" + String.format("%02x", value[0]));
                 productInfo.setErdCurrentCookMode(byteBuffer.get());
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
-
-                                if (fragment instanceof GetReadyFragment) {
-                                    ((GetReadyFragment) fragment).onCookModeChanged();
-                                }
-                                else {
-                                    //do nothing
-                                }
-
-                            }
-                        });
-                    }
-                }).start();
-
+                onCookMode();
                 break;
 
 
@@ -416,7 +395,6 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
     }
 
-
     private void onWriteData(String uuid, byte[] value) {
 
         switch (uuid.toUpperCase()) {
@@ -443,6 +421,35 @@ public class ParagonMainActivity extends ActionBarActivity {
         }
 
         writeDataState = WRITE_STATE_WRITE_DONE;
+    }
+
+
+    private void onCookMode() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Fragment fragment = getFragmentManager().findFragmentById(R.id.frame_content);
+
+                        if (fragment instanceof GetReadyFragment) {
+                            ((GetReadyFragment) fragment).onCookModeChanged();
+                        }
+                        else if (fragment instanceof CompleteFragment) {
+                            ((CompleteFragment) fragment).onCookModeChanged();
+                        }
+                        else {
+                            //do nothing
+                        }
+
+                    }
+                });
+            }
+        }).start();
+
+
     }
 
 

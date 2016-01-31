@@ -30,7 +30,7 @@
     // Material Design color table
     <color name="colorOrangePrimary">#ffaf5e1d</color>
     <color name="colorOrangePrimaryDark">#ff582c11</color>
-    <color name="colorOrangeAccent">#ffaf9318</color>
+    <color name="colorOrangeAccent">#ffFFA12D</color>
     <color name="colorOrangeHighlight">#ffaf2319</color>
 
     <color name="transparent">#00FFFFFF</color>
