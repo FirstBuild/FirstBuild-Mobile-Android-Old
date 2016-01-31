@@ -18,9 +18,10 @@ public class ProductInfo {
     public static final int PRODUCT_TYPE_CILLHUB = 0;
     public static final int PRODUCT_TYPE_PARAGON = 1;
     public static final int NO_BATTERY_INFO = -1;
-    public static final int NUM_MUST_INIT_DATA = 6;
+    public static final int NUM_MUST_INIT_DATA = 7;
 
     public static final byte INITIAL_VALUE = 0x0f;
+    public static final int INITIAL_ELAPSED_TIME = 0xffff;
     private static String TAG = ProductInfo.class.getSimpleName();
     //type can be Paragon and Chilhub so far.
     public int type = -1;
@@ -37,9 +38,9 @@ public class ProductInfo {
     private byte erdCurrentCookMode = INITIAL_VALUE;
     private RecipeInfo erdRecipeConfig = null;
     private byte erdCookState = INITIAL_VALUE;
+    private int erdElapsedTime = INITIAL_ELAPSED_TIME;
 
     private float erdCurrentTemp;
-    private int erdElapsedTime;
     private byte erdCookStage;
     private byte erdPowerLevel = 0;
 
@@ -85,6 +86,10 @@ public class ProductInfo {
         }
 
         if(erdCookState != INITIAL_VALUE){
+            numGetData++;
+        }
+
+        if(erdElapsedTime != INITIAL_ELAPSED_TIME){
             numGetData++;
         }
 
@@ -181,6 +186,7 @@ public class ProductInfo {
             this.erdCookState = INITIAL_VALUE;
             this.erdCookStage = INITIAL_VALUE;
             this.erdCurrentCookMode = INITIAL_VALUE;
+            this.erdElapsedTime = INITIAL_ELAPSED_TIME;
         }
     }
 

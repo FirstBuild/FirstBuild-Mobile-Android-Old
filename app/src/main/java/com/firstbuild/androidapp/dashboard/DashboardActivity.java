@@ -235,6 +235,7 @@ public class DashboardActivity extends ActionBarActivity {
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
 
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
@@ -508,6 +509,10 @@ public class DashboardActivity extends ActionBarActivity {
                 Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL :" + String.format("%02x", value[0]));
                 break;
 
+            case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
+                Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + String.format("%02x%02x", value[0], value[1]));
+                product.setErdElapsedTime(byteBuffer.getShort());
+                break;
 
             case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
                 Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" + String.format("%02x", value[0]));
