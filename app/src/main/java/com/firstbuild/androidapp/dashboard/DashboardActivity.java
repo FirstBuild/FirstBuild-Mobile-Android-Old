@@ -547,6 +547,11 @@ public class DashboardActivity extends ActionBarActivity {
                 product.setErdCookState(byteBuffer.get());
                 break;
 
+
+            case ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE:
+                //Skip refresh ui.
+                return;
+
         }
 
         new Thread(new Runnable() {
@@ -556,7 +561,6 @@ public class DashboardActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         adapterDashboard.notifyDataSetChanged();
-                        listViewProduct.invalidateViews();
 
                     }
                 });
