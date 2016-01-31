@@ -21,6 +21,7 @@ public class ProductInfo {
     public static final int NUM_MUST_INIT_DATA = 6;
 
     public static final byte INITIAL_VALUE = 0x0f;
+    public static final byte INITIAL_ELAPSED_TIME = (byte) 0xff;
     private static String TAG = ProductInfo.class.getSimpleName();
     //type can be Paragon and Chilhub so far.
     public int type = -1;
@@ -39,7 +40,7 @@ public class ProductInfo {
     private byte erdCookState = INITIAL_VALUE;
 
     private float erdCurrentTemp;
-    private int erdElapsedTime;
+    private int erdElapsedTime = INITIAL_ELAPSED_TIME;
     private byte erdCookStage;
     private byte erdPowerLevel = 0;
 
@@ -181,6 +182,7 @@ public class ProductInfo {
             this.erdCookState = INITIAL_VALUE;
             this.erdCookStage = INITIAL_VALUE;
             this.erdCurrentCookMode = INITIAL_VALUE;
+            this.erdElapsedTime = INITIAL_ELAPSED_TIME;
         }
     }
 

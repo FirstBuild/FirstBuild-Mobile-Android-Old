@@ -182,7 +182,7 @@ public class SousvideStatusFragment extends Fragment {
 
         ProductInfo product  = ProductManager.getInstance().getCurrent();
 
-        BleManager.getInstance().readCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
+//        BleManager.getInstance().readCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
         StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
 
         if (cookState != state) {
@@ -190,16 +190,6 @@ public class SousvideStatusFragment extends Fragment {
 
             switch (cookState) {
                 case STATE_PREHEAT:
-
-                    if (stageInfo.getTemp() == (int)product.getErdCurrentTemp()) {
-
-                    }
-                    else if (stageInfo.getTemp() < (int)product.getErdCurrentTemp()) {
-                        textStatusName.setText("COOLING");
-                    }
-                    else {
-                        textStatusName.setText("PREHEATING");
-                    }
 
                     progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
                     progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
@@ -214,6 +204,8 @@ public class SousvideStatusFragment extends Fragment {
                     textLabelCurrent.setText("Current:");
                     textTempTarget.setText(Html.fromHtml("Target: " + stageInfo.getTemp() + "<small>℉</small>"));
                     textExplanation.setVisibility(View.GONE);
+
+                    updateUiCurrentTemp();
                     break;
 
                 case STATE_READY_TO_COOK:
@@ -287,7 +279,6 @@ public class SousvideStatusFragment extends Fragment {
                     circle.setColor(R.color.colorParagonAccent);
 
                     textExplanation.setVisibility(View.VISIBLE);
-//                    textExplanation.setText(R.string.fragment_soudvide_status_explanation_donekeep);
 
                     updateUiElapsedTime();
                     break;
@@ -321,11 +312,13 @@ public class SousvideStatusFragment extends Fragment {
                 bigNumber = currentTemp;
                 smallNumber = (float)stageInfo.getTemp();
                 circle.setColor(R.color.colorAccent);
+                textStatusName.setText("COOLING");
             }
             else{
                 smallNumber = currentTemp;
                 bigNumber = (float)stageInfo.getTemp();
                 circle.setColor(R.color.colorParagonAccent);
+                textStatusName.setText("PREHEATING");
             }
 
             float ratioTemp = smallNumber / bigNumber;
@@ -358,16 +351,20 @@ public class SousvideStatusFragment extends Fragment {
 
             circle.setBarValue(1.0f - ratioTime);
 
-            updateReadyTime(elapsedTime);
+            String text = updateReadyTime(elapsedTime);
+            textTempCurrent.setText(text);
+
         }
         else if(cookState == COOK_STATE.STATE_DONE){
-            float ratioTime = (float) elapsedTime / (float) stageInfo.getTime();
+            float ratioTime = (float) elapsedTime / (float) stageInfo.getMaxTime();
 
             ratioTime = Math.min(ratioTime, 1.0f);
 
             circle.setDashValue(1.0f - ratioTime);
 
-            updateStayTime(elapsedTime);
+            String text = "Food can stay in until " + updateReadyTime(elapsedTime);
+            textExplanation.setText(text);
+
         }
         else {
             //do nothing
@@ -383,7 +380,8 @@ public class SousvideStatusFragment extends Fragment {
     }
 
 
-    private void updateReadyTime(int elapsedMin){
+    private String updateReadyTime(int elapsedMin){
+        String stringTime = "";
         Calendar now = Calendar.getInstance();
         now.add(Calendar.MINUTE, elapsedMin);
         String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
@@ -398,27 +396,8 @@ public class SousvideStatusFragment extends Fragment {
             ampm = "PM";
         }
 
-        textTempCurrent.setText(Html.fromHtml(timeText + "<small>" + ampm + "</small>"));
+        stringTime = Html.fromHtml(timeText + "<small>"+ampm+"</small>") +"";
+        return stringTime;
     }
-
-    private void updateStayTime(int elapsedMin){
-        Calendar now = Calendar.getInstance();
-        now.add(Calendar.MINUTE, elapsedMin);
-        String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
-        String ampm = "";
-
-        Log.d(TAG, "updateStayTime :" + timeText);
-
-        if(now.get(Calendar.AM_PM) == Calendar.AM){
-            ampm = "AM";
-        }
-        else{
-            ampm = "PM";
-        }
-
-        String text = "Food can stay in until "+Html.fromHtml(timeText + "<small>"+ampm+"</small>");
-        textExplanation.setText(text);
-    }
-
 
 }
