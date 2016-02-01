@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.dashboard.DashboardActivity;
 import com.firstbuild.commonframework.bleManager.BleManager;
@@ -72,6 +73,15 @@ public class AddProductSetParagonNameFragment extends Fragment {
                 Log.d(TAG, "Paragon Nickname: " + paragonName);
                 attached.setNewProductNickname(paragonName);
                 attached.addNewProductToList();
+
+
+                new MaterialDialog.Builder(this)
+                        .title(R.string.useGoogleLocationServices)
+                        .content(R.string.loremIpsum)
+                        .positiveText(R.string.agree)
+                        .negativeText(R.string.disagree)
+                        .show();
+
 
                 // Go to dash board
                 Intent intent = new Intent(getActivity(), DashboardActivity.class);
