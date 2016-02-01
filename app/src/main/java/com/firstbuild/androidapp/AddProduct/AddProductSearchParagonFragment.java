@@ -94,7 +94,7 @@ public class AddProductSearchParagonFragment extends Fragment {
         }
         else {
             Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
-            spinningAnimation.setRepeatCount(10);
+            spinningAnimation.setRepeatCount(30);
             BleManager.getInstance().startScan();
         }
     }
@@ -138,7 +138,7 @@ public class AddProductSearchParagonFragment extends Fragment {
             }
 
             public void onAnimationEnd(Animation animation) {
-//                Log.d(TAG, "onAnimationEnd IN");
+                Log.d(TAG, "onAnimationEnd IN");
 
                 BleManager.getInstance().stopScan();
 
