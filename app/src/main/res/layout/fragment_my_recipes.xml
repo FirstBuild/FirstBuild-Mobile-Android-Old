@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.paragon.MyRecipesFragment">
+    tools:context="com.firstbuild.androidapp.paragon.myRecipes.MyRecipesFragment">
 
 
     <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
@@ -25,7 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/colorParagonHighlight"
+            android:background="@color/colorParagonAccent"
             android:gravity="center"
             android:orientation="horizontal">
 

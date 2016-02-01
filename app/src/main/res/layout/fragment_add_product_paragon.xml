@@ -34,6 +34,7 @@
         android:id="@+id/relative_layout_add_product_chillhub"
         android:layout_width="match_parent"
         android:layout_height="70dp"
+        android:visibility="gone"
         android:background="@android:color/white"
         android:layout_marginTop="0dp">
 

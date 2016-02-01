@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,9 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
@@ -28,16 +30,6 @@ import java.util.Calendar;
 public class SousvideStatusFragment extends Fragment {
 
     private String TAG = "SousvideStatusFragment";
-    private int countDown = 10;
-
-    public enum COOK_STATE {
-        STATE_NONE,
-        STATE_PREHEAT,
-        STATE_READY_TO_COOK,
-        STATE_COOKING,
-        STATE_DONE,
-    }
-
     private gridCircleView circle;
     private ImageView[] progressDots = new ImageView[4];
     private View layoutStatus;
@@ -49,9 +41,8 @@ public class SousvideStatusFragment extends Fragment {
     private TextView textExplanation;
     private View btnContinue;
     private View btnComplete;
-    private COOK_STATE cookState = COOK_STATE.STATE_NONE;
-
     private ParagonMainActivity attached = null;
+    private byte previousCookState = (byte) 0xff;
 
     public SousvideStatusFragment() {
         // Required empty public constructor
@@ -61,7 +52,7 @@ public class SousvideStatusFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        attached = (ParagonMainActivity)getActivity();
+        attached = (ParagonMainActivity) getActivity();
     }
 
     @Override
@@ -69,6 +60,8 @@ public class SousvideStatusFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         Log.d(TAG, "onCreateView IN");
+
+        ((ParagonMainActivity) getActivity()).setTitle("Active");
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_circle, container, false);
@@ -105,11 +98,12 @@ public class SousvideStatusFragment extends Fragment {
             public void onClick(View view) {
 
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+                ProductInfo product = ProductManager.getInstance().getCurrent();
 
                 valueBuffer.put((byte) 0x01);
-                BleManager.getInstance().writeCharateristics(ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
+                BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
-                UpdateUiCookState(COOK_STATE.STATE_COOKING);
+//                updateCookState(COOK_STATE.STATE_COOKING);
 
             }
         });
@@ -124,46 +118,33 @@ public class SousvideStatusFragment extends Fragment {
         });
 
 
-        //TODO: remove code below after debug.
-        view.findViewById(R.id.progress_dot_3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateCookStatus(ParagonValues.COOK_STATE_COOKING);
-            }
-        });
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+        previousCookState = product.getErdCookState();
 
-        view.findViewById(R.id.progress_dot_4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateCookStatus(ParagonValues.COOK_STATE_DONE);
-            }
-        });
-
-
-//        layoutStatus.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((ParagonMainActivity) getActivity()).setTargetTime(10, 0);
-//                updateUiElapsedTime(countDown--);
-//            }
-//        });
-//        //TODO: remove code above.
-
+        updateCookState();
         updateUiCurrentTemp();
-
-        UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
+        updateUiElapsedTime();
 
         return view;
     }
 
-
     /**
      * Update cooking state, Off -> Heating -> Ready -> Cooking -> Done
-     *
-     * @param state
      */
-    public void updateCookStatus(byte state) {
-        Log.d(TAG, "updateCookStatus IN " + state);
+    public void updateCookState() {
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+        byte state = product.getErdCookState();
+        StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
+        Log.d(TAG, "updateCookState IN " + state);
+
+        if(previousCookState != state){
+            // for the batter UI on circle view.
+            previousCookState = state;
+            product.setErdElapsedTime(ProductInfo.INITIAL_ELAPSED_TIME);
+        }
+        else{
+            //do nothing.
+        }
 
         switch (state) {
             case ParagonValues.COOK_STATE_OFF:
@@ -171,19 +152,96 @@ public class SousvideStatusFragment extends Fragment {
                 break;
 
             case ParagonValues.COOK_STATE_HEATING:
-                UpdateUiCookState(COOK_STATE.STATE_PREHEAT);
+                progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
+                progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
+                progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
+                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+
+                layoutStatus.setVisibility(View.VISIBLE);
+                imgStatus.setVisibility(View.GONE);
+                btnContinue.setVisibility(View.GONE);
+                btnComplete.setVisibility(View.GONE);
+
+                textLabelCurrent.setText("Current:");
+                textTempTarget.setText(Html.fromHtml("Target: " + stageInfo.getTemp() + "<small>℉</small>"));
+                textExplanation.setVisibility(View.GONE);
+
+                updateUiCurrentTemp();
                 break;
 
             case ParagonValues.COOK_STATE_READY:
-                UpdateUiCookState(COOK_STATE.STATE_READY_TO_COOK);
+                textStatusName.setText("READY TO COOK");
+                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
+                progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
+                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+
+                layoutStatus.setVisibility(View.GONE);
+                imgStatus.setImageResource(R.drawable.img_ready_to_cook);
+                imgStatus.setVisibility(View.VISIBLE);
+                btnContinue.setVisibility(View.VISIBLE);
+                btnComplete.setVisibility(View.GONE);
+
+                textTempTarget.setText(Html.fromHtml("Target: " + stageInfo.getTemp() + "<small>℉</small>"));
+                imgStatus.setImageResource(R.drawable.img_ready_to_cook);
+
+                circle.setGridValue(1.0f);
+                circle.setBarValue(0.0f);
+                circle.setDashValue(0.0f);
+                circle.setColor(R.color.colorParagonAccent);
+
+                textExplanation.setVisibility(View.VISIBLE);
+                textExplanation.setText(R.string.fragment_soudvide_status_explanation_placefood);
                 break;
 
             case ParagonValues.COOK_STATE_COOKING:
-                UpdateUiCookState(COOK_STATE.STATE_COOKING);
+                textStatusName.setText("COOKING");
+                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
+                progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
+                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+
+                layoutStatus.setVisibility(View.VISIBLE);
+                imgStatus.setVisibility(View.GONE);
+                btnContinue.setVisibility(View.GONE);
+                btnComplete.setVisibility(View.GONE);
+
+                textTempTarget.setText(Html.fromHtml(stageInfo.getTemp() + "<small>℉</small>"));
+
+                textLabelCurrent.setText("Food ready at");
+
+                textTempCurrent.setText("");
+
+                circle.setGridValue(1.0f);
+                circle.setBarValue(0.0f);
+                circle.setDashValue(0.0f);
+                circle.setColor(R.color.colorParagonAccent);
+
+                textExplanation.setVisibility(View.GONE);
                 break;
 
             case ParagonValues.COOK_STATE_DONE:
-                UpdateUiCookState(COOK_STATE.STATE_DONE);
+                textStatusName.setText("DONE");
+                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
+                progressDots[2].setImageResource(R.drawable.ic_step_dot_done);
+                progressDots[3].setImageResource(R.drawable.ic_step_dot_current);
+
+                layoutStatus.setVisibility(View.VISIBLE);
+                imgStatus.setVisibility(View.GONE);
+                btnContinue.setVisibility(View.GONE);
+                btnComplete.setVisibility(View.VISIBLE);
+
+                textTempTarget.setText(Html.fromHtml(stageInfo.getTemp() + "<small>℉</small>"));
+                textLabelCurrent.setText("Food is");
+                textTempCurrent.setText("READY");
+
+                circle.setGridValue(1.0f);
+                circle.setBarValue(1.0f);
+                circle.setColor(R.color.colorParagonAccent);
+
+                textExplanation.setVisibility(View.VISIBLE);
+                textExplanation.setText("");
                 break;
 
             default:
@@ -194,181 +252,124 @@ public class SousvideStatusFragment extends Fragment {
     }
 
 
-    /**
-     * Update UI progress bar top of the screen and on circle view.
-     */
-    public void UpdateUiCookState(COOK_STATE state) {
-        Log.d(TAG, "UpdateUiCookState " + state);
-
-        StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
-
-        if (cookState != state) {
-            cookState = state;
-
-            switch (cookState) {
-                case STATE_PREHEAT:
-                    textStatusName.setText("PREHEATING");
-                    progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
-                    progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
-                    progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
-
-                    layoutStatus.setVisibility(View.VISIBLE);
-                    imgStatus.setVisibility(View.GONE);
-                    btnContinue.setVisibility(View.GONE);
-                    btnComplete.setVisibility(View.GONE);
-
-                    textLabelCurrent.setText("Current:");
-                    textTempTarget.setText(Html.fromHtml("Target: " + stageInfo.getTemp() + "<small>℉</small>"));
-                    textExplanation.setVisibility(View.GONE);
-                    break;
-
-                case STATE_READY_TO_COOK:
-                    textStatusName.setText("READY TO COOK");
-                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                    progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
-                    progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
-
-                    layoutStatus.setVisibility(View.GONE);
-                    imgStatus.setVisibility(View.VISIBLE);
-                    btnContinue.setVisibility(View.VISIBLE);
-                    btnComplete.setVisibility(View.GONE);
-
-                    textTempTarget.setText(Html.fromHtml("Target: " + stageInfo.getTemp() + "<small>℉</small>"));
-                    imgStatus.setImageResource(R.drawable.img_ready_to_cook);
-
-                    circle.setGridValue(1.0f);
-
-                    textExplanation.setVisibility(View.VISIBLE);
-                    textExplanation.setText(R.string.fragment_soudvide_status_explanation_placefood);
-                    break;
-
-                case STATE_COOKING:
-                    textStatusName.setText("COOKING");
-                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                    progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
-                    progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
-
-                    layoutStatus.setVisibility(View.VISIBLE);
-                    imgStatus.setVisibility(View.GONE);
-                    btnContinue.setVisibility(View.GONE);
-                    btnComplete.setVisibility(View.GONE);
-
-                    textTempTarget.setText(Html.fromHtml(stageInfo.getTemp() + "<small>℉</small>"));
-
-                    textLabelCurrent.setText("Food ready at");
-
-                    textTempCurrent.setText("");
-
-                    circle.setGridValue(1.0f);
-
-                    textExplanation.setVisibility(View.GONE);
-                    break;
-
-                case STATE_DONE:
-                    textStatusName.setText("DONE");
-                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                    progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
-                    progressDots[2].setImageResource(R.drawable.ic_step_dot_done);
-                    progressDots[3].setImageResource(R.drawable.ic_step_dot_current);
-
-                    layoutStatus.setVisibility(View.VISIBLE);
-                    imgStatus.setVisibility(View.GONE);
-                    btnContinue.setVisibility(View.GONE);
-                    btnComplete.setVisibility(View.VISIBLE);
-
-                    textTempTarget.setText(Html.fromHtml(stageInfo.getTemp() + "<small>℉</small>"));
-                    textLabelCurrent.setText("Food is");
-                    textTempCurrent.setText("READY");
-
-                    circle.setGridValue(1.0f);
-
-                    textExplanation.setVisibility(View.VISIBLE);
-                    textExplanation.setText(R.string.fragment_soudvide_status_explanation_donekeep);
-                    break;
-
-                default:
-                    break;
-            }
-
-        }
-        else {
-            //do nothing.
-        }
-
-
-    }
 
     /**
      * Update UI current temperature compare with set temperature.r
      */
     public void updateUiCurrentTemp() {
-        StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
+        StageInfo stageInfo = ProductManager.getInstance().getCurrent().getErdRecipeConfig().getStage(0);
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+        byte state = product.getErdCookState();
 
-        if (cookState == COOK_STATE.STATE_PREHEAT) {
-            float currentTemp = attached.getCurrentTemp();
-            textTempCurrent.setText((int)currentTemp + "℉");
+        if (state == ParagonValues.COOK_STATE_HEATING)  {
+            float currentTemp = ProductManager.getInstance().getCurrent().getErdCurrentTemp();
+            textTempCurrent.setText(Math.round(currentTemp) + "℉");
 
-            float ratioTemp = currentTemp / (float)stageInfo.getTemp();
+            float bigNumber;
+            float smallNumber;
+
+            if (currentTemp > (float) stageInfo.getTemp()) {
+                bigNumber = currentTemp;
+                smallNumber = (float) stageInfo.getTemp();
+                circle.setColor(R.color.colorAccent);
+                textStatusName.setText("COOLING");
+            }
+            else {
+                smallNumber = currentTemp;
+                bigNumber = (float) stageInfo.getTemp();
+                circle.setColor(R.color.colorParagonAccent);
+                textStatusName.setText("PREHEATING");
+            }
+
+            float ratioTemp = smallNumber / bigNumber;
 
             ratioTemp = Math.min(ratioTemp, 1.0f);
             circle.setGridValue(ratioTemp);
         }
         else {
-            //do nothing.
+            circle.setColor(R.color.colorParagonAccent);
         }
     }
 
-
     /**
      * Update UI current elapsed time. Elapsed time is increase from 0 until selected cook time.
-     *
-     * @param elapsedTime
      */
-    public void updateUiElapsedTime(int elapsedTime) {
-        Log.d(TAG, "updateUiElapsedTime :" + elapsedTime);
-        StageInfo stageInfo = RecipeManager.getInstance().getCurrentStage();
+    public void updateUiElapsedTime() {
 
-        if (cookState == COOK_STATE.STATE_COOKING) {
+        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+        int elapsedTime = productInfo.getErdElapsedTime();
+        byte state = productInfo.getErdCookState();
+
+        Log.d(TAG, "updateUiElapsedTime :" + elapsedTime);
+        StageInfo stageInfo = ProductManager.getInstance().getCurrent().getErdRecipeConfig().getStage(0);
+
+        if (state == ParagonValues.COOK_STATE_COOKING) {
             float ratioTime = (float) elapsedTime / (float) stageInfo.getTime();
 
             ratioTime = Math.min(ratioTime, 1.0f);
 
             circle.setBarValue(1.0f - ratioTime);
 
-            updateReadyTime(elapsedTime);
+            textTempCurrent.setText(updateReadyTime(elapsedTime));
+
+        }
+        else if (state == ParagonValues.COOK_STATE_DONE) {
+            float ratioTime = (float) elapsedTime / (float) stageInfo.getMaxTime();
+
+            ratioTime = Math.min(ratioTime, 1.0f);
+
+            circle.setDashValue(1.0f - ratioTime);
+
+            if (elapsedTime == 0) {
+                layoutStatus.setVisibility(View.GONE);
+                imgStatus.setImageResource(R.drawable.img_cook_done);
+                imgStatus.setVisibility(View.VISIBLE);
+
+                textExplanation.setText("Take food out now");
+            }
+            else {
+                layoutStatus.setVisibility(View.VISIBLE);
+                imgStatus.setVisibility(View.GONE);
+
+                CharSequence text = "Food can stay in until " + updateReadyTime(elapsedTime);
+                textExplanation.setText(text);
+            }
         }
         else {
             //do nothing
         }
     }
 
-
     /**
      * Update new stage get from BLE master.
-     * @param newStage integer value of stage 1 - 5.
      */
-    public void updateCookStage(int newStage) {
-        RecipeManager.getInstance().setCurrentStage(newStage-1);
+    public void updateCookStage() {
+        Log.d(TAG, "updateCookStage. Error sousvide is support only one stage.");
     }
 
-
-    private void updateReadyTime(int minute){
+    /**
+     * Calculate end time base on current phone's time.
+     * @param elapsedMin remaining time.
+     * @return text of time.
+     */
+    private CharSequence updateReadyTime(int elapsedMin) {
+        CharSequence stringTime = "";
         Calendar now = Calendar.getInstance();
-        now.add(Calendar.MINUTE, minute);
-        String timeText = String.format( "%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
+        now.add(Calendar.MINUTE, elapsedMin);
+        String timeText = String.format("%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
         String ampm = "";
 
-        if(now.get(Calendar.AM_PM) == Calendar.AM){
+        Log.d(TAG, "updateReadyTime :" + timeText);
+
+        if (now.get(Calendar.AM_PM) == Calendar.AM) {
             ampm = "AM";
         }
-        else{
+        else {
             ampm = "PM";
         }
 
-        textTempCurrent.setText(Html.fromHtml(timeText + "<small>"+ampm+"</small>"));
+        stringTime = Html.fromHtml(timeText + "<small>" + ampm + "</small>");
+        return stringTime;
     }
 
 

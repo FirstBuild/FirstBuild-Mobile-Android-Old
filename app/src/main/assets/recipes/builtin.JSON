@@ -1,0 +1,775 @@
+{
+  "recipes": [
+	{
+	  "name": "beef",
+	  "recipes": [
+		{
+		  "name": "Beef Steaks Tender Cuts",
+		  "recipes": [
+			{
+			  "name": "Rib",
+			  "id": 100,
+			  "doneness": [
+				"rare",
+				"medium rare",
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				0.25,
+				0.75,
+				1.25,
+				2.0
+			  ],
+			  "temp": [
+				125,
+				125,
+				125,
+				130,
+				130,
+				130,
+				140,
+				140,
+				140,
+				150,
+				150,
+				150,
+				158,
+				158,
+				158
+			  ],
+			  "time min": [
+				0.5,
+				1.0,
+				1.5,
+				0.5,
+				1.0,
+				1.5,
+				0.5,
+				1.0,
+				1.5,
+				0.5,
+				0.75,
+				1.5,
+				0.5,
+				0.75,
+				1.5
+			  ],
+			  "time max": [
+				1.5,
+				3.0,
+				3.5,
+				1.5,
+				3.0,
+				3.5,
+				1.5,
+				3.0,
+				5.0,
+				1.5,
+				3.0,
+				4.0,
+				1.5,
+				3.0,
+				4.0
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "Beef Steaks",
+		  "recipes": [
+			{
+			  "name": "Sirloin",
+			  "id": 101,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				0.25,
+				0.75,
+				1.25,
+				2.0
+			  ],
+			  "temp": [
+				140,
+				140,
+				140,
+				150,
+				150,
+				150,
+				158,
+				158,
+				158
+			  ],
+			  "time min": [
+				3,4,6,3,4,6,3,4,6
+			  ],
+			  "time max": [
+				6,8,10,6,8,10,6,8,10
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "Beef Steaks Tough Cuts",
+		  "recipes": [
+			{
+			  "name": "Round",
+			  "id": 102,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				0.25,
+				0.75,
+				1.25,
+				2.0
+			  ],
+			  "temp": [
+				140, 140, 140,
+				150, 150, 150,
+				160, 160, 160
+			  ],
+			  "time min": [
+				6,8,12,6,8,12,4,6,8
+			  ],
+			  "time max": [
+				12,24,30, 12, 24, 30, 6, 10, 12
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "Beef Roasts Tender Cuts",
+		  "recipes": [
+			{
+			  "name": "Tenderloin",
+			  "id": 103,
+			  "doneness": [
+				"rare",
+				"medium rare",
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "temp": [
+				125, 130, 140, 150, 160
+			  ],
+			  "time min": [
+				1.5, 1.5, 1, 1, 1
+			  ],
+			  "time max": [
+				2.5, 3, 2, 3, 2
+			  ]
+			},
+			{
+			  "name": "Rib-Eye or Prime Rib Roast",
+			  "id": 104,
+			  "doneness": [
+				"rare",
+				"medium rare",
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "temp": [
+				125, 130, 140, 150, 160
+			  ],
+			  "time min": [
+				2.5, 2.5, 8, 6, 8
+			  ],
+			  "time max": [
+				3.5, 3.5, 12, 8, 9
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "Beef Roasts Tough Cuts",
+		  "recipes": [
+			{
+			  "name": "Round roast, chuck roast",
+			  "id": 105,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well, slower",
+				"well, faster"
+			  ],
+			  "temp": [
+				140, 150, 160, 175
+			  ],
+			  "time min": [
+				24, 24, 16, 10
+			  ],
+			  "time max": [
+				48, 30, 30, 12
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "Beef Other",
+		  "recipes": [
+			{
+			  "name": "Brisket",
+			  "id": 106,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well, slower",
+				"well, faster"
+			  ],
+			  "temp": [
+				140, 150, 160, 175
+			  ],
+			  "time min": [
+				24, 24, 24, 12
+			  ],
+			  "time max": [
+				72, 56, 48, 16
+			  ]
+			},
+			{
+			  "name": "Short Ribs",
+			  "id": 107,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "temp": [
+				140, 150, 160
+			  ],
+			  "time min": [
+				16, 16, 16
+			  ],
+			  "time max": [
+				48, 30, 30
+			  ]
+			},
+			{
+			  "name": "Ground Beef",
+			  "id": 108,
+			  "doneness": [
+				"medium rare",
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				0.5,
+				1.0,
+				2.0
+			  ],
+			  "temp": [
+				130, 130, 140, 140, 150, 150, 160, 160
+			  ],
+			  "time min": [
+				2, 2.5, 1, 1.5, 1, 1.5, 1, 2
+			  ],
+			  "time max": [
+				3, 3, 2, 3, 2, 3, 2, 3
+			  ]
+			}
+		  ]
+		}
+
+	  ]
+	},
+	{
+	  "name": "poultry",
+	  "recipes": [
+		{
+		  "name": "chicken",
+		  "recipes": [
+			{
+			  "name": "breasts (boneless)",
+			  "id": 200,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				0.25,
+				1.0,
+				1.5,
+				2.0
+			  ],
+			  "temp": [
+				140,
+				140,
+				140,
+				150,
+				150,
+				150,
+				165,
+				165,
+				165
+			  ],
+			  "time min": [
+				1.5,
+				2.5,
+				3,
+				1,
+				1.75,
+				2.75,
+				0.75,
+				1,
+				1.5
+			  ],
+			  "time max": [
+				2.5,
+				3.5,
+				4,
+				2,
+				2.75,
+				3.75,
+				2,
+				2.5,
+				4
+			  ]
+			},
+			{
+			  "name": "breasts (bone-in)",
+			  "id": 201,
+			  "doneness": [
+				"medium",
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				1.5,
+				2.0
+			  ],
+			  "temp": [
+				140,
+				150,
+				165
+			  ],
+			  "time min": [
+				3.5,
+				3.25,
+				2
+			  ],
+			  "time max": [
+				5,
+				5,
+				5
+			  ]
+			},
+			{
+			  "name": "legs & thighs (bone-in)",
+			  "id": 202,
+			  "doneness": [
+				"well, slower",
+				"well, faster"
+			  ],
+			  "temp": [
+				165,
+				175
+			  ],
+			  "time min": [
+				6,
+				4
+			  ],
+			  "time max": [
+				12,
+				6
+			  ],
+			  "notes": [
+				"less time may be required for boneless cuts",
+				"less time may be required for boneless cuts"
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "turkey",
+		  "recipes": [
+			{
+			  "name": "breasts (boneless)",
+			  "id": 203,
+			  "doneness": [
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				1.0,
+				2.0
+			  ],
+			  "temp": [
+				150,
+				165
+			  ],
+			  "time min": [
+				3,
+				2.5
+			  ],
+			  "time max": [
+				6,
+				6
+			  ]
+			},
+			{
+			  "name": "breasts (bone-in)",
+			  "id": 204,
+			  "doneness": [
+				"medium well",
+				"well"
+			  ],
+			  "thickness": [
+				1.5,
+				2.0
+			  ],
+			  "temp": [
+				149,
+				165
+			  ],
+			  "time min": [
+				4,
+				3
+			  ],
+			  "time max": [
+				8,
+				6
+			  ]
+			},
+			{
+			  "name": "legs & thighs (bone-in)",
+			  "id": 205,
+			  "doneness": [
+				"well"
+			  ],
+			  "temp": [
+				175
+			  ],
+			  "time min": [
+				8
+			  ],
+			  "time max": [
+				10
+			  ],
+			  "notes": [
+				"less time may be required for boneless cuts"
+			  ]
+			}
+		  ]
+		},
+		{
+		  "name": "duck",
+		  "recipes": [
+			{
+			  "name": "breasts",
+			  "id": 206,
+			  "doneness": [
+				"medium-rare",
+				"medium"
+			  ],
+			  "thickness": [
+				0.25,
+				1.0
+			  ],
+			  "temp": [
+				135,
+				140
+			  ],
+			  "time min": [
+				3,
+				1.5
+			  ],
+			  "time max": [
+				4,
+				3.5
+			  ]
+			},
+			{
+			  "name": "legs",
+			  "id": 207,
+			  "doneness": [
+				"well"
+			  ],
+			  "temp": [
+				175
+			  ],
+			  "time min": [
+				8
+			  ],
+			  "time max": [
+				12
+			  ]
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "name": "pork",
+	  "recipes": [
+		{
+		  "name": "Pork Chops (loin and sirloin)",
+		  "id": 300,
+		  "doneness": [
+			"medium",
+			"medium well",
+			"well"
+		  ],
+		  "thickness": [
+			0.25,
+			1.0,
+			1.5,
+			2.0
+		  ],
+		  "temp": [
+			140,
+			140,
+			140,
+			150,
+			150,
+			150,
+			160,
+			160,
+			160
+		  ],
+		  "time min": [
+			0.5,
+			1,
+			1.5,
+			0.5,
+			1,
+			1.5,
+			0.5,
+			1,
+			1.5
+		  ],
+		  "time max": [
+			1.5,
+			2.5,
+			3,
+			1.5,
+			2.5,
+			3,
+			1.5,
+			2.5,
+			3
+		  ]
+		},
+		{
+		  "name": "Pork Tenderloin",
+		  "id": 303,
+		  "doneness": [
+			"medium"
+		  ],
+		  "thickness": [
+			0.25,
+			3.0
+		  ],
+		  "temp": [
+			140
+		  ],
+		  "time min": [
+			2
+		  ],
+		  "time max": [
+			4
+		  ]
+		},
+		{
+		  "name": "Pork Shoulder (whole)",
+		  "id": 304,
+		  "doneness": [
+			"medium",
+			"well"
+		  ],
+		  "thickness": [
+			0.25,
+			4.0
+		  ],
+		  "temp": [
+			140,
+			160
+		  ],
+		  "time min": [
+			24,
+			24
+		  ],
+		  "time max": [
+			36,
+			30
+		  ]
+		},
+		{
+		  "name": "Ribs",
+		  "id": 305,
+		  "doneness": [
+			"back",
+			"spare"
+		  ],
+		  "temp": [
+			165,
+			165
+		  ],
+		  "time min": [
+			8,
+			12
+		  ],
+		  "time max": [
+			12,
+			24
+		  ]
+		}
+	  ]
+	},
+	{
+	  "name": "Fish Fillets or Steaks",
+	  "id": 400,
+	  "doneness": [
+		"very rare",
+		"rare",
+		"medium rare",
+		"well"
+	  ],
+	  "temp": [
+		110, 110, 120, 125, 140
+	  ],
+	  "time min": [
+		10, 15, 15, 15, 40
+	  ],
+	  "time max": [
+		15, 20, 20, 20, 50
+	  ]
+	},
+	{
+	  "name": "Eggs",
+	  "recipes": [
+		{
+		  "name": "whole in shell, large",
+		  "id": 400,
+		  "doneness": [
+			"pasteurized",
+			"slightly firm white",
+			"mostly firm white",
+			"firm white, firm yolk",
+			"firm white, runny yolk"
+		  ],
+		  "temp": [
+			135, 144, 148, 165, 167
+		  ],
+		  "time min": [
+			1.33, 0.66, 0.66, 0.75, 0.216
+		  ],
+		  "time max": [
+			2, 1, 1, 1, 0.25
+		  ]
+		},
+		{
+		  "name": "scrambled",
+		  "id": 401,
+		  "doneness": [
+			"scrambled eggs"
+		  ],
+		  "temp": [
+			167
+		  ],
+		  "time min": [
+			0.33
+		  ],
+		  "time max": [
+			1
+		  ]
+		}
+	  ]
+	},
+	{
+	  "name": "Fruits",
+	  "recipes": [
+		{
+		  "name": "any, small pieces or sliced",
+		  "id": 500,
+		  "doneness": [
+			"warm"
+		  ],
+		  "temp": [
+			155
+		  ],
+		  "time min": [
+			0.5
+		  ],
+		  "time max": [
+			0.66
+		  ]
+		},
+		{
+		  "name": "apple",
+		  "id": 501,
+		  "doneness": [
+			"warm"
+		  ],
+		  "temp": [
+			185
+		  ],
+		  "time min": [
+			0.4166
+		  ],
+		  "time max": [
+			1
+		  ]
+		},
+		{
+		  "name": "pears",
+		  "id": 502,
+		  "doneness": [
+			"warm"
+		  ],
+		  "temp": [
+			185
+		  ],
+		  "time min": [
+			0.333
+		  ],
+		  "time max": [
+			0.666
+		  ]
+		},
+		{
+		  "name": "peaches, nectarines, apricots, plums, mangos, papaya, berries",
+		  "id": 503,
+		  "doneness": [
+			"warm"
+		  ],
+		  "temp": [
+			185
+		  ],
+		  "time min": [
+			0.333
+		  ],
+		  "time max": [
+			1
+		  ]
+		},
+		{
+		  "name": "cherries, berries",
+		  "id": 504,
+		  "doneness": [
+			"very soft"
+		  ],
+		  "temp": [
+			190
+		  ],
+		  "time min": [
+			0.4166
+		  ],
+		  "time max": [
+			1
+		  ]
+		}
+	  ]
+	}
+  ]
+}

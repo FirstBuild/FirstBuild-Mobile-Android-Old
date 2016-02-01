@@ -72,22 +72,22 @@
     <string name="drawer_close">close</string>
 
     <string-array name="paragon_modes">
-        <item>Boil</item>
-        <item>Chocolate</item>
+        <!--<item>Boil</item>-->
+        <!--<item>Chocolate</item>-->
         <item>Sous Vide</item>
-        <item>Candy</item>
-        <item>Deep Fry</item>
-        <item>Warming</item>
+        <!--<item>Candy</item>-->
+        <!--<item>Deep Fry</item>-->
+        <!--<item>Warming</item>-->
     </string-array>
 
     <string-array name="paragon_modes_sousvide">
         <item>Beef</item>
-        <item>Chicken</item>
-        <item>Pork</item>
-        <item>Seafood</item>
-        <item>Turkey</item>
-        <item>Veal</item>
-        <item>Vegetables</item>
+        <!--<item>Chicken</item>-->
+        <!--<item>Pork</item>-->
+        <!--<item>Seafood</item>-->
+        <!--<item>Turkey</item>-->
+        <!--<item>Veal</item>-->
+        <!--<item>Vegetables</item>-->
     </string-array>
 
     <string-array name="kind_of_recipe">
@@ -97,7 +97,7 @@
 
 
     <string-array name="paragon_modes_beef">
-        <item>Steak</item>
+        <!--<item>Steak</item>-->
         <item>Roast</item>
     </string-array>
     <string name="title_activity_settings">Settings</string>
@@ -111,7 +111,7 @@
     <string name="opensource_license_content">FirstBuild Terms of Service\nMicrofactory, Inc. and its affiliates (collectively "Microfactory" or "We") provide service and content on Firstbuild.com and all other web properties owned or operated by Microfactory (the "Website") to you subject to the following Terms and Conditions (the "Terms"). We may periodically change the Terms without notice, so please check back from time to time. These Terms of Service constitute a binding agreement between you and Microfactory governing your use of the Website and any/all content represented herein. By using and/or visiting the www.Firstbuild.com Website, or any other Websites owned and operated by Microfactory, you signify you understand and agree to both these Terms of Service and the Microfactory Privacy Policy, which is incorporated into the Microfactory Terms of Service, and is included in the Website. These Terms of Service apply to all users of the Website, including users who contribute information, ideas, and other materials or services on the Website. Only those who agree to and abide by all applicable laws, and to these Terms of Service, are authorized to use the Website. Please read these Terms of Service carefully. If you do not agree to these Terms of Service, please do not use the Website.\nThe Website may contain links to third party websites that are not owned or controlled by Microfactory. Microfactory has no control over, and therefore assumes no responsibility for the content, privacy policies, or practices of any third party websites. By using the Website, you specifically release and indemnify Microfactory from any and all liability arising from your use of any third-party website.</string>
     <string name="opensource_license_ok">OK</string>
 
-    <string name="url_manual">http://www.firstbuild.com</string>
+    <string name="url_manual">http://paragoninduction.com</string>
     <string name="fragment_select_mode_button_quickstart">Quick Start</string>
     <string name="fragment_select_mode_myrecipes">My Recipes</string>
 
@@ -120,6 +120,8 @@
     <string name="fragment_soudvide_status_explanation_placefood">Place food to continue</string>
     <string name="fragment_soudvide_status_explanation_donekeep">Keeping the temperature until press Stop button</string>
     <string name="my_recipes_add_recipe">Add Recipe</string>
+    <string name="popup_ota_title">Update Paragon</string>
+    <string name="popup_ota_content">Please wait...</string>
 
     <!-- Add appliance -->
     <string name="searching_your_paragon">Searching for your Paragon\nThis might take a few minutes</string>
@@ -130,4 +132,8 @@
     <string name="connection_error_explanation">We were unable to connect to Paragon.\nPlease try again</string>
     <string name="name_your_paragon">Name your Paragon</string>
     <string name="name_your_paragon_explanation">This is how your Paragon will appear\nin the list. You can change it later.</string>
+    <string name="urlFistBuild">http://market.firstbuild.com/</string>
+    <string name="popup_food_warning_title">WARNING</string>
+    <string name="popup_food_warning_content">\u2022 Consuming unpasteurized foods can increase your risk of foodbourne illness.\n\n\u2022 Sous vide cooking often involves temperatures below FDA recommended safe minimum cooking temperatures, but can still be safe when done for the correct amount of time as long as the temperature remains above 54°C (130°F).\n\n\u2022 Several factors impact the time required to pasteurize foods, including cooking temperature, initial food temperature, food thickness, and food preparation.\n\n\u2022 Follow all proper instructions related to preparation, cooking including time and temperature requirements and storage during sous vide cooking to prevent foodbourne illness caused by harmful bacteria.\n\n\u2022 Discard food if it has been at temperatures in the FDA Danger Zone (4°C (40°F) to 60°C (140°F) for more than four hours. Cool foods quickly using an ice bath if not consuming directly after cooking.</string>
+    <string name="url_food_warning">http://www.foodauthority.nsw.gov.au/_Documents/scienceandtechnical/sous_vide_food_safey_precautions.pdf</string>
 </resources>

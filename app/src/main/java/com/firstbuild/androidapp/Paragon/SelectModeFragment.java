@@ -3,6 +3,7 @@ package com.firstbuild.androidapp.paragon;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,15 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
+import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.helper.SelectModeAdapter;
+import com.firstbuild.androidapp.productManager.ProductManager;
+
+import java.util.ArrayList;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SelectModeFragment extends Fragment  implements SelectModeAdapter.ClickListener {
+public class SelectModeFragment extends Fragment implements SelectModeAdapter.ClickListener {
 
 
     private String TAG = SelectModeFragment.class.getSimpleName();
@@ -29,13 +35,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     private SelectModeSteps selectModeSteps;
     private View layoutButtons;
     private ParagonMainActivity attached;
-
-    private enum SelectModeSteps {
-        STEP_COOKING_METHOD,
-        STEP_MATERIAL,
-        STEP_HOW_TO_COOK,
-    }
-
+    private BuiltInRecipeInfo builtInRecipes = null;
 
     public SelectModeFragment() {
         // Required empty public constructor
@@ -45,7 +45,7 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        attached = (ParagonMainActivity)getActivity();
+        attached = (ParagonMainActivity) getActivity();
     }
 
     @Override
@@ -54,22 +54,23 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_select_mode, container, false);
 
-        view.findViewById(R.id.btn_my_recipes).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onclick my recipes");
-                RecipeManager.getInstance().ReadFromFile();
-                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_MY_RECIPES);
+        //TODO: block recipeManaber until multi-stage enabled.
+//        view.findViewById(R.id.btn_my_recipes).setVisibility(View.GONE);
+//        view.findViewById(R.id.btn_my_recipes).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "onclick my recipes");
+//                RecipeManager.getInstance().ReadFromFile();
+//                attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_MY_RECIPES);
+//
+//            }
+//        });
 
-            }
-        });
-
-        view.findViewById(R.id.btn_custom).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btn_quick_start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onclick Quick Start");
 
-                RecipeManager.getInstance().createRecipeSousVide();
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_QUICK_START);
 
             }
@@ -89,17 +90,18 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         listMode.setAdapter(selectModeAdapter);
         listMode.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        builtInRecipes = attached.builtInRecipes;
+
         selectModeSteps = SelectModeSteps.STEP_COOKING_METHOD;
         removeAllList();
-        fillList(R.array.paragon_modes);
+        fillList();
 
-        ((ParagonMainActivity)getActivity()).setTitle("Paragon");
+        ((ParagonMainActivity) getActivity()).setTitle("Paragon");
 
         return view;
     }
 
-
-    private void removeAllList(){
+    private void removeAllList() {
         int size = selectModeAdapter.getItemCount();
 
         for (int i = 0; i < size; i++) {
@@ -107,71 +109,103 @@ public class SelectModeFragment extends Fragment  implements SelectModeAdapter.C
         }
     }
 
+    private void fillList() {
+        ArrayList<BuiltInRecipeInfo> recipeFoods = builtInRecipes.child;
 
-    private void fillList(int resourceId){
-        String[] arryString = getResources().getStringArray(resourceId);
-
-        for (int i = 0; i < arryString.length; i++) {
-            selectModeAdapter.addItem(arryString[i]);
+        for (BuiltInRecipeInfo recipeInfo : recipeFoods) {
+            selectModeAdapter.addItem(recipeInfo.name);
         }
-    }
 
+    }
 
     @Override
     public void itemClicked(View view, int position, String text) {
-        Log.d(TAG, "itemclicked "+position);
+        Log.d(TAG, "itemclicked " + position);
 
-        switch(selectModeSteps){
-            case STEP_COOKING_METHOD:
-                if(position == 2){
-                    selectModeSteps = SelectModeSteps.STEP_MATERIAL;
+        builtInRecipes = builtInRecipes.child.get(position);
 
-                    SetTitle(text);
-
-                    removeAllList();
-                    fillList(R.array.paragon_modes_sousvide);
-                    layoutButtons.setVisibility(View.GONE);
-                }
-                else{
-                    //do nothing
-                }
-
-                break;
-
-            case STEP_MATERIAL:
-                if(position == 0){
-                    selectModeSteps = SelectModeSteps.STEP_HOW_TO_COOK;
-                    SetTitle(text);
-
-                    removeAllList();
-                    fillList(R.array.paragon_modes_beef);
-                    layoutButtons.setVisibility(View.GONE);
-                }
-                else{
-                    //do nothing
-                }
-
-                break;
-
-            case STEP_HOW_TO_COOK:
-                if(position == 0){
-                    SetTitle("Settings");
-                    attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
-                }
-                else{
-                    //do nothing
-                }
-
-                break;
+        if(builtInRecipes.type == BuiltInRecipeInfo.TYPE_FOOD){
+            removeAllList();
+            fillList();
         }
+        else{
+            attached.selectedBuiltInRecipe = (BuiltInRecipeSettingsInfo)builtInRecipes;
+            SetTitle("Settings");
+
+            attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
+        }
+
+//
+//        switch(selectModeSteps){
+//            case STEP_COOKING_METHOD:
+//                if(text.equals("Sous Vide")){
+//                    selectModeSteps = SelectModeSteps.STEP_MATERIAL;
+//
+//                    SetTitle(text);
+//
+//                    removeAllList();
+//                    fillList(R.array.paragon_modes_sousvide);
+//                    layoutButtons.setVisibility(View.GONE);
+//                }
+//                else{
+//                    //do nothing
+//                }
+//
+//                break;
+//
+//            case STEP_MATERIAL:
+//                if(text.equals("Beef")){
+//                    selectModeSteps = SelectModeSteps.STEP_HOW_TO_COOK;
+//                    SetTitle(text);
+//
+//                    removeAllList();
+//                    fillList(R.array.paragon_modes_beef);
+//                    layoutButtons.setVisibility(View.GONE);
+//                }
+//                else{
+//                    //do nothing
+//                }
+//
+//                break;
+//
+//            case STEP_HOW_TO_COOK:
+//                if(text.equals("Roast")){
+//                    SetTitle("Settings");
+//                    attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_SOUSVIDE_SETTINGS);
+//                }
+//                else{
+//                    //do nothing
+//                }
+//
+//                break;
+//        }
 
     }
 
     /**
      * Set title text on header.
+     *
      * @param text string to be title.
      */
     private void SetTitle(String text) {
-        ((ParagonMainActivity)getActivity()).setTitle(text);
+        ((ParagonMainActivity) getActivity()).setTitle(text);
+    }
+
+    public void onBackPressed() {
+        if(builtInRecipes.parent != null){
+            builtInRecipes = builtInRecipes.parent;
+            removeAllList();
+            fillList();
+        }
+        else{
+            attached.finishParagonMain();
+        }
+
+    }
+
+    private enum SelectModeSteps {
+        STEP_COOKING_METHOD,
+        STEP_MATERIAL,
+        STEP_HOW_TO_COOK,
     }
 }

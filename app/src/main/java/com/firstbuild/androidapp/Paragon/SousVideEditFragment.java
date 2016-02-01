@@ -2,25 +2,18 @@ package com.firstbuild.androidapp.paragon;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
 import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.androidapp.viewUtil.SwipeMenu;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuCreator;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuItem;
+import com.firstbuild.androidapp.paragon.myRecipes.RecipeEditFragment;
 import com.firstbuild.androidapp.viewUtil.SwipeMenuListView;
 
 /**

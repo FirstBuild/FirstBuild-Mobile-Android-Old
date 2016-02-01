@@ -7,6 +7,7 @@
         android:entries="@array/list_temp_unit"
         android:entryValues="@array/list_temp_unit_values"
         android:key="pref_temp_unit"
+        android:summary="℉"
         android:title="Temperature"/>
 
     <ListPreference
@@ -14,21 +15,13 @@
         android:entries="@array/list_metric_unit"
         android:entryValues="@array/list_metric_unit_values"
         android:key="pref_unit"
+        android:summary="Metrics"
         android:title="Unit"/>
 
-    <PreferenceCategory android:title="Paragon Details">
+    <EditTextPreference
+        android:key="pref_name"
+        android:summary="My Paragon"
+        android:title="Name">
+    </EditTextPreference>
 
-        <EditTextPreference
-            android:key="pref_name"
-            android:summary="Your Paragon's name"
-            android:title="Name">
-        </EditTextPreference>
-
-        <Preference
-            android:key="pref_serial_number"
-            android:selectable="false"
-            android:title="Serial number"
-            android:summary="-----"/>
-
-    </PreferenceCategory>
 </PreferenceScreen>

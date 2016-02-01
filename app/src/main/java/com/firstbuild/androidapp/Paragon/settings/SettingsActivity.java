@@ -1,15 +1,24 @@
 package com.firstbuild.androidapp.paragon.settings;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -50,22 +59,52 @@ public class SettingsActivity extends AppCompatActivity {
     public static class PreferenceSettings extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
         public static final String KEY_PREF_TEMP_UNIT = "pref_temp_unit";
         public static final String KEY_PREF_UNIT = "pref_unit";
+        public static final String KEY_PREF_NAME = "pref_name";
         private String TAG = PreferenceSettings.class.getSimpleName();
 
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_settings);
+
+
+            ListPreference tempPreference = (ListPreference) findPreference(KEY_PREF_TEMP_UNIT);
+            tempPreference.setSummary(tempPreference.getValue());
+
+            ListPreference unitPreference = (ListPreference) findPreference(KEY_PREF_UNIT);
+            unitPreference.setSummary(unitPreference.getValue());
+
+            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+
+            if(productInfo != null){
+                EditTextPreference editTextPref = (EditTextPreference) findPreference(KEY_PREF_NAME);
+                editTextPref.setSummary(productInfo.nickname);
+            }
+
+
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
             Log.d(TAG, "onSharedPreferenceChanged " + s);
 
-            Preference connectionPref = findPreference(s);
             // Set summary to be the user-description for the selected value
-            connectionPref.setSummary(sharedPreferences.getString(s, ""));
+            Preference connectionPref = findPreference(s);
+            String newValue = sharedPreferences.getString(s, "");
+            connectionPref.setSummary(newValue);
 
+            if(s.equals("pref_name")){
+                ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+
+                if(productInfo != null){
+                    productInfo.nickname = newValue;
+                    ProductManager.getInstance().write();
+                }
+                else{
+                    Log.d(TAG, "productInfo is Null");
+                }
+
+            }
         }
 
         @Override
@@ -84,6 +123,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class PreferenceAbout extends PreferenceFragment {
         private String TAG = PreferenceSettings.class.getSimpleName();
+        public static final String KEY_PREF_VERSION = "pref_version_number";
+
 
         @Override
         public void onCreate(final Bundle savedInstanceState) {
@@ -125,27 +166,43 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
-        }
 
-//        @Override
-//        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-//            Log.d(TAG, "onSharedPreferenceChanged " + s);
-//
-//            Preference connectionPref = findPreference(s);
-//            // Set summary to be the user-description for the selected value
-//            connectionPref.setSummary(sharedPreferences.getString(s, ""));
-//
-//        }
+
+            Preference learnMore = findPreference("pref_learn_more");
+
+            learnMore.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Log.d(TAG, "onPreferenceClick pref_learn_more");
+
+                    String url = getResources().getString(R.string.url_manual);
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+
+                    return false;
+                }
+            });
+
+
+            String versionName = "";
+            try {
+                versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+            }
+            catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            Preference version = findPreference(KEY_PREF_VERSION);
+            version.setSummary(versionName);
+
+
+        }
 
         @Override
         public void onResume() {
             super.onResume();
-//            getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         }
 
         @Override
         public void onPause() {
-//            getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
             super.onPause();
         }
     }

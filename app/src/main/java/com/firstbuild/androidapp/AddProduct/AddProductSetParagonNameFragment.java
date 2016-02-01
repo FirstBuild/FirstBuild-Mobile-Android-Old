@@ -1,8 +1,10 @@
 package com.firstbuild.androidapp.addProduct;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.dashboard.DashboardActivity;
 import com.firstbuild.commonframework.bleManager.BleManager;
@@ -22,10 +25,17 @@ import com.firstbuild.commonframework.bleManager.BleManager;
 public class AddProductSetParagonNameFragment extends Fragment {
     private String TAG = AddProductActivity.class.getSimpleName();
     private EditText paragonNameEditText;
+    private AddProductActivity attached = null;
 
     public AddProductSetParagonNameFragment() {
         // Required empty public constructor
         Log.d(TAG, "AddProductSearchParagonFragment IN");
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        attached = (AddProductActivity) activity;
     }
 
     @Override
@@ -56,20 +66,52 @@ public class AddProductSetParagonNameFragment extends Fragment {
                 // Get name from edit text
                 String paragonName = paragonNameEditText.getText().toString();
 
-                // Save device name here
-                if (paragonName != null && paragonName != "") {
-                    Log.d(TAG, "Paragon Nickname: " + paragonName);
-                    BleManager.getInstance().setDeviceName(paragonName);
+                if(paragonName.isEmpty()){
+                    paragonName = "My Paragon";
                 }
 
-                // Go to dash board
-                Intent intent = new Intent(getActivity(), DashboardActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                // Save device name here
+                Log.d(TAG, "Paragon Nickname: " + paragonName);
+                attached.setNewProductNickname(paragonName);
+                attached.addNewProductToList();
+
+
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.popup_food_warning_title)
+                        .content(R.string.popup_food_warning_content)
+                        .positiveText("Dismiss")
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                gotoDashboard();
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+
+                            }
+
+                            @Override
+                            public void onNeutral(MaterialDialog dialog) {
+                            }
+                        })
+                        .cancelable(false)
+                        .show();
+
+
             }
         });
 
         return view;
+    }
+
+    public void gotoDashboard(){
+        // Go to dash board
+        Intent intent = new Intent(getActivity(), DashboardActivity.class);
+        intent.putExtra("previous_activity", AddProductActivity.class.getSimpleName());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
     }
 
     public void hideKeyboard(View view) {

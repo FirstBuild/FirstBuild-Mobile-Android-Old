@@ -2,10 +2,11 @@
 <RelativeLayout
     android:id="@+id/rootItem"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ge="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:background="@drawable/btn_ripple_bg">
+    android:layout_height="80dp"
+    android:background="@drawable/btn_ripple_bg"
+    tools:context="com.firstbuild.androidapp.dashboard.DashboardActivity">
 
     <ImageView
         android:id="@+id/image_mark"
@@ -17,10 +18,10 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="72dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="vertical">
 
         <ImageView
@@ -31,24 +32,112 @@
             android:scaleType="fitStart"
             android:src="@drawable/ic_paragon_logo"/>
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <TextView
             android:id="@+id/item_nickname"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-light"
             android:text="My name"
             android:textColor="@color/colorSecondaryText"
-            android:textSize="19sp"
-            android:fontFamily="sans-serif-light"/>
+            android:textSize="19sp"/>
 
     </LinearLayout>
 
 
-    <ImageView
+    <LinearLayout
+        android:id="@+id/layout_status"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="#D1D3D4"/>
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/text_cooking"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="end|top"
+            android:text="Cooking"
+            android:textColor="@color/colorParagonAccent"
+            android:textSize="19sp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="right|bottom"
+            android:layout_weight="0.7"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_battery"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="5dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="end|center_vertical"
+                android:text="probe/noffline"
+                android:textColor="@color/colorParagonPrimary"
+                android:textSize="15sp"/>
+
+            <ImageView
+                android:id="@+id/image_battery"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="end|bottom"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/ic_battery_100"
+                android:visibility="visible"/>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#E0FFFFFF"
+        android:visibility="visible">
+
+
+        <TextView
+            android:id="@+id/text_searching"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="sans-serif-medium"
+            android:text="Searching..."
+            android:textColor="@color/colorParagonAccent"
+            android:textSize="19sp"/>
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_below="@+id/text_searching"
+            android:layout_centerVertical="true"
+            android:indeterminate="true"
+            android:indeterminateBehavior="repeat"/>
+
+    </RelativeLayout>
+    <!--<ImageView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="#D1D3D4"/>-->
 
 </RelativeLayout>
 

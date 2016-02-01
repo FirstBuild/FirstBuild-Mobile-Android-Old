@@ -13,7 +13,7 @@ public class ParagonValues {
 
     //cooking specific characteristics
     public static final String CHARACTERISTIC_BURNER_STATUS             = "B98F1B81-F098-2CBA-7940-EB8C0FFD7BDC"; //read,notify
-    public static final String CHARACTERISTIC_REMAINING_TIME = "7FCE08B6-B7B2-168B-C44F-5E576045FD2E";
+    public static final String CHARACTERISTIC_ELAPSED_TIME = "7FCE08B6-B7B2-168B-C44F-5E576045FD2E";
     public static final String CHARACTERISTIC_CURRENT_TEMPERATURE       = "8F080B1C-7C3B-FBB9-584A-F0AFD57028F0";
 
     // NEW ADDED SERVICES.
@@ -33,27 +33,35 @@ public class ParagonValues {
     public static final String CHARACTERISTIC_PARAGON_PROBE_SERVICE = "CFA29500-5F33-498E-9F43-C50960D223F8";
     public static final String CHARACTERISTIC_ERROR_STATE = "7EE9F201-120D-1CB9-E248-9D4855F68335";
 
+
+    public static final String CHARACTERISTIC_OTA_COMMAND = "4FB34AB1-6207-E5A0-484F-E24A7F638FFF";
+    public static final String CHARACTERISTIC_OTA_DATA = "78282AE5-3060-C3B6-7D49-EC74702414E5";
+    public static final String CHARACTERISTIC_OTA_VERSION = "318DB1F5-67F1-119B-6A41-1EECA0C744CE";
+
     // Target device's name
-//    public static final String TARGET_DEVICE_NAME = "Paragon Master";
-    //TODO: This is only for debug pupose. please remove below code after test.
     public static final String TARGET_DEVICE_NAME = "Paragon Master";
 
-    public static final int MAX_COOK_TIME = 100;
-
-    public static final byte COOK_STATE_OFF = 00;
-    public static final byte COOK_STATE_HEATING = 01;
-    public static final byte COOK_STATE_READY = 02;
-    public static final byte COOK_STATE_COOKING = 03;
-    public static final byte COOK_STATE_DONE = 04;
+    public static final byte COOK_STATE_OFF = 0x00;
+    public static final byte COOK_STATE_HEATING = 0x01;
+    public static final byte COOK_STATE_READY = 0x02;
+    public static final byte COOK_STATE_COOKING = 0x03;
+    public static final byte COOK_STATE_DONE = 0x04;
 
     public static final byte BURNER_STATE_STOP = 0x00;
     public static final byte BURNER_STATE_START = 0x01;
 
-    public static final byte CURRENT_COOK_MODE_NONE = 0x00;
+    public static final byte CURRENT_COOK_MODE_OFF = 0x00;
     public static final byte CURRENT_COOK_MODE_DIRECT = 0x01;
     public static final byte CURRENT_COOK_MODE_RAPID = 0x02;
     public static final byte CURRENT_COOK_MODE_GENTLE = 0x03;
     public static final byte CURRENT_COOK_MODE_MULTISTEP = 0x04;
 
+    public static final int QUICK_MIN_TEMP = 80;
+    public static final int QUICK_MAX_TEMP = 375;
+    public static final int QUICK_DEFAULT_TEMP = 140;
 
+    public static final byte PROBE_CONNECT = 0x01;
+    public static final byte PROBE_NOT_CONNECT = 0x02;
+
+    public static final int WARNING_TEMPERATURE = 140;
 }

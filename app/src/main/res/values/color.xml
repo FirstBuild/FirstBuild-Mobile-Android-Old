@@ -15,6 +15,7 @@
     <color name="colorParagonPrimaryText">#f1f2f2</color>
     <color name="colorParagonSecondaryText">#6d6e71</color>
     <color name="colorParagonDivider">#B6B6B6</color>
+    <color name="colorParagonDisabled">#B6B6B6</color>
 
     <color name="colorKitchenPrimary">#9E9E9E</color>
     <color name="colorKitchenPrimaryDark">#616161</color>
@@ -29,7 +30,7 @@
     // Material Design color table
     <color name="colorOrangePrimary">#ffaf5e1d</color>
     <color name="colorOrangePrimaryDark">#ff582c11</color>
-    <color name="colorOrangeAccent">#ffaf9318</color>
+    <color name="colorOrangeAccent">#ffFFA12D</color>
     <color name="colorOrangeHighlight">#ffaf2319</color>
 
     <color name="transparent">#00FFFFFF</color>

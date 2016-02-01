@@ -1,17 +1,23 @@
 package com.firstbuild.androidapp.paragon;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.commonframework.bleManager.BleManager;
+import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
+import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productManager.ProductManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,10 +25,19 @@ import com.firstbuild.commonframework.bleManager.BleManager;
 public class GetReadyFragment extends Fragment {
 
 
+    private ParagonMainActivity attached;
+    private String TAG = GetReadyFragment.class.getSimpleName();
+    private MaterialDialog dialogTryAgain = null;
+
     public GetReadyFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        attached = (ParagonMainActivity) activity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,21 +47,61 @@ public class GetReadyFragment extends Fragment {
 
         view.findViewById(R.id.btn_done).setVisibility(View.GONE);
 
-        ((TextView)view.findViewById(R.id.text_explanation)).setText(Html.fromHtml("Press <b>START</b> on your Paragon"));
+        ((TextView) view.findViewById(R.id.text_explanation)).setText(Html.fromHtml("Press <b>START</b> on your Paragon"));
 
-//        //TODO: remove below listener after test.
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ((ParagonMainActivity) getActivity()).nextStep(ParagonMainActivity.ParagonSteps.STEP_COOK_STATUS);
-//            }
-//        });
+        ((ParagonMainActivity) getActivity()).setTitle("Get Ready");
 
-        ((ParagonMainActivity)getActivity()).setTitle("Get Ready");
+        dialogTryAgain = new MaterialDialog.Builder(attached)
+                .content("Induction Cookware is not detected.\nPlease verify Induction Cookware placement on your Paragon Cooktop.")
+                .positiveText(null)
+                .negativeText("Cancel")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        // TODO: Block RecipeManager until multi-stage activated.
+//                        RecipeManager.getInstance().sendCurrentStages();
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
+                    }
+
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                    }
+                })
+                .cancelable(false).build();
+
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+
+//        if (product.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_RAPID &&
+//                product.getErdCurrentCookMode() != ParagonValues.CURRENT_COOK_MODE_GENTLE) {
+//            dialogTryAgain.show();
+//        }
+//        else {
+//            //do nothing.
+//        }
 
 
         return view;
     }
 
+    public void onCookModeChanged(){
+        byte cookMode = ProductManager.getInstance().getCurrent().getErdCurrentCookMode();
 
+        if(cookMode == ParagonValues.CURRENT_COOK_MODE_OFF ||
+                cookMode == ParagonValues.CURRENT_COOK_MODE_DIRECT){
+            attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
+        }
+        else{
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        dialogTryAgain.dismiss();
+    }
 }

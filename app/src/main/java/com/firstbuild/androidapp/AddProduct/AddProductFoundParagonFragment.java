@@ -42,6 +42,7 @@ public class AddProductFoundParagonFragment extends Fragment {
             }
         };
 
+        Log.d(TAG, "Launch 3 sec timer");
         handler = new Handler();
         handler.postDelayed(runnable, 3000);
 
@@ -52,8 +53,15 @@ public class AddProductFoundParagonFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        handler.postDelayed(runnable, 1000);
+
+        if(handler == null) {
+            Log.d(TAG, "Launch 1 sec timer");
+            handler = new Handler();
+            handler.postDelayed(runnable, 1000);
+        }
     }
+
+
 
     @Override
     public void onPause() {
@@ -61,6 +69,7 @@ public class AddProductFoundParagonFragment extends Fragment {
 
         // Cancel the runnable
         handler.removeCallbacks(runnable);
+        handler = null;
 
         super.onPause();
     }
