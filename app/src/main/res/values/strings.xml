@@ -133,4 +133,7 @@
     <string name="name_your_paragon">Name your Paragon</string>
     <string name="name_your_paragon_explanation">This is how your Paragon will appear\nin the list. You can change it later.</string>
     <string name="urlFistBuild">http://market.firstbuild.com/</string>
+    <string name="popup_food_warning_title">WARNING</string>
+    <string name="popup_food_warning_content">\u2022 Consuming unpasteurized foods can increase your risk of foodbourne illness.\n\n\u2022 Sous vide cooking often involves temperatures below FDA recommended safe minimum cooking temperatures, but can still be safe when done for the correct amount of time as long as the temperature remains above 54°C (130°F).\n\n\u2022 Several factors impact the time required to pasteurize foods, including cooking temperature, initial food temperature, food thickness, and food preparation.\n\n\u2022 Follow all proper instructions related to preparation, cooking including time and temperature requirements and storage during sous vide cooking to prevent foodbourne illness caused by harmful bacteria.\n\n\u2022 Discard food if it has been at temperatures in the FDA Danger Zone (4°C (40°F) to 60°C (140°F) for more than four hours. Cool foods quickly using an ice bath if not consuming directly after cooking.</string>
+    <string name="url_food_warning">http://www.foodauthority.nsw.gov.au/_Documents/scienceandtechnical/sous_vide_food_safey_precautions.pdf</string>
 </resources>

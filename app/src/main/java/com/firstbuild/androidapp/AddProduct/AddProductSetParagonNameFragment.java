@@ -4,6 +4,7 @@ package com.firstbuild.androidapp.addProduct;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -75,23 +76,42 @@ public class AddProductSetParagonNameFragment extends Fragment {
                 attached.addNewProductToList();
 
 
-                new MaterialDialog.Builder(this)
-                        .title(R.string.useGoogleLocationServices)
-                        .content(R.string.loremIpsum)
-                        .positiveText(R.string.agree)
-                        .negativeText(R.string.disagree)
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.popup_food_warning_title)
+                        .content(R.string.popup_food_warning_content)
+                        .positiveText("Dismiss")
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                gotoDashboard();
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+
+                            }
+
+                            @Override
+                            public void onNeutral(MaterialDialog dialog) {
+                            }
+                        })
+                        .cancelable(false)
                         .show();
 
 
-                // Go to dash board
-                Intent intent = new Intent(getActivity(), DashboardActivity.class);
-                intent.putExtra("previous_activity", AddProductActivity.class.getSimpleName());
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
             }
         });
 
         return view;
+    }
+
+    public void gotoDashboard(){
+        // Go to dash board
+        Intent intent = new Intent(getActivity(), DashboardActivity.class);
+        intent.putExtra("previous_activity", AddProductActivity.class.getSimpleName());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
     }
 
     public void hideKeyboard(View view) {
