@@ -94,7 +94,7 @@ public class AddProductSearchParagonFragment extends Fragment {
         }
         else {
             Log.d(TAG, "Bluetooth adapter is already enabled. Start scanning.");
-            spinningAnimation.setRepeatCount(10);
+            spinningAnimation.setRepeatCount(30);
             BleManager.getInstance().startScan();
         }
     }
@@ -138,7 +138,7 @@ public class AddProductSearchParagonFragment extends Fragment {
             }
 
             public void onAnimationEnd(Animation animation) {
-//                Log.d(TAG, "onAnimationEnd IN");
+                Log.d(TAG, "onAnimationEnd IN");
 
                 BleManager.getInstance().stopScan();
 
@@ -247,20 +247,6 @@ public class AddProductSearchParagonFragment extends Fragment {
             super.onServicesDiscovered(address, bleGattServices);
 
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
-
-//            BleManager.getInstance().displayGattServices(address);
-//
-//            // Request data to check connectivity
-//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-//
-//            attached.setNewProductAddress(deviceAddress);
-//
-//            // Transit to success UI
-//            getFragmentManager().
-//                    beginTransaction().
-//                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
-//                    addToBackStack(null).
-//                    commit();
         }
 
         @Override
@@ -268,14 +254,7 @@ public class AddProductSearchParagonFragment extends Fragment {
             super.onCharacteristicRead(address, uuid, value);
 
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
-
-//            if(deviceAddress != null & deviceAddress.equals(address) &&
-//            ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION.toLowerCase().equals(uuid)){
-//                Log.d(TAG, "[Found!!!] address: " + address + ", uuid: " + uuid);
-//
-//
-//                ProductManager.getInstance().add(deviceAddress);
-//            }
+            
         }
     };
 
