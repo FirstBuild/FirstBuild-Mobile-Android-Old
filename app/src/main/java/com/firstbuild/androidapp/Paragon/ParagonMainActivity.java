@@ -124,7 +124,6 @@ public class ParagonMainActivity extends ActionBarActivity {
             }
             else {
                 Log.d(TAG, "Stop scanning BLE devices");
-
             }
         }
 
@@ -132,11 +131,11 @@ public class ParagonMainActivity extends ActionBarActivity {
         public void onConnectionStateChanged(final String address, final int status) {
             super.onConnectionStateChanged(address, status);
 
-            Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
-
             final ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
             if (address.equals(productInfo.address)) {
+                Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -191,20 +190,27 @@ public class ParagonMainActivity extends ActionBarActivity {
         public void onCharacteristicRead(String address, String uuid, byte[] value) {
             super.onCharacteristicRead(address, uuid, value);
 
-            Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
+            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
-            onReceivedData(uuid, value);
+            if (address.equals(productInfo.address)) {
+                Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
+                onReceivedData(uuid, value);
+            }
         }
 
         @Override
         public void onCharacteristicWrite(String address, String uuid, final byte[] value) {
             super.onCharacteristicWrite(address, uuid, value);
 
-            final int ret = (int) value[0];
+            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
-            Log.d(TAG, "[onCharacteristicWrite] uuid: " + uuid + ", value: " + String.format("%02x", value[0]));
+            if (address.equals(productInfo.address)) {
+                final int ret = (int) value[0];
 
-            onWriteData(uuid, value);
+                Log.d(TAG, "[onCharacteristicWrite] uuid: " + uuid + ", value: " + String.format("%02x", value[0]));
+
+                onWriteData(uuid, value);
+            }
 
         }
 
@@ -212,18 +218,24 @@ public class ParagonMainActivity extends ActionBarActivity {
         public void onCharacteristicChanged(String address, String uuid, byte[] value) {
             super.onCharacteristicChanged(address, uuid, value);
 
-            Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid);
-
-            onReceivedData(uuid, value);
-
-//            nextCharacteristicRead();
+            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+            if (address.equals(productInfo.address)) {
+                Log.d(TAG, "[onCharacteristicChanged] address: " + address + ", uuid: " + uuid);
+                onReceivedData(uuid, value);
+            }
         }
 
         @Override
         public void onDescriptorWrite(String address, String uuid, byte[] value) {
             super.onDescriptorWrite(address, uuid, value);
 
-            Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
+            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+
+            if (address.equals(productInfo.address)) {
+                Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
+
+            }
+
         }
     };
 
