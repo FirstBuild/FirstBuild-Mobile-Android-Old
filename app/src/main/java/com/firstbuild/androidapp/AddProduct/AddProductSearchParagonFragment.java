@@ -247,20 +247,6 @@ public class AddProductSearchParagonFragment extends Fragment {
             super.onServicesDiscovered(address, bleGattServices);
 
             Log.d(TAG, "[onServicesDiscovered] address: " + address);
-
-//            BleManager.getInstance().displayGattServices(address);
-//
-//            // Request data to check connectivity
-//            BleManager.getInstance().readCharacteristics(ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-//
-//            attached.setNewProductAddress(deviceAddress);
-//
-//            // Transit to success UI
-//            getFragmentManager().
-//                    beginTransaction().
-//                    replace(R.id.content_frame, new AddProductFoundParagonFragment()).
-//                    addToBackStack(null).
-//                    commit();
         }
 
         @Override
@@ -268,14 +254,7 @@ public class AddProductSearchParagonFragment extends Fragment {
             super.onCharacteristicRead(address, uuid, value);
 
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
-
-//            if(deviceAddress != null & deviceAddress.equals(address) &&
-//            ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION.toLowerCase().equals(uuid)){
-//                Log.d(TAG, "[Found!!!] address: " + address + ", uuid: " + uuid);
-//
-//
-//                ProductManager.getInstance().add(deviceAddress);
-//            }
+            
         }
     };
 
