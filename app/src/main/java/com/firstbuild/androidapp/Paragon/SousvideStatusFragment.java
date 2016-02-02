@@ -373,4 +373,11 @@ public class SousvideStatusFragment extends Fragment {
     }
 
 
+    public void updateCookConfig() {
+        ProductInfo product = ProductManager.getInstance().getCurrent();
+        StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
+
+        textTempTarget.setText(Html.fromHtml("Target: " + stageInfo.getTemp() + "<small>℉</small>"));
+    }
+
 }

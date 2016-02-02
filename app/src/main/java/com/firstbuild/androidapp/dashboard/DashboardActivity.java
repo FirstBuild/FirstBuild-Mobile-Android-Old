@@ -38,7 +38,6 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.addProduct.AddProductActivity;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
 import com.firstbuild.androidapp.viewUtil.SwipeMenu;
@@ -295,6 +294,7 @@ public class DashboardActivity extends ActionBarActivity {
             BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
             BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
 
+            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, true);
             BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
             BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
             BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
@@ -535,48 +535,25 @@ public class DashboardActivity extends ActionBarActivity {
         switch (uuid.toUpperCase()) {
 
             case ParagonValues.CHARACTERISTIC_BATTERY_LEVEL:
-                product.setErdBatteryLevel(byteBuffer.get());
-                Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL :" + String.format("%02x", value[0]));
                 break;
 
             case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
-                Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + String.format("%02x%02x", value[0], value[1]));
-                product.setErdElapsedTime(byteBuffer.getShort());
                 break;
 
             case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
-                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" + String.format("%02x", value[0]));
-                product.setErdBurnerStatus(byteBuffer.get());
                 break;
 
             case ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE:
-                Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
-                product.setErdProbeConnectionStatue(byteBuffer.get());
                 break;
 
             case ParagonValues.CHARACTERISTIC_COOK_MODE:
-                Log.d(TAG, "CHARACTERISTIC_COOK_MODE :" + String.format("%02x", value[0]));
-                product.setErdCurrentCookMode(byteBuffer.get());
                 break;
 
             case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
-                Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :");
-
-                String data = "";
-                for (int i = 0; i < 39; i++) {
-                    data += String.format("%02x", value[i]);
-                }
-                Log.d(TAG, "CONFIGURATION Data :" + data);
-
-                RecipeInfo newRecipe = new RecipeInfo(value);
-                product.setErdRecipeConfig(newRecipe);
                 break;
 
             case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE:
-                Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STATE :" + String.format("%02x", value[0]));
-                product.setErdCookState(byteBuffer.get());
                 break;
-
 
             case ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE:
                 //Skip refresh ui.

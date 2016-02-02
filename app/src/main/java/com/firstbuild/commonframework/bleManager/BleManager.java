@@ -21,6 +21,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
+import com.firstbuild.androidapp.productManager.ProductManager;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -211,6 +213,16 @@ public class BleManager {
      */
     public void sendUpdate(String listener, Object... args) {
         Log.d(TAG, "sendUpdate IN");
+
+
+        if (listener.equals("onCharacteristicChanged") ||
+                listener.equals("onCharacteristicRead") ) {
+            ProductManager.getInstance().updateErd((String) args[0], (String) args[1], (byte[]) args[2]);
+        }
+        else {
+            // Do nothing
+        }
+
 
         // Clone hashmap to avoid java.util.ConcurrentModificationException
         HashMap<String, BleListener> callbackClone = (HashMap) callbacks.clone();

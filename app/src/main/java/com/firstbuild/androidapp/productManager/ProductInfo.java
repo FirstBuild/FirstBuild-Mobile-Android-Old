@@ -43,6 +43,10 @@ public class ProductInfo {
     private float erdCurrentTemp;
     private byte erdCookStage;
     private byte erdPowerLevel = 0;
+    private byte versionMajor = 0;
+    private byte versionMinor = 0;
+    private short versionBuild = 0;
+
 
     private boolean isAllMustDataReceived = false;
 
@@ -308,5 +312,32 @@ public class ProductInfo {
 
     public byte getErdPowerLevel() {
         return erdPowerLevel;
+    }
+
+    public void setErdVersion(byte major, byte minor, short build) {
+        this.versionMajor = major;
+        this.versionMinor = minor;
+        this.versionBuild = build;
+    }
+
+    public byte getVersionMajor() {
+        return versionMajor;
+    }
+
+    public byte getVersionMinor() {
+        return versionMinor;
+    }
+
+    public short getVersionBuild() {
+        return versionBuild;
+    }
+
+    public boolean isReceivedVersion() {
+        if(versionMajor == 0 && versionMinor == 0 && versionBuild == 0){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 }

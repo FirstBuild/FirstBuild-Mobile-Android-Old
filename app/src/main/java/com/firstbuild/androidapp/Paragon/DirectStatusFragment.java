@@ -88,6 +88,7 @@ public class DirectStatusFragment extends Fragment {
         view.findViewById(R.id.btn_continue).setVisibility(View.GONE);
         view.findViewById(R.id.btn_complete).setVisibility(View.GONE);
 
+        updateUiPowerLevel();
 
         return view;
     }
