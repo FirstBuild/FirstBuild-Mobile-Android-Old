@@ -1229,6 +1229,11 @@ public class ParagonMainActivity extends ActionBarActivity {
     }
 
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+    }
+
     private void startCommunicateParagon() {
         Log.d(TAG, "startCommunicateParagon IN");
         ProductInfo productInfo = ProductManager.getInstance().getCurrent();
