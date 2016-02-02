@@ -1,3 +1,10 @@
+/**
+ * @file DashboardActivity.java
+ * @brief Activity for Dashboard showing products.
+ * @author Hollis Kim (wowhos@gmail.com)
+ * @date Oct/1/2015
+ * Copyright (c) 2014 General Electric Corporation - Confidential - All rights reserved.
+ */
 package com.firstbuild.androidapp.dashboard;
 
 import android.bluetooth.BluetoothAdapter;
@@ -49,7 +56,6 @@ import java.util.List;
 public class DashboardActivity extends ActionBarActivity {
 
     static final int REQUEST_ENABLE_BT = 1234;
-    private static final int INTERVAL_MAX_PRODUCT_UPDATE = 50;      // Max switching time to the switching to next product.
     private String TAG = DashboardActivity.class.getSimpleName();
     private SwipeMenuListView listViewProduct;
     private ProductListAdapter adapterDashboard;
@@ -173,11 +179,29 @@ public class DashboardActivity extends ActionBarActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
-    private int currentConnectIndex = 0;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == -1) {
+                // Success
+                Log.d(TAG, "Bluetooth adapter is enabled. Start scanning.");
+            }
+            else if (resultCode == 0) {
+                Log.d(TAG, "Bluetooth adapter is still disabled");
+            }
+            else {
+                // Else
+            }
+        }
+        else {
+
+        }
+    }
 
     @Override
     public void onBackPressed() {
-
+        //TODO: Consider later if app exit when press back button.
     }
 
     @Override
@@ -199,13 +223,45 @@ public class DashboardActivity extends ActionBarActivity {
         // Add ble event listener
         BleManager.getInstance().addListener(bleListener);
 
-        if( checkBleTurnOff()){
+        // Check if Bluetooth turned off.
+        if (checkBleTurnOff()) {
             requestUpdateProducts();
         }
 
     }
 
+    /**
+     * Check if bluetooto turned off.
+     *
+     * @return true if turned on.
+     */
+    private boolean checkBleTurnOff() {
+        // Check bluetooth adapter. If the adapter is disabled, enable it
+        boolean result = BleManager.getInstance().isBluetoothEnabled();
 
+        if (!result) {
+            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
+
+            int size = ProductManager.getInstance().getSize();
+
+            for (int i = 0; i < size; i++) {
+                ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
+                productInfo.disconnected();
+            }
+
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+        else {
+            Log.d(TAG, "Bluetooth adapter is already enabled. Start connect");
+        }
+
+        return result;
+    }
+
+    /**
+     * Request initial data to registed product.
+     */
     private void requestUpdateProducts() {
 
         int size = ProductManager.getInstance().getSize();
@@ -224,8 +280,12 @@ public class DashboardActivity extends ActionBarActivity {
         updateListView();
     }
 
-
-    private void requestMustHaveData(ProductInfo productInfo){
+    /**
+     * Must get datas.
+     *
+     * @param productInfo Object of ProductInfo.
+     */
+    private void requestMustHaveData(ProductInfo productInfo) {
         if (productInfo.bluetoothDevice != null) {
             BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
             BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
@@ -247,6 +307,9 @@ public class DashboardActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * Update List view. if no item for list show robot image.
+     */
     private void updateListView() {
 
         adapterDashboard.notifyDataSetChanged();
@@ -264,28 +327,6 @@ public class DashboardActivity extends ActionBarActivity {
 
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == -1) {
-                // Success
-                Log.d(TAG, "Bluetooth adapter is enabled. Start scanning.");
-            }
-            else if (resultCode == 0) {
-                Log.d(TAG, "Bluetooth adapter is still disabled");
-            }
-            else {
-                // Else
-            }
-        }
-        else {
-
-        }
-    }
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -297,7 +338,7 @@ public class DashboardActivity extends ActionBarActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("");
-        ((TextView) toolbar.findViewById(R.id.toolbar_title)).setText("My Products");
+        ((TextView) toolbar.findViewById(R.id.toolbar_title)).setText(R.string.header_title_dashboard);
 
         setSupportActionBar(toolbar);
 
@@ -382,7 +423,7 @@ public class DashboardActivity extends ActionBarActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                itemClicked(position);
+                onItemClicked(position);
             }
         });
 
@@ -429,37 +470,24 @@ public class DashboardActivity extends ActionBarActivity {
 
     }
 
-
-    private boolean checkBleTurnOff(){
-        // Check bluetooth adapter. If the adapter is disabled, enable it
-        boolean result = BleManager.getInstance().isBluetoothEnabled();
-
-        if (!result) {
-            Log.d(TAG, "Bluetooth adapter is disabled. Enable bluetooth adapter.");
-
-            int size = ProductManager.getInstance().getSize();
-
-            for (int i = 0; i < size; i++) {
-                ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
-                productInfo.disconnected();
-            }
-
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-        else {
-            Log.d(TAG, "Bluetooth adapter is already enabled. Start connect");
-        }
-
-        return result;
-    }
-
+    /**
+     * Convert dp to pixel.
+     *
+     * @param dp dp value.
+     * @return pixel value.
+     */
     private int dp2px(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
     }
 
-    public void itemClicked(int position) {
+
+    /**
+     * call when press item on listview.
+     *
+     * @param position 0 index of list item.
+     */
+    public void onItemClicked(int position) {
 
         ProductManager.getInstance().setCurrent(position);
         ProductInfo productInfo = adapterDashboard.getItem(position);
@@ -472,12 +500,19 @@ public class DashboardActivity extends ActionBarActivity {
             startActivity(intent);
         }
         else {
-            Log.d(TAG, "itemClicked but error :" + productInfo.type);
+            Log.d(TAG, "onItemClicked but error :" + productInfo.type);
         }
 
     }
 
 
+    /**
+     * Called when data comming from Pragon Master.
+     *
+     * @param address Address of BLE.
+     * @param uuid    UUID
+     * @param value   value get from BLE.
+     */
     private void onReceivedData(String address, String uuid, byte[] value) {
 
         Log.d(TAG, "onReceivedData :" + uuid);
@@ -626,19 +661,20 @@ public class DashboardActivity extends ActionBarActivity {
 
             }
             else {
+                // do nothing.
             }
 
             holderDashboard.textNickname.setText(currentProduct.nickname);
             int numMustData = currentProduct.getMustDataStatus();
-            Log.d(TAG, "numMustData :"+numMustData);
+            Log.d(TAG, "numMustData :" + numMustData);
 
-            if (currentProduct.isConnected()){
+            if (currentProduct.isConnected()) {
 
-                if(currentProduct.isAllMustDataReceived()) {
+                if (currentProduct.isAllMustDataReceived()) {
                     holderDashboard.layoutProgress.setVisibility(View.GONE);
                     holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
                 }
-                else{
+                else {
                     holderDashboard.progressBar.setIndeterminate(false);
                     holderDashboard.progressBar.setMax(ProductInfo.NUM_MUST_INIT_DATA);
                     holderDashboard.progressBar.setProgress(numMustData);
@@ -674,7 +710,7 @@ public class DashboardActivity extends ActionBarActivity {
                 }
 
                 String batteryLevel = level + "%";
-                holderDashboard.textBattery.setText(batteryLevel + "");
+                holderDashboard.textBattery.setText(batteryLevel);
             }
             else {
                 holderDashboard.textBattery.setText("probe\noffline");
@@ -682,7 +718,7 @@ public class DashboardActivity extends ActionBarActivity {
             }
 
             if (currentProduct.getErdBurnerStatus() == ParagonValues.BURNER_STATE_START) {
-                holderDashboard.textCooking.setText("Cooking");
+                holderDashboard.textCooking.setText(R.string.product_state_cooking);
             }
             else {
                 holderDashboard.textCooking.setText("");
