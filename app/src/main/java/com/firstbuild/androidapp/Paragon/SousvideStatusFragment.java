@@ -43,6 +43,7 @@ public class SousvideStatusFragment extends Fragment {
     private View btnComplete;
     private ParagonMainActivity attached = null;
     private byte previousCookState = (byte) 0xff;
+    private float initialTemp = 0;
 
     public SousvideStatusFragment() {
         // Required empty public constructor
@@ -120,6 +121,8 @@ public class SousvideStatusFragment extends Fragment {
 
         ProductInfo product = ProductManager.getInstance().getCurrent();
         previousCookState = product.getErdCookState();
+
+        initialTemp = product.getErdCurrentTemp();
 
         updateCookState();
         updateUiCurrentTemp();
@@ -295,34 +298,34 @@ public class SousvideStatusFragment extends Fragment {
         byte state = product.getErdCookState();
 
         if (state == ParagonValues.COOK_STATE_HEATING)  {
-            float currentTemp = ProductManager.getInstance().getCurrent().getErdCurrentTemp();
+            float currentTemp = product.getErdCurrentTemp();
+            float targetTemp = stageInfo.getTemp();
+
             textTempCurrent.setText(Math.round(currentTemp) + "℉");
 
-            float bigNumber;
-            float smallNumber;
-
-            if (currentTemp > (float) stageInfo.getTemp()) {
-                bigNumber = currentTemp;
-                smallNumber = (float) stageInfo.getTemp();
+            if (currentTemp > targetTemp) {
                 circle.setColor(R.color.colorAccent);
                 textStatusName.setText("COOLING");
             }
             else {
-                smallNumber = currentTemp;
-                bigNumber = (float) stageInfo.getTemp();
                 circle.setColor(R.color.colorParagonAccent);
                 textStatusName.setText("PREHEATING");
             }
 
-            float ratioTemp = smallNumber / bigNumber;
+            float ratioTemp = (currentTemp - initialTemp) / (targetTemp - initialTemp);
 
-            ratioTemp = Math.min(ratioTemp, 1.0f);
+            if(ratioTemp > 1.0f){
+                ratioTemp = 1.0f - ratioTemp;
+            }
+
+            ratioTemp = Math.max(ratioTemp, 0.0f);
+
             circle.setGridValue(ratioTemp);
         }
         else if(state == ParagonValues.COOK_STATE_COOKING){
             circle.setColor(R.color.colorParagonAccent);
             if(stageInfo.getTime() == 0){
-                float currentTemp = ProductManager.getInstance().getCurrent().getErdCurrentTemp();
+                float currentTemp = product.getErdCurrentTemp();
                 textTempCurrent.setText(Math.round(currentTemp) + "℉");
             }
 
