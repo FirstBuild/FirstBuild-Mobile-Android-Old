@@ -30,7 +30,9 @@ public class RecipeInfo {
     }
 
     public RecipeInfo(byte[] value) {
-        for (int i = 0; i < MAX_RECIPE; i++) {
+
+        int size = value.length / STAGE_CHUNK_SIZE;
+        for (int i = 0; i < size; i++) {
             byte powerLevel = value[i*STAGE_CHUNK_SIZE];
             short holdTime = (short)( (value[i * STAGE_CHUNK_SIZE + 1] & 0xff) << 8 | (value[i * STAGE_CHUNK_SIZE + 2] & 0xff) );
             short maxHoldTime = (short) ((value[i * STAGE_CHUNK_SIZE + 3] & 0xff) << 8 | (value[i * STAGE_CHUNK_SIZE + 4] & 0xff));
