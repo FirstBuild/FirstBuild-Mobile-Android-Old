@@ -64,6 +64,8 @@ public class RecipeSettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_settings, container, false);
 
+        attached.setTitle(attached.selectedBuiltInRecipe.name);
+
         textSetTimeMin = (TextView) view.findViewById(R.id.text_set_time_min);
         textSetTimeMax = (TextView) view.findViewById(R.id.text_set_time_max);
         textSetTemp = (TextView) view.findViewById(R.id.text_set_temp);

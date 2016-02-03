@@ -1306,7 +1306,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     public void loadRecipesFromAsset() {
         String json = null;
         try {
-            InputStream is = getAssets().open("recipes/builtin.JSON");
+            InputStream is = getAssets().open("recipes/builtin2.JSON");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -1343,6 +1343,8 @@ public class ParagonMainActivity extends ActionBarActivity {
             for (int j = 0; j < arrayJson.length(); j++) {
                 JSONObject childObj = arrayJson.getJSONObject(j);
                 String name = childObj.getString("name");
+
+                Log.d(TAG, "name :"+name);
 
                 if (childObj.has("recipes")) {
                     BuiltInRecipeInfo foodsInfo = new BuiltInRecipeInfo(name);
