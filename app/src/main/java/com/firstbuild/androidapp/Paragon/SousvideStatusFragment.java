@@ -146,16 +146,36 @@ public class SousvideStatusFragment extends Fragment {
             //do nothing.
         }
 
+        if(stageInfo.getTime() == 0){
+            progressDots[0].setVisibility(View.GONE);
+            progressDots[1].setVisibility(View.GONE);
+            progressDots[2].setVisibility(View.VISIBLE);
+            progressDots[3].setVisibility(View.VISIBLE);
+        }
+        else{
+            progressDots[0].setVisibility(View.VISIBLE);
+            progressDots[1].setVisibility(View.VISIBLE);
+            progressDots[2].setVisibility(View.VISIBLE);
+            progressDots[3].setVisibility(View.VISIBLE);
+        }
+
+
         switch (state) {
             case ParagonValues.COOK_STATE_OFF:
                 attached.nextStep(ParagonMainActivity.ParagonSteps.STEP_COOKING_MODE);
                 break;
 
             case ParagonValues.COOK_STATE_HEATING:
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                if (stageInfo.getTime() == 0) {
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                }
+                else{
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                }
 
                 layoutStatus.setVisibility(View.VISIBLE);
                 imgStatus.setVisibility(View.GONE);
@@ -171,10 +191,16 @@ public class SousvideStatusFragment extends Fragment {
 
             case ParagonValues.COOK_STATE_READY:
                 textStatusName.setText("READY TO COOK");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                if (stageInfo.getTime() == 0) {
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                }
+                else {
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_todo);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                }
 
                 layoutStatus.setVisibility(View.GONE);
                 imgStatus.setImageResource(R.drawable.img_ready_to_cook);
@@ -196,10 +222,19 @@ public class SousvideStatusFragment extends Fragment {
 
             case ParagonValues.COOK_STATE_COOKING:
                 textStatusName.setText("COOKING");
-                progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
-                progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
-                progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+
+                if(stageInfo.getTime() == 0){
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_current);
+                    textLabelCurrent.setText("Current:");
+                }
+                else{
+                    progressDots[0].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[1].setImageResource(R.drawable.ic_step_dot_done);
+                    progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
+                    progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
+                    textLabelCurrent.setText("Food ready at");
+                }
 
                 layoutStatus.setVisibility(View.VISIBLE);
                 imgStatus.setVisibility(View.GONE);
@@ -207,8 +242,6 @@ public class SousvideStatusFragment extends Fragment {
                 btnComplete.setVisibility(View.GONE);
 
                 textTempTarget.setText(Html.fromHtml(stageInfo.getTemp() + "<small>℉</small>"));
-
-                textLabelCurrent.setText("Food ready at");
 
                 textTempCurrent.setText("");
 
@@ -285,6 +318,14 @@ public class SousvideStatusFragment extends Fragment {
 
             ratioTemp = Math.min(ratioTemp, 1.0f);
             circle.setGridValue(ratioTemp);
+        }
+        else if(state == ParagonValues.COOK_STATE_COOKING){
+            circle.setColor(R.color.colorParagonAccent);
+            if(stageInfo.getTime() == 0){
+                float currentTemp = ProductManager.getInstance().getCurrent().getErdCurrentTemp();
+                textTempCurrent.setText(Math.round(currentTemp) + "℉");
+            }
+
         }
         else {
             circle.setColor(R.color.colorParagonAccent);
