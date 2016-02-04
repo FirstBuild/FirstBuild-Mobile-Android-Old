@@ -410,6 +410,8 @@ public class BleManager {
             for( BleOperation tempOperation : tempOperations){
                 operations.add(tempOperation);
             }
+
+            operations.add(currentOperation);
         }
 
         currentOperation = null;

@@ -267,7 +267,9 @@ public class DashboardActivity extends ActionBarActivity {
 
         for (int i = 0; i < size; i++) {
             ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
-            productInfo.bluetoothDevice = BleManager.getInstance().connect(productInfo.address);
+            if(productInfo.bluetoothDevice == null) {
+                productInfo.bluetoothDevice = BleManager.getInstance().connect(productInfo.address);
+            }
         }
 
         for (int i = 0; i < size; i++) {
