@@ -111,7 +111,7 @@ public class DashboardActivity extends ActionBarActivity {
                 }).start();
 
 
-                checkBleTurnOff();
+                checkBleTurnOn();
             }
         }
 
@@ -223,7 +223,7 @@ public class DashboardActivity extends ActionBarActivity {
         BleManager.getInstance().addListener(bleListener);
 
         // Check if Bluetooth turned off.
-        if (checkBleTurnOff()) {
+        if (checkBleTurnOn()) {
             requestUpdateProducts();
         }
 
@@ -234,7 +234,7 @@ public class DashboardActivity extends ActionBarActivity {
      *
      * @return true if turned on.
      */
-    private boolean checkBleTurnOff() {
+    private boolean checkBleTurnOn() {
         // Check bluetooth adapter. If the adapter is disabled, enable it
         boolean result = BleManager.getInstance().isBluetoothEnabled();
 
