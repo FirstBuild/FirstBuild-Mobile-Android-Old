@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,9 @@ import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -399,20 +402,11 @@ public class SousvideStatusFragment extends Fragment {
     private CharSequence updateReadyTime(int elapsedMin) {
         CharSequence stringTime = "";
         Calendar now = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm aa");
+
         now.add(Calendar.MINUTE, elapsedMin);
-        String timeText = String.format("%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
-        String ampm = "";
+        stringTime = sdf.format(now.getTime());
 
-        Log.d(TAG, "updateReadyTime :" + timeText);
-
-        if (now.get(Calendar.AM_PM) == Calendar.AM) {
-            ampm = "AM";
-        }
-        else {
-            ampm = "PM";
-        }
-
-        stringTime = Html.fromHtml(timeText + "<small>" + ampm + "</small>");
         return stringTime;
     }
 
