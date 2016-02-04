@@ -169,11 +169,13 @@ public class ProductManager {
         Log.d(TAG, "updateErd Address :" + address);
 
         ProductInfo product = getProductByAddress(address);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(value);
 
-        if (product == null) {
+        if (product == null || value == null) {
             return;
         }
+
+        ByteBuffer byteBuffer = ByteBuffer.wrap(value);
+
 
         switch (uuid.toUpperCase()) {
 
