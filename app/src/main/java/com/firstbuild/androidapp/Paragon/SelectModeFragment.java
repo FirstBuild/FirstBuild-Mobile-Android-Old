@@ -116,7 +116,7 @@ public class SelectModeFragment extends Fragment implements SelectModeAdapter.Cl
     }
 
     @Override
-    public void itemClicked(View view, int position, String text) {
+    public void itemClicked(View view, int position) {
         Log.d(TAG, "itemclicked " + position);
 
         int size = builtInRecipes.child.size();
