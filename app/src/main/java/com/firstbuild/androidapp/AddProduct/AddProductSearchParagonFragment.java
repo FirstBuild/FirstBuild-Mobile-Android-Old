@@ -258,6 +258,11 @@ public class AddProductSearchParagonFragment extends Fragment {
         }
     };
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+    }
+
     private void goToErrorScreen(){
         getFragmentManager().
                 beginTransaction().
