@@ -76,7 +76,16 @@ public class RecipeInfo {
     }
 
     public StageInfo getStage(int index){
-        return stages.get(index);
+        StageInfo stageInfo = null;
+
+        if(index < stages.size() -1){
+            stageInfo = stages.get(index);
+        }
+        else{
+            stageInfo = null;
+        }
+
+        return stageInfo;
     }
 
     public void setStageList(ArrayList<StageInfo> stageList){
