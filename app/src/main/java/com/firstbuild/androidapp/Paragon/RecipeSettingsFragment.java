@@ -290,11 +290,14 @@ public class RecipeSettingsFragment extends Fragment {
 
         RecipeInfo recipeConfig = new RecipeInfo("", "", "", "");
         recipeConfig.setType(RecipeInfo.TYPE_SOUSVIDE);
+
+        StageInfo stageInfo = new StageInfo();
+        stageInfo.setTime((int) (setTargetTimeMin * 60));
+        stageInfo.setMaxTime((int) (setTargetTimeMax * 60));
+        stageInfo.setTemp((int) setTargetTemp);
+        stageInfo.setSpeed(10);
+
         recipeConfig.addStage(new StageInfo());
-        recipeConfig.getStage(0).setTime((int) (setTargetTimeMin * 60));
-        recipeConfig.getStage(0).setMaxTime((int) (setTargetTimeMax * 60));
-        recipeConfig.getStage(0).setTemp((int) setTargetTemp);
-        recipeConfig.getStage(0).setSpeed(10);
 
         product.setErdRecipeConfig(recipeConfig);
         product.sendRecipeConfig();
