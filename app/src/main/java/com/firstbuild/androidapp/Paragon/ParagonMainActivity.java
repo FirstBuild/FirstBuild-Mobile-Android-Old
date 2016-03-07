@@ -83,7 +83,6 @@ public class ParagonMainActivity extends ActionBarActivity {
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
-    private boolean isCheckingCurrentStatus = false;
     // Thread handler for checking the connection with Paragon Master.
     private Handler handlerCheckingConnection;
     // Thread for update UI.
@@ -596,10 +595,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                 return;
 
             case STEP_CHECK_CURRENT_STATUS:
-//                isCheckingCurrentStatus = true;
 
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ERROR_STATE, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
 
@@ -886,8 +883,6 @@ public class ParagonMainActivity extends ActionBarActivity {
         OtaManager.getInstance().readImageFile(ParagonMainActivity.this);
 
 
-
-//        isCheckingCurrentStatus = false;
 
         dialogWaiting = new MaterialDialog.Builder(ParagonMainActivity.this)
                 .title("Please wait")

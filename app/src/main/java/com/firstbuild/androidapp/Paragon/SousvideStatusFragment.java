@@ -107,7 +107,8 @@ public class SousvideStatusFragment extends Fragment {
                 valueBuffer.put((byte) 0x01);
                 BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
-//                updateCookState(COOK_STATE.STATE_COOKING);
+//                updateCookState(ParagonValues.COOK_STATE_COOKING);
+                view.setVisibility(View.GONE);
 
             }
         });
