@@ -297,8 +297,7 @@ public class RecipeSettingsFragment extends Fragment {
         stageInfo.setTemp((int) setTargetTemp);
         stageInfo.setSpeed(10);
 
-        recipeConfig.addStage(new StageInfo());
-
+        recipeConfig.addStage(stageInfo);
         product.setErdRecipeConfig(recipeConfig);
         product.sendRecipeConfig();
 
