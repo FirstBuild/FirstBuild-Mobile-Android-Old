@@ -255,12 +255,12 @@ public class QuickStartFragment extends Fragment {
 
 
     private void makeTempMaxText(int hour, int min) {
-        textTimeMax.setText(hour + ":" + min);
+        textTimeMax.setText(String.format("%d:%02d", hour, min));
     }
 
 
     private void makeTempMinText(int hour, int min) {
-        textTimeMin.setText(hour + ":" + min);
+        textTimeMin.setText(String.format("%d:%02d", hour, min));
     }
 
 
