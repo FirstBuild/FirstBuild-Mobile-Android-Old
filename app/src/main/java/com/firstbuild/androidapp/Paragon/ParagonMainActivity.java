@@ -30,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.FirstBuildApplication;
@@ -100,6 +101,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     private MaterialDialog dialogOtaAsk;
     private MaterialDialog disconnectDialog = null;
     private MaterialDialog dialogGoodToGo;
+    private View dialogGoodToGoButton;
     private MaterialDialog dialogFoodWarning;
     private int checkingCountDown;
     private int writeDataState = WRITE_STATE_NONE;
@@ -903,6 +905,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                     @Override
                     public void onNegative(MaterialDialog dialog) {
                         handlerCheckingGoodToGo.removeCallbacks(runnableGoodToGo);
+                        Log.d(TAG, "dialogGoodToGo onNegative Pressed ");
                     }
 
                     @Override
@@ -914,6 +917,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         View customView = dialogGoodToGo.getCustomView();
         dialogGoodToGoBar = (ProgressBar) customView.findViewById(R.id.progressBar);
         dialogGoodToGoContent = (TextView) customView.findViewById(R.id.content);
+        dialogGoodToGoButton = dialogGoodToGo.getActionButton(DialogAction.NEGATIVE);
 
 
         dialogOtaAsk = new MaterialDialog.Builder(ParagonMainActivity.this)
@@ -1401,6 +1405,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         Log.d(TAG, "checkGoodToGo");
 
         dialogGoodToGoBar.setProgress(100);
+        dialogGoodToGoButton.setVisibility(View.VISIBLE);
         checkGoodToGoLoop();
 
         writeDataState = WRITE_STATE_NONE;
@@ -1412,6 +1417,7 @@ public class ParagonMainActivity extends ActionBarActivity {
      * This call every INTERVAL_GOODTOGO time
      */
     private void checkGoodToGoLoop() {
+        Log.d(TAG, "checkGoodToGoLoop IN");
 
         ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
@@ -1448,6 +1454,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "checkGoodToGoLoop isReady");
             dialogGoodToGo.setTitle("Sending configuration...");
             dialogGoodToGoContent.setText("");
+            dialogGoodToGoButton.setVisibility(View.GONE);
 
             switch (writeDataState) {
                 case WRITE_STATE_NONE:
