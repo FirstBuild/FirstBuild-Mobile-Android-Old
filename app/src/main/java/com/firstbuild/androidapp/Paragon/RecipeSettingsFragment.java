@@ -64,6 +64,8 @@ public class RecipeSettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sousvide_settings, container, false);
 
+        attached.setTitle(attached.selectedBuiltInRecipe.name);
+
         textSetTimeMin = (TextView) view.findViewById(R.id.text_set_time_min);
         textSetTimeMax = (TextView) view.findViewById(R.id.text_set_time_max);
         textSetTemp = (TextView) view.findViewById(R.id.text_set_temp);
@@ -288,12 +290,14 @@ public class RecipeSettingsFragment extends Fragment {
 
         RecipeInfo recipeConfig = new RecipeInfo("", "", "", "");
         recipeConfig.setType(RecipeInfo.TYPE_SOUSVIDE);
-        recipeConfig.addStage(new StageInfo());
-        recipeConfig.getStage(0).setTime((int) (setTargetTimeMin * 60));
-        recipeConfig.getStage(0).setMaxTime((int) (setTargetTimeMax * 60));
-        recipeConfig.getStage(0).setTemp((int) setTargetTemp);
-        recipeConfig.getStage(0).setSpeed(10);
 
+        StageInfo stageInfo = new StageInfo();
+        stageInfo.setTime((int) (setTargetTimeMin * 60));
+        stageInfo.setMaxTime((int) (setTargetTimeMax * 60));
+        stageInfo.setTemp((int) setTargetTemp);
+        stageInfo.setSpeed(10);
+
+        recipeConfig.addStage(stageInfo);
         product.setErdRecipeConfig(recipeConfig);
         product.sendRecipeConfig();
 

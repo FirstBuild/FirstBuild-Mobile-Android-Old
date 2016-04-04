@@ -157,6 +157,10 @@ public class BleManager {
     public boolean isBluetoothEnabled() {
         Log.d(TAG, "isBluetoothEnabled IN");
 
+        if(bluetoothAdapter == null){
+            return false;
+        }
+
         return bluetoothAdapter.isEnabled();
     }
 
@@ -410,6 +414,8 @@ public class BleManager {
             for( BleOperation tempOperation : tempOperations){
                 operations.add(tempOperation);
             }
+
+            operations.add(currentOperation);
         }
 
         currentOperation = null;

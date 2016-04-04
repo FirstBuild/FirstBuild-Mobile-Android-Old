@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,9 @@ import com.firstbuild.commonframework.bleManager.BleManager;
 import com.firstbuild.viewUtil.gridCircleView;
 
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -104,7 +107,8 @@ public class SousvideStatusFragment extends Fragment {
                 valueBuffer.put((byte) 0x01);
                 BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, ParagonValues.CHARACTERISTIC_START_HOLD_TIMER, valueBuffer.array());
 
-//                updateCookState(COOK_STATE.STATE_COOKING);
+//                updateCookState(ParagonValues.COOK_STATE_COOKING);
+                view.setVisibility(View.GONE);
 
             }
         });
@@ -138,6 +142,12 @@ public class SousvideStatusFragment extends Fragment {
         ProductInfo product = ProductManager.getInstance().getCurrent();
         byte state = product.getErdCookState();
         StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
+        int time = 0;
+
+        if(stageInfo != null){
+            time = stageInfo.getTime();
+        }
+
         Log.d(TAG, "updateCookState IN " + state);
 
         if(previousCookState != state){
@@ -149,7 +159,7 @@ public class SousvideStatusFragment extends Fragment {
             //do nothing.
         }
 
-        if(stageInfo.getTime() == 0){
+        if(time == 0){
             progressDots[0].setVisibility(View.GONE);
             progressDots[1].setVisibility(View.GONE);
             progressDots[2].setVisibility(View.VISIBLE);
@@ -169,7 +179,7 @@ public class SousvideStatusFragment extends Fragment {
                 break;
 
             case ParagonValues.COOK_STATE_HEATING:
-                if (stageInfo.getTime() == 0) {
+                if (time == 0) {
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
                     progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
                 }
@@ -194,7 +204,7 @@ public class SousvideStatusFragment extends Fragment {
 
             case ParagonValues.COOK_STATE_READY:
                 textStatusName.setText("READY TO COOK");
-                if (stageInfo.getTime() == 0) {
+                if (time == 0) {
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_current);
                     progressDots[3].setImageResource(R.drawable.ic_step_dot_todo);
                 }
@@ -226,7 +236,7 @@ public class SousvideStatusFragment extends Fragment {
             case ParagonValues.COOK_STATE_COOKING:
                 textStatusName.setText("COOKING");
 
-                if(stageInfo.getTime() == 0){
+                if(time == 0){
                     progressDots[2].setImageResource(R.drawable.ic_step_dot_done);
                     progressDots[3].setImageResource(R.drawable.ic_step_dot_current);
                     textLabelCurrent.setText("Current:");
@@ -399,20 +409,11 @@ public class SousvideStatusFragment extends Fragment {
     private CharSequence updateReadyTime(int elapsedMin) {
         CharSequence stringTime = "";
         Calendar now = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm aa");
+
         now.add(Calendar.MINUTE, elapsedMin);
-        String timeText = String.format("%d:%02d", now.get(Calendar.HOUR), now.get(Calendar.MINUTE));
-        String ampm = "";
+        stringTime = sdf.format(now.getTime());
 
-        Log.d(TAG, "updateReadyTime :" + timeText);
-
-        if (now.get(Calendar.AM_PM) == Calendar.AM) {
-            ampm = "AM";
-        }
-        else {
-            ampm = "PM";
-        }
-
-        stringTime = Html.fromHtml(timeText + "<small>" + ampm + "</small>");
         return stringTime;
     }
 

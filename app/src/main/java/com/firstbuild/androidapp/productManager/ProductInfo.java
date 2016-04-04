@@ -209,9 +209,9 @@ public class ProductInfo {
             valueBuffer.put(7 + 8 * i, (byte) (stage.isAutoTransition() ? 0x01 : 0x02));
         }
 
-        for (int i = 0; i < 40; i++) {
-            Log.d(TAG, "RecipeManager.sendCurrentStages:" + String.format("0x%02x", valueBuffer.array()[i]));
-        }
+//        for (int i = 0; i < 40; i++) {
+//            Log.d(TAG, "RecipeManager.sendCurrentStages:" + String.format("0x%02x", valueBuffer.array()[i]));
+//        }
 
         BleManager.getInstance().writeCharacteristics(bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
     }

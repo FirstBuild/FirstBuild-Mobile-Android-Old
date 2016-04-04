@@ -255,16 +255,18 @@ public class QuickStartFragment extends Fragment {
 
 
     private void makeTempMaxText(int hour, int min) {
-        textTimeMax.setText(hour + ":" + min);
+        textTimeMax.setText(String.format("%d:%02d", hour, min));
     }
 
 
     private void makeTempMinText(int hour, int min) {
-        textTimeMin.setText(hour + ":" + min);
+        textTimeMin.setText(String.format("%d:%02d", hour, min));
     }
 
 
     public void sendRecipeConfig() {
+        Log.d(TAG, "sendRecipeConfig IN");
+
         String stringTime = textTimeMin.getText().toString();
         String hourValue = stringTime.split(":")[0];
         String minValue = stringTime.split(":")[1];
@@ -286,11 +288,13 @@ public class QuickStartFragment extends Fragment {
 
         RecipeInfo recipeConfig = new RecipeInfo("", "", "", "");
         recipeConfig.setType(RecipeInfo.TYPE_SOUSVIDE);
-        recipeConfig.addStage(new StageInfo());
-        recipeConfig.getStage(0).setTime(minHour * 60 + minMin);
-        recipeConfig.getStage(0).setMaxTime(maxHour * 60 + maxMin);
-        recipeConfig.getStage(0).setTemp(temp);
-        recipeConfig.getStage(0).setSpeed(10);
+
+        StageInfo stageInfo = new StageInfo();
+        stageInfo.setTime(minHour * 60 + minMin);
+        stageInfo.setMaxTime(maxHour * 60 + maxMin);
+        stageInfo.setTemp(temp);
+        stageInfo.setSpeed(10);
+        recipeConfig.addStage(stageInfo);
 
         product.setErdRecipeConfig(recipeConfig);
         product.sendRecipeConfig();

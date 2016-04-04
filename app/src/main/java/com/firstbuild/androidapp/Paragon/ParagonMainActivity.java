@@ -30,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.FirstBuildApplication;
@@ -83,7 +84,6 @@ public class ParagonMainActivity extends ActionBarActivity {
     // Bluetooth adapter handler
     private BluetoothAdapter bluetoothAdapter = null;
     private ParagonSteps currentStep = ParagonSteps.STEP_NONE;
-    private boolean isCheckingCurrentStatus = false;
     // Thread handler for checking the connection with Paragon Master.
     private Handler handlerCheckingConnection;
     // Thread for update UI.
@@ -101,6 +101,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     private MaterialDialog dialogOtaAsk;
     private MaterialDialog disconnectDialog = null;
     private MaterialDialog dialogGoodToGo;
+    private View dialogGoodToGoButton;
     private MaterialDialog dialogFoodWarning;
     private int checkingCountDown;
     private int writeDataState = WRITE_STATE_NONE;
@@ -596,10 +597,8 @@ public class ParagonMainActivity extends ActionBarActivity {
                 return;
 
             case STEP_CHECK_CURRENT_STATUS:
-//                isCheckingCurrentStatus = true;
 
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ERROR_STATE, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE, true);
                 BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
 
@@ -887,8 +886,6 @@ public class ParagonMainActivity extends ActionBarActivity {
 
 
 
-//        isCheckingCurrentStatus = false;
-
         dialogWaiting = new MaterialDialog.Builder(ParagonMainActivity.this)
                 .title("Please wait")
                 .content("Communicating with Paragon...")
@@ -908,6 +905,7 @@ public class ParagonMainActivity extends ActionBarActivity {
                     @Override
                     public void onNegative(MaterialDialog dialog) {
                         handlerCheckingGoodToGo.removeCallbacks(runnableGoodToGo);
+                        Log.d(TAG, "dialogGoodToGo onNegative Pressed ");
                     }
 
                     @Override
@@ -919,6 +917,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         View customView = dialogGoodToGo.getCustomView();
         dialogGoodToGoBar = (ProgressBar) customView.findViewById(R.id.progressBar);
         dialogGoodToGoContent = (TextView) customView.findViewById(R.id.content);
+        dialogGoodToGoButton = dialogGoodToGo.getActionButton(DialogAction.NEGATIVE);
 
 
         dialogOtaAsk = new MaterialDialog.Builder(ParagonMainActivity.this)
@@ -1306,7 +1305,7 @@ public class ParagonMainActivity extends ActionBarActivity {
     public void loadRecipesFromAsset() {
         String json = null;
         try {
-            InputStream is = getAssets().open("recipes/builtin.JSON");
+            InputStream is = getAssets().open("recipes/builtin2.JSON");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -1343,6 +1342,8 @@ public class ParagonMainActivity extends ActionBarActivity {
             for (int j = 0; j < arrayJson.length(); j++) {
                 JSONObject childObj = arrayJson.getJSONObject(j);
                 String name = childObj.getString("name");
+
+                Log.d(TAG, "name :"+name);
 
                 if (childObj.has("recipes")) {
                     BuiltInRecipeInfo foodsInfo = new BuiltInRecipeInfo(name);
@@ -1404,6 +1405,7 @@ public class ParagonMainActivity extends ActionBarActivity {
         Log.d(TAG, "checkGoodToGo");
 
         dialogGoodToGoBar.setProgress(100);
+        dialogGoodToGoButton.setVisibility(View.VISIBLE);
         checkGoodToGoLoop();
 
         writeDataState = WRITE_STATE_NONE;
@@ -1415,6 +1417,7 @@ public class ParagonMainActivity extends ActionBarActivity {
      * This call every INTERVAL_GOODTOGO time
      */
     private void checkGoodToGoLoop() {
+        Log.d(TAG, "checkGoodToGoLoop IN");
 
         ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
@@ -1451,6 +1454,7 @@ public class ParagonMainActivity extends ActionBarActivity {
             Log.d(TAG, "checkGoodToGoLoop isReady");
             dialogGoodToGo.setTitle("Sending configuration...");
             dialogGoodToGoContent.setText("");
+            dialogGoodToGoButton.setVisibility(View.GONE);
 
             switch (writeDataState) {
                 case WRITE_STATE_NONE:
