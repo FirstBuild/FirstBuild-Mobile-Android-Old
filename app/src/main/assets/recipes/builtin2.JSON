@@ -906,16 +906,16 @@
           "id": 400,
           "doneness": ["very rare", "rare", "medium rare", "well"],
           "temp": [110, 110, 120, 125, 140],
-          "time min": [10, 15, 15, 15, 40],
-          "time max": [15, 20, 20, 20, 50]
+          "time min": [0.16, 0.25, 0.25, 0.25, 0.67],
+          "time max": [0.25, 0.33, 0.33, 0.33, 0.83]
         },
         {
           "name": "Steaks",
           "id": 400,
           "doneness": ["very rare", "rare", "medium rare", "well"],
           "temp": [110, 110, 120, 125, 140],
-          "time min": [10, 15, 15, 15, 40],
-          "time max": [15, 20, 20, 20, 50]
+          "time min": [0.16, 0.25, 0.25, 0.25, 0.67],
+          "time max": [0.25, 0.33, 0.33, 0.33, 0.83]
         }
       ]
     },
