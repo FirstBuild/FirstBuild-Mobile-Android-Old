@@ -3,7 +3,7 @@
     package="com.firstbuild.androidapp" >
 
     <uses-sdk
-        android:minSdkVersion="16"
+        android:minSdkVersion="18"
         android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -18,6 +18,8 @@
 
     <uses-feature android:name="android.hardware.camera"
                   android:required="true" />
+
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 
     <application
         android:name=".FirstBuildApplication"
