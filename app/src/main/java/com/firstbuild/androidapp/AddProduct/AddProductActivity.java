@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -17,7 +18,7 @@ import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.productManager.ProductInfo;
 import com.firstbuild.androidapp.productManager.ProductManager;
 
-public class AddProductActivity extends ActionBarActivity {
+public class AddProductActivity extends AppCompatActivity {
     private String TAG = AddProductActivity.class.getSimpleName();
     private ProductInfo newProduct = null;
 
@@ -31,7 +32,7 @@ public class AddProductActivity extends ActionBarActivity {
         // Set title name
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("");
-        ((TextView) toolbar.findViewById(R.id.toolbar_title)).setText("ADD PRODUCT");
+        ((TextView) toolbar.findViewById(R.id.toolbar_title)).setText(R.string.add_product_screen_title);
 
         setSupportActionBar(toolbar);
 
@@ -113,27 +114,7 @@ public class AddProductActivity extends ActionBarActivity {
 //        anim.start();
 //    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_product, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     public void setNewProductAddress(String deviceAddress) {
         if(newProduct != null){
