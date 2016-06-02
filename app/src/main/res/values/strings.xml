@@ -139,4 +139,5 @@
     <string name="header_title_dashboard">My Products</string>
     <string name="product_state_cooking">Cooking</string>
     <string name="add_product_screen_title">ADD PRODUCT</string>
+    <string name="product_name_opal">Opal</string>
 </resources>

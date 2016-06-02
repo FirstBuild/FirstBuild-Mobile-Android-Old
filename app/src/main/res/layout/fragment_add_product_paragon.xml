@@ -80,6 +80,31 @@
             android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_add_product_opal"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@android:color/white"
+        android:layout_marginTop="0dp">
+
+        <ImageView
+            android:id="@+id/add_product_opal_plus_icon"
+            style="@style/add_product_plus_icon"
+            android:src="@drawable/img_plus"/>
+
+        <com.firstbuild.viewUtil.StyledTextView
+            style="@style/add_product_item_text"
+            android:text="@string/product_name_opal"
+            android:layout_toRightOf="@+id/add_product_opal_plus_icon"/>
+
+        <ImageView
+            android:background="@color/colorParagonDivider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
     <!--<LinearLayout-->
         <!--android:id="@+id/layoutParagon"-->
         <!--android:layout_height="wrap_content"-->

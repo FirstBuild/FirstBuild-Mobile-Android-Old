@@ -153,13 +153,13 @@ public class AddProductSearchParagonFragment extends Fragment {
         Log.d(TAG, "onActivityResult - resultCode: " + resultCode);
 
         if (requestCode == BleValues.REQUEST_ENABLE_BT) {
-            if (resultCode == -1) {
+            if (resultCode == Activity.RESULT_OK) {
                 // Success
                 Log.d(TAG, "Bluetooth adapter is enabled. Start scanning.");
                 spinningAnimation.setRepeatCount(SPINNING_REPEAT_COUNT);
                 BleManager.getInstance().startScan();
             }
-            else if (resultCode == 0) {
+            else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.d(TAG, "Bluetooth adapter is still disabled");
                 getFragmentManager().
                         beginTransaction().
