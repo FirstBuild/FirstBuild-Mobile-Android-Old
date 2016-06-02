@@ -35,5 +35,23 @@
 
     <color name="transparent">#00FFFFFF</color>
 
+    // FirstBuild color table
+    <color name="colorLightYellow">#fffaed36</color>
+    <color name="colorYellow">#fffec110</color>
+    <color name="colorDarkYellow">#ffffa12d</color>
+    <color name="colorLightOrange">#fff1582c</color>
+    <color name="colorOrange">#ffef4438</color>
+    <color name="colorLightRed">#ffe30450</color>
+    <color name="colorRed">#ffc82027</color>
+    <color name="colorWhite">#ffffffff</color>
+    <color name="colorGrey">#ffcccccc</color>
+    <color name="colorLightBlack">#ff6a6b6c</color>
+    <color name="colorMiddleBlack">#ff4c4c4c</color>
+    <color name="colorBlack">#ff000000</color>
+
+
+
+
+
 
 </resources>
