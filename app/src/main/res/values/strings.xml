@@ -138,4 +138,6 @@
     <string name="url_food_warning">http://www.foodauthority.nsw.gov.au/_Documents/scienceandtechnical/sous_vide_food_safey_precautions.pdf</string>
     <string name="header_title_dashboard">My Products</string>
     <string name="product_state_cooking">Cooking</string>
+    <string name="add_product_screen_title">ADD PRODUCT</string>
+    <string name="product_name_opal">Opal</string>
 </resources>

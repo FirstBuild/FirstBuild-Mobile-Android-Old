@@ -52,6 +52,23 @@ public class AddProductSelectFragment extends Fragment {
             }
         });
 
+        view.findViewById(R.id.relative_layout_add_product_opal).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick pressed");
+
+                attached.createNewProduct(ProductInfo.PRODUCT_TYPE_OPAL);
+
+                getFragmentManager().
+                        beginTransaction().
+                        replace(R.id.content_frame, new AddProductSearchParagonFragment()).
+                        addToBackStack(null).
+                        commit();
+            }
+        });
+
+
+
 
         return view;
     }

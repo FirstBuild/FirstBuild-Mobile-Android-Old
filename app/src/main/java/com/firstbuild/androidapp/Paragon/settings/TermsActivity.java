@@ -2,12 +2,13 @@ package com.firstbuild.androidapp.paragon.settings;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.firstbuild.androidapp.R;
 
-public class TermsActivity extends ActionBarActivity {
+public class TermsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

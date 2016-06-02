@@ -17,6 +17,8 @@ public class ProductInfo {
 
     public static final int PRODUCT_TYPE_CILLHUB = 0;
     public static final int PRODUCT_TYPE_PARAGON = 1;
+    public static final int PRODUCT_TYPE_OPAL = 1;
+
     public static final int NO_BATTERY_INFO = -1;
     public static final int NUM_MUST_INIT_DATA = 7;
 

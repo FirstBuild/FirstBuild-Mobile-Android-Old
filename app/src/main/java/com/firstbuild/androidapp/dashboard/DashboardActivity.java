@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -52,7 +53,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 
-public class DashboardActivity extends ActionBarActivity {
+public class DashboardActivity extends AppCompatActivity {
 
     static final int REQUEST_ENABLE_BT = 1234;
     private String TAG = DashboardActivity.class.getSimpleName();

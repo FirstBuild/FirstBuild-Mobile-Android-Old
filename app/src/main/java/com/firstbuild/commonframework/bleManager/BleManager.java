@@ -180,6 +180,7 @@ public class BleManager {
         if (duration > 0 && duration <= 120) {
             // Check duration
             isScanning = true;
+            // TODO: hans 16. 5. 31. consider replacing this with startScan(List, ScanSettings, ScanCallback)
             bluetoothAdapter.startLeScan(leScanCallback);
 
             // Stops scanning after a pre-defined scan period.

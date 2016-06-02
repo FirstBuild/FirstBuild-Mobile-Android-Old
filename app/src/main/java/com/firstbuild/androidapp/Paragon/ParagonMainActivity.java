@@ -20,6 +20,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -62,7 +63,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class ParagonMainActivity extends ActionBarActivity {
+public class ParagonMainActivity extends AppCompatActivity {
     public static final int INTERVAL_CHECKING_PARAGON_CONNECTION = 1000;
     static final int REQUEST_TAKE_PHOTO = 123;
     static final int REQUEST_ENABLE_BT = 1234;
