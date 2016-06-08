@@ -4,6 +4,7 @@ Open Source Android app used for connected products made by FirstBuild.
 #Current Products
 
 Paragon
+
 Opal
 
 #Paragon
