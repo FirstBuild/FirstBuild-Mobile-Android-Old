@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.viewUtil;
+package com.firstbuild.androidapp.viewutil;
 
 
 /**

@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.productManager.ProductManager;
-import com.firstbuild.viewUtil.gridCircleView;
+import com.firstbuild.androidapp.productmanager.ProductManager;
+import com.firstbuild.viewutil.gridCircleView;
 
 /**
  * A simple {@link Fragment} subclass.

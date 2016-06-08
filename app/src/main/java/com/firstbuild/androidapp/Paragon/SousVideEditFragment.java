@@ -10,11 +10,11 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.androidapp.paragon.myRecipes.RecipeEditFragment;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuListView;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeManager;
+import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.paragon.myrecipes.RecipeEditFragment;
+import com.firstbuild.androidapp.viewutil.SwipeMenuListView;
 
 /**
  * Created by Hollis on 11/4/15.

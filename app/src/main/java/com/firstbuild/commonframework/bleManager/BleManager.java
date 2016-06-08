@@ -5,7 +5,7 @@
  * @date May/22/2015
  */
 
-package com.firstbuild.commonframework.bleManager;
+package com.firstbuild.commonframework.blemanager;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -21,7 +21,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.androidapp.productmanager.ProductManager;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -59,6 +59,7 @@ public class BleManager {
         @Override
         public void onLeScan(final BluetoothDevice bluetoothDevice, int rssi, byte[] scanRecord) {
             try {
+
                 if (bluetoothDevice != null && bluetoothDevice.getName() != null) {
                     scannedDevices.put(bluetoothDevice.getAddress(), bluetoothDevice);
 

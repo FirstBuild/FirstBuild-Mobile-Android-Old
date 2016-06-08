@@ -1,4 +1,4 @@
-package com.firstbuild.commonframework.bleManager;
+package com.firstbuild.commonframework.blemanager;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;

@@ -14,11 +14,10 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.androidapp.productManager.ProductInfo;
-import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
+import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.productmanager.ProductInfo;
+import com.firstbuild.androidapp.productmanager.ProductManager;
 
 /**
  * A simple {@link Fragment} subclass.

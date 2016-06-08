@@ -28,7 +28,8 @@
             android:layout_below="@+id/imgSpinner"
             android:layout_marginTop="100dp" />
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
+            android:id="@+id/search_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/searching_your_paragon"

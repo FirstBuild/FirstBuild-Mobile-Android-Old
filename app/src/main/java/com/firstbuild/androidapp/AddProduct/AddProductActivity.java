@@ -1,22 +1,13 @@
-package com.firstbuild.androidapp.addProduct;
+package com.firstbuild.androidapp.addproduct;
 
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.productManager.ProductInfo;
-import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.androidapp.productmanager.ProductInfo;
+import com.firstbuild.androidapp.productmanager.ProductManager;
 
 public class AddProductActivity extends AppCompatActivity {
     private String TAG = AddProductActivity.class.getSimpleName();

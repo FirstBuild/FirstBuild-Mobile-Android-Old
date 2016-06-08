@@ -16,7 +16,7 @@
         android:visibility="visible"
         android:src="@drawable/ic_paragon_logo"/>
 
-    <com.firstbuild.viewUtil.StyledTextView
+    <com.firstbuild.viewutil.StyledTextView
         android:id="@+id/toolbar_title_text"
         android:layout_width="wrap_content"
         android:layout_height="36dp"

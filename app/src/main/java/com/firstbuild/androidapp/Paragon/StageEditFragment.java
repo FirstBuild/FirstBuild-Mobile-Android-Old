@@ -14,8 +14,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeManager;
+import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
 
 /**
  * A simple {@link Fragment} subclass.

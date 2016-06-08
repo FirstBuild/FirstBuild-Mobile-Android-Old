@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.addProduct;
+package com.firstbuild.androidapp.addproduct;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productmanager.ProductInfo;
 
 public class AddProductSelectFragment extends Fragment {
     private String TAG = AddProductSelectFragment.class.getSimpleName();
@@ -61,7 +61,7 @@ public class AddProductSelectFragment extends Fragment {
 
                 getFragmentManager().
                         beginTransaction().
-                        replace(R.id.content_frame, new AddProductSearchParagonFragment()).
+                        replace(R.id.content_frame, new AddProductSearchOpalFragment()).
                         addToBackStack(null).
                         commit();
             }

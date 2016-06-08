@@ -31,7 +31,7 @@
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/img_robot"/>
 
-            <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
+            <com.firstbuild.androidapp.viewutil.SwipeMenuListView
                 android:id="@+id/listProduct"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

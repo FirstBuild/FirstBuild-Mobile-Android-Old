@@ -1,4 +1,4 @@
-package com.firstbuild.viewUtil;
+package com.firstbuild.viewutil;
 
 import android.content.Context;
 import android.graphics.Typeface;

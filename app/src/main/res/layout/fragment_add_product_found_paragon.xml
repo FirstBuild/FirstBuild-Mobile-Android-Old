@@ -18,7 +18,7 @@
             android:layout_marginTop="50dp"
             android:src="@drawable/img_got_it"/>
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
             android:id="@+id/text_got_it"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +30,8 @@
             android:layout_marginTop="20dp"
             android:textColor="@color/colorParagonHighlight" />
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
+            android:id="@+id/add_product_pairing_success_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/we_found_your_paragon"

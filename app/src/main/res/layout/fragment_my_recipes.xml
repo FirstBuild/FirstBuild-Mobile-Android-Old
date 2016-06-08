@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.paragon.myRecipes.MyRecipesFragment">
+    tools:context="com.firstbuild.androidapp.paragon.myrecipes.MyRecipesFragment">
 
 
-    <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
+    <com.firstbuild.androidapp.viewutil.SwipeMenuListView
         android:id="@+id/list_recipes"
         android:layout_width="match_parent"
         android:layout_height="0dp"

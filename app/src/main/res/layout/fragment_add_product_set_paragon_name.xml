@@ -18,7 +18,7 @@
             android:layout_marginTop="50dp"
             android:src="@drawable/img_name_your_paragon"/>
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
             android:id="@+id/text_name_your_paragon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             android:layout_below="@+id/image_name_your_paragon"
             android:textColor="@color/colorParagonHighlight" />
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
             android:id="@+id/text_name_your_paragon_explanation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

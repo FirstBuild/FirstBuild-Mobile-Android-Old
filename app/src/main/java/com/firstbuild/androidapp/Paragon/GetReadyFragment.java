@@ -5,19 +5,16 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.androidapp.productManager.ProductInfo;
-import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.androidapp.productmanager.ProductInfo;
+import com.firstbuild.androidapp.productmanager.ProductManager;
 
 /**
  * A simple {@link Fragment} subclass.

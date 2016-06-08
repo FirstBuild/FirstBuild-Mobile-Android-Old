@@ -5,7 +5,7 @@
  * @date Aug/26/2015
  * Copyright (c) 2014 General Electric Corporation - Confidential - All rights reserved.
  */
-package com.firstbuild.viewUtil;
+package com.firstbuild.viewutil;
 
 import android.content.Context;
 import android.graphics.Canvas;

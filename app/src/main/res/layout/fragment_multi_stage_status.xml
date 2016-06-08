@@ -87,11 +87,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" />
 
-        <com.firstbuild.viewUtil.SquareLayout
+        <com.firstbuild.viewutil.SquareLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.firstbuild.viewUtil.gridCircleView
+            <com.firstbuild.viewutil.gridCircleView
                 android:id="@+id/circle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -158,7 +158,7 @@
             </RelativeLayout>
 
 
-        </com.firstbuild.viewUtil.SquareLayout>
+        </com.firstbuild.viewutil.SquareLayout>
 
         <TextView
             android:id="@+id/text_explanation"

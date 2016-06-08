@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.androidapp.productmanager.ProductManager;
 
 /**
  * Created by Hollis on 10/28/15.

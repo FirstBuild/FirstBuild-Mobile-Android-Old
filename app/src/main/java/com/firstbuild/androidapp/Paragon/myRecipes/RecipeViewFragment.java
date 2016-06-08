@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.paragon.myRecipes;
+package com.firstbuild.androidapp.paragon.myrecipes;
 
 
 import android.app.Activity;
@@ -17,10 +17,10 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuListView;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeManager;
+import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.viewutil.SwipeMenuListView;
 
 /**
  * A simple {@link Fragment} subclass.

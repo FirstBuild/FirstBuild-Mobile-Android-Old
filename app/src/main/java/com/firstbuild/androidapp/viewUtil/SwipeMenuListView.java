@@ -1,7 +1,6 @@
-package com.firstbuild.androidapp.viewUtil;
+package com.firstbuild.androidapp.viewutil;
 
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;

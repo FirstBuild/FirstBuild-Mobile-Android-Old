@@ -14,7 +14,7 @@
         android:layout_toLeftOf="@+id/text_add_stage"
         android:background="@drawable/ic_add_stage"/>
 
-    <com.firstbuild.viewUtil.StyledTextView
+    <com.firstbuild.viewutil.StyledTextView
         android:id="@+id/text_add_stage"
         android:layout_width="wrap_content"
         android:layout_height="40dp"

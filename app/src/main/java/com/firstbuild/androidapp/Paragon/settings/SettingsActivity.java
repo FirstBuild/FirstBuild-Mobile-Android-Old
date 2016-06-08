@@ -9,16 +9,14 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.productManager.ProductInfo;
-import com.firstbuild.androidapp.productManager.ProductManager;
+import com.firstbuild.androidapp.productmanager.ProductInfo;
+import com.firstbuild.androidapp.productmanager.ProductManager;
 
 
 public class SettingsActivity extends AppCompatActivity {
