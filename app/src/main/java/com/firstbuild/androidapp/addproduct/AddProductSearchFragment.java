@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -172,9 +173,16 @@ public abstract class AddProductSearchFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        attached = (AddProductActivity) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof AddProductActivity) {
+            attached = (AddProductActivity) context;
+        }
+        else {
+            throw new ClassCastException(context + " must be an instance of "
+                    + AddProductActivity.class.getSimpleName());
+        }
     }
 
     @Override

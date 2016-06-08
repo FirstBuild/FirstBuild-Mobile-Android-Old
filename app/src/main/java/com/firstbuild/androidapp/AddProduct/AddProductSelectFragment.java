@@ -1,6 +1,7 @@
 package com.firstbuild.androidapp.addproduct;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 
@@ -21,9 +22,16 @@ public class AddProductSelectFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        attached = (AddProductActivity) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof AddProductActivity) {
+            attached = (AddProductActivity) context;
+        }
+        else {
+            throw new ClassCastException(context + " must be an instance of "
+                    + AddProductActivity.class.getSimpleName());
+        }
     }
 
     @Override
