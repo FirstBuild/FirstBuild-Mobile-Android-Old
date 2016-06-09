@@ -1,6 +1,7 @@
-package com.firstbuild.androidapp.addProduct;
+package com.firstbuild.androidapp.addproduct;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 
@@ -10,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.productManager.ProductInfo;
+import com.firstbuild.androidapp.productmanager.ProductInfo;
 
 public class AddProductSelectFragment extends Fragment {
     private String TAG = AddProductSelectFragment.class.getSimpleName();
@@ -21,9 +22,16 @@ public class AddProductSelectFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        attached = (AddProductActivity) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof AddProductActivity) {
+            attached = (AddProductActivity) context;
+        }
+        else {
+            throw new ClassCastException(context + " must be an instance of "
+                    + AddProductActivity.class.getSimpleName());
+        }
     }
 
     @Override
@@ -61,7 +69,7 @@ public class AddProductSelectFragment extends Fragment {
 
                 getFragmentManager().
                         beginTransaction().
-                        replace(R.id.content_frame, new AddProductSearchParagonFragment()).
+                        replace(R.id.content_frame, new AddProductSearchOpalFragment()).
                         addToBackStack(null).
                         commit();
             }

@@ -7,7 +7,7 @@
     android:animateLayoutChanges="true"
     android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context="com.firstbuild.androidapp.paragon.myRecipes.RecipeEditFragment">
+    tools:context="com.firstbuild.androidapp.paragon.myrecipes.RecipeEditFragment">
 
     <!--<ScrollView-->
     <!--android:layout_width="match_parent"-->
@@ -176,7 +176,7 @@
             android:layout_height="match_parent"
             android:visibility="gone">
 
-            <com.firstbuild.androidapp.viewUtil.SwipeMenuListView
+            <com.firstbuild.androidapp.viewutil.SwipeMenuListView
                 android:id="@+id/list_stages"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.paragon.dataModel;
+package com.firstbuild.androidapp.paragon.datamodel;
 
 import android.util.Log;
 

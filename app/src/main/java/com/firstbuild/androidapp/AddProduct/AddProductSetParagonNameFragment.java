@@ -1,14 +1,13 @@
-package com.firstbuild.androidapp.addProduct;
+package com.firstbuild.androidapp.addproduct;
 
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -17,15 +16,15 @@ import android.widget.EditText;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.dashboard.DashboardActivity;
-import com.firstbuild.commonframework.bleManager.BleManager;
+import com.firstbuild.commonframework.blemanager.BleManager;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AddProductSetParagonNameFragment extends Fragment {
     private String TAG = AddProductActivity.class.getSimpleName();
-    private EditText paragonNameEditText;
-    private AddProductActivity attached = null;
+    protected EditText paragonNameEditText;
+    protected AddProductActivity attached = null;
 
     public AddProductSetParagonNameFragment() {
         // Required empty public constructor
@@ -33,10 +32,18 @@ public class AddProductSetParagonNameFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        attached = (AddProductActivity) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof AddProductActivity) {
+            attached = (AddProductActivity) context;
+        }
+        else {
+            throw new ClassCastException(context + " must be an instance of "
+                    + AddProductActivity.class.getSimpleName());
+        }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

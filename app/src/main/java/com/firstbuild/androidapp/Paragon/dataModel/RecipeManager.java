@@ -1,9 +1,6 @@
-package com.firstbuild.androidapp.paragon.dataModel;
+package com.firstbuild.androidapp.paragon.datamodel;
 
 import android.util.Log;
-
-import com.firstbuild.androidapp.ParagonValues;
-import com.firstbuild.commonframework.bleManager.BleManager;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

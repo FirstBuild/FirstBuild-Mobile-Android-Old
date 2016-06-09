@@ -1,12 +1,11 @@
-package com.firstbuild.androidapp.productManager;
+package com.firstbuild.androidapp.productmanager;
 
 import android.bluetooth.BluetoothDevice;
-import android.util.Log;
 
 import com.firstbuild.androidapp.ParagonValues;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
-import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.commonframework.bleManager.BleManager;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
+import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.commonframework.blemanager.BleManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +16,7 @@ public class ProductInfo {
 
     public static final int PRODUCT_TYPE_CILLHUB = 0;
     public static final int PRODUCT_TYPE_PARAGON = 1;
-    public static final int PRODUCT_TYPE_OPAL = 1;
+    public static final int PRODUCT_TYPE_OPAL = 2;
 
     public static final int NO_BATTERY_INFO = -1;
     public static final int NUM_MUST_INIT_DATA = 7;

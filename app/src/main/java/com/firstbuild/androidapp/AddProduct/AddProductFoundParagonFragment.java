@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.addProduct;
+package com.firstbuild.androidapp.addproduct;
 
 
 import android.app.Fragment;
@@ -10,14 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.tools.MainQueue;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AddProductFoundParagonFragment extends Fragment {
-    private String TAG = AddProductActivity.class.getSimpleName();
-    private Handler handler;
-    private Runnable runnable;
+    private String TAG = AddProductFoundParagonFragment.class.getSimpleName();
+    protected Runnable runnable;
 
 
     public AddProductFoundParagonFragment() {
@@ -31,6 +31,15 @@ public class AddProductFoundParagonFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_product_found_paragon, container, false);
 
+
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -42,11 +51,8 @@ public class AddProductFoundParagonFragment extends Fragment {
             }
         };
 
-        Log.d(TAG, "Launch 3 sec timer");
-        handler = new Handler();
-        handler.postDelayed(runnable, 3000);
-
-        return view;
+        Log.d(TAG, "Launch 5 sec timer");
+        MainQueue.postDelayed(runnable, 5000);
     }
 
     @Override
@@ -54,11 +60,7 @@ public class AddProductFoundParagonFragment extends Fragment {
         super.onResume();
         Log.d(TAG, "onResume");
 
-        if(handler == null) {
-            Log.d(TAG, "Launch 1 sec timer");
-            handler = new Handler();
-            handler.postDelayed(runnable, 1000);
-        }
+        MainQueue.postDelayed(runnable, 1000);
     }
 
 
@@ -67,9 +69,7 @@ public class AddProductFoundParagonFragment extends Fragment {
     public void onPause() {
         Log.d(TAG, "onPause");
 
-        // Cancel the runnable
-        handler.removeCallbacks(runnable);
-        handler = null;
+        MainQueue.removeCallbacks(runnable);
 
         super.onPause();
     }

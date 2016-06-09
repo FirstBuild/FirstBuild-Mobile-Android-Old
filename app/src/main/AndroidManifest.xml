@@ -50,7 +50,7 @@
             android:parentActivityName="com.firstbuild.androidapp.dashboard.DashboardActivity">
         </activity>
         <activity
-            android:name=".addProduct.AddProductActivity"
+            android:name=".addproduct.AddProductActivity"
             android:label="@string/title_activity_add_product"
             android:screenOrientation="portrait">
         </activity>

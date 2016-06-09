@@ -68,4 +68,7 @@ public class OpalValues {
     public static final String OPAL_BLE_RET_OUT_OF_RANGE = "0x80";
     public static final String OPAL_BLE_RET_WRITE_NOT_ALLOWED = "0x90";
     public static final String OPAL_BLE_RET_ILLEGAL_OTA_STATE_TRANSITION = "0xE0";
+
+    // Target device Opal's name
+    public static final String TARGET_DEVICE_NAME = "OPAL Bluetooth";
 }

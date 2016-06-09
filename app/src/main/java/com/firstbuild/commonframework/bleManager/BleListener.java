@@ -5,14 +5,10 @@
  * @date Jun/29/2015
  */
 
-package com.firstbuild.commonframework.bleManager;
+package com.firstbuild.commonframework.blemanager;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.content.Context;
-import android.content.Intent;
 
 import java.util.HashMap;
 import java.util.List;

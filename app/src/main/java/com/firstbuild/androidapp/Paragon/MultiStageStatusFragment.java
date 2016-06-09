@@ -14,13 +14,12 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.androidapp.productManager.ProductInfo;
-import com.firstbuild.androidapp.productManager.ProductManager;
-import com.firstbuild.commonframework.bleManager.BleManager;
-import com.firstbuild.viewUtil.gridCircleView;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeManager;
+import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.productmanager.ProductInfo;
+import com.firstbuild.androidapp.productmanager.ProductManager;
+import com.firstbuild.viewutil.gridCircleView;
 
 import java.nio.ByteBuffer;
 import java.util.Calendar;

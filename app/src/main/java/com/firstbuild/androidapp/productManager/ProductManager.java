@@ -1,17 +1,12 @@
-package com.firstbuild.androidapp.productManager;
+package com.firstbuild.androidapp.productmanager;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.firstbuild.androidapp.FirstBuildApplication;
 import com.firstbuild.androidapp.ParagonValues;
-import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.MultiStageStatusFragment;
-import com.firstbuild.androidapp.paragon.OtaManager;
-import com.firstbuild.androidapp.paragon.SousvideStatusFragment;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;

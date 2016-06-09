@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeInfo;
-import com.firstbuild.androidapp.paragon.dataModel.BuiltInRecipeSettingsInfo;
+import com.firstbuild.androidapp.paragon.datamodel.BuiltInRecipeInfo;
+import com.firstbuild.androidapp.paragon.datamodel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.helper.SelectModeAdapter;
 
 import java.util.ArrayList;

@@ -125,13 +125,18 @@
 
     <!-- Add appliance -->
     <string name="searching_your_paragon">Searching for your Paragon\nThis might take a few minutes</string>
+    <string name="searching_your_opal">Searching for your Opal\nThis might take a few minutes</string>
     <string name="select_product_below">Select a product below to set-up\nand add it to your home screen</string>
     <string name="got_it">Got it!</string>
     <string name="we_found_your_paragon">We found your Paragon</string>
+    <string name="we_found_your_device">We found your device.</string>
     <string name="connection_error">Connection Error</string>
     <string name="connection_error_explanation">We were unable to connect to Paragon.\nPlease try again</string>
+    <string name="connection_error_explanation_opal">We were unable to connect to Opal.\nPlease try again</string>
     <string name="name_your_paragon">Name your Paragon</string>
+    <string name="name_your_opal">Name your Opal</string>
     <string name="name_your_paragon_explanation">This is how your Paragon will appear\nin the list. You can change it later.</string>
+    <string name="name_your_opal_explanation">This is how your Opal will appear\nin the list. You can change it later.</string>
     <string name="urlFistBuild">http://market.firstbuild.com/</string>
     <string name="popup_food_warning_title">WARNING</string>
     <string name="popup_food_warning_content">\u2022 Consuming unpasteurized foods can increase your risk of foodbourne illness.\n\n\u2022 Sous vide cooking often involves temperatures below FDA recommended safe minimum cooking temperatures, but can still be safe when done for the correct amount of time as long as the temperature remains above 54°C (130°F).\n\n\u2022 Several factors impact the time required to pasteurize foods, including cooking temperature, initial food temperature, food thickness, and food preparation.\n\n\u2022 Follow all proper instructions related to preparation, cooking including time and temperature requirements and storage during sous vide cooking to prevent foodbourne illness caused by harmful bacteria.\n\n\u2022 Discard food if it has been at temperatures in the FDA Danger Zone (4°C (40°F) to 60°C (140°F) for more than four hours. Cool foods quickly using an ice bath if not consuming directly after cooking.</string>
@@ -140,4 +145,6 @@
     <string name="product_state_cooking">Cooking</string>
     <string name="add_product_screen_title">ADD PRODUCT</string>
     <string name="product_name_opal">Opal</string>
+    <string name="default_product_name_opal">My Opal</string>
+
 </resources>

@@ -5,7 +5,7 @@
  * @date Jun/29/2015
  */
 
-package com.firstbuild.commonframework.bleManager;
+package com.firstbuild.commonframework.blemanager;
 
 public class BleValues {
 

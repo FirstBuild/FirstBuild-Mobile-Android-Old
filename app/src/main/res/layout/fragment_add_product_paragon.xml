@@ -13,7 +13,7 @@
         android:background="@android:color/white"
         android:layout_marginTop="0dp">
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
             android:id="@+id/textMyProducts"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
             style="@style/add_product_plus_icon"
             android:src="@drawable/img_plus"/>
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
             style="@style/add_product_item_text"
             android:text="ChillHub"
             android:layout_toRightOf="@+id/add_product_chillhub_plus_icon"/>
@@ -68,7 +68,7 @@
             style="@style/add_product_plus_icon"
             android:src="@drawable/img_plus"/>
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
             style="@style/add_product_item_text"
             android:text="Paragon"
             android:layout_toRightOf="@+id/add_product_Paragon_plus_icon"/>
@@ -93,7 +93,7 @@
             style="@style/add_product_plus_icon"
             android:src="@drawable/img_plus"/>
 
-        <com.firstbuild.viewUtil.StyledTextView
+        <com.firstbuild.viewutil.StyledTextView
             style="@style/add_product_item_text"
             android:text="@string/product_name_opal"
             android:layout_toRightOf="@+id/add_product_opal_plus_icon"/>

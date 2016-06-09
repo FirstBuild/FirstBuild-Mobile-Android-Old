@@ -1,4 +1,4 @@
-package com.firstbuild.androidapp.paragon.myRecipes;
+package com.firstbuild.androidapp.paragon.myrecipes;
 
 
 import android.app.Activity;
@@ -22,13 +22,13 @@ import android.widget.Toast;
 
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeInfo;
-import com.firstbuild.androidapp.paragon.dataModel.RecipeManager;
-import com.firstbuild.androidapp.paragon.dataModel.StageInfo;
-import com.firstbuild.androidapp.viewUtil.SwipeMenu;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuCreator;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuItem;
-import com.firstbuild.androidapp.viewUtil.SwipeMenuListView;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
+import com.firstbuild.androidapp.paragon.datamodel.RecipeManager;
+import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.viewutil.SwipeMenu;
+import com.firstbuild.androidapp.viewutil.SwipeMenuCreator;
+import com.firstbuild.androidapp.viewutil.SwipeMenuItem;
+import com.firstbuild.androidapp.viewutil.SwipeMenuListView;
 
 /**
  * A simple {@link Fragment} subclass.

@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.firstbuild.androidapp.ParagonValues;
-import com.firstbuild.commonframework.bleManager.BleManager;
-
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
