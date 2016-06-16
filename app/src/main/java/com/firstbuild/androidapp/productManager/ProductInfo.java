@@ -1,8 +1,11 @@
 package com.firstbuild.androidapp.productmanager;
 
 import android.bluetooth.BluetoothDevice;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.firstbuild.androidapp.ParagonValues;
+import com.firstbuild.androidapp.dashboard.DashboardActivity;
 import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
 import com.firstbuild.commonframework.blemanager.BleManager;
@@ -11,109 +14,61 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
-public class ProductInfo {
+public abstract class ProductInfo {
+
+    private static String TAG = ProductInfo.class.getSimpleName();
 
     public static final int PRODUCT_TYPE_CILLHUB = 0;
     public static final int PRODUCT_TYPE_PARAGON = 1;
     public static final int PRODUCT_TYPE_OPAL = 2;
 
-    public static final int NO_BATTERY_INFO = -1;
-    public static final int NUM_MUST_INIT_DATA = 7;
-
     public static final byte INITIAL_VALUE = 0x0f;
     public static final int INITIAL_ELAPSED_TIME = 0xffff;
-    private static String TAG = ProductInfo.class.getSimpleName();
-    //type can be Paragon and Chilhub so far.
+
+    public static final String KEY_PRODUCT_TYPE = "type";
+    public static final String KEY_PRODUCT_NICKNAME = "nickname";
+    public static final String KEY_PRODUCT_ADDRESS = "address";
+
+    //product type
     public int type = -1;
     public String address = "";
     public String nickname = "";
     public BluetoothDevice bluetoothDevice = null;
+
     //properties get from device.
-    private boolean isConnected = false;
+    protected boolean isConnected = false;
 
-    // Initial data must get from dashboard.
-    private int erdBatteryLevel = NO_BATTERY_INFO;
-    private byte erdBurnerStatus = INITIAL_VALUE;
-    private byte erdProbeConnectionStatue = INITIAL_VALUE;
-    private byte erdCurrentCookMode = INITIAL_VALUE;
-    private RecipeInfo erdRecipeConfig = null;
-    private byte erdCookState = INITIAL_VALUE;
-    private int erdElapsedTime = INITIAL_ELAPSED_TIME;
+    protected boolean isAllMustDataReceived = false;
 
-    private float erdCurrentTemp;
-    private byte erdCookStage;
-    private byte erdPowerLevel = 0;
-    private byte versionMajor = 0;
-    private byte versionMinor = 0;
-    private short versionBuild = 0;
+    protected int NUM_MUST_INIT_DATA = -1;
 
-
-    private boolean isAllMustDataReceived = false;
-
+    protected ArrayList<String> mustHaveUUIDList = new ArrayList<>();
+    protected ArrayList<String> mustHaveNotificationUUIDList = new ArrayList<>();
 
     public boolean isAllMustDataReceived() {
         return isAllMustDataReceived;
     }
 
-    public void initMustData(){
-        erdBatteryLevel = NO_BATTERY_INFO;
-        erdBurnerStatus = INITIAL_VALUE;
-        erdProbeConnectionStatue = INITIAL_VALUE;
-        erdCurrentCookMode = INITIAL_VALUE;
-        erdRecipeConfig = null;
-        erdCookState = INITIAL_VALUE;
+    public abstract void initMustData();
 
-        isAllMustDataReceived = false;
-    }
+    public abstract int getMustDataStatus();
 
-    public int getMustDataStatus(){
-        int numGetData = 0;
+    public abstract int getNumMustInitData();
 
-        if(erdBatteryLevel != NO_BATTERY_INFO){
-            numGetData++;
-        }
+    public abstract void updateErd(String uuid, byte[] value);
 
-        if(erdBurnerStatus != INITIAL_VALUE){
-            numGetData++;
-        }
+    public abstract void updateDashboardItemUI(DashboardActivity.ProductListAdapter.ViewHolder holderDashboard);
 
-        if(erdProbeConnectionStatue != INITIAL_VALUE){
-            numGetData++;
-        }
+    public abstract ArrayList<String> getMustHaveUUIDList();
 
-        if(erdCurrentCookMode != INITIAL_VALUE){
-            numGetData++;
-        }
-
-        if(erdRecipeConfig != null ){
-            numGetData++;
-        }
-
-        if(erdCookState != INITIAL_VALUE){
-            numGetData++;
-        }
-
-        if(erdElapsedTime != INITIAL_ELAPSED_TIME){
-            numGetData++;
-        }
-
-        if(numGetData == NUM_MUST_INIT_DATA){
-            isAllMustDataReceived = true;
-        }
-        else{
-            isAllMustDataReceived = false;
-        }
-
-        return numGetData;
-    }
-
+    public abstract ArrayList<String> getMustHaveNotificationUUIDList();
 
     public ProductInfo(int type, String address, String nickname) {
         this.address = address;
         this.nickname = nickname;
         this.type = type;
-        this.erdBatteryLevel = -1;
         this.isConnected = false;
     }
 
@@ -121,22 +76,20 @@ public class ProductInfo {
         this.type = product.type;
         this.address = product.address;
         this.nickname = product.nickname;
-        this.erdBatteryLevel = -1;
         this.isConnected = false;
     }
 
     public ProductInfo(JSONObject jsonObject) {
 
         try {
-            this.type = jsonObject.getInt("type");
+            this.type = jsonObject.getInt(KEY_PRODUCT_TYPE);
         }
         catch (JSONException e) {
-            this.type = PRODUCT_TYPE_PARAGON;
+            Log.e(TAG, e.toString());
         }
 
-
         try {
-            this.nickname = jsonObject.getString("nickname");
+            this.nickname = jsonObject.getString(KEY_PRODUCT_NICKNAME);
 
         }
         catch (JSONException e) {
@@ -145,7 +98,7 @@ public class ProductInfo {
 
 
         try {
-            this.address = jsonObject.getString("address");
+            this.address = jsonObject.getString(KEY_PRODUCT_ADDRESS);
 
         }
         catch (JSONException e) {
@@ -160,9 +113,9 @@ public class ProductInfo {
         JSONObject object = new JSONObject();
 
         try {
-            object.put("type", type);
-            object.put("nickname", nickname);
-            object.put("address", address);
+            object.put(KEY_PRODUCT_TYPE, type);
+            object.put(KEY_PRODUCT_NICKNAME, nickname);
+            object.put(KEY_PRODUCT_ADDRESS, address);
 
         }
         catch (JSONException e) {
@@ -182,163 +135,31 @@ public class ProductInfo {
     public void disconnected() {
         if (this.isConnected == true) {
             this.isConnected = false;
-            this.erdProbeConnectionStatue = ParagonValues.PROBE_NOT_CONNECT;
-            this.erdBatteryLevel = NO_BATTERY_INFO;
-            this.erdCurrentTemp = 0.0f;
-            this.erdElapsedTime = 0;
-            this.erdRecipeConfig = null;
-            this.erdBurnerStatus = INITIAL_VALUE;
-            this.erdCookState = INITIAL_VALUE;
-            this.erdCookStage = INITIAL_VALUE;
-            this.erdCurrentCookMode = INITIAL_VALUE;
-            this.erdElapsedTime = INITIAL_ELAPSED_TIME;
         }
     }
-
-    public void sendRecipeConfig() {
-        ByteBuffer valueBuffer = ByteBuffer.allocate(40);
-
-        int numStage = this.erdRecipeConfig.numStage();
-
-        for (int i = 0; i < numStage; i++) {
-            StageInfo stage = this.erdRecipeConfig.getStage(i);
-
-            valueBuffer.put(8 * i, (byte) stage.getSpeed());
-            valueBuffer.putShort(1 + 8 * i, (short) (stage.getTime()));
-            valueBuffer.putShort(3 + 8 * i, (short) (stage.getMaxTime()));
-            valueBuffer.putShort(5 + 8 * i, (short) (stage.getTemp() * 100));
-            valueBuffer.put(7 + 8 * i, (byte) (stage.isAutoTransition() ? 0x01 : 0x02));
-        }
-
-//        for (int i = 0; i < 40; i++) {
-//            Log.d(TAG, "RecipeManager.sendCurrentStages:" + String.format("0x%02x", valueBuffer.array()[i]));
-//        }
-
-        BleManager.getInstance().writeCharacteristics(bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, valueBuffer.array());
-    }
-
-
-    public void createRecipeConfigForSousVide() {
-        this.erdRecipeConfig = new RecipeInfo("", "", "", "");
-        this.erdRecipeConfig.setType(RecipeInfo.TYPE_SOUSVIDE);
-        this.erdRecipeConfig.addStage(new StageInfo());
-    }
-
-
 
     public boolean isConnected() {
         return isConnected;
     }
 
+    public static ProductInfo buildProductInfo(JSONObject productObject) throws JSONException {
 
-    public float getErdCurrentTemp() {
-        return erdCurrentTemp;
-    }
+        int type = productObject.getInt(ProductInfo.KEY_PRODUCT_TYPE);
 
-    public void setErdCurrentTemp(short erdCurrentTemp) {
-        this.erdCurrentTemp = (erdCurrentTemp / 100.0f);
-    }
+        ProductInfo ret = null;
 
-    public int getErdElapsedTime() {
-        return erdElapsedTime;
-    }
-
-    public void setErdElapsedTime(int erdRemainingTime) {
-        this.erdElapsedTime = erdRemainingTime;
-    }
-
-    public RecipeInfo getErdRecipeConfig() {
-        return erdRecipeConfig;
-    }
-
-    public void setErdRecipeConfig(RecipeInfo erdRecipeConfig) {
-        this.erdRecipeConfig = erdRecipeConfig;
-    }
-
-    public byte getErdBurnerStatus() {
-        return erdBurnerStatus;
-    }
-
-    public void setErdBurnerStatus(byte erdBurnerStatus) {
-        this.erdBurnerStatus = erdBurnerStatus;
-    }
-
-    public byte getErdCookState() {
-        return erdCookState;
-    }
-
-    public void setErdCookState(byte erdCookState) {
-        this.erdCookState = erdCookState;
-    }
-
-    public byte getErdCookStage() {
-        return erdCookStage;
-    }
-
-    public void setErdCookStage(byte erdCookStage) {
-        this.erdCookStage = erdCookStage;
-    }
-
-    public byte getErdCurrentCookMode() {
-        return erdCurrentCookMode;
-    }
-
-    public void setErdCurrentCookMode(byte erdCurrentCookMode) {
-        this.erdCurrentCookMode = erdCurrentCookMode;
-    }
-
-    public int getErdBatteryLevel() {
-        return erdBatteryLevel;
-    }
-
-    public void setErdBatteryLevel(int erdBatteryLevel) {
-        this.erdBatteryLevel = erdBatteryLevel;
-    }
-
-    public byte getErdProbeConnectionStatue() {
-        return erdProbeConnectionStatue;
-    }
-
-    public void setErdProbeConnectionStatue(byte erdProbeConnectionStatue) {
-        this.erdProbeConnectionStatue = erdProbeConnectionStatue;
-    }
-
-    public boolean isProbeConnected() {
-        return (this.erdProbeConnectionStatue == ParagonValues.PROBE_CONNECT);
-    }
-
-    public void setErdPowerLevel(byte erdPowerLevel) {
-        this.erdPowerLevel = erdPowerLevel;
-    }
-
-    public byte getErdPowerLevel() {
-        return erdPowerLevel;
-    }
-
-    public void setErdVersion(byte major, byte minor, short build) {
-        this.versionMajor = major;
-        this.versionMinor = minor;
-        this.versionBuild = build;
-    }
-
-    public byte getVersionMajor() {
-        return versionMajor;
-    }
-
-    public byte getVersionMinor() {
-        return versionMinor;
-    }
-
-    public short getVersionBuild() {
-        return versionBuild;
-    }
-
-    public boolean isReceivedVersion() {
-        if(versionMajor == 0 && versionMinor == 0 && versionBuild == 0){
-            return false;
+        switch(type) {
+            case ProductInfo.PRODUCT_TYPE_OPAL:
+                ret = new OpalInfo(productObject);
+                break;
+            case ProductInfo.PRODUCT_TYPE_PARAGON:
+                ret = new ParagonInfo(productObject);
+                break;
+            default:
+                break;
         }
-        else{
-            return true;
-        }
+
+        return ret;
+
     }
 }

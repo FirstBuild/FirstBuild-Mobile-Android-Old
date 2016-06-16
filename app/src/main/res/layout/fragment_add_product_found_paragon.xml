@@ -16,7 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="200dp"
             android:layout_marginTop="50dp"
-            android:src="@drawable/img_got_it"/>
+            android:src="@drawable/img_got_it"
+            android:layout_centerHorizontal="true" />
 
         <com.firstbuild.viewutil.StyledTextView
             android:id="@+id/text_got_it"

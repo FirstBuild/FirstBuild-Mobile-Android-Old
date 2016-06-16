@@ -17,6 +17,7 @@ import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.datamodel.RecipeManager;
 import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 import com.firstbuild.viewutil.gridCircleView;
@@ -153,7 +154,8 @@ public class MultiStageStatusFragment extends Fragment {
      *
      */
     public void updateCookState() {
-        byte state = ProductManager.getInstance().getCurrent().getErdCookState();
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
+        byte state = productInfo.getErdCookState();
         Log.d(TAG, "updateCookState IN " + state);
 
         switch (state) {
@@ -340,7 +342,8 @@ public class MultiStageStatusFragment extends Fragment {
 
         if (cookState == MULTI_STAGE_COOK_STATE.STATE_HEAT_COOL) {
 
-            int currentTemp = Math.round(ProductManager.getInstance().getCurrent().getErdCurrentTemp());
+            ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
+            int currentTemp = Math.round(productInfo.getErdCurrentTemp());
             int targetTep = stageInfo.getTemp();
 
             if(currentTemp < targetTep){
@@ -368,7 +371,7 @@ public class MultiStageStatusFragment extends Fragment {
      *
      */
     public void updateUiElapsedTime() {
-        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
         int elapsedTime = productInfo.getErdElapsedTime();
 
         Log.d(TAG, "updateUiElapsedTime :" + elapsedTime);
@@ -393,7 +396,8 @@ public class MultiStageStatusFragment extends Fragment {
      * Udate new stage get from BLE master.
      */
     public void updateCookStage() {
-        int newStage = ProductManager.getInstance().getCurrent().getErdCookStage();
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
+        int newStage = productInfo.getErdCookStage();
         RecipeManager.getInstance().setCurrentStage(newStage-1);
 
         attached.setTitle("Stage "+newStage);

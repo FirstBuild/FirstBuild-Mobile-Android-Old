@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 
 /**
@@ -50,7 +51,8 @@ public class CompleteFragment extends Fragment {
 
 
     public void onCookModeChanged(){
-        byte cookMode = ProductManager.getInstance().getCurrent().getErdCurrentCookMode();
+        ParagonInfo paragonInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
+        byte cookMode = paragonInfo.getErdCurrentCookMode();
 
         if(cookMode == ParagonValues.CURRENT_COOK_MODE_OFF ||
                 cookMode == ParagonValues.CURRENT_COOK_MODE_DIRECT){

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 
@@ -85,7 +86,9 @@ public class GetReadyFragment extends Fragment {
     }
 
     public void onCookModeChanged(){
-        byte cookMode = ProductManager.getInstance().getCurrent().getErdCurrentCookMode();
+
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
+        byte cookMode = productInfo.getErdCurrentCookMode();
 
         if(cookMode == ParagonValues.CURRENT_COOK_MODE_OFF ||
                 cookMode == ParagonValues.CURRENT_COOK_MODE_DIRECT){

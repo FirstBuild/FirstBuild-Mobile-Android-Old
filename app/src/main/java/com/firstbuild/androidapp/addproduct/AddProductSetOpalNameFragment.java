@@ -28,10 +28,11 @@ public class AddProductSetOpalNameFragment extends AddProductSetParagonNameFragm
 
 
         // // TODO: hans 16. 6. 8. replace logo image
-        ((ImageView)view.findViewById(R.id.image_name_your_paragon)).setImageResource(R.drawable.ic_opal_logo);
+        ((ImageView)view.findViewById(R.id.image_name_your_paragon)).setImageResource(R.drawable.img_hello_opal);
         ((TextView)view.findViewById(R.id.text_name_your_paragon)).setText(R.string.name_your_opal);
         ((TextView)view.findViewById(R.id.text_name_your_paragon_explanation)).setText(R.string.name_your_opal_explanation);
-        ((EditText)view.findViewById(R.id.edit_paragon_name)).setHint(R.string.default_product_name_opal);
+        ((EditText)view.findViewById(R.id.edit_paragon_name)).setText(R.string.default_product_name);
+        ((EditText)view.findViewById(R.id.edit_paragon_name)).setHint(R.string.default_product_name);
 
         // Override click behavior
         view.findViewById(R.id.button_add_product_complete).setOnClickListener(new View.OnClickListener() {

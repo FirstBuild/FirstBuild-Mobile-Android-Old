@@ -1,5 +1,6 @@
 package com.firstbuild.androidapp.addproduct;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +15,10 @@ import com.firstbuild.tools.MainQueue;
 /**
  * Created by hans on 16. 6. 8..
  */
-public class AddProductFoundOpalFragment extends AddProductFoundParagonFragment {
+public class AddProductFoundOpalFragment extends Fragment {
 
     private String TAG = AddProductFoundOpalFragment.class.getSimpleName();
+    private Runnable runnable;
 
     public AddProductFoundOpalFragment() {
         // Required empty public constructor
@@ -25,10 +27,9 @@ public class AddProductFoundOpalFragment extends AddProductFoundParagonFragment 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view =  super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_add_product_found_paragon, container, false);
 
-        // TODO: hans 16. 6. 8. replace opal image with below
-        ((ImageView)view.findViewById(R.id.image_got_it)).setImageResource(R.drawable.img_robot_without_text);
+        ((ImageView)view.findViewById(R.id.image_got_it)).setImageResource(R.drawable.img_opal_got_it);
         ((TextView)view.findViewById(R.id.add_product_pairing_success_description)).setText(R.string.we_found_your_device);
 
         return view;
@@ -36,6 +37,7 @@ public class AddProductFoundOpalFragment extends AddProductFoundParagonFragment 
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         runnable = new Runnable() {
             @Override
@@ -51,4 +53,24 @@ public class AddProductFoundOpalFragment extends AddProductFoundParagonFragment 
         Log.d(TAG, "Launch 5 sec timer");
         MainQueue.postDelayed(runnable, 5000);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+
+        MainQueue.postDelayed(runnable, 1000);
+    }
+
+
+
+    @Override
+    public void onPause() {
+        Log.d(TAG, "onPause");
+
+        MainQueue.removeCallbacks(runnable);
+
+        super.onPause();
+    }
+
 }

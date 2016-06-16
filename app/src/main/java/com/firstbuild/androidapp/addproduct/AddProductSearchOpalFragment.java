@@ -25,7 +25,7 @@ public class AddProductSearchOpalFragment extends AddProductSearchFragment {
         View view =  super.onCreateView(inflater, container, savedInstanceState);
 
         ((TextView)view.findViewById(R.id.search_description)).setText(R.string.searching_your_opal);
-        ((ImageView)view.findViewById(R.id.imgParagonLogo)).setImageResource(R.drawable.ic_opal_logo);
+        ((ImageView)view.findViewById(R.id.imgParagonLogo)).setImageResource(R.drawable.img_opal_logo_gray);
 
         return view;
     }

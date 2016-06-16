@@ -113,9 +113,9 @@ public class AddProductActivity extends AppCompatActivity {
         }
     }
 
-    public void createNewProduct(int productTypeParagon) {
+    public void setNewProduct(ProductInfo productTypeParagon) {
 
-        newProduct = new ProductInfo(productTypeParagon, "", "");
+        newProduct = productTypeParagon;
     }
 
     public void setNewProductNickname(String nickName) {
