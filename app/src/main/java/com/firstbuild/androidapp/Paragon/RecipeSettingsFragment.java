@@ -18,6 +18,7 @@ import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.datamodel.BuiltInRecipeSettingsInfo;
 import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 
@@ -285,7 +286,7 @@ public class RecipeSettingsFragment extends Fragment {
 
     public void sendRecipeConfig() {
 
-        ProductInfo product = ProductManager.getInstance().getCurrent();
+        ParagonInfo product = (ParagonInfo)ProductManager.getInstance().getCurrent();
 
         RecipeInfo recipeConfig = new RecipeInfo("", "", "", "");
         recipeConfig.setType(RecipeInfo.TYPE_SOUSVIDE);

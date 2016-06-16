@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.productmanager.OpalInfo;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 
 public class AddProductSelectFragment extends Fragment {
@@ -50,7 +52,7 @@ public class AddProductSelectFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick pressed");
 
-                attached.createNewProduct(ProductInfo.PRODUCT_TYPE_PARAGON);
+                attached.setNewProduct(new ParagonInfo(ProductInfo.PRODUCT_TYPE_PARAGON, "", ""));
 
                 getFragmentManager().
                         beginTransaction().
@@ -65,7 +67,7 @@ public class AddProductSelectFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick pressed");
 
-                attached.createNewProduct(ProductInfo.PRODUCT_TYPE_OPAL);
+                attached.setNewProduct(new OpalInfo(ProductInfo.PRODUCT_TYPE_OPAL, "", ""));
 
                 getFragmentManager().
                         beginTransaction().

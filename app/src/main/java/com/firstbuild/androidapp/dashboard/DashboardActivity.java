@@ -97,18 +97,26 @@ public class DashboardActivity extends AppCompatActivity {
             if (productInfo != null && status == BluetoothProfile.STATE_DISCONNECTED) {
                 productInfo.disconnected();
 
-                new Thread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapterDashboard.notifyDataSetChanged();
-                                listViewProduct.invalidateViews();
-                            }
-                        });
+                        adapterDashboard.notifyDataSetChanged();
+                        listViewProduct.invalidateViews();
                     }
-                }).start();
+                });
+
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                adapterDashboard.notifyDataSetChanged();
+//                                listViewProduct.invalidateViews();
+//                            }
+//                        });
+//                    }
+//                }).start();
 
 
                 checkBleTurnOn();
@@ -129,18 +137,26 @@ public class DashboardActivity extends AppCompatActivity {
 
                 requestMustHaveData(productInfo);
 
-                new Thread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapterDashboard.notifyDataSetChanged();
-                                listViewProduct.invalidateViews();
-                            }
-                        });
+                        adapterDashboard.notifyDataSetChanged();
+                        listViewProduct.invalidateViews();
                     }
-                }).start();
+                });
+
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                adapterDashboard.notifyDataSetChanged();
+//                                listViewProduct.invalidateViews();
+//                            }
+//                        });
+//                    }
+//                }).start();
             }
         }
 
@@ -288,23 +304,16 @@ public class DashboardActivity extends AppCompatActivity {
      */
     private void requestMustHaveData(ProductInfo productInfo) {
         if (productInfo.bluetoothDevice != null) {
-            BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE);
-            BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL);
-            BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS);
-            BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE);
-            BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION);
-            BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE);
-            BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME);
 
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION, true);
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BURNER_STATUS, true);
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_BATTERY_LEVEL, true);
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE, true);
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_COOK_MODE, true);
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE, true);
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE, true);
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_ELAPSED_TIME, true);
-            BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, ParagonValues.CHARACTERISTIC_CURRENT_POWER_LEVEL, true);
+            // read must have characteristics
+            for(String uuid : productInfo.getMustHaveUUIDList()) {
+                BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, uuid);
+            }
+
+            // set must-have-notification characteristics
+            for(String uuid : productInfo.getMustHaveNotificationUUIDList()) {
+                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, uuid, true);
+            }
         }
 
     }
@@ -491,7 +500,7 @@ public class DashboardActivity extends AppCompatActivity {
      */
     public void onItemClicked(int position) {
 
-        ProductManager.getInstance().setCurrent(position);
+//        ProductManager.getInstance().setCurrent(position);
         ProductInfo productInfo = adapterDashboard.getItem(position);
 
         if (productInfo.isConnected() && productInfo.isAllMustDataReceived()) {
@@ -624,26 +633,13 @@ public class DashboardActivity extends AppCompatActivity {
 
             if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.adapter_product_card_view, null);
-                new ViewHolder(convertView);
+                convertView.setTag(new ViewHolder(convertView));
             }
             ViewHolder holderDashboard = (ViewHolder) convertView.getTag();
             ProductInfo currentProduct = getItem(position);
 
-
-            if (currentProduct.type == ProductInfo.PRODUCT_TYPE_CILLHUB) {
-                holderDashboard.imageLogo.setImageResource(R.drawable.ic_paragon_logo);
-                holderDashboard.imageMark.setImageResource(R.drawable.ic_paragon_mark);
-            }
-            else if (currentProduct.type == ProductInfo.PRODUCT_TYPE_PARAGON) {
-                holderDashboard.imageLogo.setImageResource(R.drawable.ic_paragon_logo);
-                holderDashboard.imageMark.setImageResource(R.drawable.ic_paragon_mark);
-
-            }
-            else {
-                // do nothing.
-            }
-
             holderDashboard.textNickname.setText(currentProduct.nickname);
+
             int numMustData = currentProduct.getMustDataStatus();
             Log.d(TAG, "numMustData :" + numMustData);
 
@@ -655,7 +651,7 @@ public class DashboardActivity extends AppCompatActivity {
                 }
                 else {
                     holderDashboard.progressBar.setIndeterminate(false);
-                    holderDashboard.progressBar.setMax(ProductInfo.NUM_MUST_INIT_DATA);
+                    holderDashboard.progressBar.setMax(currentProduct.getNumMustInitData());
                     holderDashboard.progressBar.setProgress(numMustData);
 
                     holderDashboard.layoutProgress.setVisibility(View.VISIBLE);
@@ -668,56 +664,23 @@ public class DashboardActivity extends AppCompatActivity {
                 holderDashboard.layoutStatus.setVisibility(View.GONE);
             }
 
-
-            if (currentProduct.isProbeConnected()) {
-
-                holderDashboard.imageBattery.setVisibility(View.VISIBLE);
-
-                int level = currentProduct.getErdBatteryLevel();
-
-                if (level > 75) {
-                    holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_100);
-                }
-                else if (level > 25) {
-                    holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_50);
-                }
-                else if (level > 15) {
-                    holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_25);
-                }
-                else {
-                    holderDashboard.imageBattery.setImageResource(R.drawable.ic_battery_15);
-                }
-
-                String batteryLevel = level + "%";
-                holderDashboard.textBattery.setText(batteryLevel);
-            }
-            else {
-                holderDashboard.textBattery.setText("probe\noffline");
-                holderDashboard.imageBattery.setVisibility(View.GONE);
-            }
-
-            if (currentProduct.getErdBurnerStatus() == ParagonValues.BURNER_STATE_START) {
-                holderDashboard.textCooking.setText(R.string.product_state_cooking);
-            }
-            else {
-                holderDashboard.textCooking.setText("");
-            }
-
+            // Let each productInfo instance handle product specific UI update
+            currentProduct.updateDashboardItemUI(holderDashboard);
 
             return convertView;
         }
 
 
-        class ViewHolder {
-            private ImageView imageMark;
-            private ImageView imageLogo;
-            private TextView textNickname;
-            private TextView textCooking;
-            private TextView textBattery;
-            private ImageView imageBattery;
-            private View layoutProgress;
-            private View layoutStatus;
-            private ProgressBar progressBar;
+        public class ViewHolder {
+            public ImageView imageMark;
+            public ImageView imageLogo;
+            public TextView textNickname;
+            public TextView textCooking;
+            public TextView textBattery;
+            public ImageView imageBattery;
+            public View layoutProgress;
+            public View layoutStatus;
+            public ProgressBar progressBar;
 
             public ViewHolder(View view) {
                 imageMark = (ImageView) view.findViewById(R.id.image_mark);

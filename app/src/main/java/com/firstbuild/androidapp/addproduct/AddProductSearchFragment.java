@@ -63,7 +63,7 @@ public abstract class AddProductSearchFragment extends Fragment {
                 Log.d(TAG, "Device name: " + name);
                 Log.d(TAG, "Device Bond state: " + device.getBondState());
 
-                if (getCurrentProductDefaultName().contains(name)) {
+                if (name.contains(getCurrentProductDefaultName())) {
                     Log.d(TAG, "device found: " + device.getName());
                     boolean isFound = false;
 

@@ -16,6 +16,7 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
 import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 
@@ -283,7 +284,7 @@ public class QuickStartFragment extends Fragment {
         int temp = Integer.parseInt(tempValue);
 
 
-        ProductInfo product = ProductManager.getInstance().getCurrent();
+        ParagonInfo product = (ParagonInfo)ProductManager.getInstance().getCurrent();
 
         RecipeInfo recipeConfig = new RecipeInfo("", "", "", "");
         recipeConfig.setType(RecipeInfo.TYPE_SOUSVIDE);

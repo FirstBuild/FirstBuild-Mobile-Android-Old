@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 import com.firstbuild.commonframework.blemanager.BleManager;
@@ -120,7 +121,7 @@ public class SousvideStatusFragment extends Fragment {
         });
 
 
-        ProductInfo product = ProductManager.getInstance().getCurrent();
+        ParagonInfo product = (ParagonInfo)ProductManager.getInstance().getCurrent();
         previousCookState = product.getErdCookState();
 
         initialTemp = product.getErdCurrentTemp();
@@ -136,7 +137,7 @@ public class SousvideStatusFragment extends Fragment {
      * Update cooking state, Off -> Heating -> Ready -> Cooking -> Done
      */
     public void updateCookState() {
-        ProductInfo product = ProductManager.getInstance().getCurrent();
+        ParagonInfo product = (ParagonInfo)ProductManager.getInstance().getCurrent();
         byte state = product.getErdCookState();
         StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
         int time = 0;
@@ -300,8 +301,9 @@ public class SousvideStatusFragment extends Fragment {
      * Update UI current temperature compare with set temperature.r
      */
     public void updateUiCurrentTemp() {
-        StageInfo stageInfo = ProductManager.getInstance().getCurrent().getErdRecipeConfig().getStage(0);
-        ProductInfo product = ProductManager.getInstance().getCurrent();
+        ParagonInfo product = (ParagonInfo)ProductManager.getInstance().getCurrent();
+        StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
+
         byte state = product.getErdCookState();
 
         if (state == ParagonValues.COOK_STATE_HEATING)  {
@@ -347,12 +349,12 @@ public class SousvideStatusFragment extends Fragment {
      */
     public void updateUiElapsedTime() {
 
-        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
-        int elapsedTime = productInfo.getErdElapsedTime();
-        byte state = productInfo.getErdCookState();
+        ParagonInfo product = (ParagonInfo)ProductManager.getInstance().getCurrent();
+        int elapsedTime = product.getErdElapsedTime();
+        byte state = product.getErdCookState();
 
         Log.d(TAG, "updateUiElapsedTime :" + elapsedTime);
-        StageInfo stageInfo = ProductManager.getInstance().getCurrent().getErdRecipeConfig().getStage(0);
+        StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
 
         if (state == ParagonValues.COOK_STATE_COOKING) {
             float ratioTime = (float) elapsedTime / (float) stageInfo.getTime();
@@ -416,7 +418,7 @@ public class SousvideStatusFragment extends Fragment {
 
 
     public void updateCookConfig() {
-        ProductInfo product = ProductManager.getInstance().getCurrent();
+        ParagonInfo product = (ParagonInfo)ProductManager.getInstance().getCurrent();
         StageInfo stageInfo = product.getErdRecipeConfig().getStage(0);
 
         textTempTarget.setText(Html.fromHtml("Target: " + stageInfo.getTemp() + "<small>℉</small>"));

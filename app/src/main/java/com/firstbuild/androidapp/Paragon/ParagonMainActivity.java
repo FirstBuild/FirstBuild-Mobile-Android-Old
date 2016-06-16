@@ -43,6 +43,7 @@ import com.firstbuild.androidapp.paragon.myrecipes.RecipeEditFragment;
 import com.firstbuild.androidapp.paragon.myrecipes.RecipeViewFragment;
 import com.firstbuild.androidapp.paragon.navigation.NavigationDrawerFragment;
 import com.firstbuild.androidapp.paragon.settings.SettingsActivity;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 import com.firstbuild.commonframework.blemanager.BleListener;
@@ -253,7 +254,7 @@ public class ParagonMainActivity extends AppCompatActivity {
             return;
         }
 
-        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
         if (productInfo == null) {
             Log.d(TAG, "productInfo is null");
             return;
@@ -569,7 +570,7 @@ public class ParagonMainActivity extends AppCompatActivity {
      */
     public void nextStep(ParagonSteps step) {
         Fragment fragment = null;
-        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
 
         currentStep = step;
 
@@ -756,7 +757,7 @@ public class ParagonMainActivity extends AppCompatActivity {
     private void checkParagonConnectionStatus() {
         Log.d(TAG, "checkParagonConnectionStatus");
 
-        ProductInfo product = ProductManager.getInstance().getCurrent();
+        ParagonInfo product = (ParagonInfo)ProductManager.getInstance().getCurrent();
 
         Log.d(TAG, "checkParagonConnectionStatus buner :" + product.getErdBurnerStatus());
         Log.d(TAG, "checkParagonConnectionStatus cookmode :" + product.getErdCurrentCookMode());
@@ -1419,7 +1420,7 @@ public class ParagonMainActivity extends AppCompatActivity {
     private void checkGoodToGoLoop() {
         Log.d(TAG, "checkGoodToGoLoop IN");
 
-        ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
 
         boolean isReady = false;
         boolean isAllRight = false;

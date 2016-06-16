@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 import com.firstbuild.viewutil.gridCircleView;
 
@@ -94,7 +95,8 @@ public class DirectStatusFragment extends Fragment {
     }
 
     public void updateCookState() {
-        byte state = ProductManager.getInstance().getCurrent().getErdCookState();
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
+        byte state = productInfo.getErdCookState();
         Log.d(TAG, "updateCookState IN " + state);
 
         if(state == ParagonValues.COOK_STATE_OFF) {
@@ -107,7 +109,8 @@ public class DirectStatusFragment extends Fragment {
 
 
     public void updateUiPowerLevel() {
-        byte powerLevel = ProductManager.getInstance().getCurrent().getErdPowerLevel();
+        ParagonInfo productInfo = (ParagonInfo)ProductManager.getInstance().getCurrent();
+        byte powerLevel = productInfo.getErdPowerLevel();
 
         textTempCurrent.setText(powerLevel + "");
     }

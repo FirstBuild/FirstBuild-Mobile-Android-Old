@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ProductManager {
     public static final String PREFS_NAME = "FIRSTBUILD_APP";
@@ -39,16 +40,6 @@ public class ProductManager {
     }
 
     /**
-     * Add Paragon to the list
-     *
-     * @param deviceAddress Address.
-     */
-    public void add(String deviceAddress) {
-        //TODO: Check if the nick name is duplicated;
-        add(new ProductInfo(ProductInfo.PRODUCT_TYPE_PARAGON, "Paragon", deviceAddress));
-    }
-
-    /**
      * Once add a product app store its information into internal storage.
      *
      * @param productInfo
@@ -60,7 +51,7 @@ public class ProductManager {
     }
 
     /**
-     * Save the list of Paragon to SharedPreference.
+     * Save the list of Product to SharedPreference.
      */
     public void write() {
         SharedPreferences settings;
@@ -93,7 +84,7 @@ public class ProductManager {
     }
 
     /**
-     * Load registerd Paragon from SharedPreference.
+     * Load registerd Product from SharedPreference.
      *
      * @throws JSONException
      */
@@ -107,13 +98,11 @@ public class ProductManager {
 
             try {
 
-                JSONArray arrayProductObject = null;
-                arrayProductObject = new JSONArray(jsonString);
+                JSONArray arrayProductObject = new JSONArray(jsonString);
+
                 for (int i = 0; i < arrayProductObject.length(); i++) {
                     JSONObject productObject = arrayProductObject.getJSONObject(i);
-
-                    ProductInfo productInfo = new ProductInfo(productObject);
-
+                    ProductInfo productInfo = ProductInfo.buildProductInfo(productObject);
                     products.add(productInfo);
                 }
 
@@ -169,77 +158,8 @@ public class ProductManager {
             return;
         }
 
-        ByteBuffer byteBuffer = ByteBuffer.wrap(value);
+        product.updateErd(uuid, value);
 
-
-        switch (uuid.toUpperCase()) {
-
-            case ParagonValues.CHARACTERISTIC_BATTERY_LEVEL:
-                product.setErdBatteryLevel(byteBuffer.get());
-                Log.d(TAG, "CHARACTERISTIC_BATTERY_LEVEL :" + String.format("%02x", value[0]));
-                break;
-
-            case ParagonValues.CHARACTERISTIC_ELAPSED_TIME:
-                Log.d(TAG, "CHARACTERISTIC_ELAPSED_TIME :" + String.format("%02x%02x", value[0], value[1]));
-                product.setErdElapsedTime(byteBuffer.getShort());
-                break;
-
-            case ParagonValues.CHARACTERISTIC_BURNER_STATUS:
-                Log.d(TAG, "CHARACTERISTIC_BURNER_STATUS :" + String.format("%02x", value[0]));
-                product.setErdBurnerStatus(byteBuffer.get());
-                break;
-
-            case ParagonValues.CHARACTERISTIC_PROBE_CONNECTION_STATE:
-                Log.d(TAG, "CHARACTERISTIC_PROBE_CONNECTION_STATE :" + String.format("%02x", value[0]));
-                product.setErdProbeConnectionStatue(byteBuffer.get());
-                break;
-
-            case ParagonValues.CHARACTERISTIC_COOK_MODE:
-                Log.d(TAG, "CHARACTERISTIC_COOK_MODE :" + String.format("%02x", value[0]));
-                product.setErdCurrentCookMode(byteBuffer.get());
-                break;
-
-            case ParagonValues.CHARACTERISTIC_COOK_CONFIGURATION:
-                Log.d(TAG, "CHARACTERISTIC_COOK_CONFIGURATION :");
-
-                String data = "";
-                for (int i = 0; i < value.length; i++) {
-                    data += String.format("%02x", value[i]);
-                }
-                Log.d(TAG, "CONFIGURATION Data :" + data);
-
-                RecipeInfo newRecipe = new RecipeInfo(value);
-                product.setErdRecipeConfig(newRecipe);
-                break;
-
-            case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STATE:
-                Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STATE :" + String.format("%02x", value[0]));
-                product.setErdCookState(byteBuffer.get());
-                break;
-
-            case ParagonValues.CHARACTERISTIC_CURRENT_TEMPERATURE:
-                Log.d(TAG, "CHARACTERISTIC_CURRENT_TEMPERATURE :" + String.format("%02x%02x", value[0], value[1]));
-                product.setErdCurrentTemp(byteBuffer.getShort());
-                break;
-
-
-            case ParagonValues.CHARACTERISTIC_CURRENT_COOK_STAGE:
-                Log.d(TAG, "CHARACTERISTIC_CURRENT_COOK_STAGE :" + String.format("%02x", value[0]));
-                product.setErdCookStage(byteBuffer.get());
-                break;
-
-
-            case ParagonValues.CHARACTERISTIC_OTA_VERSION:
-                Log.d(TAG, "CHARACTERISTIC_OTA_VERSION :" + String.format("%02x%02x%02x%02x%02x%02x", value[0], value[1], value[2], value[3], value[4], value[5]));
-                product.setErdVersion(value[2], value[3], (short) value[4]);
-                break;
-
-            case ParagonValues.CHARACTERISTIC_CURRENT_POWER_LEVEL:
-                Log.d(TAG, "CHARACTERISTIC_CURRENT_POWER_LEVEL :" + String.format("%02x", value[0]));
-                product.setErdPowerLevel(byteBuffer.get());
-                break;
-
-        }
     }
 
     public ProductInfo getProductByAddress(String address) {

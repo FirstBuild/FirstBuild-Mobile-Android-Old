@@ -146,5 +146,6 @@
     <string name="add_product_screen_title">ADD PRODUCT</string>
     <string name="product_name_opal">Opal</string>
     <string name="default_product_name_opal">My Opal</string>
+    <string name="default_product_name">My Device</string>
 
 </resources>

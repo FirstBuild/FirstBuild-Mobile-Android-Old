@@ -47,7 +47,7 @@ public class BleManager {
     private Runnable stopScanRunnable = null;
     private Context context = null;
     private HashMap<String, BleListener> callbacks = null;
-    private HashMap<String, BluetoothGatt> connectedGatts = new HashMap<>();
+    private HashMap<String, BluetoothGatt> connectedGatts = new HashMap<>(); // contains connected Gatt server
     private LinkedList<BleOperation> operations = new LinkedList<>();
     private AsyncTask<Void, Void, Void> currentOperationTimeout;
     private BleOperation currentOperation = null;
