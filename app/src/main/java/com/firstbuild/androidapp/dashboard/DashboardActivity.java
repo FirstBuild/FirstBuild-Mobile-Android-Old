@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -34,9 +35,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.firstbuild.androidapp.OpalValues;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.addproduct.AddProductActivity;
+import com.firstbuild.androidapp.opal.OpalMainActivity;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
@@ -49,8 +52,10 @@ import com.firstbuild.commonframework.blemanager.BleManager;
 import com.firstbuild.commonframework.blemanager.BleValues;
 
 import java.nio.ByteBuffer;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -137,6 +142,15 @@ public class DashboardActivity extends AppCompatActivity {
 
                 requestMustHaveData(productInfo);
 
+                // According to the spec, Application should send local epoch time to Opal device
+                // after Connection to the GATT server is made
+                if(productInfo.type == ProductInfo.PRODUCT_TYPE_OPAL) {
+                    sendPhoneLocalEpochTimeToOpal(productInfo);
+                }
+                else {
+                    // Do nothing
+                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -194,6 +208,32 @@ public class DashboardActivity extends AppCompatActivity {
             Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
         }
     };
+
+    private void sendPhoneLocalEpochTimeToOpal(ProductInfo product) {
+
+        if(product.bluetoothDevice != null) {
+
+            Log.d(TAG, "[HANS] sendPhoneLocalEpochTimeToOpal : " + product.nickname);
+
+            ByteBuffer valueBuffer = ByteBuffer.allocate(4);
+
+            Calendar mCalendar = Calendar.getInstance(TimeZone.getTimeZone("gmt"));
+            Long millis = mCalendar.getTimeInMillis();
+
+            Long epoch = millis/1000;
+
+            valueBuffer.putInt(epoch.intValue());
+
+            Log.d(TAG, "[HANS] current epoch time : " + epoch.intValue());
+            Log.d(TAG, "[HANS] current epoch time in buffer array format: " + valueBuffer.array().toString());
+
+            BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, OpalValues.OPAL_TIME_SYNC_UUID, valueBuffer.array());
+
+        }
+        else {
+            // Should we reconnect if bluetoothdevice is not available ?
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -477,8 +517,6 @@ public class DashboardActivity extends AppCompatActivity {
             }
 
         }
-
-
     }
 
     /**
@@ -507,13 +545,36 @@ public class DashboardActivity extends AppCompatActivity {
 
             ProductManager.getInstance().setCurrent(position);
 
-            Intent intent = new Intent(DashboardActivity.this, ParagonMainActivity.class);
+            Class<?> cls = getTargetActivityClass(productInfo.type);
+
+            Intent intent = new Intent(DashboardActivity.this, cls);
+
             startActivity(intent);
         }
         else {
             Log.d(TAG, "onItemClicked but error :" + productInfo.type);
         }
 
+    }
+
+    @NonNull
+    private Class<?> getTargetActivityClass(int type) {
+        Class<?> ret;
+
+        switch(type) {
+            case ProductInfo.PRODUCT_TYPE_PARAGON:
+                ret = ParagonMainActivity.class;
+                break;
+            case ProductInfo.PRODUCT_TYPE_OPAL:
+                ret = OpalMainActivity.class;
+                break;
+
+            default:
+                Log.d(TAG, "Unsupported type : " + type);
+                ret = ParagonMainActivity.class;
+        }
+
+        return ret;
     }
 
 
