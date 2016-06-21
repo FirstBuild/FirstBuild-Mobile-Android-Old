@@ -1,0 +1,80 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_status_item"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="0dp">
+
+        <com.firstbuild.viewutil.StyledTextView
+            style="@style/add_product_item_text"
+            android:text="STATUS" />
+
+        <com.firstbuild.viewutil.StyledTextView
+            style="@style/add_product_item_text"
+            android:text="Idle"
+            android:layout_alignParentEnd="true"/>
+
+        <ImageView
+            android:background="@color/colorParagonDivider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_light_mode_item"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="0dp">
+
+        <com.firstbuild.viewutil.StyledTextView
+            style="@style/add_product_item_text"
+            android:text="NIGHT LIGHT" />
+        
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"/>
+
+        <ImageView
+            android:background="@color/colorParagonDivider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_schedule_item"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="0dp">
+
+        <com.firstbuild.viewutil.StyledTextView
+            style="@style/add_product_item_text"
+            android:text="SCHEDULE" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/abc_btn_check_material"
+            android:layout_alignParentEnd="true"/>
+
+        <ImageView
+            android:background="@color/colorParagonDivider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+

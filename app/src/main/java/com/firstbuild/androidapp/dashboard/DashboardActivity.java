@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,6 +39,7 @@ import com.firstbuild.androidapp.OpalValues;
 import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.addproduct.AddProductActivity;
+import com.firstbuild.androidapp.opal.OpalMainActivity;
 import com.firstbuild.androidapp.paragon.ParagonMainActivity;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
@@ -543,15 +545,36 @@ public class DashboardActivity extends AppCompatActivity {
 
             ProductManager.getInstance().setCurrent(position);
 
-            Class<?> cls = ParagonMainActivity.class;
+            Class<?> cls = getTargetActivityClass(productInfo.type);
 
             Intent intent = new Intent(DashboardActivity.this, cls);
+
             startActivity(intent);
         }
         else {
             Log.d(TAG, "onItemClicked but error :" + productInfo.type);
         }
 
+    }
+
+    @NonNull
+    private Class<?> getTargetActivityClass(int type) {
+        Class<?> ret;
+
+        switch(type) {
+            case ProductInfo.PRODUCT_TYPE_PARAGON:
+                ret = ParagonMainActivity.class;
+                break;
+            case ProductInfo.PRODUCT_TYPE_OPAL:
+                ret = OpalMainActivity.class;
+                break;
+
+            default:
+                Log.d(TAG, "Unsupported type : " + type);
+                ret = ParagonMainActivity.class;
+        }
+
+        return ret;
     }
 
 

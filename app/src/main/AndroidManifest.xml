@@ -49,6 +49,15 @@
             android:screenOrientation="portrait"
             android:parentActivityName="com.firstbuild.androidapp.dashboard.DashboardActivity">
         </activity>
+
+        <activity
+            android:name=".opal.OpalMainActivity"
+            android:label="@string/product_name_opal"
+            android:windowSoftInputMode="adjustUnspecified|adjustPan"
+            android:screenOrientation="portrait"
+            android:parentActivityName="com.firstbuild.androidapp.dashboard.DashboardActivity">
+        </activity>
+
         <activity
             android:name=".addproduct.AddProductActivity"
             android:label="@string/title_activity_add_product"
