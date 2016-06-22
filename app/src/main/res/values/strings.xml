@@ -129,7 +129,7 @@
     <string name="select_product_below">Select a product below to set-up\nand add it to your home screen</string>
     <string name="got_it">Got it!</string>
     <string name="we_found_your_paragon">We found your Paragon</string>
-    <string name="we_found_your_device">We found your device.</string>
+    <string name="we_found_your_opal">We found your Opal.</string>
     <string name="connection_error">Connection Error</string>
     <string name="connection_error_explanation">We were unable to connect to Paragon.\nPlease try again</string>
     <string name="connection_error_explanation_opal">We were unable to connect to Opal.\nPlease try again</string>

@@ -30,7 +30,7 @@ public class AddProductFoundOpalFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_product_found_paragon, container, false);
 
         ((ImageView)view.findViewById(R.id.image_got_it)).setImageResource(R.drawable.img_opal_got_it);
-        ((TextView)view.findViewById(R.id.add_product_pairing_success_description)).setText(R.string.we_found_your_device);
+        ((TextView)view.findViewById(R.id.add_product_pairing_success_description)).setText(R.string.we_found_your_opal);
 
         return view;
     }
