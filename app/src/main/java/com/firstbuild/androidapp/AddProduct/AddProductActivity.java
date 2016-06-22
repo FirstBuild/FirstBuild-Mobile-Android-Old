@@ -24,13 +24,11 @@ public class AddProductActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("");
         ((TextView) toolbar.findViewById(R.id.toolbar_title)).setText(R.string.add_product_screen_title);
-
         setSupportActionBar(toolbar);
 
-        getFragmentManager().
+        getSupportFragmentManager().
                 beginTransaction().
                 replace(R.id.content_frame, new AddProductSelectFragment()).
-                addToBackStack(null).
                 commit();
 
 

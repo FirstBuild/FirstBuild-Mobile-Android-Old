@@ -1,11 +1,9 @@
 package com.firstbuild.androidapp.addproduct;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -33,7 +31,7 @@ import java.util.Map;
 /**
  * Created by hans on 16. 6. 3..
  */
-public abstract class AddProductSearchFragment extends Fragment {
+public abstract class AddProductSearchFragment extends android.support.v4.app.Fragment {
 
     protected ImageView spinningImage;
 
@@ -173,14 +171,14 @@ public abstract class AddProductSearchFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
-        if(context instanceof AddProductActivity) {
-            attached = (AddProductActivity) context;
+        if(activity instanceof AddProductActivity) {
+            attached = (AddProductActivity) activity;
         }
         else {
-            throw new ClassCastException(context + " must be an instance of "
+            throw new ClassCastException(activity + " must be an instance of "
                     + AddProductActivity.class.getSimpleName());
         }
     }
