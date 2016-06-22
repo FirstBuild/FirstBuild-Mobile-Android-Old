@@ -1,10 +1,7 @@
 package com.firstbuild.androidapp.addproduct;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +12,7 @@ import com.firstbuild.androidapp.productmanager.OpalInfo;
 import com.firstbuild.androidapp.productmanager.ParagonInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 
-public class AddProductSelectFragment extends Fragment {
+public class AddProductSelectFragment extends android.support.v4.app.Fragment {
     private String TAG = AddProductSelectFragment.class.getSimpleName();
     private AddProductActivity attached = null;
 
@@ -23,15 +20,18 @@ public class AddProductSelectFragment extends Fragment {
         // Required empty public constructor
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
 
-        if(context instanceof AddProductActivity) {
-            attached = (AddProductActivity) context;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        Log.d(TAG, "AddProductSelectFragment : onAttach() IN ");
+
+        if(activity instanceof AddProductActivity) {
+            attached = (AddProductActivity) activity;
         }
         else {
-            throw new ClassCastException(context + " must be an instance of "
+            throw new ClassCastException(activity + " must be an instance of "
                     + AddProductActivity.class.getSimpleName());
         }
     }

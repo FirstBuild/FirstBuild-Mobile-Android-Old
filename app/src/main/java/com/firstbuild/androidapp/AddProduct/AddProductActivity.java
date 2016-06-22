@@ -27,7 +27,7 @@ public class AddProductActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        getFragmentManager().
+        getSupportFragmentManager().
                 beginTransaction().
                 replace(R.id.content_frame, new AddProductSelectFragment()).
                 addToBackStack(null).
