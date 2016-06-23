@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -68,4 +69,24 @@ public class BleOperationWriteCharateristics extends BleOperation {
         System.out.println(hexValue);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) {
+            return true;
+        }
+
+        if(!(o instanceof BleOperationWriteCharateristics)) {
+            return false;
+        }
+
+        BleOperationWriteCharateristics other = (BleOperationWriteCharateristics)o;
+
+        return this.characteristicsUuid.equalsIgnoreCase(other.characteristicsUuid) &&
+                Arrays.equals(this.values, other.values);
+    }
+
+    @Override
+    public int hashCode() {
+        return characteristicsUuid.hashCode();
+    }
 }

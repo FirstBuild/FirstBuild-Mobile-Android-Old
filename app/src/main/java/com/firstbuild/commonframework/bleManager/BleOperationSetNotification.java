@@ -68,7 +68,26 @@ public class BleOperationSetNotification extends BleOperation {
                 }
             }
         }
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) {
+            return true;
+        }
 
+        if(!(o instanceof BleOperationSetNotification)) {
+            return false;
+        }
+
+        BleOperationSetNotification other = (BleOperationSetNotification)o;
+
+        return this.characteristicsUuid.equalsIgnoreCase(other.characteristicsUuid) &&
+                this.isEnabled == other.isEnabled;
+    }
+
+    @Override
+    public int hashCode() {
+        return characteristicsUuid.hashCode();
     }
 }
