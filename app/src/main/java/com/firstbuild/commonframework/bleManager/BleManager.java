@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class BleManager {
 
@@ -48,7 +49,10 @@ public class BleManager {
     private Context context = null;
     private HashMap<String, BleListener> callbacks = null;
     private HashMap<String, BluetoothGatt> connectedGatts = new HashMap<>(); // contains connected Gatt server
-    private LinkedList<BleOperation> operations = new LinkedList<>();
+//    private LinkedList<BleOperation> operations = new LinkedList<>();
+
+    // Use BlockingQueue for thread-safety
+    LinkedBlockingQueue<BleOperation> operationQ = new LinkedBlockingQueue<>();
     private AsyncTask<Void, Void, Void> currentOperationTimeout;
     private BleOperation currentOperation = null;
     /**
@@ -348,8 +352,15 @@ public class BleManager {
      * @param characteristicsUuid UUID to read.
      */
     public void readCharacteristics(BluetoothDevice device, String characteristicsUuid) {
-        Log.d(TAG, "operations.add readCharacteristics");
-        operations.add(new BleOperationReadCharacteristics(device, characteristicsUuid));
+        Log.d(TAG, "operationQ.offer readCharacteristics");
+        BleOperationReadCharacteristics read = new BleOperationReadCharacteristics(device, characteristicsUuid);
+
+        if(isBleOperationExisting(read) == false) {
+            operationQ.offer(read);
+        }else {
+            // Don't add as there is already same operation in the Q
+            Log.d(TAG, "readCharacteristics : current operation is already queued !");
+        }
 
         doOperation();
     }
@@ -362,8 +373,16 @@ public class BleManager {
      * @param values              actual value to write.
      */
     public void writeCharacteristics(BluetoothDevice device, String characteristicsUuid, byte[] values) {
-        Log.d(TAG, "operations.add writeCharacteristics");
-        operations.add(new BleOperationWriteCharateristics(device, characteristicsUuid, values));
+        Log.d(TAG, "operationQ.offer writeCharacteristics");
+
+        BleOperationWriteCharateristics write = new BleOperationWriteCharateristics(device, characteristicsUuid, values);
+
+        if(isBleOperationExisting(write) == false) {
+            operationQ.offer(write);
+        }else {
+            // Don't add as there is already same operation in the Q
+            Log.d(TAG, "writeCharacteristics : current operation is already queued !");
+        }
 
         doOperation();
     }
@@ -376,8 +395,16 @@ public class BleManager {
      * @param isEnabled           enable/disable of notification.
      */
     public void setCharacteristicNotification(BluetoothDevice device, String characteristicsUuid, boolean isEnabled) {
-        Log.d(TAG, "operations.add setCharacteristicNotification");
-        operations.add(new BleOperationSetNotification(device, characteristicsUuid, isEnabled));
+        Log.d(TAG, "operationQ.offer setCharacteristicNotification");
+
+        BleOperationSetNotification notification = new BleOperationSetNotification(device, characteristicsUuid, isEnabled);
+
+        if(isBleOperationExisting(notification) == false) {
+            operationQ.offer(notification);
+        }else {
+            // Don't add as there is already same operation in the Q
+            Log.d(TAG, "setCharacteristicNotification : current operation is already queued !");
+        }
 
         doOperation();
     }
@@ -388,8 +415,8 @@ public class BleManager {
      * @param device BluetoothDevice object.
      */
     public void disconnect(BluetoothDevice device) {
-        Log.d(TAG, "operations.add disconnect");
-        operations.add(new BleOperationDisconnect(device));
+        Log.d(TAG, "operationQ.offer disconnect");
+        operationQ.offer(new BleOperationDisconnect(device));
 
         doOperation();
     }
@@ -403,21 +430,26 @@ public class BleManager {
         if(currentOperation != null) {
             LinkedList<BleOperation> tempOperations = new LinkedList<>();
 
-            for (Iterator<BleOperation> iterator = operations.iterator(); iterator.hasNext();) {
+            for (Iterator<BleOperation> iterator = operationQ.iterator(); iterator.hasNext();) {
                 BleOperation operation = iterator.next();
 
                 if(operation.getDevice() == currentOperation.getDevice()) {
-                    Log.d(TAG, "cancelCurrentOperation removed operations has same device :"+currentOperation.getDevice().getAddress());
+                    Log.d(TAG, "cancelCurrentOperation removed operationQ has same device :"+currentOperation.getDevice().getAddress());
                     tempOperations.add(operation);
                     iterator.remove();
                 }
             }
 
             for( BleOperation tempOperation : tempOperations){
-                operations.add(tempOperation);
+                operationQ.offer(tempOperation);
             }
 
-            operations.add(currentOperation);
+            if(isBleOperationExisting(currentOperation) == false) {
+                operationQ.offer(currentOperation);
+            }
+            else {
+                // Do nothing as there is an already same operation to be executed
+            }
         }
 
         currentOperation = null;
@@ -432,16 +464,16 @@ public class BleManager {
             Log.d(TAG, "tried to doOperation, but currentOperation was not null, " + currentOperation);
             return;
         }
-        if (operations.size() == 0) {
+        if (operationQ.size() == 0) {
             Log.d(TAG, "Queue empty, doOperation loop stopped.");
             currentOperation = null;
             return;
         }
 
-        final BleOperation operation = operations.poll();
+        final BleOperation operation = operationQ.poll();
         final BluetoothDevice device = operation.getDevice();
 
-        Log.d(TAG, "Driving Gatt queue, size will now : " + operations.size());
+        Log.d(TAG, "Driving Gatt queue, size will now : " + operationQ.size());
         setCurrentOperation(operation);
 
         if (currentOperationTimeout != null) {
@@ -670,6 +702,10 @@ public class BleManager {
      */
     private synchronized void setCurrentOperation(BleOperation operation) {
         this.currentOperation = operation;
+    }
+
+    private boolean isBleOperationExisting(BleOperation op) {
+        return operationQ.contains(op);
     }
 
     public void printGattValue(byte[] values) {

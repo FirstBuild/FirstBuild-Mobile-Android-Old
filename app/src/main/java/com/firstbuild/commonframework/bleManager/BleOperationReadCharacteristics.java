@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -46,5 +47,26 @@ public class BleOperationReadCharacteristics extends BleOperation {
             }
         }
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) {
+            return true;
+        }
+
+        if(!(o instanceof BleOperationReadCharacteristics)) {
+            return false;
+        }
+
+        BleOperationReadCharacteristics other = (BleOperationReadCharacteristics)o;
+
+        return this.characteristicsUuid.equalsIgnoreCase(other.characteristicsUuid) &&
+                this.getDevice().equals(other.getDevice());
+    }
+
+    @Override
+    public int hashCode() {
+        return characteristicsUuid.hashCode();
     }
 }
