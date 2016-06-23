@@ -82,7 +82,7 @@ public class BleOperationWriteCharateristics extends BleOperation {
         BleOperationWriteCharateristics other = (BleOperationWriteCharateristics)o;
 
         return this.characteristicsUuid.equalsIgnoreCase(other.characteristicsUuid) &&
-                Arrays.equals(this.values, other.values);
+                Arrays.equals(this.values, other.values) && this.getDevice().equals(other.getDevice());
     }
 
     @Override

@@ -83,7 +83,7 @@ public class BleOperationSetNotification extends BleOperation {
         BleOperationSetNotification other = (BleOperationSetNotification)o;
 
         return this.characteristicsUuid.equalsIgnoreCase(other.characteristicsUuid) &&
-                this.isEnabled == other.isEnabled;
+                this.isEnabled == other.isEnabled && this.getDevice().equals(other.getDevice());
     }
 
     @Override

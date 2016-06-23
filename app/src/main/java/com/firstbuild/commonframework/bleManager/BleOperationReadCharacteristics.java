@@ -61,7 +61,8 @@ public class BleOperationReadCharacteristics extends BleOperation {
 
         BleOperationReadCharacteristics other = (BleOperationReadCharacteristics)o;
 
-        return this.characteristicsUuid.equalsIgnoreCase(other.characteristicsUuid);
+        return this.characteristicsUuid.equalsIgnoreCase(other.characteristicsUuid) &&
+                this.getDevice().equals(other.getDevice());
     }
 
     @Override
