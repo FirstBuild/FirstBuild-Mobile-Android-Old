@@ -96,6 +96,9 @@ public class ProductManager {
         if (settings.contains(FAVORITES)) {
             String jsonString = settings.getString(FAVORITES, null);
 
+            // Clear saved products in memory before loading from the shared preference.
+            products.clear();
+
             try {
 
                 JSONArray arrayProductObject = new JSONArray(jsonString);
