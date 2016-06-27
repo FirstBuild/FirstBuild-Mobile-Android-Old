@@ -1,9 +1,8 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="vertical">
+    android:background="@android:color/white">
 
     <RelativeLayout
         android:id="@+id/relative_layout_status_item"
@@ -12,13 +11,15 @@
         android:layout_marginTop="0dp">
 
         <com.firstbuild.viewutil.StyledTextView
-            style="@style/add_product_item_text"
+            style="@style/main_ui_item_text"
             android:text="STATUS" />
 
         <com.firstbuild.viewutil.StyledTextView
             style="@style/add_product_item_text"
+            android:id="@+id/opal_status_text"
             android:text="Idle"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="23dp"/>
 
         <ImageView
             android:background="@color/colorParagonDivider"
@@ -32,16 +33,19 @@
         android:id="@+id/relative_layout_light_mode_item"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_marginTop="0dp">
+        android:layout_marginTop="0dp"
+        android:layout_below="@+id/relative_layout_status_item">
 
         <com.firstbuild.viewutil.StyledTextView
-            style="@style/add_product_item_text"
+            style="@style/main_ui_item_text"
             android:text="NIGHT LIGHT" />
         
         <Switch
+            android:id="@+id/night_light_switch"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="23dp"/>
 
         <ImageView
             android:background="@color/colorParagonDivider"
@@ -55,17 +59,20 @@
         android:id="@+id/relative_layout_schedule_item"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_marginTop="0dp">
+        android:layout_marginTop="0dp"
+        android:layout_below="@+id/relative_layout_light_mode_item">
 
         <com.firstbuild.viewutil.StyledTextView
-            style="@style/add_product_item_text"
+            style="@style/main_ui_item_text"
             android:text="SCHEDULE" />
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/abc_btn_check_material"
-            android:layout_alignParentEnd="true"/>
+            android:layout_height="35dp"
+            android:background="@drawable/vector_ic_arrow_right_24dp"
+            android:layout_marginRight="23dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"/>
 
         <ImageView
             android:background="@color/colorParagonDivider"
@@ -74,7 +81,17 @@
             android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
+    
+    <Button
+        android:id="@+id/main_ui_start_stop_making_ice"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorParagonAccent"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp"
+        android:text="@string/make_ice" />
 
-</LinearLayout>
+</RelativeLayout>
 
 

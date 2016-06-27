@@ -49,4 +49,10 @@
         <item name="typeface">fonts/PTSansNarrowRegular</item>
     </style>
 
+    <style name="main_ui_item_text" parent="add_product_item_text">
+        <item name="android:textColor">@color/colorDarkYellow</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

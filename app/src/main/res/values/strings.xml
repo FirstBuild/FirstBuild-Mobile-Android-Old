@@ -147,5 +147,12 @@
     <string name="product_name_opal">Opal</string>
     <string name="default_product_name_opal">My Opal</string>
     <string name="default_product_name">My Device</string>
+    <string name="opal_status_idle">Idle</string>
+    <string name="opal_status_ice_making">Ice making</string>
+    <string name="opal_status_add_water">Add water</string>
+    <string name="opal_status_ice_full">Ice full</string>
+    <string name="opal_status_cleaning">Cleaning</string>
+    <string name="stop_making_ice">STOP MAKING ICE</string>
+    <string name="make_ice">MAKE ICE</string>
 
 </resources>
