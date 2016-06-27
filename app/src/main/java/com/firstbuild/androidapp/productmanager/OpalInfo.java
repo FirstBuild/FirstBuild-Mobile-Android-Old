@@ -207,6 +207,19 @@ public class OpalInfo extends ProductInfo{
 
     }
 
+    public boolean isMakingIceButtonVisible() {
+
+        boolean ret = false;
+
+
+        if(this.operationStateValue == OpalValues.OPAL_STATE_IDLE ||
+                this.operationStateValue == OpalValues.OPAL_STATE_ICE_MAKING) {
+            ret = true;
+        }
+
+        return ret;
+    }
+
     public void setOperationStateValue(byte operationStateValue) {
         this.operationStateValue = operationStateValue;
     }

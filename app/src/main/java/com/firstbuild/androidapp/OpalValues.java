@@ -1,5 +1,6 @@
 package com.firstbuild.androidapp;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -9,6 +10,8 @@ import java.util.ArrayList;
  * Created by hans on 16. 5. 31..
  */
 public class OpalValues {
+
+    private static final String TAG = OpalValues.class.getSimpleName();
 
     // BLE Service UUID
     public static final String OPAL_BLE_SERVICE_UUID = "3E6763C5-9429-40CC-909E-BEBF8C7487BE";
@@ -77,6 +80,34 @@ public class OpalValues {
     // Target device Opal's name
     public static final String TARGET_DEVICE_NAME = "OPAL Bluetooth";
 
+    public static String getStatusText(Context c, byte value) {
+
+        String ret = "";
+
+        switch(value) {
+            case OPAL_STATE_IDLE:
+                ret = c.getString(R.string.opal_status_idle);
+                break;
+            case OPAL_STATE_ICE_MAKING:
+                ret = c.getString(R.string.opal_status_ice_making);
+                break;
+            case OPAL_STATE_ADD_WATER:
+                ret = c.getString(R.string.opal_status_add_water);
+                break;
+            case OPAL_STATE_ICE_FULL:
+                ret = c.getString(R.string.opal_status_ice_full);
+                break;
+            case OPAL_STATE_CLEANING:
+                ret = c.getString(R.string.opal_status_cleaning);
+                break;
+           default:
+               Log.d(TAG, "getStatusText : byte value : " + value);
+                break;
+        }
+
+        return ret;
+    }
+
     public static void convertEndian() {
 
         ArrayList<String> uuidList = new ArrayList<>();
@@ -131,15 +162,5 @@ public class OpalValues {
             delimiterLocation = 0;
 
         }
-
-
-
-
-
-
-
     }
-
-
-
 }
