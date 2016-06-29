@@ -6,19 +6,19 @@ import android.bluetooth.BluetoothGatt;
 /**
  * Created by Hollis on 1/22/16.
  */
-public class BleOperationDisconnect extends BleOperation {
+public class BleOperationDeleteDevice extends BleOperation {
 
-    public BleOperationDisconnect(BluetoothDevice device) {
+    public BleOperationDeleteDevice(BluetoothDevice device) {
         super(device);
     }
 
     @Override
     public boolean hasCallback() {
-        return true;
+        return false;
     }
 
     @Override
     public void execute(BluetoothGatt bluetoothGatt) {
-        bluetoothGatt.disconnect();
+        bluetoothGatt.close();
     }
 }
