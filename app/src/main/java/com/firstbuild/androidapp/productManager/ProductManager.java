@@ -175,4 +175,19 @@ public class ProductManager {
 
         return null;
     }
+
+    public boolean removeProductByAddress(String address) {
+
+        boolean ret = false;
+
+        for (ProductInfo productInfo : products) {
+            if (productInfo.address.equals(address)) {
+                products.remove(productInfo);
+                ret = true;
+                break;
+            }
+        }
+
+        return ret;
+    }
 }

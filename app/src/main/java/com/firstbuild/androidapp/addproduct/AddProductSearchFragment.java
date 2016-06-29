@@ -36,7 +36,7 @@ public abstract class AddProductSearchFragment extends android.support.v4.app.Fr
     protected ImageView spinningImage;
 
     private final int SPINNING_REPEAT_COUNT = 30;
-    private String TAG = AddProductActivity.class.getSimpleName();
+    private String TAG = AddProductSearchFragment.class.getSimpleName();
     private RotateAnimation spinningAnimation;
     private String deviceAddress = null;
     private AddProductActivity attached = null;

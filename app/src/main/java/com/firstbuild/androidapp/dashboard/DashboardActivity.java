@@ -23,8 +23,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -448,7 +446,7 @@ public class DashboardActivity extends AppCompatActivity {
                                 public void onPositive(MaterialDialog dialog) {
                                     ProductInfo product = ProductManager.getInstance().getProduct(position);
 
-                                    BleManager.getInstance().disconnect(product.bluetoothDevice);
+                                    BleManager.getInstance().removeDevice(product.bluetoothDevice);
                                     ProductManager.getInstance().remove(position);
 
                                     updateListView();
@@ -633,18 +631,26 @@ public class DashboardActivity extends AppCompatActivity {
 
         }
 
-        new Thread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapterDashboard.notifyDataSetChanged();
+                adapterDashboard.notifyDataSetChanged();
 
-                    }
-                });
             }
-        }).start();
+        });
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        adapterDashboard.notifyDataSetChanged();
+//
+//                    }
+//                });
+//            }
+//        }).start();
 
     }
 
