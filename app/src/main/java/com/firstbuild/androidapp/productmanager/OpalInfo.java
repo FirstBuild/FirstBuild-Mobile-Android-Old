@@ -19,9 +19,12 @@ import java.util.ArrayList;
  */
 public class OpalInfo extends ProductInfo{
 
-    private static final String TAG = ParagonInfo.class.getSimpleName();
+    private static final String TAG = OpalInfo.class.getSimpleName();
 
     public static final int INITIAL_TIME_SYNC_VALUE = 0xffffffff;
+
+    // TODO: hans 16. 6. 15. Asking which characteristic should be read and subscribed
+    protected int NUM_MUST_INIT_DATA = 4;
 
     private byte operationStateValue;
     private byte operationModeValue;
@@ -64,9 +67,6 @@ public class OpalInfo extends ProductInfo{
         operationModeValue = INITIAL_VALUE;
         lightModeValue = INITIAL_VALUE;
         isScheduleEnabledValue = INITIAL_VALUE;
-
-        // TODO: hans 16. 6. 15. Asking which characteristic should be read and subscribed
-        NUM_MUST_INIT_DATA = 4;
 
         isAllMustDataReceived = false;
     }

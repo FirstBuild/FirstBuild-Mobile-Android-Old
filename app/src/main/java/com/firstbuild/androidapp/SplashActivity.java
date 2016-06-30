@@ -30,6 +30,7 @@ public class SplashActivity extends Activity {
             public void run() {
                 Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
                 startActivity(intent);
+                finish();
             }
         };
 

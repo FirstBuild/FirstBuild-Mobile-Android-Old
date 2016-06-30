@@ -108,20 +108,6 @@ public class DashboardActivity extends AppCompatActivity {
                     }
                 });
 
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                adapterDashboard.notifyDataSetChanged();
-//                                listViewProduct.invalidateViews();
-//                            }
-//                        });
-//                    }
-//                }).start();
-
-
                 checkBleTurnOn();
             }
         }
@@ -156,19 +142,6 @@ public class DashboardActivity extends AppCompatActivity {
                         listViewProduct.invalidateViews();
                     }
                 });
-
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                adapterDashboard.notifyDataSetChanged();
-//                                listViewProduct.invalidateViews();
-//                            }
-//                        });
-//                    }
-//                }).start();
             }
         }
 
@@ -255,6 +228,7 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //TODO: Consider later if app exit when press back button.
+        super.onBackPressed();
     }
 
     @Override
@@ -639,19 +613,6 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        adapterDashboard.notifyDataSetChanged();
-//
-//                    }
-//                });
-//            }
-//        }).start();
-
     }
 
 //    @Override
@@ -696,7 +657,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d(TAG, "update View");
+            Log.d(TAG, "ProductListAdapter : getView()");
 
             if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.adapter_product_card_view, null);
