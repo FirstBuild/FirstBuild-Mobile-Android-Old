@@ -174,10 +174,10 @@ public class OpalInfo extends ProductInfo{
             mustHaveNotificationUUIDList.add(OpalValues.OPAL_OP_STATE_UUID);
             mustHaveNotificationUUIDList.add(OpalValues.OPAL_OP_MODE_UUID);
             mustHaveNotificationUUIDList.add(OpalValues.OPAL_LIGHT_UUID);
-            mustHaveNotificationUUIDList.add(OpalValues.OPAL_CLEAN_CYCLE_UUID);
+//            mustHaveNotificationUUIDList.add(OpalValues.OPAL_CLEAN_CYCLE_UUID);
             mustHaveNotificationUUIDList.add(OpalValues.OPAL_UPDATE_PROGRESS_UUID);
             mustHaveNotificationUUIDList.add(OpalValues.OPAL_ERROR_CHAR_UUID);
-            mustHaveNotificationUUIDList.add(OpalValues.OPAL_TEMPERATURE_CHAR_UUID);
+//            mustHaveNotificationUUIDList.add(OpalValues.OPAL_TEMPERATURE_CHAR_UUID);
         }
 
         return mustHaveNotificationUUIDList;
