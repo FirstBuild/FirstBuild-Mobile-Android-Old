@@ -616,8 +616,16 @@ public class BleManager {
         // remove any scheduled periodic connection runnable
         removePeriodicConnectionScheduled(device.getAddress());
 
-        // Schedule to disconnect and close
-        operationQ.offer(new BleOperationDeleteDevice(device));
+
+        // if it is connected, then let it call gatt.close()
+        if(isConnectedDevice(device)) {
+            // Schedule to close
+            operationQ.offer(new BleOperationDeleteDevice(device));
+        }
+        else {
+            bluetoothGattMap.remove(device.getAddress());
+        }
+
         doOperation();
     }
 
