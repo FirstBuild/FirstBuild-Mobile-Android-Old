@@ -108,20 +108,6 @@ public class DashboardActivity extends AppCompatActivity {
                     }
                 });
 
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                adapterDashboard.notifyDataSetChanged();
-//                                listViewProduct.invalidateViews();
-//                            }
-//                        });
-//                    }
-//                }).start();
-
-
                 checkBleTurnOn();
             }
         }
@@ -138,7 +124,8 @@ public class DashboardActivity extends AppCompatActivity {
                 productInfo.connected();
                 productInfo.initMustData();
 
-                requestMustHaveData(productInfo);
+                // Should subscribe to notification as it is initial request to the BLE device
+                requestMustHaveData(productInfo, false);
 
                 // According to the spec, Application should send local epoch time to Opal device
                 // after Connection to the GATT server is made
@@ -156,19 +143,6 @@ public class DashboardActivity extends AppCompatActivity {
                         listViewProduct.invalidateViews();
                     }
                 });
-
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                adapterDashboard.notifyDataSetChanged();
-//                                listViewProduct.invalidateViews();
-//                            }
-//                        });
-//                    }
-//                }).start();
             }
         }
 
@@ -255,6 +229,7 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //TODO: Consider later if app exit when press back button.
+        super.onBackPressed();
     }
 
     @Override
@@ -328,7 +303,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         for (int i = 0; i < size; i++) {
             ProductInfo productInfo = ProductManager.getInstance().getProduct(i);
-            requestMustHaveData(productInfo);
+            requestMustHaveData(productInfo, true);
         }
 
 
@@ -339,8 +314,9 @@ public class DashboardActivity extends AppCompatActivity {
      * Must get datas.
      *
      * @param productInfo Object of ProductInfo.
+     * @param readOnly perform read opeartions only
      */
-    private void requestMustHaveData(ProductInfo productInfo) {
+    private void requestMustHaveData(ProductInfo productInfo, boolean readOnly) {
         if (productInfo.bluetoothDevice != null) {
 
             // read must have characteristics
@@ -348,9 +324,11 @@ public class DashboardActivity extends AppCompatActivity {
                 BleManager.getInstance().readCharacteristics(productInfo.bluetoothDevice, uuid);
             }
 
-            // set must-have-notification characteristics
-            for(String uuid : productInfo.getMustHaveNotificationUUIDList()) {
-                BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, uuid, true);
+            if(readOnly == false) {
+                // set must-have-notification characteristics
+                for(String uuid : productInfo.getMustHaveNotificationUUIDList()) {
+                    BleManager.getInstance().setCharacteristicNotification(productInfo.bluetoothDevice, uuid, true);
+                }
             }
         }
 
@@ -639,19 +617,6 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        adapterDashboard.notifyDataSetChanged();
-//
-//                    }
-//                });
-//            }
-//        }).start();
-
     }
 
 //    @Override
@@ -696,7 +661,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d(TAG, "update View");
+            Log.d(TAG, "ProductListAdapter : getView()");
 
             if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.adapter_product_card_view, null);

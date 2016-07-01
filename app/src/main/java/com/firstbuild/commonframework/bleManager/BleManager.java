@@ -31,7 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -95,52 +94,52 @@ public class BleManager {
                 Log.i(TAG, "Attempting to start service discovery:" +
                         gatt.discoverServices());
 
-                if(periodicConnectionCheckerMap.containsKey(address)) {
-                    // remove check connection runnable from MainQueue and HashMap
-                    Log.d(TAG, "Remove periodic connection checker runnable ");
-
-                    MainQueue.removeCallbacks(periodicConnectionCheckerMap.remove(address));
-                }
+                removePeriodicConnectionScheduled(address);
             }
             else if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Disconnected from GATT server." + address + " name : " + gatt.getDevice().getName());
 
+                // if bluetooth is turned off, remove gatt and close on it.
+                if(bluetoothAdapter.isEnabled() == false) {
+                    Log.d(TAG, "Bluetooth was turned off so call gatt.close as well as removing gatt instance");
+                    if(bluetoothGattMap.containsKey(address)) {
+                        bluetoothGattMap.remove(address);
+                        gatt.close();
+                    }
+                }
+
+                // As we don't get callback for connected, periodically trying to connect to the device after disconnection
+                schedulePeriodicConnection(address);
+
                 // make sure to run the operation for other Gatt client that might be connected
-                executeNextOperation();
+                doOperation();
 
             } else if(status != BluetoothGatt.GATT_SUCCESS) {
 
                 Log.d(TAG, "[HANS] onConnectionStateChange status : " + status );
-
-                  // if there is a failure, simply disconnect
-//                gatt.disconnect();
 
                 if (status == 133) {
                     // device doesn't adverise or reachable
 
                     Log.d(TAG, "onConnectionStateChange : device doesn't advertise or not reachable!!!");
 
-                    bluetoothGattMap.remove(address);
-                    gatt.close();
+                    if(bluetoothGattMap.containsKey(address)) {
+                        bluetoothGattMap.remove(address);
+                        gatt.close();
+                    }
 
                 } else if(status == 8) {
                     //  lost the connection link(LINK_LOSS) due to no response from remote device or Timeout happened.
 
                     Log.d(TAG, "onConnectionStateChange : lost the connection link(LINK_LOSS) due to no response from remote device or Timeout!!!");
 
-                    if(periodicConnectionCheckerMap.containsKey(address) == false) {
-                        periodicConnectionCheckerMap.put(address, new PeriodicConnectionChecker(address));
-                    }
-
-                    Runnable r  = periodicConnectionCheckerMap.get(address);
-                    MainQueue.removeCallbacks(r);
-                    MainQueue.postDelayed(r, 1000);
+                    schedulePeriodicConnection(address);
                 }
 
                 sendUpdate("onConnectionStateChanged", new Object[]{address, BluetoothProfile.STATE_DISCONNECTED});
 
                 // make sure to run the operation for other Gatt client that might be connected
-                executeNextOperation();
+                doOperation();
 
                 return;
 
@@ -254,6 +253,25 @@ public class BleManager {
         }
 
     };
+
+    private void removePeriodicConnectionScheduled(String address) {
+        if(periodicConnectionCheckerMap.containsKey(address)) {
+            // remove check connection runnable from MainQueue and HashMap
+            Log.d(TAG, "Remove periodic connection checker runnable ");
+
+            MainQueue.removeCallbacks(periodicConnectionCheckerMap.remove(address));
+        }
+    }
+
+    private void schedulePeriodicConnection(String address) {
+        if(periodicConnectionCheckerMap.containsKey(address) == false) {
+            periodicConnectionCheckerMap.put(address, new PeriodicConnectionChecker(address));
+        }
+
+        Runnable r  = periodicConnectionCheckerMap.get(address);
+        MainQueue.removeCallbacks(r);
+        MainQueue.postDelayed(r, 10000);
+    }
 
     public BleManager() {
         // Default constructor
@@ -466,24 +484,6 @@ public class BleManager {
     }
 
     /**
-     * Start scan for specific types of peripherals, which runs for 10 sec
-     * @param supportedUUID Service UUID to scan for
-     */
-    public void startScan(UUID[] supportedUUID) {
-        Log.d(TAG, "startScan(UUID[] supportedUUID) IN");
-
-        isScanning = true;
-
-        // Set callback to leScanCallback
-        bluetoothAdapter.startLeScan(supportedUUID, leScanCallback);
-
-        // Stops scanning after a pre-defined scan period.
-        handler.postDelayed(setStopScanRunnable(), BleValues.SCAN_PERIOD);
-
-        sendUpdate("onScanStateChanged", new Object[]{BleValues.START_SCAN});
-    }
-
-    /**
      * Start device scan for 10 sec
      */
     public void startScan() {
@@ -612,6 +612,9 @@ public class BleManager {
 
         // remove current operations that is scheduled to be executed on removed device
         cancelOperationFromDeletedDevice(device);
+
+        // remove any scheduled periodic connection runnable
+        removePeriodicConnectionScheduled(device.getAddress());
 
         // Schedule to disconnect and close
         operationQ.offer(new BleOperationDeleteDevice(device));
@@ -783,7 +786,9 @@ public class BleManager {
         }
 
         BluetoothGatt gatt = device.connectGatt(context, false, gattCallback);
-        bluetoothGattMap.put(address, gatt);
+        if(gatt != null) {
+            bluetoothGattMap.put(address, gatt);
+        }
 
         return true;
     }
@@ -969,6 +974,8 @@ public class BleManager {
      */
     private class PeriodicConnectionChecker implements Runnable {
 
+        private final String TAG = PeriodicConnectionChecker.class.getSimpleName();
+
         String targetDeviceAddress;
 
         public PeriodicConnectionChecker(String address) {
@@ -977,8 +984,10 @@ public class BleManager {
 
         @Override
         public void run() {
+            Log.d(TAG, "PeriodicConnectionChecker run() : trying to connect to the GattServer");
             connectToGattServer(targetDeviceAddress);
-            MainQueue.postDelayed(this, 1000);
+            MainQueue.removeCallbacks(this);
+            MainQueue.postDelayed(this, 10000);
         }
     }
 }

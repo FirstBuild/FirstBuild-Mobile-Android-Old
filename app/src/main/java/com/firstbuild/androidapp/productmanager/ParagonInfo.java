@@ -26,6 +26,8 @@ public class ParagonInfo extends ProductInfo{
 
     public static final int NO_BATTERY_INFO = -1;
 
+    protected int NUM_MUST_INIT_DATA = 7;
+
     // Initial data must get from dashboard.
     private int erdBatteryLevel = NO_BATTERY_INFO;
     private byte erdBurnerStatus = INITIAL_VALUE;
@@ -63,8 +65,6 @@ public class ParagonInfo extends ProductInfo{
         erdCurrentCookMode = INITIAL_VALUE;
         erdRecipeConfig = null;
         erdCookState = INITIAL_VALUE;
-
-        NUM_MUST_INIT_DATA = 7;
 
         isAllMustDataReceived = false;
     }
