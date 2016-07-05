@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <group android:id="@+id/aboutGrp1" android:enabled="false">
+            <item android:id="@+id/nav_item_about_back"
+                android:title=""
+                app:actionLayout="@layout/navigation_menu_item_back_button_header_help" />
+        </group>
+
+        <group android:id="@+id/aboutGrp2" android:enabled="false">
+            <item android:id="@+id/nav_item_about_contents"
+                android:title=""
+                app:actionLayout="@layout/navigation_menu_item_about" />
+        </group>
+
+</menu>

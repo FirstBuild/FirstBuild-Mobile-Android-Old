@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <item android:id="@+id/nav_item_help_back"
+            android:title=""
+            app:actionLayout="@layout/navigation_menu_item_back_button_header_help" />
+
+        <group android:id="@+id/helpGrp2">
+            <item android:id="@+id/nav_item_faq"
+                android:title="FAQ" />
+        </group>
+
+        <group android:id="@+id/helpGrp3">
+            <item android:id="@+id/nav_item_contact_expert"
+                android:title="Contact an expert" />
+        </group>
+
+        <group android:id="@+id/helpGrp4">
+            <item android:id="@+id/nav_item_contact_warranty"
+                android:title="Contact warranty" />
+        </group>
+
+        <group android:id="@+id/helpGrp5">
+            <item
+                android:title=""
+                android:enabled="false"/>
+        </group>
+
+</menu>

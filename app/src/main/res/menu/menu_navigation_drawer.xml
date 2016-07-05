@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <group android:id="@+id/grp1">
+
+        <item android:id="@+id/nav_item_my_product"
+            android:title="My Products" />
+    </group>
+
+    <group android:id="@+id/grp2">
+        <item android:id="@+id/nav_item_help"
+            android:title="Help" />
+    </group>
+
+
+    <group android:id="@+id/grp3">
+        <item android:id="@+id/nav_item_feedback"
+            android:title="Feedback" />
+    </group>
+
+    <group android:id="@+id/grp4">
+        <item android:id="@+id/nav_item_about"
+            android:title="About" />
+    </group>
+
+    <group android:id="@+id/grp5" >
+        <item android:id="@+id/nav_item_update"
+            android:title="Updates" />
+    </group>
+
+    <group android:id="@+id/grp6">
+        <item
+            android:title=""
+            android:enabled="false"/>
+    </group>
+
 </menu>

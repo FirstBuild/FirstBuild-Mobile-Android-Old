@@ -188,12 +188,11 @@ public class OpalMainFragment extends Fragment {
                 ByteBuffer valueBuffer = ByteBuffer.allocate(1);
 
                 if(makeIceBtn.getText().equals(getString(R.string.make_ice))) {
-                    // turn on night light mode
-                    valueBuffer.put((byte) 0x01);
+
+                    valueBuffer.put(OpalValues.OPAL_MODE_ICE_MAKING);
                 }
                 else {
-                    // turn off night light mode
-                    valueBuffer.put((byte) 0x00);
+                    valueBuffer.put(OpalValues.OPAL_MODE_OFF);
                 }
 
                 BleManager.getInstance().writeCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_OP_MODE_UUID, valueBuffer.array());
@@ -207,16 +206,20 @@ public class OpalMainFragment extends Fragment {
 
                 if(isChecked) {
                     // turn on night light mode
-                    valueBuffer.put((byte) 0x01);
+                    valueBuffer.put(OpalValues.OPAL_NIGHT_TIME_LIGHT);
                 }
                 else {
                     // turn off night light mode
-                    valueBuffer.put((byte) 0x00);
+                    valueBuffer.put(OpalValues.OPAL_DAY_TIME_LIGHT);
                 }
 
                 BleManager.getInstance().writeCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_LIGHT_UUID, valueBuffer.array());
             }
         });
+
+        // Read the version info for OTA when creating view
+        BleManager.getInstance().readCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID);
+        BleManager.getInstance().readCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_OTA_BT_VERSION_CHAR_UUID);
 
         return view;
     }

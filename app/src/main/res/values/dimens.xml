@@ -13,4 +13,10 @@
     <dimen name="nav_drawer_header_height">80dp</dimen>
 
 
+    <!-- override padding value -->
+    <!--<dimen name="design_navigation_separator_vertical_padding">0dp</dimen>-->
+
+    <dimen name="navigation_back_button_left_translation">7dp</dimen>
+
+
 </resources>

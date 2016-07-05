@@ -16,6 +16,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.dashboard.DashboardActivity;
 import com.firstbuild.commonframework.blemanager.BleManager;
+import com.firstbuild.tools.IntentTools;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -88,7 +89,7 @@ public class AddProductSetParagonNameFragment extends Fragment {
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
-                                gotoDashboard();
+                                IntentTools.goToDashboard(getContext(), AddProductActivity.class.getSimpleName());
                             }
 
                             @Override
@@ -108,15 +109,6 @@ public class AddProductSetParagonNameFragment extends Fragment {
         });
 
         return view;
-    }
-
-    public void gotoDashboard(){
-        // Go to dash board
-        Intent intent = new Intent(getActivity(), DashboardActivity.class);
-        intent.putExtra("previous_activity", AddProductActivity.class.getSimpleName());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
     }
 
     public void hideKeyboard(View view) {

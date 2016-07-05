@@ -155,4 +155,11 @@
     <string name="stop_making_ice">STOP MAKING ICE</string>
     <string name="make_ice">MAKE ICE</string>
 
+    <string name="opal_about_content">Opal is smart enough to know when to start and stop making ice. It’s equipped with a sensor that will identify the fill level of the bucket to turn the ice maker on and off. Just like in any cooler, ice will slowly melt within the air-insulated bucket. Opal will automatically turn on to make sure that the bucket is refilling with ice.</string>
+
+
+    <string name="openDrawer">open drawer</string>
+    <string name="closeDrawer">close drawer</string>
+
+
 </resources>

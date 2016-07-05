@@ -36,6 +36,8 @@ public class OpalInfo extends ProductInfo{
     private byte opalErrorValue;
     private byte temperatureValue;
 
+    private String  firmWareversion;
+    private String  BTVersion;
 
     //private byte logDataIndexValue;
     //private byte[7][56] logDataValue;
@@ -147,6 +149,18 @@ public class OpalInfo extends ProductInfo{
             case OpalValues.OPAL_TEMPERATURE_CHAR_UUID:
                 Log.d(TAG, "OPAL_TEMPERATURE_CHAR_UUID :" + String.format("%02x", value[0]));
                 setTemperatureValue(byteBuffer.get());
+                break;
+
+            case OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID:
+                String firmware = String.format("%02x%02x%02x%02x", value[0], value[1], value[2], value[3]);
+                Log.d(TAG, "OPAL_FIRMWARE_VERSION_CHAR_UUID :" + firmware);
+                setFirmWareversion(firmware);
+                break;
+
+            case OpalValues.OPAL_OTA_BT_VERSION_CHAR_UUID:
+                String btVersion = String.format("%02x%02x%02x%02x", value[0], value[1], value[2], value[3]);
+                Log.d(TAG, "OPAL_OTA_BT_VERSION_CHAR_UUID :" + btVersion);
+                setBTVersion(btVersion);
                 break;
 
             default:
@@ -330,5 +344,21 @@ public class OpalInfo extends ProductInfo{
 
     public int getOpalVersionValue() {
         return opalVersionValue;
+    }
+
+    public String getFirmWareversion() {
+        return firmWareversion;
+    }
+
+    public void setFirmWareversion(String firmWareversion) {
+        this.firmWareversion = firmWareversion;
+    }
+
+    public String getBTVersion() {
+        return BTVersion;
+    }
+
+    public void setBTVersion(String BTVersion) {
+        this.BTVersion = BTVersion;
     }
 }
