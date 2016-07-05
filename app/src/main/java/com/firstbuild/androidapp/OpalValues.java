@@ -23,19 +23,18 @@ public class OpalValues {
     public static final String OPAL_SET_SCHEDULE_UUID = "9E1AE873-CB5E-4485-9884-5C5A3AD60E47";
     public static final String OPAL_ENABLE_DISABLE_SCHEDULE_UUID = "B45163B3-1092-4725-95DC-1A43AC4A9B88";
     public static final String OPAL_IMG_TYPE_UUID = "5EA370C7-2059-41DB-9999-36527B43A4B4";
-    public static final String OPAL_VERSION_CHAR_UUID = "CF88A5B6-6687-4F14-8E21-BB9E78A40ECC";
+    public static final String OPAL_FIRMWARE_VERSION_CHAR_UUID = "CF88A5B6-6687-4F14-8E21-BB9E78A40ECC"; // Firmware Version
     public static final String OPAL_UPDATE_PROGRESS_UUID = "14FF6DFB-36FA-4456-927D-759E1A9A8446";
     public static final String OPAL_ERROR_CHAR_UUID = "5BCBF6B1-DE80-94B6-0F4B-99FB984707B6";
     public static final String OPAL_TEMPERATURE_CHAR_UUID = "BD205030-B5CE-4847-B78D-83BFF1450A6B";
     public static final String OPAL_FILTER_INSTALL_CHAR_UUID = "9BFDF2DD-E92C-468C-996B-F2EB95AA9325";
     public static final String OPAL_PUMP_CYCLE_CHAR_UUID = "6AF78DF8-629C-490E-9D42-100E84915753";
 
-
     // OTA Upgrade Service UUID
     public static final String OPAL_OTA_UPGRADE_SERVICE_UUID = "E936877A-8DD0-FAA7-B648-F46ACDA1F27B";
     public static final String OPAL_CONTROL_COMMAND_CHAR_UUID = "4FB34AB1-6207-E5A0-484F-E24A7F638FFF";
     public static final String OPAL_IMAGE_DATA_CHAR_UUID = "78282AE5-3060-C3B6-7D49-EC74702414E5";
-    public static final String OPAL_OTA_APP_INFO_CHAR_UUID = "318DB1F5-67F1-119B-6A41-1EECA0C744CE";
+    public static final String OPAL_OTA_BT_VERSION_CHAR_UUID = "318DB1F5-67F1-119B-6A41-1EECA0C744CE"; //Bluetooth Version Char
 
     // OP State Char , Permission > Read only , Property > Read/Notify
     public static final byte OPAL_STATE_IDLE = 0x00;
@@ -120,7 +119,7 @@ public class OpalValues {
         uuidList.add(OPAL_SET_SCHEDULE_UUID);
         uuidList.add(OPAL_ENABLE_DISABLE_SCHEDULE_UUID);
         uuidList.add(OPAL_IMG_TYPE_UUID);
-        uuidList.add(OPAL_VERSION_CHAR_UUID);
+        uuidList.add(OPAL_FIRMWARE_VERSION_CHAR_UUID);
         uuidList.add(OPAL_UPDATE_PROGRESS_UUID);
         uuidList.add(OPAL_ERROR_CHAR_UUID);
         uuidList.add(OPAL_TEMPERATURE_CHAR_UUID);
@@ -129,7 +128,7 @@ public class OpalValues {
         uuidList.add(OPAL_OTA_UPGRADE_SERVICE_UUID);
         uuidList.add(OPAL_CONTROL_COMMAND_CHAR_UUID);
         uuidList.add(OPAL_IMAGE_DATA_CHAR_UUID);
-        uuidList.add(OPAL_OTA_APP_INFO_CHAR_UUID);
+        uuidList.add(OPAL_OTA_BT_VERSION_CHAR_UUID);
 
         StringBuilder builder = new StringBuilder();
         int start;

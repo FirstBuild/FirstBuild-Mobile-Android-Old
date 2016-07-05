@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+    android:paddingRight="?attr/listPreferredItemPaddingRight"
+    android:background="@color/colorParagonPrimary">
+
+    <TextView
+        android:id="@+id/opal_about_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonPrimaryText"
+        android:text="@string/opal_about_content"/>
+    
+    <View
+        android:id="@+id/place_holder"
+        android:layout_width="match_parent"
+        android:layout_height="?listPreferredItemHeightSmall"
+        android:layout_below="@id/opal_about_content"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="?listPreferredItemHeightSmall"
+        android:layout_below="@id/place_holder"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonPrimaryText"
+        android:text="App Version"/>
+
+    <TextView
+        android:id="@+id/opal_about_app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="?listPreferredItemHeightSmall"
+        android:layout_below="@id/place_holder"
+        android:layout_alignParentRight="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonAccent"
+        android:text="1.0.1"/>
+
+    <TextView
+        android:id="@+id/opal_about_app_source_code"
+        android:layout_width="wrap_content"
+        android:layout_height="?listPreferredItemHeightSmall"
+        android:layout_below="@id/opal_about_app_version"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonPrimaryText"
+        android:text="App Source Code"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="?listPreferredItemHeightSmall"
+        android:layout_below="@id/opal_about_app_source_code"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonPrimaryText"
+        android:text="Bluetooth Version"/>
+
+    <TextView
+        android:id="@+id/opal_about_bt_version"
+        android:layout_width="wrap_content"
+        android:layout_height="?listPreferredItemHeightSmall"
+        android:layout_below="@id/opal_about_app_source_code"
+        android:layout_alignParentRight="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonAccent"
+        android:text="01040000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="?listPreferredItemHeightSmall"
+        android:layout_below="@id/opal_about_bt_version"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonPrimaryText"
+        android:text="Firmware Version"/>
+
+    <TextView
+        android:id="@+id/opal_about_firmware_version"
+        android:layout_width="wrap_content"
+        android:layout_height="?listPreferredItemHeightSmall"
+        android:layout_below="@id/opal_about_bt_version"
+        android:layout_alignParentRight="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonAccent"
+        android:text="01070000"/>
+
+</RelativeLayout>

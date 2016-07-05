@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firstbuild.androidapp.R;
+import com.firstbuild.tools.IntentTools;
 
 /**
  * Created by hans on 16. 6. 8..
@@ -52,7 +53,7 @@ public class AddProductSetOpalNameFragment extends AddProductSetParagonNameFragm
                 attached.setNewProductNickname(paragonName);
                 attached.addNewProductToList();
 
-                gotoDashboard();
+                IntentTools.goToDashboard(getContext(), AddProductActivity.class.getSimpleName());
             }
         });
 

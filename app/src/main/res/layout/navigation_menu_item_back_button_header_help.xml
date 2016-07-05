@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?listPreferredItemHeightSmall"
+    android:background="@color/colorParagonPrimary">
+
+    <LinearLayout
+        android:id="@+id/back_btn_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true">
+
+        <ImageView
+            android:id="@+id/nav_item_left_back_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/vector_ic_chevron_left_white_24dp" />
+
+        <TextView
+            android:id="@+id/nav_item_left_back_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/nav_item_left_back_arrow"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="@color/colorParagonPrimaryText"
+            android:gravity="center_vertical"
+            android:text="Back"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/nav_item_right_header"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/colorParagonAccent"
+        android:gravity="center_vertical"
+        android:text="Help"/>
+
+</RelativeLayout>
