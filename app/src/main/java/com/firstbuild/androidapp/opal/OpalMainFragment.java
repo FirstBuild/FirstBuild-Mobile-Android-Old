@@ -36,6 +36,7 @@ public class OpalMainFragment extends Fragment {
 
     private TextView statusView;
     private Switch nightLightSwitch;
+    private Switch scheduleSwitch;
     private Button makeIceBtn;
     private OpalInfo currentOpalInfo;
 
@@ -162,6 +163,7 @@ public class OpalMainFragment extends Fragment {
 
         statusView = (TextView)view.findViewById(R.id.opal_status_text);
         nightLightSwitch = (Switch)view.findViewById(R.id.night_light_switch);
+        scheduleSwitch = (Switch)view.findViewById(R.id.schedule_mode_switch);
         makeIceBtn = (Button)view.findViewById(R.id.main_ui_start_stop_making_ice);
 
         currentOpalInfo = (OpalInfo)ProductManager.getInstance().getCurrent();
@@ -171,6 +173,9 @@ public class OpalMainFragment extends Fragment {
 
         // Setting current Night light mode
         nightLightSwitch.setChecked(currentOpalInfo.getLightModeValue() == OpalValues.OPAL_NIGHT_TIME_LIGHT ? true : false);
+
+        // Setting current schedule en/disable mode
+        scheduleSwitch.setChecked(currentOpalInfo.getIsScheduleEnabledValue() == OpalValues.OPAL_ENABLE_SCHEDULE ? true : false);
 
         // Configure visibilitiy of Make/Stop Ice button
         makeIceBtn.setVisibility(currentOpalInfo.isMakingIceButtonVisible() ? View.VISIBLE : View.GONE);
@@ -199,6 +204,22 @@ public class OpalMainFragment extends Fragment {
             }
         });
 
+        scheduleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+
+                if(isChecked) {
+                    valueBuffer.put(OpalValues.OPAL_ENABLE_SCHEDULE);
+                }
+                else {
+                    valueBuffer.put(OpalValues.OPAL_DISABLE_SCHEDULE);
+                }
+
+                BleManager.getInstance().writeCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_ENABLE_DISABLE_SCHEDULE_UUID, valueBuffer.array());
+            }
+        });
+
         nightLightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -216,6 +237,8 @@ public class OpalMainFragment extends Fragment {
                 BleManager.getInstance().writeCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_LIGHT_UUID, valueBuffer.array());
             }
         });
+
+
 
         // Read the version info for OTA when creating view
         BleManager.getInstance().readCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID);
