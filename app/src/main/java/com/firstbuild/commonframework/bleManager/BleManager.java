@@ -653,6 +653,19 @@ public class BleManager {
     }
 
     /**
+     * Remove all operations pertaining to device passed in, which are schedule to be run on from the Queue
+     *
+     * @param device Device where scheduled operations should be deleted
+     */
+    public void cancelOperations(BluetoothDevice device) {
+
+        // reuse function
+        cancelOperationFromDeletedDevice(device);
+        // execute the next queued operation
+        doOperation();
+    }
+
+    /**
      * Cancel current operation due to expired timer.
      */
     public synchronized void cancelCurrentOperation() {
