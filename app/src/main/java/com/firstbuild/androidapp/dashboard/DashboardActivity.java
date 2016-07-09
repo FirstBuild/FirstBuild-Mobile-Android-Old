@@ -48,9 +48,12 @@ import com.firstbuild.androidapp.viewutil.SwipeMenuListView;
 import com.firstbuild.commonframework.blemanager.BleListener;
 import com.firstbuild.commonframework.blemanager.BleManager;
 import com.firstbuild.commonframework.blemanager.BleValues;
+import com.firstbuild.tools.MathTools;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -189,15 +192,17 @@ public class DashboardActivity extends AppCompatActivity {
 
             ByteBuffer valueBuffer = ByteBuffer.allocate(4);
 
-            Calendar mCalendar = Calendar.getInstance(TimeZone.getTimeZone("gmt"));
-            Long millis = mCalendar.getTimeInMillis();
+            Calendar calendar = Calendar.getInstance();
+            // Get UTC time
+            Long millis = calendar.getTimeInMillis();
+            // Get local time from UTC time + Current Zone time + DST
+            millis += TimeZone.getDefault().getOffset(millis);
+            Long localtime = millis/1000;
 
-            Long epoch = millis/1000;
+            valueBuffer.putInt(localtime.intValue());
 
-            valueBuffer.putInt(epoch.intValue());
-
-            Log.d(TAG, "[HANS] current epoch time : " + epoch.intValue());
-            Log.d(TAG, "[HANS] current epoch time in buffer array format: " + valueBuffer.array().toString());
+            Log.d(TAG, "[HANS] current epoch time : " + localtime.intValue());
+            Log.d(TAG, "[HANS] current epoch time in buffer array format: " + MathTools.byteArrayToHex(valueBuffer.array()));
 
             BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, OpalValues.OPAL_TIME_SYNC_UUID, valueBuffer.array());
 

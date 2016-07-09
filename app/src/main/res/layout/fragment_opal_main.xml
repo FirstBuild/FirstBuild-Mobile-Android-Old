@@ -56,11 +56,37 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/relative_layout_schedule_item"
+        android:id="@+id/relative_layout_schedule_mode_item"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_marginTop="0dp"
         android:layout_below="@+id/relative_layout_light_mode_item">
+
+        <com.firstbuild.viewutil.StyledTextView
+            style="@style/main_ui_item_text"
+            android:text="SCHEDULE ENABLED" />
+
+        <Switch
+            android:id="@+id/schedule_mode_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="23dp"/>
+
+        <ImageView
+            android:background="@color/colorParagonDivider"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_schedule_item"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="0dp"
+        android:layout_below="@+id/relative_layout_schedule_mode_item">
 
         <com.firstbuild.viewutil.StyledTextView
             style="@style/main_ui_item_text"
