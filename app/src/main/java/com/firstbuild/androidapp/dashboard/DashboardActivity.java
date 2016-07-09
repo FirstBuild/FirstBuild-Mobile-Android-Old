@@ -543,7 +543,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         for(ProductInfo p : ProductManager.getInstance().getProducts()) {
 
-            if(p.bluetoothDevice.equals(currentProduct))
+            if(p.bluetoothDevice.equals(currentProduct.bluetoothDevice))
                 continue;
 
             BleManager.getInstance().cancelOperations(p.bluetoothDevice);

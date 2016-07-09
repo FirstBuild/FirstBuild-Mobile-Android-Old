@@ -1,5 +1,6 @@
 package com.firstbuild.androidapp.productmanager;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -8,6 +9,7 @@ import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.dashboard.DashboardActivity;
 import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
+import com.firstbuild.tools.MathTools;
 
 import org.json.JSONObject;
 
@@ -36,8 +38,16 @@ public class OpalInfo extends ProductInfo{
     private byte opalErrorValue;
     private byte temperatureValue;
 
-    private String  firmWareversion;
-    private String  BTVersion;
+
+    private byte firmwareVersionFirst = -1;
+    private byte firmwareVersionSecond = -1;
+    private byte firmwareVersionThird = -1;
+    private byte firmwareVersionFourth = -1;
+
+    private byte blueToothVersionFirst = -1;
+    private byte blueToothVersionSecond = -1;
+    private byte blueToothVersionThird = -1;
+    private byte blueToothVersionFourth = -1;
 
     //private byte logDataIndexValue;
     //private byte[7][56] logDataValue;
@@ -154,17 +164,18 @@ public class OpalInfo extends ProductInfo{
             case OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID:
                 String firmware = String.format("%02x%02x%02x%02x", value[0], value[1], value[2], value[3]);
                 Log.d(TAG, "OPAL_FIRMWARE_VERSION_CHAR_UUID :" + firmware);
-                setFirmWareversion(firmware);
+                setFirmWareVersion(value[0], value[1], value[2], value[3]);
                 break;
 
             case OpalValues.OPAL_OTA_BT_VERSION_CHAR_UUID:
-                String btVersion = String.format("%02x%02x%02x%02x", value[0], value[1], value[2], value[3]);
+                // First 2 bytes are service ID , so ignore it !
+                String btVersion = String.format("%02x%02x%02x%02x", value[2], value[3], value[4], value[5]);
                 Log.d(TAG, "OPAL_OTA_BT_VERSION_CHAR_UUID :" + btVersion);
-                setBTVersion(btVersion);
+                setBTVersion(value[2], value[3], value[4], value[5]);
                 break;
 
             default:
-                Log.d(TAG, "[NOT UPDATING in APP]UUID to update : " + uuid + "   value to update : " + byteBuffer.toString());
+                Log.d(TAG, "[NOT UPDATING in APP]UUID to update : " + uuid + "   value to update : " + MathTools.byteArrayToHex(byteBuffer.array()));
                 break;
         }
 
@@ -191,6 +202,7 @@ public class OpalInfo extends ProductInfo{
 //            mustHaveNotificationUUIDList.add(OpalValues.OPAL_CLEAN_CYCLE_UUID);
             mustHaveNotificationUUIDList.add(OpalValues.OPAL_UPDATE_PROGRESS_UUID);
             mustHaveNotificationUUIDList.add(OpalValues.OPAL_ERROR_CHAR_UUID);
+            mustHaveNotificationUUIDList.add(OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID);
 //            mustHaveNotificationUUIDList.add(OpalValues.OPAL_TEMPERATURE_CHAR_UUID);
         }
 
@@ -346,19 +358,110 @@ public class OpalInfo extends ProductInfo{
         return opalVersionValue;
     }
 
-    public String getFirmWareversion() {
-        return firmWareversion;
+
+    public void setFirmWareVersion(byte first, byte second, byte third, byte fourth) {
+        this.firmwareVersionFirst = first;
+        this.firmwareVersionSecond = second;
+        this.firmwareVersionThird = third;
+        this.firmwareVersionFourth = fourth;
     }
 
-    public void setFirmWareversion(String firmWareversion) {
-        this.firmWareversion = firmWareversion;
+    public String getFirmWareVersion() {
+
+        return String.format("%02x%02x%02x%02x", firmwareVersionFirst, firmwareVersionSecond, firmwareVersionThird, firmwareVersionFourth );
+    }
+
+    public void setBTVersion(byte first, byte second, byte third, byte fourth) {
+        this.blueToothVersionFirst = first;
+        this.blueToothVersionSecond = second;
+        this.blueToothVersionThird = third;
+        this.blueToothVersionFourth = fourth;
     }
 
     public String getBTVersion() {
-        return BTVersion;
+        return String.format("%02x%02x%02x%02x", blueToothVersionFirst, blueToothVersionSecond, blueToothVersionThird, blueToothVersionFourth);
     }
 
-    public void setBTVersion(String BTVersion) {
-        this.BTVersion = BTVersion;
+    /**
+     * Compare the version number between opal device and image file.
+     * @return return true when update is required, otherwise return false.
+     */
+    public boolean isOpalFirmwareUpgradeRequired() {
+
+        byte[] latest = MathTools.hexToByteArray(OpalValues.LATEST_OPAL_FIRMWARE_VERSION);
+        byte first = latest[0];
+        byte second = latest[1];
+        byte third = latest[2];
+        byte fourth = latest[3];
+
+        Log.d(TAG, "compareVersion : Image  version :" + first + "." + second + "." + third + "." + fourth );
+        Log.d(TAG, "compareVersion : current Opal version   :" + this.firmwareVersionFirst + "." + this.firmwareVersionSecond + "." + this.firmwareVersionThird + "." + this.firmwareVersionFourth);
+
+        boolean isNeedUpdate = false;
+
+        if (first > this.firmwareVersionFirst ||
+                second  > this.firmwareVersionSecond ||
+                third > this.firmwareVersionThird ||
+                fourth > this.firmwareVersionFourth ) {
+            isNeedUpdate = true;
+        }
+
+        return isNeedUpdate;
+    }
+
+    /**
+     * Compare the version number between BLE module and image file.
+     *
+     * @return return true when update is required, otherwise return false.
+     */
+    public boolean isBLEModuleUpgradeRequired() {
+
+        byte[] latest = MathTools.hexToByteArray(OpalValues.LATEST_OPAL_BLE_FIRMWARE_VERSION);
+        byte first = latest[0];
+        byte second = latest[1];
+        byte third = latest[2];
+        byte fourth = latest[3];
+
+        Log.d(TAG, "compareVersion : Image  version :" + first + "." + second + "." + third + "." + fourth );
+        Log.d(TAG, "compareVersion : current Opal BLE version   :" + this.blueToothVersionFirst + "." + this.blueToothVersionSecond + "." + this.blueToothVersionThird + "." + this.blueToothVersionFourth);
+
+        boolean isNeedUpdate = false;
+
+        if (first > this.blueToothVersionFirst ||
+                second  > this.blueToothVersionSecond ||
+                third > this.blueToothVersionThird ||
+                fourth > this.blueToothVersionFourth ) {
+            isNeedUpdate = true;
+        }
+
+        return isNeedUpdate;
+    }
+
+    public boolean isBLEVersionReceived() {
+        boolean ret = false;
+
+        if(blueToothVersionFirst != -1 &&
+                blueToothVersionSecond != -1 &&
+                blueToothVersionThird != -1 &&
+                blueToothVersionFourth != -1) {
+
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    public boolean isOpalFirmwareVersionReceived() {
+        boolean ret = false;
+
+        if(firmwareVersionFirst != -1 &&
+                firmwareVersionSecond != -1 &&
+                firmwareVersionThird != -1 &&
+                firmwareVersionFourth != -1) {
+
+            ret = true;
+        }
+
+        return ret;
     }
 }

@@ -13,12 +13,21 @@
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/colorParagonPrimaryText"
         android:text="@string/opal_about_content"/>
+
+    <TextView
+        android:id="@+id/opal_learn_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/opal_about_content"
+        android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:textColor="@color/colorParagonAccent"
+        android:text="@string/opal_learn_more"/>
     
     <View
         android:id="@+id/place_holder"
         android:layout_width="match_parent"
         android:layout_height="?listPreferredItemHeightSmall"
-        android:layout_below="@id/opal_about_content"/>
+        android:layout_below="@id/opal_learn_more"/>
 
 
     <TextView
@@ -48,8 +57,7 @@
         android:layout_alignParentLeft="true"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/colorParagonPrimaryText"
-        android:text="App Source Code"
-        android:visibility="gone"/>
+        android:text="App Source Code" />
 
     <TextView
         android:layout_width="wrap_content"

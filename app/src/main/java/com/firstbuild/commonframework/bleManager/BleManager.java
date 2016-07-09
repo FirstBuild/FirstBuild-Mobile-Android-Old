@@ -116,7 +116,7 @@ public class BleManager {
 
             } else if(status != BluetoothGatt.GATT_SUCCESS) {
 
-                Log.d(TAG, "[HANS] onConnectionStateChange status : " + status );
+                Log.d(TAG, "[HANS] onConnectionStateChange status : " + status + " Device name : " + gatt.getDevice().getName());
 
                 if (status == 133) {
                     // device doesn't adverise or reachable

@@ -1,19 +1,13 @@
 package com.firstbuild.androidapp.productmanager;
 
 import android.bluetooth.BluetoothDevice;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.dashboard.DashboardActivity;
-import com.firstbuild.androidapp.paragon.datamodel.RecipeInfo;
-import com.firstbuild.androidapp.paragon.datamodel.StageInfo;
-import com.firstbuild.commonframework.blemanager.BleManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public abstract class ProductInfo {
