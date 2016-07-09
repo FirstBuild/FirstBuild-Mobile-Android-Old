@@ -16,12 +16,14 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.OpalValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.paragon.OtaManager;
 import com.firstbuild.androidapp.productmanager.OpalInfo;
 import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 import com.firstbuild.commonframework.blemanager.BleListener;
 import com.firstbuild.commonframework.blemanager.BleManager;
 import com.firstbuild.commonframework.blemanager.BleValues;
+import com.firstbuild.tools.MathTools;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -39,121 +41,6 @@ public class OpalMainFragment extends Fragment {
     private Switch scheduleSwitch;
     private Button makeIceBtn;
     private OpalInfo currentOpalInfo;
-
-    private BleListener bleListener = new BleListener() {
-        @Override
-        public void onScanDevices(HashMap<String, BluetoothDevice> bluetoothDevices) {
-            super.onScanDevices(bluetoothDevices);
-
-            Log.d(TAG, "onScanDevices IN");
-        }
-
-        @Override
-        public void onScanStateChanged(int status) {
-            super.onScanStateChanged(status);
-
-            Log.d(TAG, "[onScanStateChanged] status: " + status);
-
-            if (status == BleValues.START_SCAN) {
-                Log.d(TAG, "Scanning BLE devices");
-            }
-            else {
-                Log.d(TAG, "Stop scanning BLE devices");
-            }
-        }
-
-        @Override
-        public void onConnectionStateChanged(final String address, final int status) {
-            super.onConnectionStateChanged(address, status);
-
-            final ProductInfo productInfo = ProductManager.getInstance().getCurrent();
-
-            if (address.equals(productInfo.address)) {
-                Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
-            }
-
-        }
-
-        @Override
-        public void onServicesDiscovered(String address, List<BluetoothGattService> bleGattServices) {
-            super.onServicesDiscovered(address, bleGattServices);
-
-            Log.d(TAG, "[onServicesDiscovered] address: " + address);
-        }
-
-        @Override
-        public void onCharacteristicRead(String address, final String uuid, final byte[] value) {
-            super.onCharacteristicRead(address, uuid, value);
-
-            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
-
-            if (address.equals(productInfo.address)) {
-                Log.d(TAG, "[HANS][onCharacteristicRead] address: " + address + ", uuid: " + uuid);
-
-                if(getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onOpalDataChanged(uuid, value);
-                        }
-                    });
-                }
-            }
-        }
-
-        @Override
-        public void onCharacteristicWrite(String address, final String uuid, final byte[] value) {
-            super.onCharacteristicWrite(address, uuid, value);
-
-            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
-
-            if (address.equals(productInfo.address)) {
-
-                Log.d(TAG, "[HANS][onCharacteristicWrite] uuid: " + uuid + ", value: " + String.format("%02x", value[0]));
-
-                if(getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onOpalDataChanged(uuid, value);
-                        }
-                    });
-                }
-            }
-
-        }
-
-        @Override
-        public void onCharacteristicChanged(String address, final String uuid, final byte[] value) {
-            super.onCharacteristicChanged(address, uuid, value);
-
-            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
-            if (address.equals(productInfo.address)) {
-                Log.d(TAG, "[HANS][onCharacteristicChanged] address: " + address + ", uuid: " + uuid);
-
-                if(getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onOpalDataChanged(uuid, value);
-                        }
-                    });
-                }
-            }
-        }
-
-        @Override
-        public void onDescriptorWrite(String address, String uuid, byte[] value) {
-            super.onDescriptorWrite(address, uuid, value);
-
-            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
-
-            if (address.equals(productInfo.address)) {
-                Log.d(TAG, "[HANS][onDescriptorWrite] address: " + address + ", uuid: " + uuid);
-            }
-
-        }
-    };
 
     @Nullable
     @Override
@@ -238,31 +125,10 @@ public class OpalMainFragment extends Fragment {
             }
         });
 
-
-
-        // Read the version info for OTA when creating view
-        BleManager.getInstance().readCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID);
-        BleManager.getInstance().readCharacteristics(currentOpalInfo.bluetoothDevice, OpalValues.OPAL_OTA_BT_VERSION_CHAR_UUID);
-
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Add ble event listener
-        BleManager.getInstance().addListener(bleListener);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        // Add ble event listener
-        BleManager.getInstance().removeListener(bleListener);
-    }
-
-    private void onOpalDataChanged(String uuid, byte[] value) {
+    public void onOpalDataChanged(String uuid, byte[] value) {
 
         switch (uuid.toUpperCase()) {
             case OpalValues.OPAL_OP_STATE_UUID:
@@ -282,14 +148,44 @@ public class OpalMainFragment extends Fragment {
                     // Clean mode
                     makeIceBtn.setVisibility(View.GONE);
                 }
+                break;
 
+            case OpalValues.OPAL_IMAGE_DATA_CHAR_UUID:
+                // TODO : each image write response should be 0x00 but current response contains exactly what we've sent to the BLE
+                // TODO : should check this with JungIn
+                OtaManager.getInstance().getResponse((byte)0x00);
                 break;
 
             default:
-                Log.d(TAG, "onOpalDataChanged : uuid : " + uuid + "    value : " + String.format("%02x", value[0]));
+                Log.d(TAG, "onOpalDataChanged : Not Handled ! : uuid : " + uuid + " value : " + MathTools.byteArrayToHex(value));
                 break;
         }
 
     }
+
+    public boolean onOpalDataNotified(String uuid, byte[] value) {
+
+        boolean notificationHandled = true;
+
+        switch (uuid.toUpperCase()) {
+            case OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID:
+                Log.d(TAG, "onOpalDataNotified : uuid : OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID");
+                OtaManager.getInstance().getResponse(value[0]);
+                break;
+
+            case OpalValues.OPAL_UPDATE_PROGRESS_UUID:
+                Log.d(TAG, "onOpalDataNotified : uuid : OpalValues.OPAL_UPDATE_PROGRESS_UUID");
+                break;
+
+            default:
+                Log.d(TAG, "onOpalDataNotified : Not Handled ! So passing to  onOpalDataChanged() : uuid : " + uuid + "    value : " + MathTools.byteArrayToHex(value));
+                notificationHandled = false;
+                break;
+        }
+
+        return notificationHandled;
+
+    }
+
 
 }

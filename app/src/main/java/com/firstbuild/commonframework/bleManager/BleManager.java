@@ -116,7 +116,7 @@ public class BleManager {
 
             } else if(status != BluetoothGatt.GATT_SUCCESS) {
 
-                Log.d(TAG, "[HANS] onConnectionStateChange status : " + status );
+                Log.d(TAG, "[HANS] onConnectionStateChange status : " + status + " Device name : " + gatt.getDevice().getName());
 
                 if (status == 133) {
                     // device doesn't adverise or reachable
@@ -650,6 +650,19 @@ public class BleManager {
                 currentOperation.getDevice().getAddress() == device.getAddress()) {
             setCurrentOperation(null);
         }
+    }
+
+    /**
+     * Remove all operations pertaining to device passed in, which are schedule to be run on from the Queue
+     *
+     * @param device Device where scheduled operations should be deleted
+     */
+    public void cancelOperations(BluetoothDevice device) {
+
+        // reuse function
+        cancelOperationFromDeletedDevice(device);
+        // execute the next queued operation
+        doOperation();
     }
 
     /**

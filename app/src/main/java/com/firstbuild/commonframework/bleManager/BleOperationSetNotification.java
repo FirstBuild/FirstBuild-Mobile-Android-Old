@@ -7,6 +7,8 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.util.Log;
 
+import com.firstbuild.androidapp.OpalValues;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +19,8 @@ public class BleOperationSetNotification extends BleOperation {
     private String TAG = BleOperationSetNotification.class.getSimpleName();
     private String characteristicsUuid;
     private boolean isEnabled;
+
+    private static final byte[] ENABLE_NOTIFICATION_INDICATION_VALUE = {0x03, 0x00};
 
     public BleOperationSetNotification(BluetoothDevice device, String characteristicsUuid, boolean isEnabled) {
         super(device);
@@ -41,6 +45,15 @@ public class BleOperationSetNotification extends BleOperation {
                 if (characteristic.getUuid().toString().equalsIgnoreCase(characteristicsUuid)) {
                     Log.d(TAG, "Found Characteristic for notification: " + characteristic.getUuid().toString());
 
+                    if ((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0) {
+                        Log.d(TAG, characteristic.getUuid().toString() + "\tCurrent Characteristic is compatible with  BluetoothGattCharacteristic.PROPERTY_NOTIFY" );
+
+                    }
+
+                    if ((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0) {
+                        Log.d(TAG, characteristic.getUuid().toString() + "\tCurrent Characteristic is compatible with  BluetoothGattCharacteristic.PROPERTY_INDICATE" );
+                    }
+
                     // Set notification
                     bluetoothGatt.setCharacteristicNotification(characteristic, isEnabled);
 
@@ -54,7 +67,16 @@ public class BleOperationSetNotification extends BleOperation {
                     BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BleManager.CLIENT_CONFIGURATION_UUID));
 
                     if (isEnabled) {
-                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+
+                        if(characteristicsUuid.equalsIgnoreCase(OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID)) {
+                            // Enable both Notification and Indication for OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID
+//                            descriptor.setValue(ENABLE_NOTIFICATION_INDICATION_VALUE);
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+
+                        } else {
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                        }
+
                     }
                     else {
                         descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);

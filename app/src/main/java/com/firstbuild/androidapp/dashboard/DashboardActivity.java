@@ -51,9 +51,7 @@ import com.firstbuild.commonframework.blemanager.BleValues;
 import com.firstbuild.tools.MathTools;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -201,8 +199,8 @@ public class DashboardActivity extends AppCompatActivity {
 
             valueBuffer.putInt(localtime.intValue());
 
-            Log.d(TAG, "[HANS] current epoch time : " + localtime.intValue());
-            Log.d(TAG, "[HANS] current epoch time in buffer array format: " + MathTools.byteArrayToHex(valueBuffer.array()));
+            Log.d(TAG, "[HANS] current local time : " + localtime.intValue());
+            Log.d(TAG, "[HANS] current local time in buffer array format: " + MathTools.byteArrayToHex(valueBuffer.array()));
 
             BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, OpalValues.OPAL_TIME_SYNC_UUID, valueBuffer.array());
 
@@ -531,11 +529,25 @@ public class DashboardActivity extends AppCompatActivity {
             Intent intent = new Intent(DashboardActivity.this, cls);
 
             startActivity(intent);
+
+            maintainOnlyCurrentProductOperation();
         }
         else {
             Log.d(TAG, "onItemClicked but error :" + productInfo.type);
         }
 
+    }
+
+    private void maintainOnlyCurrentProductOperation() {
+        ProductInfo currentProduct = ProductManager.getInstance().getCurrent();
+
+        for(ProductInfo p : ProductManager.getInstance().getProducts()) {
+
+            if(p.bluetoothDevice.equals(currentProduct.bluetoothDevice))
+                continue;
+
+            BleManager.getInstance().cancelOperations(p.bluetoothDevice);
+        }
     }
 
     @NonNull

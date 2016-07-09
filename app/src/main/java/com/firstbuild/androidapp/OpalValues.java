@@ -13,6 +13,14 @@ public class OpalValues {
 
     private static final String TAG = OpalValues.class.getSimpleName();
 
+    // !!! MAKE SURE TO UPDATE THIS HARDCODED VALUE WHEN CHANGING IMAGE FILE IN \ASSET FOLDER !!!
+    // HEXA DECIMAL VALUE
+    public static final String LATEST_OPAL_BLE_FIRMWARE_VERSION = "01040200";
+    public static final String LATEST_OPAL_FIRMWARE_VERSION = "01070510";
+
+    public static final String LATEST_OPAL_BLE_FIRMWARE_NAME = "opal_ble.bin.signed.01.04.test.ota";
+    public static final String LATEST_OPAL_FIRMWARE_NAME = "GE8868_01070510_PPR5.bin.ota";
+
     // BLE Service UUID
     public static final String OPAL_BLE_SERVICE_UUID = "3E6763C5-9429-40CC-909E-BEBF8C7487BE";
     public static final String OPAL_OP_STATE_UUID = "097A2751-CA0D-432F-87B5-7D2F31E45551";
@@ -32,7 +40,7 @@ public class OpalValues {
 
     // OTA Upgrade Service UUID
     public static final String OPAL_OTA_UPGRADE_SERVICE_UUID = "E936877A-8DD0-FAA7-B648-F46ACDA1F27B";
-    public static final String OPAL_CONTROL_COMMAND_CHAR_UUID = "4FB34AB1-6207-E5A0-484F-E24A7F638FFF";
+    public static final String OPAL_OTA_CONTROL_COMMAND_CHAR_UUID = "4FB34AB1-6207-E5A0-484F-E24A7F638FFF";
     public static final String OPAL_IMAGE_DATA_CHAR_UUID = "78282AE5-3060-C3B6-7D49-EC74702414E5";
     public static final String OPAL_OTA_BT_VERSION_CHAR_UUID = "318DB1F5-67F1-119B-6A41-1EECA0C744CE"; //Bluetooth Version Char
 
@@ -68,6 +76,8 @@ public class OpalValues {
     // Image Type char , Permission > Read/Write , Property > Read/Write
     public static final byte OPAL_BLE_IMAGE_TYPE = 0x00;
     public static final byte OPAL_OPAL_IMAGE_TYPE = 0x01;
+
+    public static final byte OPAL_CONTROL_COMMAND_PREPARE_DOWNLOAD = 0x01;
 
 
     // BLE return code
@@ -126,7 +136,7 @@ public class OpalValues {
         uuidList.add(OPAL_FILTER_INSTALL_CHAR_UUID);
         uuidList.add(OPAL_PUMP_CYCLE_CHAR_UUID);
         uuidList.add(OPAL_OTA_UPGRADE_SERVICE_UUID);
-        uuidList.add(OPAL_CONTROL_COMMAND_CHAR_UUID);
+        uuidList.add(OPAL_OTA_CONTROL_COMMAND_CHAR_UUID);
         uuidList.add(OPAL_IMAGE_DATA_CHAR_UUID);
         uuidList.add(OPAL_OTA_BT_VERSION_CHAR_UUID);
 
