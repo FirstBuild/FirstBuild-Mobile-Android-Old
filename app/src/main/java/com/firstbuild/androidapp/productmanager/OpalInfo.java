@@ -388,6 +388,10 @@ public class OpalInfo extends ProductInfo{
      */
     public boolean isOpalFirmwareUpgradeRequired() {
 
+        if(isOpalFirmwareVersionReceived() == false) {
+            return false;
+        }
+
         byte[] latest = MathTools.hexToByteArray(OpalValues.LATEST_OPAL_FIRMWARE_VERSION);
         byte first = latest[0];
         byte second = latest[1];
@@ -416,6 +420,11 @@ public class OpalInfo extends ProductInfo{
      */
     public boolean isBLEModuleUpgradeRequired() {
 
+        // If required version is not received, let it return false
+        if(isBLEVersionReceived() == false) {
+            return false;
+        }
+
         byte[] latest = MathTools.hexToByteArray(OpalValues.LATEST_OPAL_BLE_FIRMWARE_VERSION);
         byte first = latest[0];
         byte second = latest[1];
@@ -437,7 +446,7 @@ public class OpalInfo extends ProductInfo{
         return isNeedUpdate;
     }
 
-    public boolean isBLEVersionReceived() {
+    private boolean isBLEVersionReceived() {
         boolean ret = false;
 
         if(blueToothVersionFirst != -1 &&
@@ -451,7 +460,7 @@ public class OpalInfo extends ProductInfo{
         return ret;
     }
 
-    public boolean isOpalFirmwareVersionReceived() {
+    private boolean isOpalFirmwareVersionReceived() {
         boolean ret = false;
 
         if(firmwareVersionFirst != -1 &&

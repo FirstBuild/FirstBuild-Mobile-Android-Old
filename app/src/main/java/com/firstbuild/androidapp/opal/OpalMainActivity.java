@@ -3,8 +3,8 @@ package com.firstbuild.androidapp.opal;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothProfile;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,7 +21,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.firstbuild.androidapp.FirstBuildApplication;
 import com.firstbuild.androidapp.OpalValues;
+import com.firstbuild.androidapp.ParagonValues;
 import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.paragon.OtaManager;
 import com.firstbuild.androidapp.productmanager.OpalInfo;
@@ -57,9 +60,12 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
 
     public static final String TAG_MAIN_FRAGMENT = "tag_main_fragment";
 
-    public static final String TAG_OTA_UPDATE_CONFIRM_DIALOG = "tag_ota_update_confirm_dialog";
+    public static final String TAG_BLE_OTA_UPDATE_CONFIRM_DIALOG = "tag_ble_ota_update_confirm_dialog";
+    public static final String TAG_OPAL_OTA_UPDATE_CONFIRM_DIALOG = "tag_opal_ota_update_confirm_dialog";
+
     public static final String TAG_OTA_UPDATE_NOT_AVAILABLE_DIALOG = "tag_ota_update_not_available_dialog";
     public static final String TAG_OTA_FAILURE_DIALOG = "tag_ota_failure_dialog";
+    public static final String TAG_OTA_UPDATE_NOT_READY_DIALOG = "tag_ota_update_not_ready_dialog";
     public static final String TAG_OTA_SUCCESS_DIALOG = "tag_ota_success_dialog";
     public static final String TAG_OTA_PROGRESS_DIALOG = "tag_ota_progress_dialog";
 
@@ -70,8 +76,6 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
 
     private TextView opalFirmwareTv;
     private TextView bleFirmwareTv;
-
-    private String appVersionName;
 
     private OpalInfo opalInfo;
     private int currentNavItemId;
@@ -87,7 +91,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
 
         @Override
         public void onBLEOTAFailed() {
-            showUpdateFailureDialog();
+            showUpdateFailureDialog(TAG_OTA_FAILURE_DIALOG);
         }
 
         @Override
@@ -140,6 +144,15 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
 
             if (address.equals(productInfo.address)) {
                 Log.d(TAG, "[onConnectionStateChanged] address: " + address + ", status: " + status);
+
+                if (status == BluetoothProfile.STATE_CONNECTED) {
+                    // TODO: needs testing for corner case handling
+
+                }
+                else if (status == BluetoothProfile.STATE_DISCONNECTED) {
+                    // TODO: needs testing for corner case handling
+//                    productInfo.disconnected();
+                }
             }
         }
 
@@ -159,21 +172,16 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
             if (address.equals(productInfo.address)) {
                 Log.d(TAG, "[HANS][onCharacteristicRead] address: " + address + ", uuid: " + uuid + " value : " + MathTools.byteArrayToHex(value));
 
-                // If version information is read, update version UI in navigation view if possible
-                if(uuid.equalsIgnoreCase(OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID) ||
-                        uuid.equalsIgnoreCase(OpalValues.OPAL_OTA_BT_VERSION_CHAR_UUID)) {
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onUpdateVersion();
-                        }
-                    });
-                }
-
                 runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
+                            // If version information is read, update version UI in navigation view if possible
+                            if(uuid.equalsIgnoreCase(OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID) ||
+                                    uuid.equalsIgnoreCase(OpalValues.OPAL_OTA_BT_VERSION_CHAR_UUID)) {
+                                onUpdateVersion();
+                            }
+
                             OpalMainFragment mainFragment = (OpalMainFragment)getSupportFragmentManager().findFragmentByTag(TAG_MAIN_FRAGMENT);
                             if(mainFragment != null) {
                                 mainFragment.onOpalDataChanged(uuid, value);
@@ -289,12 +297,6 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
                 replace(R.id.frame_content, new OpalMainFragment(), TAG_MAIN_FRAGMENT).
                 commit();
 
-        try {
-            appVersionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
         opalInfo = (OpalInfo) ProductManager.getInstance().getCurrent();
 
         checkBleAvailability();
@@ -381,12 +383,14 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
                     case R.id.nav_item_update:
 
                         // BLE update first
-                        if(opalInfo.isBLEVersionReceived() &&
-                                opalInfo.isBLEModuleUpgradeRequired()) {
-                            showUpdateConfirmDialog();
-                        }
-                        else {
-                            showUpdateNotAvailableDialog();;
+                        if(opalInfo.getOperationStateValue() != OpalValues.OPAL_STATE_IDLE) {
+                            showUpdateFailureDialog(TAG_OTA_UPDATE_NOT_READY_DIALOG);
+                        } else if(opalInfo.isBLEModuleUpgradeRequired()) {
+                            showUpdateConfirmDialog(TAG_BLE_OTA_UPDATE_CONFIRM_DIALOG);
+                        } else if(opalInfo.isOpalFirmwareUpgradeRequired()) {
+                            showUpdateConfirmDialog(TAG_OPAL_OTA_UPDATE_CONFIRM_DIALOG);
+                        } else {
+                            showUpdateNotAvailableDialog();
                         }
                         break;
 
@@ -449,7 +453,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         bleFirmwareTv = ((TextView)aboutContentsView.findViewById(R.id.opal_about_bt_version));
 
 
-        ((TextView)aboutContentsView.findViewById(R.id.opal_about_app_version)).setText(appVersionName);
+        ((TextView)aboutContentsView.findViewById(R.id.opal_about_app_version)).setText(FirstBuildApplication.getInstance().getAppVersion());
         opalFirmwareTv.setText(opalInfo.getFirmWareVersion());
         bleFirmwareTv.setText(opalInfo.getBTVersion());
 
@@ -470,22 +474,22 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         });
     }
 
-    private void showUpdateConfirmDialog() {
+    private void showUpdateConfirmDialog(String tag) {
         FragmentManager fm = getSupportFragmentManager();
 
         if(fm != null &&
-                fm.findFragmentByTag(TAG_OTA_UPDATE_CONFIRM_DIALOG) != null) {
+                fm.findFragmentByTag(tag) != null) {
             // skip showing dialog as it is already shown
             return;
         }
 
         OTAConfirmDialogFragment dialogFragment = OTAConfirmDialogFragment.getInstance(
-                getString(R.string.popup_bluetooth_update_available_title),
-                getString(R.string.popup_bluetooth_update_available_confirm_body),
+                getString(tag.equals(TAG_BLE_OTA_UPDATE_CONFIRM_DIALOG) ? R.string.popup_bluetooth_update_available_title : R.string.popup_opal_update_available_title),
+                getString(tag.equals(TAG_BLE_OTA_UPDATE_CONFIRM_DIALOG) ? R.string.popup_bluetooth_update_available_confirm_body : R.string.popup_opal_update_available_confirm_body),
                 getString(R.string.popup_bluetooth_update_available_positive_btn),
                 getString(R.string.popup_bluetooth_update_available_negative_btn));
 
-        dialogFragment.show(fm, TAG_OTA_UPDATE_CONFIRM_DIALOG);
+        dialogFragment.show(fm, tag);
     }
 
     private void showUpdateNotAvailableDialog() {
@@ -506,24 +510,24 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         dialogFragment.show(fm, TAG_OTA_UPDATE_NOT_AVAILABLE_DIALOG);
     }
 
-    private void showUpdateFailureDialog() {
+    private void showUpdateFailureDialog(String tag) {
         FragmentManager fm = getSupportFragmentManager();
 
         dismissProgressDialog(fm);
 
         if(fm != null &&
-                fm.findFragmentByTag(TAG_OTA_FAILURE_DIALOG) != null) {
+                fm.findFragmentByTag(tag) != null) {
             // skip showing dialog as it is already shown
             return;
         }
 
         OTAConfirmDialogFragment dialogFragment = OTAConfirmDialogFragment.getInstance(
-                getString(R.string.popup_firmware_update_fail_title),
-                getString(R.string.popup_firmware_update_fail_body),
-                getString(R.string.popup_bluetooth_update_available_negative_btn),
+                getString(tag.equals(TAG_OTA_FAILURE_DIALOG) ? R.string.popup_firmware_update_fail_title : R.string.popup_opal_update_not_available_title),
+                getString(tag.equals(TAG_OTA_FAILURE_DIALOG) ? R.string.popup_firmware_update_fail_body : R.string.popup_opal_update_not_available_confirm_body),
+                getString(tag.equals(TAG_OTA_FAILURE_DIALOG) ? R.string.popup_bluetooth_update_available_negative_btn : android.R.string.ok),
                 null);
 
-        dialogFragment.show(fm, TAG_OTA_FAILURE_DIALOG);
+        dialogFragment.show(fm, tag);
     }
 
     private void dismissProgressDialog(FragmentManager fm) {
@@ -665,7 +669,14 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
     @Override
     public void onOTAStart() {
 
-        OtaManager.getInstance().startBleOtaProcess(opalInfo.bluetoothDevice, otaResultDelegate);
+        if(opalInfo.isBLEModuleUpgradeRequired()) {
+            OtaManager.getInstance().startBleOtaProcess(opalInfo.bluetoothDevice, otaResultDelegate);
+        } else if(opalInfo.isOpalFirmwareUpgradeRequired()) {
+            OtaManager.getInstance().startOpalOtaProcess(opalInfo.bluetoothDevice, otaResultDelegate);
+        } else {
+
+        }
+
         showProgressDialog();
     }
 }

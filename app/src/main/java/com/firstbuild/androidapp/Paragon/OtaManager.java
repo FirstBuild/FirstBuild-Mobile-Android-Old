@@ -33,12 +33,19 @@ public class OtaManager {
     private static final int OTA_STEP_REBOOT = 5;
 
 
-    private static final int OTA_BLE_STEP_NONE = 6;
+    private static final int OTA_BLE_STEP_NONE = OTA_STEP_REBOOT + 1;
     private static final int OTA_BLE_PREPARE_DOWNLOAD = OTA_BLE_STEP_NONE + 1;
     private static final int OTA_BLE_STEP_LOAD_IMAGE_AND_SEND_IMAGE_SIZE = OTA_BLE_PREPARE_DOWNLOAD + 1;
     private static final int OTA_BLE_STEP_SEND_IMAGE_DATA = OTA_BLE_STEP_LOAD_IMAGE_AND_SEND_IMAGE_SIZE + 1;
     private static final int OTA_BLE_STEP_SEND_IMAGE_DONE = OTA_BLE_STEP_SEND_IMAGE_DATA + 1;
     private static final int OTA_BLE_STEP_REBOOT = OTA_BLE_STEP_SEND_IMAGE_DONE + 1;
+
+    private static final int OTA_OPAL_STEP_NONE = OTA_BLE_STEP_REBOOT + 1;
+    private static final int OTA_OPAL_PREPARE_DOWNLOAD = OTA_OPAL_STEP_NONE + 1;
+    private static final int OTA_OPAL_STEP_LOAD_IMAGE_AND_SEND_IMAGE_HEADER = OTA_OPAL_PREPARE_DOWNLOAD + 1;
+    private static final int OTA_OPAL_STEP_SEND_IMAGE_DATA = OTA_OPAL_STEP_LOAD_IMAGE_AND_SEND_IMAGE_HEADER + 1;
+    private static final int OTA_OPAL_STEP_SEND_IMAGE_DONE = OTA_OPAL_STEP_SEND_IMAGE_DATA + 1;
+    private static final int OTA_OPAL_STEP_REBOOT = OTA_OPAL_STEP_SEND_IMAGE_DONE + 1;
 
     private static final int SIZE_CHUNK = 20;
     private static final int SIZE_CHECKSUM = 160;
@@ -53,7 +60,7 @@ public class OtaManager {
     private int transferOffset = 0;
 
     private BluetoothDevice currentDevice;
-    private int bleImageSize; // in byte
+    private int otaImageSize; // in byte
 
     OpalMainActivity.OTAResultDelegate delegate;
 
@@ -150,6 +157,8 @@ public class OtaManager {
 
     public void startBleOtaProcess(BluetoothDevice device, OpalMainActivity.OTAResultDelegate resultDelegate){
 
+        resetOtaValues();
+
         currentStep = OTA_BLE_PREPARE_DOWNLOAD;
         currentDevice = device;
         delegate = resultDelegate;
@@ -167,6 +176,29 @@ public class OtaManager {
 
         // Should wait for the notification value 0x00 for OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID
         Log.d(TAG, "startBleOtaProcess : Should wait for the notification value 0x00 for OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID");
+    }
+
+    public void startOpalOtaProcess(BluetoothDevice device, OpalMainActivity.OTAResultDelegate resultDelegate){
+
+        resetOtaValues();
+
+        currentStep = OTA_OPAL_PREPARE_DOWNLOAD;
+        currentDevice = device;
+        delegate = resultDelegate;
+
+        ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+
+        Log.d(TAG, "startOpalOtaProcess : Sending image type : " + OpalValues.OPAL_OPAL_IMAGE_TYPE);
+        valueBuffer.put(OpalValues.OPAL_OPAL_IMAGE_TYPE);
+        BleManager.getInstance().writeCharacteristics(device, OpalValues.OPAL_IMG_TYPE_UUID, valueBuffer.array());
+        valueBuffer.clear();
+
+        Log.d(TAG, "startOpalOtaProcess : Sending Prepare Download Control Command : " + OpalValues.OPAL_CONTROL_COMMAND_PREPARE_DOWNLOAD);
+        valueBuffer.put(OpalValues.OPAL_CONTROL_COMMAND_PREPARE_DOWNLOAD);
+        BleManager.getInstance().writeCharacteristics(device, OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID, valueBuffer.array());
+
+        // Should wait for the notification value 0x00 for OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID
+        Log.d(TAG, "startOpalOtaProcess : Should wait for the notification value 0x00 for OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID");
     }
 
     /**
@@ -246,7 +278,7 @@ public class OtaManager {
         Log.d(TAG, "sendBleImageSize : image name  : " + OpalValues.LATEST_OPAL_BLE_FIRMWARE_NAME);
 
         // load ble image into Memory
-        boolean loadSuccess = loadBleImageToMemory();
+        boolean loadSuccess = loadImageToMemory(OpalValues.LATEST_OPAL_BLE_FIRMWARE_NAME);
 
         if( loadSuccess == false) {
 
@@ -263,12 +295,85 @@ public class OtaManager {
             // => 64KByte
 
             valueBuffer.put((byte) 0x02);
-            valueBuffer.put(1, (byte) (bleImageSize & 0xff));
-            valueBuffer.put(2, (byte) ((bleImageSize >> 8) & 0xff));
+            valueBuffer.put(1, (byte) (otaImageSize & 0xff));
+            valueBuffer.put(2, (byte) ((otaImageSize >> 8) & 0xff));
 
             Log.d(TAG, "sendBleImageSize : OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID : " +  " Image size to send :  " + MathTools.byteArrayToHex(valueBuffer.array()));
 
             BleManager.getInstance().writeCharacteristics(currentDevice, OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID, valueBuffer.array());
+        }
+    }
+
+    private void sendOpalImageHeader() {
+
+        currentStep = OTA_OPAL_STEP_LOAD_IMAGE_AND_SEND_IMAGE_HEADER;
+        Log.d(TAG, "sendOpalImageHeader : image name  : " + OpalValues.LATEST_OPAL_FIRMWARE_NAME);
+
+        // load ble image into Memory
+        boolean loadSuccess = loadImageToMemory(OpalValues.LATEST_OPAL_FIRMWARE_NAME);
+
+        if( loadSuccess == false) {
+
+            Log.d(TAG, "sendOpalImageHeader : load failed !");
+
+            onBLEUpdateFailed();
+        }
+        else {
+
+            ByteBuffer valueBuffer = ByteBuffer.allocate(20);
+
+            // Image type: 1 byte (should be 0x01 : Opal image type),
+            valueBuffer.put((byte) 0x01);
+            // Opal firmware version:4 bytes,
+            byte[] version = MathTools.hexToByteArray(OpalValues.LATEST_OPAL_FIRMWARE_VERSION);
+            valueBuffer.put(version[0]);
+            valueBuffer.put(version[1]);
+            valueBuffer.put(version[2]);
+            valueBuffer.put(version[3]);
+            // file size: 4 bytes + random value 11 bytes
+            // As we put image size into 2byte bucket =>
+            // max image size should be 2 to the 16th power = 65,536
+            // => 64KByte
+
+            String hex = String.format("%08x", otaImageSize);
+            byte[] imageSize = MathTools.hexToByteArray(hex);
+
+            valueBuffer.put(imageSize[0]);
+            valueBuffer.put(imageSize[1]);
+            valueBuffer.put(imageSize[2]);
+            valueBuffer.put(imageSize[3]);
+
+            Log.d(TAG, "sendOpalImageHeader : OpalValues.OPAL_IMAGE_DATA_CHAR_UUID : " +  " Image header to send :  " + MathTools.byteArrayToHex(valueBuffer.array()));
+
+            BleManager.getInstance().writeCharacteristics(currentDevice, OpalValues.OPAL_IMAGE_DATA_CHAR_UUID, valueBuffer.array());
+        }
+    }
+
+    private void sendOpalImageData() {
+
+        if (transferOffset < transferTotalCount) {
+            currentStep = OTA_OPAL_STEP_SEND_IMAGE_DATA;
+            ByteBuffer valueBuffer = ByteBuffer.allocate(SIZE_CHUNK);
+
+            valueBuffer.put(imageChunk, transferOffset * SIZE_CHUNK, SIZE_CHUNK);
+            byte[] data = valueBuffer.array();
+
+            BleManager.getInstance().writeCharacteristics(currentDevice, OpalValues.OPAL_IMAGE_DATA_CHAR_UUID, data);
+            Log.d(TAG, "sendOpalImageData() : Sending 20 bytes image chunk : OpalValues.OPAL_IMAGE_DATA_CHAR_UUID :" + transferOffset + ", " + MathTools.byteArrayToHex(data));
+
+            transferOffset++;
+            if(delegate != null) {
+                delegate.onBLEOTAProgressChanged(transferOffset);
+            }
+        }
+        else {
+            currentStep = OTA_OPAL_STEP_SEND_IMAGE_DONE;
+
+            ByteBuffer valueBuffer = ByteBuffer.allocate(1);
+
+            valueBuffer.put((byte) 0x03);
+            BleManager.getInstance().writeCharacteristics(currentDevice, OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID, valueBuffer.array());
+            Log.d(TAG, "sendOpalImageData() : Sending verification command(0x03) for completion of sending binary !");
         }
     }
 
@@ -300,32 +405,32 @@ public class OtaManager {
         }
     }
 
-    private boolean loadBleImageToMemory() {
+    private boolean loadImageToMemory(String imageName) {
 
-        Log.d(TAG, "loadBleImageToMemory() : In");
+        Log.d(TAG, "loadImageToMemory() : In");
 
         boolean loadSuccess = false;
 
-        AssetManager assetManager = FirstBuildApplication.getContext().getAssets();
+        AssetManager assetManager = FirstBuildApplication.getInstance().getContext().getAssets();
 
         try {
-            AssetFileDescriptor fd = assetManager.openFd("image/" + OpalValues.LATEST_OPAL_BLE_FIRMWARE_NAME);
+            AssetFileDescriptor fd = assetManager.openFd("image/" + imageName);
             Long imageSize = fd.getLength();
 
-            bleImageSize = imageSize.intValue();
+            otaImageSize = imageSize.intValue();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if(bleImageSize == 0) {
+        if(otaImageSize == 0) {
             loadSuccess = false;
         }
         else {
             try {
                 // Open BLE image file
-                InputStream inputStream = assetManager.open("image/"+ OpalValues.LATEST_OPAL_BLE_FIRMWARE_NAME);
-                int padSize = bleImageSize % SIZE_CHUNK;
+                InputStream inputStream = assetManager.open("image/"+ imageName);
+                int padSize = otaImageSize % SIZE_CHUNK;
 
                 // If the image size is not divide by 20byte then pad the remained byte.
                 // The image size is contained data and checksum chunk. The checksum chunk is be the last
@@ -339,13 +444,13 @@ public class OtaManager {
 
                 // Allocate image buffer.
 
-                byte[] dataChunk = new byte[bleImageSize - SIZE_CHECKSUM + padSize];
+                byte[] dataChunk = new byte[otaImageSize - SIZE_CHECKSUM + padSize];
                 byte[] checksumChunk = new byte[SIZE_CHECKSUM];
 
                 imageChunk = new byte[dataChunk.length + checksumChunk.length];
 
                 // Read data chunk except last 160 byte of checksum chunk.
-                inputStream.read(dataChunk, 0, bleImageSize - SIZE_CHECKSUM);
+                inputStream.read(dataChunk, 0, otaImageSize - SIZE_CHECKSUM);
                 inputStream.read(checksumChunk, 0, SIZE_CHECKSUM);
                 inputStream.close();
 
@@ -357,7 +462,7 @@ public class OtaManager {
 
             }
             catch (Exception e) {
-                Log.d(TAG, "loadBleImageToMemory :" + e);
+                Log.d(TAG, "loadImageToMemory :" + e);
                 loadSuccess = false;
             }
 
@@ -439,7 +544,7 @@ public class OtaManager {
         transferOffset = 0;
 
         currentDevice = null;
-        bleImageSize = 0;
+        otaImageSize = 0;
 
         delegate = null;
     }
@@ -489,6 +594,25 @@ public class OtaManager {
                     break;
 
                 case OTA_BLE_STEP_REBOOT:
+                    break;
+
+                case OTA_OPAL_PREPARE_DOWNLOAD:
+                    sendOpalImageHeader();
+                    break;
+
+                case OTA_OPAL_STEP_LOAD_IMAGE_AND_SEND_IMAGE_HEADER:
+                    sendOpalImageData();
+                    break;
+
+                case OTA_OPAL_STEP_SEND_IMAGE_DATA:
+                    sendOpalImageData();
+                    break;
+
+                case OTA_OPAL_STEP_SEND_IMAGE_DONE:
+                    onBLEUpdateSuccess();
+                    break;
+
+                case OTA_OPAL_STEP_REBOOT:
                     break;
             }
         }

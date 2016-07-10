@@ -1541,7 +1541,7 @@ public class ParagonMainActivity extends AppCompatActivity {
      * @return if alresay dissmiss then false.
      */
     public boolean isShowFoodWarning() {
-        SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
+        SharedPreferences settings = FirstBuildApplication.getInstance().getContext().getSharedPreferences(
                 ProductManager.PREFS_NAME, Context.MODE_PRIVATE);
 
         boolean isShowFoodWarning = settings.getBoolean(PREF_KEY_FOOD_WARNING, false);
@@ -1553,7 +1553,7 @@ public class ParagonMainActivity extends AppCompatActivity {
      * If press dismiss button on popup then save this in SharedPreference.
      */
     public void saveShowFoodWarning() {
-        SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
+        SharedPreferences settings = FirstBuildApplication.getInstance().getContext().getSharedPreferences(
                 ProductManager.PREFS_NAME, Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = settings.edit();

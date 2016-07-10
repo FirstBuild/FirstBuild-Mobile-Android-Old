@@ -15,7 +15,7 @@ public class OpalValues {
 
     // !!! MAKE SURE TO UPDATE THIS HARDCODED VALUE WHEN CHANGING IMAGE FILE IN \ASSET FOLDER !!!
     // HEXA DECIMAL VALUE
-    public static final String LATEST_OPAL_BLE_FIRMWARE_VERSION = "01040200";
+    public static final String LATEST_OPAL_BLE_FIRMWARE_VERSION = "01040000";
     public static final String LATEST_OPAL_FIRMWARE_VERSION = "01070510";
 
     public static final String LATEST_OPAL_BLE_FIRMWARE_NAME = "opal_ble.bin.signed.01.04.test.ota";
@@ -78,6 +78,8 @@ public class OpalValues {
     public static final byte OPAL_OPAL_IMAGE_TYPE = 0x01;
 
     public static final byte OPAL_CONTROL_COMMAND_PREPARE_DOWNLOAD = 0x01;
+    // App can abort the OTA process anytime by writing 0x07 to OTA command, data[0] = 0x07.
+    public static final byte OPAL_CONTROL_COMMAND_ABORT_DOWNLOAD = 0x07;
 
 
     // BLE return code

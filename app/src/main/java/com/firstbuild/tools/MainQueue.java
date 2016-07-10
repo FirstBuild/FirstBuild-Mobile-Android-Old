@@ -13,7 +13,7 @@ public class MainQueue {
     private static Handler handler;
 
     static {
-        handler = new Handler(FirstBuildApplication.getContext().getMainLooper());
+        handler = new Handler(FirstBuildApplication.getInstance().getContext().getMainLooper());
     }
 
     public static boolean post(Runnable r) {
