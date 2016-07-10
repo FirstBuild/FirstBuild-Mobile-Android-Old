@@ -159,10 +159,16 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
             if (address.equals(productInfo.address)) {
                 Log.d(TAG, "[HANS][onCharacteristicRead] address: " + address + ", uuid: " + uuid + " value : " + MathTools.byteArrayToHex(value));
 
+                // If version information is read, update version UI in navigation view if possible
                 if(uuid.equalsIgnoreCase(OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID) ||
                         uuid.equalsIgnoreCase(OpalValues.OPAL_OTA_BT_VERSION_CHAR_UUID)) {
-                    // VERSION is read, so update version UI if possible
-                    onUpdateVersion();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onUpdateVersion();
+                        }
+                    });
                 }
 
                 runOnUiThread(new Runnable() {
@@ -257,7 +263,6 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
 
             Log.d(TAG, "[HANS][onUpdateVersion] : Updating version UI");
 
-            // TODO: somehow UI update doesn't work
             opalFirmwareTv.setText(opalInfo.getFirmWareVersion());
             bleFirmwareTv.setText(opalInfo.getBTVersion());
 
