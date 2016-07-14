@@ -131,8 +131,8 @@ public abstract class AddProductSearchFragment extends android.support.v4.app.Fr
         }
 
         @Override
-        public void onCharacteristicRead(String address, String uuid, byte[] value) {
-            super.onCharacteristicRead(address, uuid, value);
+        public void onCharacteristicRead(String address, String uuid, byte[] value, int status) {
+            super.onCharacteristicRead(address, uuid, value, status);
 
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
 

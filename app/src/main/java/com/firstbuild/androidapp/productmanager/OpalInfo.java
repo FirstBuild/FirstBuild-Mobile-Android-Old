@@ -410,6 +410,14 @@ public class OpalInfo extends ProductInfo{
             isNeedUpdate = true;
         }
 
+        // TODO: This is test code to allow same version OTA update , remove this later
+        if (first == this.firmwareVersionFirst ||
+                second  == this.firmwareVersionSecond ||
+                third == this.firmwareVersionThird ||
+                fourth == this.firmwareVersionFourth ) {
+            isNeedUpdate = true;
+        }
+
         return isNeedUpdate;
     }
 

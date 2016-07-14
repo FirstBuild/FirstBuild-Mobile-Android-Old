@@ -86,4 +86,9 @@ public class ProgressDialogFragment extends DialogFragment{
     public void setProgress(int progress) {
         progressDialog.setProgress(progress);
     }
+
+    public void setTitle(String title) {
+        getArguments().putString(KEY_TITLE, title);
+        progressDialog.setTitle(title);
+    }
 }

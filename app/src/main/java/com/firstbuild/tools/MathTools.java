@@ -33,4 +33,8 @@ public class MathTools {
         }
         return sb.toString();
     }
+
+    public static int hexByteToInt(byte b) {
+        return Integer.parseInt(Byte.toString(b), 16);
+    }
 }

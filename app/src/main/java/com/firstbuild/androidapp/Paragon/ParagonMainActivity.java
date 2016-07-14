@@ -188,8 +188,8 @@ public class ParagonMainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCharacteristicRead(String address, String uuid, byte[] value) {
-            super.onCharacteristicRead(address, uuid, value);
+        public void onCharacteristicRead(String address, String uuid, byte[] value, int status) {
+            super.onCharacteristicRead(address, uuid, value, status);
 
             ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
@@ -200,8 +200,8 @@ public class ParagonMainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCharacteristicWrite(String address, String uuid, final byte[] value) {
-            super.onCharacteristicWrite(address, uuid, value);
+        public void onCharacteristicWrite(String address, String uuid, final byte[] value, int status) {
+            super.onCharacteristicWrite(address, uuid, value, status);
 
             ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
@@ -227,8 +227,8 @@ public class ParagonMainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onDescriptorWrite(String address, String uuid, byte[] value) {
-            super.onDescriptorWrite(address, uuid, value);
+        public void onDescriptorWrite(String address, String uuid, byte[] value, int status) {
+            super.onDescriptorWrite(address, uuid, value, status);
 
             ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 

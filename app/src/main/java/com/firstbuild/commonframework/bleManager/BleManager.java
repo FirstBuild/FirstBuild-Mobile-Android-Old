@@ -36,7 +36,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class BleManager {
 
-    public final static String CLIENT_CONFIGURATION_UUID = "00002902-0000-1000-8000-00805f9b34fb";
+    public final static String CLIENT_CHARACTERISTIC_CONFIGURATION_UUID = "00002902-0000-1000-8000-00805f9b34fb";
     public static BleManager instance = new BleManager();
     private final String TAG = getClass().getSimpleName();
     // Flag for checking device scanning state
@@ -186,7 +186,7 @@ public class BleManager {
                 printGattValue(value);
             }
 
-            sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value});
+            sendUpdate("onCharacteristicRead", new Object[]{address, uuid, value, status});
 
             executeNextOperation();
         }
@@ -203,12 +203,12 @@ public class BleManager {
 
             // Retrieves uuid and value
             String uuid = characteristic.getUuid().toString();
-            Log.d(TAG, "Write Characteristic UUID: " + uuid);
+            Log.d(TAG, "Write Characteristic UUID: " + uuid + "    status : " + status);
 
             byte[] value = characteristic.getValue();
             printGattValue(value);
 
-            sendUpdate("onCharacteristicWrite", new Object[]{address, uuid, value});
+            sendUpdate("onCharacteristicWrite", new Object[]{address, uuid, value, status});
 
             executeNextOperation();
         }
@@ -247,7 +247,7 @@ public class BleManager {
 
             byte[] value = descriptor.getValue();
 
-            sendUpdate("onDescriptorWrite", new Object[]{address, uuid, value});
+            sendUpdate("onDescriptorWrite", new Object[]{address, uuid, value, status});
 
             executeNextOperation();
         }
@@ -449,13 +449,13 @@ public class BleManager {
                 callback.onCharacteristicChanged((String) args[0], (String) args[1], (byte[]) args[2]);
             }
             else if (callback != null && listener.equals("onCharacteristicRead")) {
-                callback.onCharacteristicRead((String) args[0], (String) args[1], (byte[]) args[2]);
+                callback.onCharacteristicRead((String) args[0], (String) args[1], (byte[]) args[2], (int) args[3]);
             }
             else if (callback != null && listener.equals("onCharacteristicWrite")) {
-                callback.onCharacteristicWrite((String) args[0], (String) args[1], (byte[]) args[2]);
+                callback.onCharacteristicWrite((String) args[0], (String) args[1], (byte[]) args[2], (int) args[3]);
             }
             else if (callback != null && listener.equals("onDescriptorWrite")) {
-                callback.onDescriptorWrite((String) args[0], (String) args[1], (byte[]) args[2]);
+                callback.onDescriptorWrite((String) args[0], (String) args[1], (byte[]) args[2], (int) args[3]);
             }
             else {
                 // Do nothing

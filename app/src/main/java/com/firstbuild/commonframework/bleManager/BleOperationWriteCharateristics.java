@@ -42,8 +42,8 @@ public class BleOperationWriteCharateristics extends BleOperation {
                     Log.d(TAG, "Found Characteristic for writing: " + characteristic.getUuid().toString());
 
                     printGattValue(values);
-
                     characteristic.setValue(values);
+
                     boolean result = bluetoothGatt.writeCharacteristic(characteristic);
                     Log.d(TAG, "result of writeCharacteristic is " + result);
 

@@ -54,7 +54,7 @@ public class BleOperationSetNotification extends BleOperation {
                         Log.d(TAG, characteristic.getUuid().toString() + "\tCurrent Characteristic is compatible with  BluetoothGattCharacteristic.PROPERTY_INDICATE" );
                     }
 
-                    // Set notification
+                    // enable local notification
                     bluetoothGatt.setCharacteristicNotification(characteristic, isEnabled);
 
 //                    try {
@@ -64,14 +64,17 @@ public class BleOperationSetNotification extends BleOperation {
 //                        e.printStackTrace();
 //                    }
 
-                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BleManager.CLIENT_CONFIGURATION_UUID));
+                    // Enable remote notifications
+                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BleManager.CLIENT_CHARACTERISTIC_CONFIGURATION_UUID));
 
                     if (isEnabled) {
 
                         if(characteristicsUuid.equalsIgnoreCase(OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID)) {
                             // Enable both Notification and Indication for OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID
 //                            descriptor.setValue(ENABLE_NOTIFICATION_INDICATION_VALUE);
+
                             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+//                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
 
                         } else {
                             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);

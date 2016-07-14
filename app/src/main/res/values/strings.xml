@@ -166,11 +166,8 @@
     <string name="popup_bluetooth_update_unavailable_title">No Updates Available</string>
     <string name="popup_bluetooth_update_unavailable_body">Your Opal\'s Bluetooth and application firmware are up-to-date. Also make sure you have the latest version of this app from the Google Play.</string>
 
-    <string name="popup_opal_update_not_available_title">Please ensure Opal is not on</string>
-    <string name="popup_opal_update_not_available_confirm_body">Please ensure the unit is plugged in, but not making ice or in cleaning mode.</string>
-
     <string name="popup_opal_update_available_title">Opal Update Available</string>
-    <string name="popup_opal_update_available_confirm_body">There is an Opal update available, would you like to update now? It will take about 6 minutes and you will need to keep the app open and nearby your Opal.</string>
+    <string name="popup_opal_update_available_confirm_body">There is an Opal update available, would you like to update now? It will take about 10 minutes and you will need to keep the app open and nearby your Opal.</string>
 
 
 
@@ -179,10 +176,17 @@
     <string name="popup_firmware_update_success_body">Update Successful!</string>
 
     <string name="popup_ota_progress_title">Downloading...</string>
+    <string name="popup_ota_install_progress_title">Installing...</string>
     <string name="popup_ota_progress_body">Please keep application open, stay within 10 feet, and do not unplug the device. The update can take up to 10 minutes.</string>
 
     <string name="openDrawer">open drawer</string>
     <string name="closeDrawer">close drawer</string>
+
+    <string name="schedule_edit_schedule_title">EDIT SCHEDULE</string>
+    <string name="schedule_applied_all">APPLIED ALL</string>
+    <string name="schedule_apply_all_days">APPLY ALL DAYS</string>
+
+
 
 
 </resources>

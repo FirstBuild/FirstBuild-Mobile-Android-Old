@@ -10,6 +10,7 @@ import com.firstbuild.androidapp.FirstBuildApplication;
 import com.firstbuild.androidapp.OpalValues;
 import com.firstbuild.androidapp.opal.OpalMainActivity;
 import com.firstbuild.commonframework.blemanager.BleManager;
+import com.firstbuild.tools.MainQueue;
 import com.firstbuild.tools.MathTools;
 
 import java.io.IOException;
@@ -45,7 +46,8 @@ public class OtaManager {
     private static final int OTA_OPAL_STEP_LOAD_IMAGE_AND_SEND_IMAGE_HEADER = OTA_OPAL_PREPARE_DOWNLOAD + 1;
     private static final int OTA_OPAL_STEP_SEND_IMAGE_DATA = OTA_OPAL_STEP_LOAD_IMAGE_AND_SEND_IMAGE_HEADER + 1;
     private static final int OTA_OPAL_STEP_SEND_IMAGE_DONE = OTA_OPAL_STEP_SEND_IMAGE_DATA + 1;
-    private static final int OTA_OPAL_STEP_REBOOT = OTA_OPAL_STEP_SEND_IMAGE_DONE + 1;
+    private static final int OTA_OPAL_STEP_BINARY_INSTALL_IN_PROGRESS = OTA_OPAL_STEP_SEND_IMAGE_DONE + 1;
+    private static final int OTA_OPAL_STEP_REBOOT = OTA_OPAL_STEP_BINARY_INSTALL_IN_PROGRESS + 1;
 
     private static final int SIZE_CHUNK = 20;
     private static final int SIZE_CHECKSUM = 160;
@@ -58,6 +60,8 @@ public class OtaManager {
     private byte[] imageChunk = null;
     private int transferTotalCount = 0;
     private int transferOffset = 0;
+
+    private int currentInstallProgress = -1;
 
     private BluetoothDevice currentDevice;
     private int otaImageSize; // in byte
@@ -277,8 +281,8 @@ public class OtaManager {
         currentStep = OTA_BLE_STEP_LOAD_IMAGE_AND_SEND_IMAGE_SIZE;
         Log.d(TAG, "sendBleImageSize : image name  : " + OpalValues.LATEST_OPAL_BLE_FIRMWARE_NAME);
 
-        // load ble image into Memory
-        boolean loadSuccess = loadImageToMemory(OpalValues.LATEST_OPAL_BLE_FIRMWARE_NAME);
+        // load ble image into Memory, checksum is available
+        boolean loadSuccess = loadImageToMemory(OpalValues.LATEST_OPAL_BLE_FIRMWARE_NAME, true);
 
         if( loadSuccess == false) {
 
@@ -309,8 +313,8 @@ public class OtaManager {
         currentStep = OTA_OPAL_STEP_LOAD_IMAGE_AND_SEND_IMAGE_HEADER;
         Log.d(TAG, "sendOpalImageHeader : image name  : " + OpalValues.LATEST_OPAL_FIRMWARE_NAME);
 
-        // load ble image into Memory
-        boolean loadSuccess = loadImageToMemory(OpalValues.LATEST_OPAL_FIRMWARE_NAME);
+        // load Opal image into Memory , checksum is not available
+        boolean loadSuccess = loadImageToMemory(OpalValues.LATEST_OPAL_FIRMWARE_NAME, false);
 
         if( loadSuccess == false) {
 
@@ -338,10 +342,12 @@ public class OtaManager {
             String hex = String.format("%08x", otaImageSize);
             byte[] imageSize = MathTools.hexToByteArray(hex);
 
-            valueBuffer.put(imageSize[0]);
-            valueBuffer.put(imageSize[1]);
-            valueBuffer.put(imageSize[2]);
+
+            // img size => reverse order
             valueBuffer.put(imageSize[3]);
+            valueBuffer.put(imageSize[2]);
+            valueBuffer.put(imageSize[1]);
+            valueBuffer.put(imageSize[0]);
 
             Log.d(TAG, "sendOpalImageHeader : OpalValues.OPAL_IMAGE_DATA_CHAR_UUID : " +  " Image header to send :  " + MathTools.byteArrayToHex(valueBuffer.array()));
 
@@ -352,10 +358,31 @@ public class OtaManager {
     private void sendOpalImageData() {
 
         if (transferOffset < transferTotalCount) {
-            currentStep = OTA_OPAL_STEP_SEND_IMAGE_DATA;
-            ByteBuffer valueBuffer = ByteBuffer.allocate(SIZE_CHUNK);
 
-            valueBuffer.put(imageChunk, transferOffset * SIZE_CHUNK, SIZE_CHUNK);
+            currentStep = OTA_OPAL_STEP_SEND_IMAGE_DATA;
+
+
+
+            ByteBuffer valueBuffer;
+            // if it is last chunk to send and it is dividable by 20,
+            // then send only available bytes
+            if(transferOffset == transferTotalCount - 1) {
+
+                int lastChunkLength = imageChunk.length % SIZE_CHUNK;
+
+                if (lastChunkLength != 0) {
+                    valueBuffer = ByteBuffer.allocate(lastChunkLength);
+                    valueBuffer.put(imageChunk, transferOffset * SIZE_CHUNK, lastChunkLength);
+                } else {
+                    valueBuffer = ByteBuffer.allocate(SIZE_CHUNK);
+                    valueBuffer.put(imageChunk, transferOffset * SIZE_CHUNK, SIZE_CHUNK);
+                }
+            }
+            else {
+                valueBuffer = ByteBuffer.allocate(SIZE_CHUNK);
+                valueBuffer.put(imageChunk, transferOffset * SIZE_CHUNK, SIZE_CHUNK);
+            }
+
             byte[] data = valueBuffer.array();
 
             BleManager.getInstance().writeCharacteristics(currentDevice, OpalValues.OPAL_IMAGE_DATA_CHAR_UUID, data);
@@ -363,7 +390,7 @@ public class OtaManager {
 
             transferOffset++;
             if(delegate != null) {
-                delegate.onBLEOTAProgressChanged(transferOffset);
+                delegate.onOTAProgressChanged(transferOffset);
             }
         }
         else {
@@ -391,7 +418,7 @@ public class OtaManager {
 
             transferOffset++;
             if(delegate != null) {
-                delegate.onBLEOTAProgressChanged(transferOffset);
+                delegate.onOTAProgressChanged(transferOffset);
             }
         }
         else {
@@ -405,9 +432,9 @@ public class OtaManager {
         }
     }
 
-    private boolean loadImageToMemory(String imageName) {
+    private boolean loadImageToMemory(String imageName, boolean isChecksumAvailable) {
 
-        Log.d(TAG, "loadImageToMemory() : In");
+        Log.d(TAG, "loadImageToMemory() : In Image name to load : " + imageName);
 
         boolean loadSuccess = false;
 
@@ -418,6 +445,8 @@ public class OtaManager {
             Long imageSize = fd.getLength();
 
             otaImageSize = imageSize.intValue();
+
+            Log.d(TAG, "Binary Image size in byte: " + otaImageSize);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -444,22 +473,40 @@ public class OtaManager {
 
                 // Allocate image buffer.
 
-                byte[] dataChunk = new byte[otaImageSize - SIZE_CHECKSUM + padSize];
-                byte[] checksumChunk = new byte[SIZE_CHECKSUM];
+                if(isChecksumAvailable == true) {
+                    byte[] dataChunk = new byte[otaImageSize - SIZE_CHECKSUM + padSize];
+                    byte[] checksumChunk = new byte[SIZE_CHECKSUM];
 
-                imageChunk = new byte[dataChunk.length + checksumChunk.length];
+                    imageChunk = new byte[dataChunk.length + checksumChunk.length];
 
-                // Read data chunk except last 160 byte of checksum chunk.
-                inputStream.read(dataChunk, 0, otaImageSize - SIZE_CHECKSUM);
-                inputStream.read(checksumChunk, 0, SIZE_CHECKSUM);
-                inputStream.close();
+                    // Read data chunk except last 160 byte of checksum chunk.
+                    inputStream.read(dataChunk, 0, otaImageSize - SIZE_CHECKSUM );
+                    inputStream.read(checksumChunk, 0, SIZE_CHECKSUM);
+                    inputStream.close();
 
-                System.arraycopy(dataChunk, 0, imageChunk, 0, dataChunk.length);
-                System.arraycopy(checksumChunk, 0, imageChunk, imageChunk.length-checksumChunk.length, checksumChunk.length);
+                    System.arraycopy(dataChunk, 0, imageChunk, 0, dataChunk.length);
+                    System.arraycopy(checksumChunk, 0, imageChunk, imageChunk.length-checksumChunk.length, checksumChunk.length);
+                }
+                else {
 
-                transferTotalCount = (int)(imageChunk.length / (float)SIZE_CHUNK);
+                    // Opal Firmware image should not add padding to meet SIZE_CHUNK * N
+                    byte[] dataChunk = new byte[otaImageSize];
+                    imageChunk = new byte[dataChunk.length];
+
+                    // Read data chunk
+                    inputStream.read(dataChunk, 0, otaImageSize);
+                    inputStream.close();
+
+                    System.arraycopy(dataChunk, 0, imageChunk, 0, dataChunk.length);
+                }
+
+                int totalImgSize = imageChunk.length;
+                if(totalImgSize % SIZE_CHUNK != 0) {
+                    totalImgSize += padSize;
+                }
+
+                transferTotalCount = totalImgSize / SIZE_CHUNK;
                 transferOffset = 0;
-
             }
             catch (Exception e) {
                 Log.d(TAG, "loadImageToMemory :" + e);
@@ -471,7 +518,7 @@ public class OtaManager {
 
                 // Let the UI to know the max progress value
                 if(delegate != null) {
-                    delegate.onBLEOTAProgressMax(transferTotalCount);
+                    delegate.onOTAProgressMax(transferTotalCount);
                 }
             }
         }
@@ -518,7 +565,7 @@ public class OtaManager {
     private void onBLEUpdateSuccess() {
         Log.d(TAG, "onBLEUpdateSuccess");
         if(delegate != null) {
-            delegate.onBLEOTASuccessful();
+            delegate.onOTASuccessful();
         }
 
         resetOtaValues();
@@ -527,7 +574,7 @@ public class OtaManager {
     private void onBLEUpdateFailed() {
         Log.d(TAG, "onBLEUpdateFailed");
         if(delegate != null) {
-            delegate.onBLEOTAFailed();
+            delegate.onOTAFailed();
         }
 
         resetOtaValues();
@@ -542,6 +589,8 @@ public class OtaManager {
         imageChunk = null;
         transferTotalCount = 0;
         transferOffset = 0;
+
+        currentInstallProgress = -1;
 
         currentDevice = null;
         otaImageSize = 0;
@@ -609,7 +658,8 @@ public class OtaManager {
                     break;
 
                 case OTA_OPAL_STEP_SEND_IMAGE_DONE:
-                    onBLEUpdateSuccess();
+                    // prepare install progress UI from BLE to Opal Device
+                    prepareOpalImageInstallProgress();
                     break;
 
                 case OTA_OPAL_STEP_REBOOT:
@@ -619,14 +669,86 @@ public class OtaManager {
         else {
             Log.d(TAG, "getResponse : get error response :" + response + ", step :" + currentStep);
 
-            if(currentStep >= OTA_BLE_STEP_NONE && currentStep <= OTA_BLE_STEP_REBOOT) {
+            if(currentStep >= OTA_BLE_STEP_NONE && currentStep <= OTA_OPAL_STEP_REBOOT) {
                 onBLEUpdateFailed();
             }
+        }
+    }
+
+    private void prepareOpalImageInstallProgress() {
+
+        if(delegate != null) {
+            currentStep = OTA_OPAL_STEP_BINARY_INSTALL_IN_PROGRESS;
+            delegate.onOpalBinaryInstallPrepare();
+            currentInstallProgress = 0;
         }
     }
 
     public void responseWriteData() {
         Log.d(TAG, "responseWriteData");
         transferData();
+    }
+
+    public void onHandleWriteResponse(String uuid, final int status) {
+
+        switch(uuid.toUpperCase()) {
+
+            case OpalValues.OPAL_IMAGE_DATA_CHAR_UUID:
+                // Let it run on the Main Thread
+                MainQueue.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        getResponse((byte)status);
+                    }
+                });
+                break;
+
+            default :
+        }
+    }
+
+    public void onHandleNotification(String uuid, final byte[] value) {
+
+        switch (uuid.toUpperCase()) {
+            case OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID:
+                Log.d(TAG, "onHandleNotification : uuid : OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID : value : "+ MathTools.byteArrayToHex(value));
+                MainQueue.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        getResponse(value[0]);
+                    }
+                });
+                break;
+
+            case OpalValues.OPAL_UPDATE_PROGRESS_UUID:
+                Log.d(TAG, "onHandleNotification : uuid : OpalValues.OPAL_UPDATE_PROGRESS_UUID : value : " + MathTools.byteArrayToHex(value) );
+
+                final int progress = MathTools.hexByteToInt(value[0]);
+                if(currentStep == OTA_OPAL_STEP_BINARY_INSTALL_IN_PROGRESS && progress != currentInstallProgress) {
+
+                    currentInstallProgress = progress;
+
+                    MainQueue.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(delegate != null) {
+
+                                delegate.onOpalBinaryInstallProgress(progress);
+
+                                if(progress == 100) {
+                                    currentStep = OTA_OPAL_STEP_REBOOT;
+                                    resetOtaValues();
+                                }
+                            }
+                        }
+                    });
+                }
+                break;
+
+            default:
+                Log.d(TAG, "onHandleNotification : Not Handled ! " + uuid + " value : " + MathTools.byteArrayToHex(value));
+
+                break;
+        }
     }
 }
