@@ -517,30 +517,17 @@ public class DashboardActivity extends AppCompatActivity {
      */
     public void onItemClicked(int position) {
 
-//        ProductManager.getInstance().setCurrent(position);
         ProductInfo productInfo = adapterDashboard.getItem(position);
-
-        ProductManager.getInstance().setCurrent(position);
-
-        Class<?> cls = getTargetActivityClass(productInfo.type);
-
-        Intent intent = new Intent(DashboardActivity.this, cls);
-
-        startActivity(intent);
-
-        maintainOnlyCurrentProductOperation();
 
         if (productInfo.isConnected() && productInfo.isAllMustDataReceived()) {
 
-//            ProductManager.getInstance().setCurrent(position);
-//
-//            Class<?> cls = getTargetActivityClass(productInfo.type);
-//
-//            Intent intent = new Intent(DashboardActivity.this, cls);
-//
-//            startActivity(intent);
-//
-//            maintainOnlyCurrentProductOperation();
+            ProductManager.getInstance().setCurrent(position);
+
+            Class<?> cls = getTargetActivityClass(productInfo.type);
+            Intent intent = new Intent(DashboardActivity.this, cls);
+            startActivity(intent);
+
+            maintainOnlyCurrentProductOperation();
         }
         else {
             Log.d(TAG, "onItemClicked but error :" + productInfo.type);
@@ -719,11 +706,9 @@ public class DashboardActivity extends AppCompatActivity {
             }
             else {
 
-                holderDashboard.layoutProgress.setVisibility(View.GONE);
-                holderDashboard.layoutStatus.setVisibility(View.VISIBLE);
-//                holderDashboard.progressBar.setIndeterminate(true);
-//                holderDashboard.layoutProgress.setVisibility(View.VISIBLE);
-//                holderDashboard.layoutStatus.setVisibility(View.GONE);
+                holderDashboard.progressBar.setIndeterminate(true);
+                holderDashboard.layoutProgress.setVisibility(View.VISIBLE);
+                holderDashboard.layoutStatus.setVisibility(View.GONE);
             }
 
             // Let each productInfo instance handle product specific UI update
