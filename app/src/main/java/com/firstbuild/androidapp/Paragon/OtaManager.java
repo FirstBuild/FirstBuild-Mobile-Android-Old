@@ -161,7 +161,7 @@ public class OtaManager {
 
     public void startBleOtaProcess(BluetoothDevice device, OpalMainActivity.OTAResultDelegate resultDelegate){
 
-        resetOtaValues();
+        resetOtaStates();
 
         currentStep = OTA_BLE_PREPARE_DOWNLOAD;
         currentDevice = device;
@@ -184,7 +184,7 @@ public class OtaManager {
 
     public void startOpalOtaProcess(BluetoothDevice device, OpalMainActivity.OTAResultDelegate resultDelegate){
 
-        resetOtaValues();
+        resetOtaStates();
 
         currentStep = OTA_OPAL_PREPARE_DOWNLOAD;
         currentDevice = device;
@@ -568,7 +568,7 @@ public class OtaManager {
             delegate.onOTASuccessful();
         }
 
-        resetOtaValues();
+        resetOtaStates();
     }
 
     private void onBLEUpdateFailed() {
@@ -577,10 +577,10 @@ public class OtaManager {
             delegate.onOTAFailed();
         }
 
-        resetOtaValues();
+        resetOtaStates();
     }
 
-    private void resetOtaValues() {
+    private void resetOtaStates() {
         context = null;
         versionMajor = 0;
         versionMinor = 0;
@@ -737,7 +737,7 @@ public class OtaManager {
 
                                 if(progress == 100) {
                                     currentStep = OTA_OPAL_STEP_REBOOT;
-                                    resetOtaValues();
+                                    resetOtaStates();
                                 }
                             }
                         }
