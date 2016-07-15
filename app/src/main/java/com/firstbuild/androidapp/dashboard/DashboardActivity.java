@@ -148,8 +148,8 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCharacteristicRead(String address, String uuid, byte[] value) {
-            super.onCharacteristicRead(address, uuid, value);
+        public void onCharacteristicRead(String address, String uuid, byte[] value, int status) {
+            super.onCharacteristicRead(address, uuid, value, status);
 
             Log.d(TAG, "[onCharacteristicRead] address: " + address + ", uuid: " + uuid);
 
@@ -157,8 +157,8 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCharacteristicWrite(String address, String uuid, byte[] value) {
-            super.onCharacteristicWrite(address, uuid, value);
+        public void onCharacteristicWrite(String address, String uuid, byte[] value, int status) {
+            super.onCharacteristicWrite(address, uuid, value, status);
 
             Log.d(TAG, "[onCharacteristicWrite] address: " + address + ", uuid: " + uuid);
 
@@ -175,10 +175,10 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onDescriptorWrite(String address, String uuid, byte[] value) {
-            super.onDescriptorWrite(address, uuid, value);
+        public void onDescriptorWrite(String address, String uuid, byte[] value, int status) {
+            super.onDescriptorWrite(address, uuid, value, status);
 
-            Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid);
+            Log.d(TAG, "[onDescriptorWrite] address: " + address + ", uuid: " + uuid + ", value : " + MathTools.byteArrayToHex(value) + ", status" + status);
         }
     };
 
@@ -517,7 +517,6 @@ public class DashboardActivity extends AppCompatActivity {
      */
     public void onItemClicked(int position) {
 
-//        ProductManager.getInstance().setCurrent(position);
         ProductInfo productInfo = adapterDashboard.getItem(position);
 
         if (productInfo.isConnected() && productInfo.isAllMustDataReceived()) {
@@ -525,9 +524,7 @@ public class DashboardActivity extends AppCompatActivity {
             ProductManager.getInstance().setCurrent(position);
 
             Class<?> cls = getTargetActivityClass(productInfo.type);
-
             Intent intent = new Intent(DashboardActivity.this, cls);
-
             startActivity(intent);
 
             maintainOnlyCurrentProductOperation();
@@ -708,6 +705,7 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             }
             else {
+
                 holderDashboard.progressBar.setIndeterminate(true);
                 holderDashboard.layoutProgress.setVisibility(View.VISIBLE);
                 holderDashboard.layoutStatus.setVisibility(View.GONE);

@@ -64,4 +64,47 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="schedule_time_slot_item">
+        <item name="android:minWidth">64dp</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:layout_margin">@dimen/grid_layout_default_margin</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/selector_schedule_time_slot_item_bg</item>
+        <item name="android:textColor">@color/selector_schedule_weekdays_text_color</item>
+        <item name="android:onClick">onTimeSlotClicked</item>
+    </style>
+
+    <style name="schedule_header_weekday_item">
+        <item name="android:minWidth">32dp</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/selector_schedule_weekday_bg</item>
+        <item name="android:textColor">@color/selector_schedule_weekdays_text_color</item>
+        <item name="android:onClick">onWeekdaysClicked</item>
+    </style>
+
+    <!--<style name="schedule_header_weekday_item">-->
+        <!--<item name="android:layout_width">0dp</item>-->
+        <!--<item name="android:layout_height">wrap_content</item>-->
+        <!--<item name="android:layout_weight">1</item>-->
+        <!--<item name="android:gravity">center</item>-->
+        <!--<item name="android:background">@drawable/selector_schedule_weekday_bg</item>-->
+        <!--<item name="android:textColor">@color/selector_schedule_weekdays_text_color</item>-->
+        <!--<item name="android:onClick">onWeekdaysClicked</item>-->
+    <!--</style>-->
+
+    <style name="schedule_header_weekday_indicator">
+        <item name="android:layout_width">10dp</item>
+        <item name="android:layout_height">10dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:background">@drawable/ic_schedule_indicator_24dp</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
 </resources>

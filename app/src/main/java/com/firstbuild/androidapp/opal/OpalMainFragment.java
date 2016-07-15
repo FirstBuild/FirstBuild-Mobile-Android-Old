@@ -1,7 +1,5 @@
 package com.firstbuild.androidapp.opal;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattService;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,18 +14,12 @@ import android.widget.TextView;
 
 import com.firstbuild.androidapp.OpalValues;
 import com.firstbuild.androidapp.R;
-import com.firstbuild.androidapp.paragon.OtaManager;
 import com.firstbuild.androidapp.productmanager.OpalInfo;
-import com.firstbuild.androidapp.productmanager.ProductInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
-import com.firstbuild.commonframework.blemanager.BleListener;
 import com.firstbuild.commonframework.blemanager.BleManager;
-import com.firstbuild.commonframework.blemanager.BleValues;
 import com.firstbuild.tools.MathTools;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by hans on 16. 6. 20..
@@ -41,6 +33,7 @@ public class OpalMainFragment extends Fragment {
     private Switch scheduleSwitch;
     private Button makeIceBtn;
     private OpalInfo currentOpalInfo;
+    private View scheduleListItem;
 
     @Nullable
     @Override
@@ -52,6 +45,8 @@ public class OpalMainFragment extends Fragment {
         nightLightSwitch = (Switch)view.findViewById(R.id.night_light_switch);
         scheduleSwitch = (Switch)view.findViewById(R.id.schedule_mode_switch);
         makeIceBtn = (Button)view.findViewById(R.id.main_ui_start_stop_making_ice);
+        scheduleListItem = view.findViewById(R.id.relative_layout_schedule_item);
+
 
         currentOpalInfo = (OpalInfo)ProductManager.getInstance().getCurrent();
 
@@ -125,6 +120,18 @@ public class OpalMainFragment extends Fragment {
             }
         });
 
+        scheduleListItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getActivity().getSupportFragmentManager().
+                        beginTransaction().
+                        replace(R.id.frame_content, new OpalScheduleFragment(), OpalMainActivity.TAG_SCHEDULE_FRAGMENT).
+                        addToBackStack(null).
+                        commit();
+            }
+        });
+
         return view;
     }
 
@@ -150,42 +157,10 @@ public class OpalMainFragment extends Fragment {
                 }
                 break;
 
-            case OpalValues.OPAL_IMAGE_DATA_CHAR_UUID:
-                // TODO : each image write response should be 0x00 but current response contains exactly what we've sent to the BLE
-                // TODO : should check this with JungIn
-                OtaManager.getInstance().getResponse((byte)0x00);
-                break;
-
             default:
                 Log.d(TAG, "onOpalDataChanged : Not Handled ! : uuid : " + uuid + " value : " + MathTools.byteArrayToHex(value));
                 break;
         }
-
     }
-
-    public boolean onOpalDataNotified(String uuid, byte[] value) {
-
-        boolean notificationHandled = true;
-
-        switch (uuid.toUpperCase()) {
-            case OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID:
-                Log.d(TAG, "onOpalDataNotified : uuid : OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID");
-                OtaManager.getInstance().getResponse(value[0]);
-                break;
-
-            case OpalValues.OPAL_UPDATE_PROGRESS_UUID:
-                Log.d(TAG, "onOpalDataNotified : uuid : OpalValues.OPAL_UPDATE_PROGRESS_UUID");
-                break;
-
-            default:
-                Log.d(TAG, "onOpalDataNotified : Not Handled ! So passing to  onOpalDataChanged() : uuid : " + uuid + "    value : " + MathTools.byteArrayToHex(value));
-                notificationHandled = false;
-                break;
-        }
-
-        return notificationHandled;
-
-    }
-
 
 }

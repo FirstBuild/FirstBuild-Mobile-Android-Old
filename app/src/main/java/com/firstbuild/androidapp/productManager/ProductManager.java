@@ -57,7 +57,7 @@ public class ProductManager {
         SharedPreferences settings;
         SharedPreferences.Editor editor;
 
-        settings = FirstBuildApplication.getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        settings = FirstBuildApplication.getInstance().getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         editor = settings.edit();
 
         JSONArray arrayProduct = new JSONArray();
@@ -90,7 +90,7 @@ public class ProductManager {
      */
     public void read() {
 
-        SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
+        SharedPreferences settings = FirstBuildApplication.getInstance().getContext().getSharedPreferences(
                 PREFS_NAME, Context.MODE_PRIVATE);
 
         if (settings.contains(FAVORITES)) {

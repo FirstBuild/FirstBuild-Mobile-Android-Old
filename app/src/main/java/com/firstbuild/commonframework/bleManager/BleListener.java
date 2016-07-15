@@ -23,12 +23,12 @@ public abstract class BleListener {
 
     public void onServicesDiscovered(final String address, final List<BluetoothGattService> bleGattServices){}
 
-    public void onCharacteristicRead(final String address, final String uuid, final byte[] value){}
+    public void onCharacteristicRead(final String address, final String uuid, final byte[] value, final int status){}
 
-    public void onCharacteristicWrite(final String address, final String uuid, final byte[] value){}
+    public void onCharacteristicWrite(final String address, final String uuid, final byte[] value, final int status){}
 
     public void onCharacteristicChanged(final String address, final String uuid, final byte[] value){}
 
-    public void onDescriptorWrite(final String address, final String uuid, final byte[] value){}
+    public void onDescriptorWrite(final String address, final String uuid, final byte[] value, final int status){}
 
 }

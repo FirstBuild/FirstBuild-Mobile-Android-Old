@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin">
+
+    <GridLayout
+        android:id="@+id/weekdays_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/img_edit_background"
+        android:useDefaultMargins="true"
+        android:rowCount="2"
+        android:columnCount="7">
+
+        <TextView
+            android:id="@+id/sunday"
+            style="@style/schedule_header_weekday_item"
+            android:text="S"/>
+
+        <TextView
+            android:id="@+id/monday"
+            style="@style/schedule_header_weekday_item"
+            android:text="M"/>
+
+        <TextView
+            android:id="@+id/tuesday"
+            style="@style/schedule_header_weekday_item"
+            android:text="T"/>
+
+        <TextView
+            android:id="@+id/wednesday"
+            style="@style/schedule_header_weekday_item"
+            android:text="W"/>
+
+        <TextView
+            android:id="@+id/thursday"
+            style="@style/schedule_header_weekday_item"
+            android:text="T"/>
+
+        <TextView
+            android:id="@+id/friday"
+            style="@style/schedule_header_weekday_item"
+            android:text="F"/>
+
+        <TextView
+            android:id="@+id/saturday"
+            style="@style/schedule_header_weekday_item"
+            android:text="S"/>
+
+        <ImageView
+            android:id="@+id/sunday_indicator"
+            style="@style/schedule_header_weekday_indicator"/>
+        <ImageView
+            android:id="@+id/monday_indicator"
+            style="@style/schedule_header_weekday_indicator"/>
+        <ImageView
+            android:id="@+id/tuesday_indicator"
+            style="@style/schedule_header_weekday_indicator"/>
+        <ImageView
+            android:id="@+id/wednesday_indicator"
+            style="@style/schedule_header_weekday_indicator"/>
+        <ImageView
+            android:id="@+id/thursday_indicator"
+            style="@style/schedule_header_weekday_indicator"/>
+        <ImageView
+            android:id="@+id/friday_indicator"
+            style="@style/schedule_header_weekday_indicator"/>
+        <ImageView
+            android:id="@+id/saturday_indicator"
+            style="@style/schedule_header_weekday_indicator"/>
+
+    </GridLayout>
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/weekdays_header"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@drawable/img_edit_background"-->
+        <!--android:padding="10dp"-->
+        <!--android:gravity="center_horizontal">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/sunday"-->
+            <!--style="@style/schedule_header_weekday_item"-->
+            <!--android:text="S"/>-->
+
+        <!--<android.support.v4.widget.Space-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/monday"-->
+            <!--style="@style/schedule_header_weekday_item"-->
+            <!--android:text="M"/>-->
+
+        <!--<android.support.v4.widget.Space-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/tuesday"-->
+            <!--style="@style/schedule_header_weekday_item"-->
+            <!--android:text="T"/>-->
+
+        <!--<android.support.v4.widget.Space-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/wednesday"-->
+            <!--style="@style/schedule_header_weekday_item"-->
+            <!--android:text="W"/>-->
+
+        <!--<android.support.v4.widget.Space-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/thursday"-->
+            <!--style="@style/schedule_header_weekday_item"-->
+            <!--android:text="T"/>-->
+
+        <!--<android.support.v4.widget.Space-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/friday"-->
+            <!--style="@style/schedule_header_weekday_item"-->
+            <!--android:text="F"/>-->
+
+        <!--<android.support.v4.widget.Space-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/saturday"-->
+            <!--style="@style/schedule_header_weekday_item"-->
+            <!--android:text="S"/>-->
+
+    <!--</LinearLayout>-->
+
+    <TextView
+        android:id="@+id/select_time_header"
+        android:layout_below="@id/weekdays_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Select time"/>
+
+    <com.firstbuild.viewutil.OpalScheduleGridLayout
+        android:id="@+id/time_slot_item_container"
+        android:layout_below="@id/select_time_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:useDefaultMargins="true"
+        android:rowCount="8"
+        android:columnCount="3">
+
+        <TextView
+            android:id="@+id/midnight"
+            style="@style/schedule_time_slot_item"
+            android:text="midnight"/>
+
+        <TextView
+            android:id="@+id/one_am"
+            style="@style/schedule_time_slot_item"
+            android:text="1 am"/>
+
+        <TextView
+            android:id="@+id/two_am"
+            style="@style/schedule_time_slot_item"
+            android:text="2 am"/>
+
+        <TextView
+            android:id="@+id/three_am"
+            style="@style/schedule_time_slot_item"
+            android:text="3 am"/>
+
+        <TextView
+            android:id="@+id/four_am"
+            style="@style/schedule_time_slot_item"
+            android:text="4 am"/>
+
+        <TextView
+            android:id="@+id/five_am"
+            style="@style/schedule_time_slot_item"
+            android:text="5 am"/>
+
+        <TextView
+            android:id="@+id/six_am"
+            style="@style/schedule_time_slot_item"
+            android:text="6 am"/>
+
+        <TextView
+            android:id="@+id/seven_am"
+            style="@style/schedule_time_slot_item"
+            android:text="7 am"/>
+
+
+        <TextView
+            android:id="@+id/eight_am"
+            style="@style/schedule_time_slot_item"
+            android:text="8 am"/>
+
+        <TextView
+            android:id="@+id/nine_am"
+            style="@style/schedule_time_slot_item"
+            android:text="9 am"/>
+
+        <TextView
+            android:id="@+id/ten_am"
+            style="@style/schedule_time_slot_item"
+            android:text="10 am"/>
+
+
+        <TextView
+            android:id="@+id/eleven_am"
+            style="@style/schedule_time_slot_item"
+            android:text="11 am"/>
+
+        <TextView
+            android:id="@+id/noon"
+            style="@style/schedule_time_slot_item"
+            android:text="noon"/>
+
+        <TextView
+            android:id="@+id/one_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="1 pm"/>
+
+        <TextView
+            android:id="@+id/two_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="2 pm"/>
+
+        <TextView
+            android:id="@+id/three_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="3 pm"/>
+
+        <TextView
+            android:id="@+id/four_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="4 pm"/>
+
+        <TextView
+            android:id="@+id/five_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="5 pm"/>
+
+        <TextView
+            android:id="@+id/six_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="6 pm"/>
+
+        <TextView
+            android:id="@+id/seven_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="7 pm"/>
+
+        <TextView
+            android:id="@+id/eight_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="8 pm"/>
+
+        <TextView
+            android:id="@+id/nine_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="9 pm"/>
+
+        <TextView
+            android:id="@+id/ten_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="10 pm"/>
+
+        <TextView
+            android:id="@+id/eleven_pm"
+            style="@style/schedule_time_slot_item"
+            android:text="11 pm"/>
+
+    </com.firstbuild.viewutil.OpalScheduleGridLayout>
+
+    <Button
+        android:id="@+id/apply_all_day_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="@dimen/md_button_padding_frame_side"
+        android:paddingRight="@dimen/md_button_padding_frame_side"
+        android:textColor="@color/selector_schedule_apply_all_button"
+        android:background="@drawable/selector_schedule_apply_all_btn_bg"
+        android:text="@string/schedule_apply_all_days" />
+
+</RelativeLayout>

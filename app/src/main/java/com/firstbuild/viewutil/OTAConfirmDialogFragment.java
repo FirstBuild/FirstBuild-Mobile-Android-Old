@@ -83,7 +83,8 @@ public class OTAConfirmDialogFragment extends DialogFragment{
                             // As Positive btn indicates "Ok" for update not available message, just dimiss dialog
                             break;
 
-                        case OpalMainActivity.TAG_OTA_UPDATE_CONFIRM_DIALOG:
+                        case OpalMainActivity.TAG_OPAL_OTA_UPDATE_CONFIRM_DIALOG:
+                        case OpalMainActivity.TAG_BLE_OTA_UPDATE_CONFIRM_DIALOG:
                             if(delegate != null) {
                                 delegate.onOTAStart();
                             }

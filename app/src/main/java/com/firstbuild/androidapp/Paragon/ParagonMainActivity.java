@@ -188,8 +188,8 @@ public class ParagonMainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCharacteristicRead(String address, String uuid, byte[] value) {
-            super.onCharacteristicRead(address, uuid, value);
+        public void onCharacteristicRead(String address, String uuid, byte[] value, int status) {
+            super.onCharacteristicRead(address, uuid, value, status);
 
             ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
@@ -200,8 +200,8 @@ public class ParagonMainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCharacteristicWrite(String address, String uuid, final byte[] value) {
-            super.onCharacteristicWrite(address, uuid, value);
+        public void onCharacteristicWrite(String address, String uuid, final byte[] value, int status) {
+            super.onCharacteristicWrite(address, uuid, value, status);
 
             ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
@@ -227,8 +227,8 @@ public class ParagonMainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onDescriptorWrite(String address, String uuid, byte[] value) {
-            super.onDescriptorWrite(address, uuid, value);
+        public void onDescriptorWrite(String address, String uuid, byte[] value, int status) {
+            super.onDescriptorWrite(address, uuid, value, status);
 
             ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
@@ -1541,7 +1541,7 @@ public class ParagonMainActivity extends AppCompatActivity {
      * @return if alresay dissmiss then false.
      */
     public boolean isShowFoodWarning() {
-        SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
+        SharedPreferences settings = FirstBuildApplication.getInstance().getContext().getSharedPreferences(
                 ProductManager.PREFS_NAME, Context.MODE_PRIVATE);
 
         boolean isShowFoodWarning = settings.getBoolean(PREF_KEY_FOOD_WARNING, false);
@@ -1553,7 +1553,7 @@ public class ParagonMainActivity extends AppCompatActivity {
      * If press dismiss button on popup then save this in SharedPreference.
      */
     public void saveShowFoodWarning() {
-        SharedPreferences settings = FirstBuildApplication.getContext().getSharedPreferences(
+        SharedPreferences settings = FirstBuildApplication.getInstance().getContext().getSharedPreferences(
                 ProductManager.PREFS_NAME, Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = settings.edit();
