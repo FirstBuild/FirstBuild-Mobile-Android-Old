@@ -3,6 +3,7 @@ package com.firstbuild.androidapp.addproduct;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ public class AddProductSearchParagonFragment extends AddProductSearchFragment {
     protected void transitionToPairSuccessScreen() {
 
         if(getFragmentManager() != null) {
+            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getFragmentManager().
                     beginTransaction().
                     replace(R.id.content_frame, new AddProductFoundParagonFragment()).

@@ -70,7 +70,6 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
 
     public static final String TAG_OTA_UPDATE_NOT_AVAILABLE_DIALOG = "tag_ota_update_not_available_dialog";
     public static final String TAG_OTA_FAILURE_DIALOG = "tag_ota_failure_dialog";
-    public static final String TAG_OTA_UPDATE_NOT_READY_DIALOG = "tag_ota_update_not_ready_dialog";
     public static final String TAG_OTA_SUCCESS_DIALOG = "tag_ota_success_dialog";
     public static final String TAG_OTA_PROGRESS_DIALOG = "tag_ota_progress_dialog";
 
