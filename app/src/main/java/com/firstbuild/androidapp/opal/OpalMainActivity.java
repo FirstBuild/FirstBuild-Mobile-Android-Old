@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -63,10 +62,11 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
     private static final String TAG = OpalMainActivity.class.getSimpleName();
 
     public static final String TAG_MAIN_FRAGMENT = "tag_main_fragment";
-    public static final String TAG_SCHEDULE_FRAGMENT = "tag_schedule_fragment";
+
 
     public static final String TAG_BLE_OTA_UPDATE_CONFIRM_DIALOG = "tag_ble_ota_update_confirm_dialog";
     public static final String TAG_OPAL_OTA_UPDATE_CONFIRM_DIALOG = "tag_opal_ota_update_confirm_dialog";
+    public static final String TAG_SCHEDULE_FRAGMENT = "tag_schedule_fragment";
 
     public static final String TAG_OTA_UPDATE_NOT_AVAILABLE_DIALOG = "tag_ota_update_not_available_dialog";
     public static final String TAG_OTA_FAILURE_DIALOG = "tag_ota_failure_dialog";
@@ -235,7 +235,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         public void onCharacteristicWrite(String address, final String uuid, final byte[] value, final int status) {
             super.onCharacteristicWrite(address, uuid, value, status);
 
-            ProductInfo productInfo = ProductManager.getInstance().getCurrent();
+            final ProductInfo productInfo = ProductManager.getInstance().getCurrent();
 
             if (address.equals(productInfo.address)) {
 
@@ -247,12 +247,15 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
+                            // if schedule write is successful, then update the product info
+                            if(uuid.equalsIgnoreCase(OpalValues.OPAL_SET_SCHEDULE_UUID)) {
+                                productInfo.updateErd(uuid, value);
+                            }
+
                             OpalMainFragment mainFragment = (OpalMainFragment)getSupportFragmentManager().findFragmentByTag(TAG_MAIN_FRAGMENT);
                             if(mainFragment != null) {
                                 mainFragment.onOpalDataChanged(uuid, value);
-                            }
-                            else {
-                                // Do nothing
                             }
                         }
                     });
@@ -333,15 +336,17 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
                 replace(R.id.frame_content, new OpalMainFragment(), TAG_MAIN_FRAGMENT).
                 commit();
 
-        getSupportFragmentManager().addOnBackStackChangedListener(new OnBackStackChangedListener() {
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
 
             @Override
             public void onBackStackChanged() {
 
                 if( getSupportFragmentManager().findFragmentByTag(TAG_SCHEDULE_FRAGMENT) != null ) {
                     setToolBarTitle(getString(R.string.schedule_edit_schedule_title));
+                    actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
                 }else {
                     setToolBarTitle(getString(R.string.product_name_opal));
+                    actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
                 }
             }
         });
@@ -647,7 +652,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         //Setting the actionbarToggle to drawer layout
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
-        //calling sync state is necessay or else your hamburger icon wont show up
+        //calling sync state is necessary or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
 
         // Make sure to call below after setting drawer layout otherwise it will throw exception that right drawer is not available
@@ -662,16 +667,12 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
                 }
             }
         });
-
-
     }
 
     private void setupToolBar() {
         toolbar = (Toolbar) findViewById(R.id.app_bar);
-        // Make sure to set this first before calling toolbar API
-        setSupportActionBar(toolbar);
-
         toolbar.setTitle("");
+        setSupportActionBar(toolbar);
 
         setToolBarTitle(getString(R.string.product_name_opal));
     }

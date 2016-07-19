@@ -9,7 +9,7 @@
 
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/colorParagonDivider" />
+            <solid android:color="@color/colorGrey" />
             <corners android:radius="100dp" />
         </shape>
     </item>
