@@ -51,6 +51,7 @@ import com.firstbuild.commonframework.blemanager.BleValues;
 import com.firstbuild.tools.MathTools;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -195,15 +196,18 @@ public class DashboardActivity extends AppCompatActivity {
             Long millis = calendar.getTimeInMillis();
             // Get local time from UTC time + Current Zone time + DST
             millis += TimeZone.getDefault().getOffset(millis);
-            Long localtime = millis/1000;
+            Long localTime = millis/1000;
+            //  Long localTime = 1468936790L; This is current time for testing purpose
+            //  "13:59:50", i can test if 2pm schedule item works or not within 10 sec
 
-            valueBuffer.putInt(localtime.intValue());
+            // Since ByteBuffer's byte order is BIG_ENDIAN by default, set it to use LITTEL_ENDIAN
+            valueBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            valueBuffer.putInt(localTime.intValue());
 
-            Log.d(TAG, "[HANS] current local time : " + localtime.intValue());
+            Log.d(TAG, "[HANS] current local time : " + localTime.intValue());
             Log.d(TAG, "[HANS] current local time in buffer array format: " + MathTools.byteArrayToHex(valueBuffer.array()));
 
             BleManager.getInstance().writeCharacteristics(product.bluetoothDevice, OpalValues.OPAL_TIME_SYNC_UUID, valueBuffer.array());
-
         }
         else {
             // Should we reconnect if bluetoothdevice is not available ?

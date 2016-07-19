@@ -18,7 +18,12 @@ public class MathTools {
         return ba;
     }
 
-    // byte[] to hex
+    /**
+     * Convert byte Array to HEX decimal
+     * Converted value's Byte Order starts from the left. Left value is lower byte to the Right value
+     * @param ba byte array to convert
+     * @return Converted Hexa Decimal value
+     */
     public static String byteArrayToHex(byte[] ba) {
         if (ba == null || ba.length == 0) {
             return null;

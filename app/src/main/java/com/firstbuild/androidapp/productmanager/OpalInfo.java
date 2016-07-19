@@ -174,11 +174,15 @@ public class OpalInfo extends ProductInfo{
                 setBTVersion(value[2], value[3], value[4], value[5]);
                 break;
 
+            case OpalValues.OPAL_SET_SCHEDULE_UUID:
+                Log.d(TAG, "OPAL_SET_SCHEDULE_UUID :" + MathTools.byteArrayToHex(value));
+                setScheduleValue(value);
+                break;
+
             default:
                 Log.d(TAG, "[NOT UPDATING in APP]UUID to update : " + uuid + "   value to update : " + MathTools.byteArrayToHex(byteBuffer.array()));
                 break;
         }
-
     }
 
     @Override
@@ -217,6 +221,7 @@ public class OpalInfo extends ProductInfo{
             mustHaveUUIDList.add(OpalValues.OPAL_OP_MODE_UUID);
             mustHaveUUIDList.add(OpalValues.OPAL_LIGHT_UUID);
             mustHaveUUIDList.add(OpalValues.OPAL_ENABLE_DISABLE_SCHEDULE_UUID);
+            mustHaveUUIDList.add(OpalValues.OPAL_SET_SCHEDULE_UUID);
         }
 
         return mustHaveUUIDList;

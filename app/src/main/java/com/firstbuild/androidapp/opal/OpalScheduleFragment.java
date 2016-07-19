@@ -4,17 +4,28 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.SparseArrayCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firstbuild.androidapp.OpalValues;
 import com.firstbuild.androidapp.R;
+import com.firstbuild.androidapp.productmanager.OpalInfo;
+import com.firstbuild.androidapp.productmanager.ProductManager;
+import com.firstbuild.commonframework.blemanager.BleManager;
 import com.firstbuild.tools.MainQueue;
+import com.firstbuild.tools.MathTools;
 import com.firstbuild.viewutil.OpalScheduleGridLayout;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 
@@ -33,6 +44,13 @@ public class OpalScheduleFragment extends Fragment {
     // Key : weekday view Id , value : selected timeslot view id
     private SparseArrayCompat<HashSet<Integer>> timeSlotTracker = new SparseArrayCompat<>();
 
+    private int[] weekdayTvIds = new int[]{ R.id.sunday, R.id.monday, R.id.tuesday,
+            R.id.wednesday, R.id.thursday, R.id.friday, R.id.saturday };
+
+    private ArrayList<Integer> timeSlotTvIds = new ArrayList<>();
+
+    private OpalInfo currentOpal;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,6 +59,11 @@ public class OpalScheduleFragment extends Fragment {
         timeSlotContainer = (OpalScheduleGridLayout)view.findViewById(R.id.time_slot_item_container);
         weekdaysContainer = (ViewGroup)view.findViewById(R.id.weekdays_header);
         applyAllDay = (Button)view.findViewById(R.id.apply_all_day_btn);
+
+        // init Time Slot View id array list
+        for(int i=0; i <timeSlotContainer.getChildCount(); i++) {
+            timeSlotTvIds.add(i, timeSlotContainer.getChildAt(i).getId());
+        }
 
         // Apply All btn
         applyAllDay.setOnClickListener(new View.OnClickListener() {
@@ -80,16 +103,112 @@ public class OpalScheduleFragment extends Fragment {
             }
         });
 
-        // Select the current day, somehow immediate update results in awkward selection UI
-        // So use delayed Update
-        MainQueue.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                initTodayWeekdayHeader(weekdaysContainer);
-            }
-        }, 100);
+        // update schedule data read from the Opal Device into timeSlotTracker
+        initTimeSlotTrackerFromScheduleData();
+
+        // Select the current day of week
+        initTodayWeekdayHeader(weekdaysContainer);
+
+        setHasOptionsMenu(true);
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_schedule, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_help) {
+            // Show help UI
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * initialize internal data structure based on the value read from the Opal Device
+     */
+    private void initTimeSlotTrackerFromScheduleData() {
+
+        currentOpal = (OpalInfo) ProductManager.getInstance().getCurrent();
+        byte[] schedule = currentOpal.getScheduleValue();
+
+        HashSet<Integer> item;
+
+        for(int i=0 ; i < weekdayTvIds.length ; i++) {
+
+            int key = weekdayTvIds[i];
+
+            // get schedule time slot info from each day of week
+            if(timeSlotTracker.get(key) == null) {
+                item = new HashSet<>();
+            } else {
+                item = timeSlotTracker.get(key);
+                item.clear();
+            }
+
+            byte hourTimeSlot;
+            boolean isSet;
+
+            // starts at 12:00 am and 1 hour increment per each loop
+            for(int j=0; j<schedule.length; j++) {
+
+                hourTimeSlot = schedule[j];
+                isSet = (( hourTimeSlot >> i ) & 1) == 1;
+
+                if(isSet == true) {
+                    Log.d(TAG, "[HANS] Time set : " + i + " bit" + " at " + j + " byte" );
+                    TextView tv = (TextView)(timeSlotContainer.findViewById(timeSlotTvIds.get(j)));
+                    Log.d(TAG, "[HANS] Time set : store view id where text is : " + tv.getText() );
+                    item.add(timeSlotTvIds.get(j));
+                }
+            }
+
+            timeSlotTracker.put(key, item);
+        }
+    }
+
+    private void sendTimeSlotInfoToOpal() {
+
+        ByteBuffer valueBuffer = ByteBuffer.allocate(24);
+        boolean[][] scheduleTable = new boolean[24][8];
+
+        for(int i = 0; i < timeSlotTracker.size(); i++) {
+            int key = timeSlotTracker.keyAt(i);
+            HashSet<Integer> value = timeSlotTracker.get(key);
+
+            TextView weekday = (TextView)weekdaysContainer.findViewById(key);
+
+            // View id
+            for (Integer integer : value) {
+                int index = timeSlotTvIds.indexOf(integer);
+                TextView tv = (TextView)(timeSlotContainer.findViewById(integer));
+                Log.d(TAG, "[HANS] \"On\" detected over : " + weekday.getText() + " : " + tv.getText() );
+                scheduleTable[index][i] = true;
+            }
+        }
+
+        for(int i=0; i<24; i++) {
+            boolean[] row = scheduleTable[i];
+
+            byte b = (byte)((row[0] ? 1 : 0) +
+                            (row[1] ? 1<<1 : 0) +
+                            (row[2] ? 1<<2 : 0) +
+                            (row[3] ? 1<<3 : 0) +
+                            (row[4] ? 1<<4 : 0) +
+                            (row[5] ? 1<<5 : 0) +
+                            (row[6] ? 1<<6 : 0) +
+                            (row[7] ? 1<<7 : 0));
+
+            valueBuffer.put(b);
+        }
+
+        Log.d(TAG, "[HANS] sendTimeSlotInfoToOpal : " + MathTools.byteArrayToHex(valueBuffer.array()));
+
+        BleManager.getInstance().writeCharacteristics(currentOpal.bluetoothDevice, OpalValues.OPAL_SET_SCHEDULE_UUID, valueBuffer.array());
     }
 
     private void onHandleApplyAllClicked(View v) {
@@ -116,8 +235,15 @@ public class OpalScheduleFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
 
+        Log.d(TAG, "onPause() IN");
+        sendTimeSlotInfoToOpal();
+        Log.d(TAG, "sendTimeSlotInfoToOpal in onPause() !!!");
 
     }
 
