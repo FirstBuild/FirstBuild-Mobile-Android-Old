@@ -9,7 +9,7 @@ android {
             minSdkVersion 21
             targetSdkVersion 22
             versionCode 3
-            versionName "1.0.9"
+            versionName "1.0.a"
     }
     buildTypes {
         release {
@@ -28,10 +28,10 @@ android {
             def jenkinsUser = System.getProperty("user.name");
             def newName;
             if(jenkinsUser == "jenkins") {
-                newName = "Paragon_${variant.versionName}_${new Date().format("MM-dd-yyyy")}.apk"
+                newName = "FirstBuild_${variant.versionName}_${new Date().format("MM-dd-yyyy")}.apk"
             }
             else {
-                newName = "Paragon_${variant.versionName}.apk"
+                newName = "FirstBuild_${variant.versionName}.apk"
             }
             output.outputFile = new File(apk.parentFile, newName)
         }
