@@ -12,8 +12,9 @@
         android:id="@+id/weekdays_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:background="@drawable/img_edit_background"
-        android:useDefaultMargins="true"
         android:rowCount="2"
         android:columnCount="7">
 
