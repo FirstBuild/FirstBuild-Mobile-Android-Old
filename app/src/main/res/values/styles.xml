@@ -66,7 +66,7 @@
 
     <style name="schedule_time_slot_item">
         <item name="android:minWidth">64dp</item>
-        <item name="android:minHeight">32dp</item>
+        <item name="android:minHeight">34dp</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:layout_gravity">fill_horizontal</item>
         <item name="android:layout_margin">@dimen/grid_layout_default_margin</item>
