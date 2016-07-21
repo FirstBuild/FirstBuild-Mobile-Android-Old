@@ -469,6 +469,9 @@ public class DashboardActivity extends AppCompatActivity {
                 Intent intent = new Intent(DashboardActivity.this, AddProductActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
+
+                // remove all ble operations
+                cancelBleOperations(false);
             }
         });
 
@@ -531,7 +534,7 @@ public class DashboardActivity extends AppCompatActivity {
             Intent intent = new Intent(DashboardActivity.this, cls);
             startActivity(intent);
 
-            maintainOnlyCurrentProductOperation();
+            cancelBleOperations(true);
         }
         else {
             Log.d(TAG, "onItemClicked but error :" + productInfo.type);
@@ -539,12 +542,16 @@ public class DashboardActivity extends AppCompatActivity {
 
     }
 
-    private void maintainOnlyCurrentProductOperation() {
+    /**
+     * cancel active BLE operations from the Queue
+     * @param maintainCurrent indicates whether the ble operations pertaining to the current product should be maintained or not
+     */
+    private void cancelBleOperations(boolean maintainCurrent) {
         ProductInfo currentProduct = ProductManager.getInstance().getCurrent();
 
         for(ProductInfo p : ProductManager.getInstance().getProducts()) {
 
-            if(p.bluetoothDevice.equals(currentProduct.bluetoothDevice))
+            if(maintainCurrent == true && p.bluetoothDevice.equals(currentProduct.bluetoothDevice))
                 continue;
 
             BleManager.getInstance().cancelOperations(p.bluetoothDevice);
