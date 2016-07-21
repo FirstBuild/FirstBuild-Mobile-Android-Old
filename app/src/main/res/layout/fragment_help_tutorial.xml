@@ -1,0 +1,21 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager_help_tutorial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/help_tutorial_viewpager_item" />
+
+    <LinearLayout
+        android:id="@+id/viewPagerCountDots"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:orientation="horizontal" />
+</RelativeLayout>

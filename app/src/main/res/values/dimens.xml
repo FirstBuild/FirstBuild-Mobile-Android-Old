@@ -19,6 +19,8 @@
     <dimen name="navigation_back_button_left_translation">7dp</dimen>
 
     <dimen name="grid_layout_default_margin">8dp</dimen>
+    <dimen name="help_tutorial_title_text_size">25sp</dimen>
+    <dimen name="help_tutorial_exit_btn_size">25dp</dimen>
 
 
 </resources>
