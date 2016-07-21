@@ -95,7 +95,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
 
         @Override
         public void onOTAFailed() {
-            showUpdateFailureDialog(TAG_OTA_FAILURE_DIALOG);
+            showUpdateFailureDialog();
         }
 
         @Override
@@ -188,7 +188,11 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
                 }
                 else if (status == BluetoothProfile.STATE_DISCONNECTED) {
                     // TODO: needs testing for corner case handling
-//                    productInfo.disconnected();
+
+                    checkBleAvailability();
+
+                    // if OTA is in progress, cancel the progress UI and show update failure UI
+                    checkOtaProgressOnDisconnected();
                 }
             }
         }
@@ -305,6 +309,19 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         }
     };
 
+    private void checkOtaProgressOnDisconnected() {
+
+        FragmentManager fm = getSupportFragmentManager();
+
+        if(fm != null &&
+                fm.findFragmentByTag(TAG_OTA_PROGRESS_DIALOG) != null) {
+            showUpdateFailureDialog();
+        }
+        else {
+            // Do nothing
+        }
+    }
+
     private void onUpdateVersion() {
         if(currentNavItemId == R.id.nav_item_about) {
 
@@ -362,6 +379,8 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         super.onResume();
 
         Log.d(TAG, "onResume() IN");
+
+        checkBleAvailability();
 
         // Add ble event listener
         BleManager.getInstance().addListener(bleListener);
@@ -562,7 +581,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         dialogFragment.show(fm, TAG_OTA_UPDATE_NOT_AVAILABLE_DIALOG);
     }
 
-    private void showUpdateFailureDialog(String tag) {
+    private void showUpdateFailureDialog() {
         FragmentManager fm = getSupportFragmentManager();
 
         dismissProgressDialog(fm);

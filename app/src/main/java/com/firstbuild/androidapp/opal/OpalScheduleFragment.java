@@ -2,7 +2,6 @@ package com.firstbuild.androidapp.opal;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.SparseArrayCompat;
@@ -13,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,9 +21,7 @@ import com.firstbuild.androidapp.R;
 import com.firstbuild.androidapp.productmanager.OpalInfo;
 import com.firstbuild.androidapp.productmanager.ProductManager;
 import com.firstbuild.commonframework.blemanager.BleManager;
-import com.firstbuild.tools.MainQueue;
 import com.firstbuild.tools.MathTools;
-import com.firstbuild.viewutil.OTAConfirmDialogFragment;
 import com.firstbuild.viewutil.OpalScheduleGridLayout;
 
 import java.nio.ByteBuffer;

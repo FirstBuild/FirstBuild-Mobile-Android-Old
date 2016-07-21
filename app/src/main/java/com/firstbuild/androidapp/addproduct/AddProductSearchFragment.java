@@ -213,6 +213,7 @@ public abstract class AddProductSearchFragment extends android.support.v4.app.Fr
     public void onDetach() {
         super.onDetach();
         attached = null;
+        BleManager.getInstance().stopScan();
         BleManager.getInstance().removeListener(bleListener);
     }
 
