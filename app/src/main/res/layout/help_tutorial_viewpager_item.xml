@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <TextView
+        android:id="@+id/help_tutorial_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_margin="@dimen/md_dialog_frame_margin"
+        android:textColor="@color/colorParagonAccent"
+        android:textSize="@dimen/help_tutorial_title_text_size"
+        android:text="@string/schedule_help_tutorial_title"/>
+
+    <ImageButton
+        android:id="@+id/help_tutorial_exit_btn"
+        android:layout_width="@dimen/help_tutorial_exit_btn_size"
+        android:layout_height="@dimen/help_tutorial_exit_btn_size"
+        android:layout_margin="@dimen/md_dialog_frame_margin"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/ic_exit"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/help_tutorial_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="100dp"
+        android:layout_marginLeft="@dimen/md_dialog_frame_margin"
+        android:layout_marginRight="@dimen/md_dialog_frame_margin"
+        android:layout_marginTop="@dimen/md_dialog_frame_margin"
+        android:layout_marginBottom="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/help_tutorial_title"
+        android:gravity="center_horizontal"
+        android:text="@string/schedule_help_tutorial_body_first"/>
+
+    <ImageView
+        android:id="@+id/help_tutorial_image"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_margin="@dimen/md_dialog_frame_margin"
+        android:layout_below="@id/help_tutorial_body"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/img_help_instruction_tap_first"
+        android:scaleType="centerInside"/>
+
+</RelativeLayout>

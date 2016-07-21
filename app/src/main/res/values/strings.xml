@@ -186,6 +186,15 @@
     <string name="schedule_applied_all">APPLIED ALL</string>
     <string name="schedule_apply_all_days">APPLY ALL DAYS</string>
 
+    <string name="schedule_help_tutorial_title">How does it work?</string>
+    <string name="schedule_help_tutorial_body_first">Picking the times you want Opal to make nugget ice is easy. Just tap on the hours of the day you would prefer, and the time will change it\'s color to orange.</string>
+    <string name="schedule_help_tutorial_body_second">You can even tap and drag through times you prefer or drag diagonally through the entire grid of times to choose all.</string>
+    <string name="schedule_help_tutorial_body_third">If you think your schedule could work every day, all you have to do is tap on the button that says "Apply All Days" This will change all 7 days of the week to the schedule that you currently see.</string>
+    <string name="schedule_help_tutorial_body_fourth">Then you will see that the week changed. The orange dots mean that these are the days you have the same schedule.</string>
+    <string name="schedule_help_tutorial_body_fifth">If you need to change the day of the week you are editing, you can tap on which day you would like to change.</string>
+    <string name="schedule_help_tutorial_body_sixth">Now you\'re ready to use your Opal Nugget Ice Maker!</string>
+    <string name="schedule_help_tutorial_title_sixth">Got it!</string>
+
 
 
 

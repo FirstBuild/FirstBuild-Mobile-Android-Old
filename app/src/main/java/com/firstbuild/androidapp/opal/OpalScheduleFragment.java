@@ -2,7 +2,9 @@ package com.firstbuild.androidapp.opal;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +25,7 @@ import com.firstbuild.androidapp.productmanager.ProductManager;
 import com.firstbuild.commonframework.blemanager.BleManager;
 import com.firstbuild.tools.MainQueue;
 import com.firstbuild.tools.MathTools;
+import com.firstbuild.viewutil.OTAConfirmDialogFragment;
 import com.firstbuild.viewutil.OpalScheduleGridLayout;
 
 import java.nio.ByteBuffer;
@@ -33,6 +37,8 @@ import java.util.HashSet;
  * Created by hans on 16. 7. 13..
  */
 public class OpalScheduleFragment extends Fragment {
+
+    private static final String TAG_HELP_TUTORIAL = "tag_help_tutorial";
 
     private String TAG = OpalScheduleFragment.class.getSimpleName();
     private OpalScheduleGridLayout timeSlotContainer;
@@ -122,10 +128,23 @@ public class OpalScheduleFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_help) {
-            // Show help UI
+            showHelpTutorial();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showHelpTutorial() {
+        FragmentManager fm = getFragmentManager();
+
+        if(fm != null &&
+                fm.findFragmentByTag(TAG_HELP_TUTORIAL) != null) {
+            // skip showing dialog as it is already shown
+            return;
+        }
+
+        OpalHelpTutorialFragment helpFragment = OpalHelpTutorialFragment.getInstance();
+        helpFragment.show(fm, TAG_HELP_TUTORIAL);
     }
 
     /**
