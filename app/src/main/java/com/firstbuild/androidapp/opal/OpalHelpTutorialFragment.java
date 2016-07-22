@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -147,7 +148,7 @@ public class OpalHelpTutorialFragment extends DialogFragment {
         // Configure Indicator view
         for(int i=0; i<count; i++) {
             dots[i] = new ImageView(getContext());
-            dots[i].setImageDrawable(getResources().getDrawable(R.drawable.selector_help_tutorial_indicator, getActivity().getTheme()));
+            dots[i].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.selector_help_tutorial_indicator));
             pager_indicator.addView(dots[i], params);
         }
 

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?listPreferredItemHeightSmall"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorParagonPrimary">
 
     <LinearLayout
@@ -16,7 +17,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="7dp"
             android:layout_marginBottom="7dp"
-            android:background="@drawable/vector_ic_chevron_left_white_24dp" />
+            app:srcCompat="@drawable/vector_ic_chevron_left_white_24dp" />
 
         <TextView
             android:id="@+id/nav_item_left_back_text"

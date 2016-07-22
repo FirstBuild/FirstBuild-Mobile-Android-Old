@@ -4,6 +4,7 @@ package com.firstbuild.androidapp.paragon;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,10 +56,10 @@ public class StageViewFragment extends Fragment {
         editDirection = (EditText) view.findViewById(R.id.edit_directions);
         textAutoTransition = (TextView) view.findViewById(R.id.text_auto_transition);
 
-        textTime.setBackground(getResources().getDrawable(R.drawable.img_text_background));
-        textTemp.setBackground(getResources().getDrawable(R.drawable.img_text_background));
-        textSpeed.setBackground(getResources().getDrawable(R.drawable.img_text_background));
-        editDirection.setBackground(getResources().getDrawable(R.drawable.img_text_background));
+        textTime.setBackground(ContextCompat.getDrawable(attached, R.drawable.img_text_background));
+        textTemp.setBackground(ContextCompat.getDrawable(attached, R.drawable.img_text_background));
+        textSpeed.setBackground(ContextCompat.getDrawable(attached, R.drawable.img_text_background));
+        editDirection.setBackground(ContextCompat.getDrawable(attached, R.drawable.img_text_background));
 
         view.findViewById(R.id.layout_picker_time).setVisibility(View.GONE);
         view.findViewById(R.id.layout_picker_temp).setVisibility(View.GONE);
