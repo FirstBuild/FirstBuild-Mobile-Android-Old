@@ -3,6 +3,9 @@ package com.firstbuild.androidapp.viewutil;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+
+import com.firstbuild.androidapp.R;
 
 /**
  * 
@@ -70,7 +73,7 @@ public class SwipeMenuItem {
 	}
 
 	public void setIcon(int resId) {
-		this.icon = mContext.getResources().getDrawable(resId);
+		this.icon = ContextCompat.getDrawable(mContext, resId);
 	}
 
 	public Drawable getBackground() {
@@ -82,7 +85,7 @@ public class SwipeMenuItem {
 	}
 
 	public void setBackground(int resId) {
-		this.background = mContext.getResources().getDrawable(resId);
+		this.background = ContextCompat.getDrawable(mContext, resId);
 	}
 
 	public int getWidth() {

@@ -22,5 +22,7 @@
     <dimen name="help_tutorial_title_text_size">25sp</dimen>
     <dimen name="help_tutorial_exit_btn_size">25dp</dimen>
 
+    <dimen name="schedule_time_slot_item_min_height">31dp</dimen>
+
 
 </resources>

@@ -7,12 +7,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.GridLayout;
+import android.support.v7.widget.GridLayout;
+
 
 /**
  * Created by hans on 16. 7. 14..
  */
-public class OpalScheduleGridLayout extends GridLayout{
+public class OpalScheduleGridLayout extends GridLayout {
 
     public interface GridDiagonalDragDector {
         void onDiagonalDragDetected(View start, View end);
@@ -37,10 +38,6 @@ public class OpalScheduleGridLayout extends GridLayout{
 
     public OpalScheduleGridLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public OpalScheduleGridLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override
