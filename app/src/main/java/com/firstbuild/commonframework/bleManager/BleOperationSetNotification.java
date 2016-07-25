@@ -68,18 +68,7 @@ public class BleOperationSetNotification extends BleOperation {
                     BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BleManager.CLIENT_CHARACTERISTIC_CONFIGURATION_UUID));
 
                     if (isEnabled) {
-
-                        if(characteristicsUuid.equalsIgnoreCase(OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID)) {
-                            // Enable both Notification and Indication for OpalValues.OPAL_OTA_CONTROL_COMMAND_CHAR_UUID
-//                            descriptor.setValue(ENABLE_NOTIFICATION_INDICATION_VALUE);
-
-                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-//                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
-
-                        } else {
-                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                        }
-
+                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                     }
                     else {
                         descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
