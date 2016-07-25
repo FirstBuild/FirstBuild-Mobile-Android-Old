@@ -94,6 +94,9 @@ public class BleManager {
                 Log.i(TAG, "Attempting to start service discovery:" +
                         gatt.discoverServices());
 
+                // Save connected gatt server
+                bluetoothGattMap.put(address, gatt);
+
                 removePeriodicConnectionScheduled(address);
             }
             else if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED) {
@@ -102,10 +105,7 @@ public class BleManager {
                 // if bluetooth is turned off, remove gatt and close on it.
                 if(bluetoothAdapter.isEnabled() == false) {
                     Log.d(TAG, "Bluetooth was turned off so call gatt.close as well as removing gatt instance");
-                    if(bluetoothGattMap.containsKey(address)) {
-                        bluetoothGattMap.remove(address);
-                        gatt.close();
-                    }
+                    close(gatt, address);
                 }
 
                 // As we don't get callback for connected, periodically trying to connect to the device after disconnection
@@ -123,10 +123,7 @@ public class BleManager {
 
                     Log.d(TAG, "onConnectionStateChange : device doesn't advertise or not reachable!!!");
 
-                    if(bluetoothGattMap.containsKey(address)) {
-                        bluetoothGattMap.remove(address);
-                        gatt.close();
-                    }
+                    close(gatt, address);
 
                 } else if(status == 8) {
                     //  lost the connection link(LINK_LOSS) due to no response from remote device or Timeout happened.
@@ -253,6 +250,15 @@ public class BleManager {
         }
 
     };
+
+    private void close(BluetoothGatt gatt, String address) {
+
+        if(bluetoothGattMap.containsKey(address)) {
+            bluetoothGattMap.remove(address);
+        }
+
+        gatt.close();
+    }
 
     private void removePeriodicConnectionScheduled(String address) {
         if(periodicConnectionCheckerMap.containsKey(address)) {
@@ -619,11 +625,10 @@ public class BleManager {
 
         // if it is connected, then let it call gatt.close()
         if(isConnectedDevice(device)) {
-            // Schedule to close
-            operationQ.offer(new BleOperationDeleteDevice(device));
-        }
-        else {
-            bluetoothGattMap.remove(device.getAddress());
+            if(bluetoothGattMap.containsKey(device.getAddress())) {
+                bluetoothGattMap.get(device.getAddress()).close();
+                bluetoothGattMap.remove(device.getAddress());
+            }
         }
 
         doOperation();
@@ -762,7 +767,9 @@ public class BleManager {
             }
         }.execute();
 
-        if(isConnectedDevice(device) && bluetoothGattMap.containsKey(device.getAddress())) {
+        // If connected and service is discovered, then let it execute the next operations
+        if(isConnectedDevice(device) && bluetoothGattMap.containsKey(device.getAddress())
+                && bluetoothGattMap.get(device.getAddress()).getServices().size() > 0) {
             Log.d(TAG, "found address in bluetoothGattMap");
             executeOperation(bluetoothGattMap.get(device.getAddress()), operation);
         } else {
@@ -808,7 +815,7 @@ public class BleManager {
 
         BluetoothGatt gatt = device.connectGatt(context, false, gattCallback);
         if(gatt != null) {
-            bluetoothGattMap.put(address, gatt);
+//            gatt.connect();
         }
 
         return true;
@@ -829,12 +836,6 @@ public class BleManager {
 
         Log.d(TAG, "execute operation");
         operation.execute(bluetoothGatt);
-
-        // remove gatt object after BleOperationDeleteDevice gets executed as
-        // gatt.close() is called so reconnection is not possible next time.
-        if(operation instanceof BleOperationDeleteDevice) {
-            bluetoothGattMap.remove(operation.getDevice().getAddress());
-        }
 
         if (!operation.hasCallback()) {
             executeNextOperation();

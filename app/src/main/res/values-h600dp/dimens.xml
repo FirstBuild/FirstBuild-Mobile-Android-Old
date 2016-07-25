@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="schedule_time_slot_item_min_height">34dp</dimen>
+    <dimen name="grid_layout_default_margin">8dp</dimen>
+    <dimen name="schedule_help_tutorial_image_height">250dp</dimen>
 </resources>

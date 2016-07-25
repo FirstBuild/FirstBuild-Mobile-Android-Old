@@ -18,11 +18,12 @@
 
     <dimen name="navigation_back_button_left_translation">7dp</dimen>
 
-    <dimen name="grid_layout_default_margin">8dp</dimen>
+    <dimen name="grid_layout_default_margin">7dp</dimen>
     <dimen name="help_tutorial_title_text_size">25sp</dimen>
     <dimen name="help_tutorial_exit_btn_size">25dp</dimen>
 
     <dimen name="schedule_time_slot_item_min_height">31dp</dimen>
+    <dimen name="schedule_help_tutorial_image_height">235dp</dimen>
 
 
 </resources>

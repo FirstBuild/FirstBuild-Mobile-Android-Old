@@ -53,8 +53,6 @@ public class AddProductFoundOpalFragment extends Fragment {
             }
         };
 
-        Log.d(TAG, "Launch 5 sec timer");
-        MainQueue.postDelayed(runnable, 5000);
     }
 
     @Override
@@ -62,7 +60,8 @@ public class AddProductFoundOpalFragment extends Fragment {
         super.onResume();
         Log.d(TAG, "onResume");
 
-        MainQueue.postDelayed(runnable, 1000);
+        Log.d(TAG, "Launch 5 sec timer");
+        MainQueue.postDelayed(runnable, 5000);
     }
 
 
