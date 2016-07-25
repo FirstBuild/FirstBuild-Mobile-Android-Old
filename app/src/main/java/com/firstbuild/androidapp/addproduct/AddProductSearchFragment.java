@@ -70,14 +70,16 @@ public abstract class AddProductSearchFragment extends android.support.v4.app.Fr
                         // Pair to device
                         BleManager.getInstance().pairDevice(device);
                     }
-                    else if (bondState == device.BOND_BONDED || bondState == device.BOND_BONDING) {
+                    else if (bondState == device.BOND_BONDED) {
                         Log.d(TAG, "device bonded: " + bondState);
 
                         if (ProductManager.getInstance().getProductByAddress(deviceAddress) == null) {
                             isFound = true;
                         }
-                    }
-                    else {
+                    } else if (bondState == device.BOND_BONDING) {
+                        Log.d(TAG, "device bonding..." );
+
+                    } else {
                         Log.d(TAG, "device bonded or bonding state: " + bondState);
 
                         // This part must be replace with proper warning page

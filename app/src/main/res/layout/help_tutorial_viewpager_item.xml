@@ -42,7 +42,7 @@
     <ImageView
         android:id="@+id/help_tutorial_image"
         android:layout_width="wrap_content"
-        android:layout_height="250dp"
+        android:layout_height="@dimen/schedule_help_tutorial_image_height"
         android:layout_margin="@dimen/md_dialog_frame_margin"
         android:layout_below="@id/help_tutorial_body"
         android:layout_centerHorizontal="true"
