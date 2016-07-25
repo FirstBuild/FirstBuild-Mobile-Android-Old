@@ -767,7 +767,9 @@ public class BleManager {
             }
         }.execute();
 
-        if(isConnectedDevice(device) && bluetoothGattMap.containsKey(device.getAddress())) {
+        // If connected and service is discovered, then let it execute the next operations
+        if(isConnectedDevice(device) && bluetoothGattMap.containsKey(device.getAddress())
+                && bluetoothGattMap.get(device.getAddress()).getServices().size() > 0) {
             Log.d(TAG, "found address in bluetoothGattMap");
             executeOperation(bluetoothGattMap.get(device.getAddress()), operation);
         } else {
