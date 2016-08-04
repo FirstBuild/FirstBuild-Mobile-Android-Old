@@ -698,7 +698,8 @@ public class DashboardActivity extends AppCompatActivity {
             holderDashboard.textNickname.setText(currentProduct.nickname);
 
             int numMustData = currentProduct.getMustDataStatus();
-            Log.d(TAG, "Product name : "+ currentProduct.bluetoothDevice.getName() + " numMustData :" + numMustData);
+            String deviceId = (currentProduct.bluetoothDevice == null) ? currentProduct.address : currentProduct.bluetoothDevice.getName();
+            Log.d(TAG, "Product name : " + deviceId + " numMustData :" + numMustData);
 
             if (currentProduct.isConnected()) {
 
