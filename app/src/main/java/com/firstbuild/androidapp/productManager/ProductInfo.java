@@ -63,14 +63,12 @@ public abstract class ProductInfo {
         this.address = address;
         this.nickname = nickname;
         this.type = type;
-        this.isConnected = false;
     }
 
     public ProductInfo(ProductInfo product) {
         this.type = product.type;
         this.address = product.address;
         this.nickname = product.nickname;
-        this.isConnected = false;
     }
 
     public ProductInfo(JSONObject jsonObject) {
