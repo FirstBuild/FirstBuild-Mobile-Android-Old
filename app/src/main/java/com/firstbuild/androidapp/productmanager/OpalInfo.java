@@ -60,6 +60,8 @@ public class OpalInfo extends ProductInfo{
     private int timeSyncValue = INITIAL_TIME_SYNC_VALUE;
     private int opalVersionValue;
 
+    private int numGetData;
+
     public OpalInfo(int type, String address, String nickname) {
         super(type, address, nickname);
     }
@@ -86,7 +88,7 @@ public class OpalInfo extends ProductInfo{
     @Override
     public int getMustDataStatus() {
 
-        int numGetData = 0;
+        numGetData = 0;
 
         if(operationStateValue != INITIAL_VALUE){
             numGetData++;

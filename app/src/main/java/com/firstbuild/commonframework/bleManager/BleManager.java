@@ -157,7 +157,13 @@ public class BleManager {
                 List<BluetoothGattService> bleGattServices = gatt.getServices();
 
                 sendUpdate("onServicesDiscovered", new Object[]{address, bleGattServices});
-                executeOperation(gatt, currentOperation);
+
+                MainQueue.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        executeNextOperation();
+                    }
+                }, 1000);
             }
             else {
                 Log.d(TAG, "onServicesDiscovered NOT GATT_SUCCESS: " + status);
@@ -706,8 +712,7 @@ public class BleManager {
             }
         }
 
-        currentOperation = null;
-        doOperation();
+        executeNextOperation();
     }
 
     /**
@@ -720,7 +725,6 @@ public class BleManager {
         }
         if (operationQ.size() == 0) {
             Log.d(TAG, "Queue empty, doOperation loop stopped.");
-            currentOperation = null;
             return;
         }
 
@@ -795,6 +799,11 @@ public class BleManager {
             return false;
         }
 
+        if(bluetoothAdapter.isEnabled() == false) {
+            Log.d(TAG, "Bluetooth is disabled ! Skip reconnection trial to GATT server : " + address);
+            return false;
+        }
+
         // previously connected device, reconnect
         if(bluetoothGattMap.containsKey(address)) {
             BluetoothGatt gatt = bluetoothGattMap.get(address);
@@ -813,11 +822,7 @@ public class BleManager {
             return false;
         }
 
-        BluetoothGatt gatt = device.connectGatt(context, false, gattCallback);
-        if(gatt != null) {
-//            gatt.connect();
-        }
-
+        device.connectGatt(context, false, gattCallback);
         return true;
     }
 
