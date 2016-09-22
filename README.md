@@ -5,7 +5,7 @@ Open Source Android app used for connected products made by FirstBuild.
 
 Paragon
 
-Opal ( in progress ) 
+Opal
 
 #Paragon
 
