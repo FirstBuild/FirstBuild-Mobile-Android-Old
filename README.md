@@ -17,5 +17,5 @@ https://cocreate.firstbuild.com/ChrisN/paragon-induction-cooktop-precision-cooki
 
 Primarily for supporting Over-The-Air upgrades of the firmware on the Opal (bluetooth and controls). Also supports scheduling of the ice maker.
 
-https://cocreate.firstbuild.com/JBerg/opal-nugget-ice-maker/activity/
+https://firstbuildhelp.zendesk.com/hc/en-us/categories/203029708-Opal-Nugget-Ice-Maker
 
