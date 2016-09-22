@@ -87,7 +87,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
     private OTAResultDelegate otaResultDelegate = new OTAResultDelegate() {
         @Override
         public void onOTASuccessful() {
-            showUpdateSuccessDialog();
+            showUpdateSuccessDialog(true);
 
             // Read BLE version again
             BleManager.getInstance().readCharacteristics(opalInfo.bluetoothDevice, OpalValues.OPAL_OTA_BT_VERSION_CHAR_UUID);
@@ -140,7 +140,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
 
                 // Opal Firmware Install finishes
                 if(progress == 100) {
-                    showUpdateSuccessDialog();
+                    showUpdateSuccessDialog(false);
 
                     // Read Opal version again
                     BleManager.getInstance().readCharacteristics(opalInfo.bluetoothDevice, OpalValues.OPAL_FIRMWARE_VERSION_CHAR_UUID);
@@ -427,7 +427,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
                         break;
 
                     case R.id.nav_item_faq:
-                        IntentTools.openBrowser(getBaseContext(), IntentTools.OPAL_INTRODUCTION_HOME_URL);
+                        IntentTools.openBrowser(getBaseContext(), IntentTools.OPAL_FAQ_URL);
                         break;
 
                     case R.id.nav_item_contact_expert:
@@ -609,7 +609,7 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
         }
     }
 
-    private void showUpdateSuccessDialog() {
+    private void showUpdateSuccessDialog(boolean isBLESuccess) {
         FragmentManager fm = getSupportFragmentManager();
 
         dismissProgressDialog(fm);
@@ -620,9 +620,19 @@ public class OpalMainActivity extends AppCompatActivity implements OTAConfirmDia
             return;
         }
 
+        String bodyContents = getString(R.string.popup_firmware_update_success_body);
+
+        // Show guidance string to let user to check the OPAL device firmware update again after BLE update is finished successfully
+        if(isBLESuccess == true) {
+            bodyContents = getString(R.string.popup_firmware_update_success_body_with_next_step_guide);
+        }
+        else {
+            // Do nothing
+        }
+
         OTAConfirmDialogFragment dialogFragment = OTAConfirmDialogFragment.getInstance(
                 null,
-                getString(R.string.popup_firmware_update_success_body),
+                bodyContents,
                 getString(android.R.string.ok),
                 null);
 

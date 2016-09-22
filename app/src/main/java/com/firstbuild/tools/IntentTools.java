@@ -13,9 +13,9 @@ import com.firstbuild.androidapp.dashboard.DashboardActivity;
  */
 public class IntentTools {
 
-    public static final String OPAL_INTRODUCTION_HOME_URL = "http://www.nuggetice.com";
+    public static final String OPAL_FAQ_URL = "https://firstbuildhelp.zendesk.com/hc/en-us/categories/203029708-Opal-Nugget-Ice-Maker";
     public static final String OPAL_APP_SOURCE_CODE_URL = "https://github.com/FirstBuild/FirstBuild-Mobile-Android";
-    public static final String OPAL_APP_LEARN_MORE_URL = "https://cocreate.firstbuild.com/JBerg/opal-nugget-ice-maker/activity/";
+    public static final String OPAL_APP_LEARN_MORE_URL = "https://nuggetice.com";
 
     public static final String OPAL_CONTACT_AN_EXPERT_EMAIL_ADDRESS = "support@firstbuild.com";
     public static final String OPAL_FEEDBACK_EMAIL_ADDRESS = OPAL_CONTACT_AN_EXPERT_EMAIL_ADDRESS;

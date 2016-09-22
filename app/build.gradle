@@ -4,13 +4,13 @@ android {
     compileSdkVersion 23
     buildToolsVersion '23.0.3'
 
-        defaultConfig {
-            applicationId "com.firstbuild.androidapp"
-            minSdkVersion 18
-            targetSdkVersion 22
-            versionCode 3
-            versionName "1.0.c"
-            vectorDrawables.useSupportLibrary = true
+    defaultConfig {
+        applicationId "com.firstbuild.androidapp"
+        minSdkVersion 19
+        targetSdkVersion 22
+        versionCode 3
+        versionName "1.0.d"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
