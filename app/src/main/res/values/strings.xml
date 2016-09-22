@@ -155,7 +155,7 @@
     <string name="stop_making_ice">STOP MAKING ICE</string>
     <string name="make_ice">MAKE ICE</string>
 
-    <string name="opal_about_content">Opal is smart enough to know when to start and stop making ice. It’s equipped with a sensor that will identify the fill level of the bucket to turn the ice maker on and off. Just like in any cooler, ice will slowly melt within the air-insulated bucket. Opal will automatically turn on to make sure that the bucket is refilling with ice.</string>
+    <string name="opal_about_content">Opal is smart enough to know when to start and stop making ice. It’s equipped with a sensor that will identify the fill level of the ice bin to turn the ice maker on and off. Just like in any cooler, ice will slowly melt within the air-insulated ice bin. Opal will automatically turn on to make sure that the ice bin is refilling with ice.</string>
     <string name="opal_learn_more"> >> Learn More</string>
 
 
@@ -174,6 +174,7 @@
     <string name="popup_firmware_update_fail_title">Oops! Firmware Update Failure</string>
     <string name="popup_firmware_update_fail_body">Unfortunately, the update failed, please try again later. If you continue to have problems please select the Help option above.</string>
     <string name="popup_firmware_update_success_body">Update Successful!</string>
+    <string name="popup_firmware_update_success_body_with_next_step_guide">Update Successful!\nPlease click on “Updates” again to check if there is another update available.</string>
 
     <string name="popup_ota_progress_title">Downloading...</string>
     <string name="popup_ota_install_progress_title">Installing...</string>
