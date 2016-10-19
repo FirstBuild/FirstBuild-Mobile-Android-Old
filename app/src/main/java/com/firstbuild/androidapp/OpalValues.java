@@ -15,10 +15,10 @@ public class OpalValues {
 
     // !!! MAKE SURE TO UPDATE THIS HARDCODED VALUE WHEN CHANGING IMAGE FILE IN \ASSET FOLDER !!!
     // HEXA DECIMAL VALUE
-    public static final String LATEST_OPAL_BLE_FIRMWARE_VERSION = "01050000";
+    public static final String LATEST_OPAL_BLE_FIRMWARE_VERSION = "01040000";
     public static final String LATEST_OPAL_FIRMWARE_VERSION = "01070510";
 
-    public static final String LATEST_OPAL_BLE_FIRMWARE_NAME = "opal_ble.ota.bin.signed.01.05.00.00.ota";
+    public static final String LATEST_OPAL_BLE_FIRMWARE_NAME = "opal_ble.bin.signed.01.04.00.00.ota";
     public static final String LATEST_OPAL_FIRMWARE_NAME = "GE8868_01070510_PPR5.bin.ota";
 
     // BLE Service UUID
