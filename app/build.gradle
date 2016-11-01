@@ -8,8 +8,8 @@ android {
         applicationId "com.firstbuild.androidapp"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.0.e"
+        versionCode 4
+        versionName "1.1.1"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
